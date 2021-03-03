@@ -1,0 +1,4 @@
+# Mixed models
+
+[Using a mixed modeling framework to help analyze repeated measures]
+

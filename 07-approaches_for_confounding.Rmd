@@ -1,0 +1,7 @@
+# Some approaches for confounding
+
+## Inverse probability weighting
+
+## Propensity scores
+
+[Modeling for weights/propensity scores, involves machine learning]

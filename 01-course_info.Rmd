@@ -1,0 +1,75 @@
+# Course information {#courseinfo}
+
+This is a the coursebook for the Colorado State University course ERHS 732,
+Advanced Epidemiological Analysis. This course provides the opportunity to
+implement theoretical expertise through designing and conducting advanced
+epidemiologic research analyses and to gain in-depth experience analyzing
+datasets from the environmental epidemiology literature. 
+
+This class will utilize a variety of instructional formats, including short lectures, readings, topic specific examples from the substantive literature, discussion and directed group work on in-course coding exercises putting lecture and discussion content into practice. A variety of teaching modalities will be used, including group discussions, student directed discussions, and in-class group exercises. It is expected that before coming to class, students will read the required papers for the week, as well as any associated code included in the papers’ supplemental materials. Students should come to class prepared to do statistical programming (i.e., bring a laptop with statistical software, download any datasets needed for the week etc). Participation is based on in-class coding exercises based on each week’s topic. If a student misses a class, they will be expected to complete the in-course exercise outside of class to receive credit for participation in that exercise. Students will be required to do mid-term and final projects which will be presented in class and submitted as a written write-up describing the project.
+
+## Course learning objectives
+
+The learning objectives for this proposed course complement core epidemiology
+and statistics courses required by the program and provide the opportunity for
+students to implement theoretical skills and knowledge gained in those courses
+in a more applied setting. 
+
+Upon successful completion of this course students will be able to:
+
+1. List several possible statistical approaches to answering an epidemiological
+research questions. (*Knowledge*)
+2. Choose among analytical approaches learned in previous courses to identify
+one that is reasonable for an epidemiological research question. (*Application*)
+3. Design a plan for cleaning and analyzing data to answer an epidemiological
+research question, drawing on techniques learned in previous and concurrent
+courses. (*Synthesis*)
+4. Justify the methods and code used to answer an epidemiological research
+question. (*Evaluation*)
+5. Explain the advantages and limitations of a chosen methodological approach
+for evaluating epidemiological data. (*Evaluation*)
+6. Apply advanced epidemiological methods to analyze example data, using a
+regression modeling framework. (*Application*)
+7. Apply statistical programming techniques learned in previous courses to
+prepare epidemiological data for statistical analysis and to conduct the
+analysis. (*Application*)
+8. Interpret the output from statistical analyses of data for an epidemiological
+research question. (*Evaluation*)
+9. Defend conclusions from their analysis. (*Comprehension*)
+10. Write a report describing the methods, results, and conclusions from an
+epidemiological analysis. (*Application*)
+11. Construct a reproducible document with embedded code to clean and analyze
+data to answer an epidemiological research question. (*Application*)
+
+## Meeting time and place
+
+[To be determined]
+
+## Course grading
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(knitr)
+
+tribble(
+  ~ `Assessment Components`, ~ `Percentage of Grade`, 
+  "Midterm written report", 30, 
+  "Midterm presentation", 15, 
+  "Final written report", 30, 
+  "Final presentation", 15, 
+  "Participation in in-course exercises", 10
+) %>% 
+  kable()
+```
+
+## Textbooks and Course Materials
+
+Readings for this course will focus on peer-reviewed literature that will be
+posted for the students in the class. Additional references that will be useful
+to students throughout the semester include:
+
+- Garrett Grolemund and Hadley Wickham, *R for Data Science*, O’Reilly, 2017. (Available for free online at https://r4ds.had.co.nz/ and in print through
+most large book sellers.)
+- Miguel A. Hernan and James M. Robins, *Causal Inference: What If*, Boca Raton: Chapman & Hall/CRC, 2020. (Available for free online at https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/2021/01/ciwhatif_hernanrobins_31jan21.pdf with a print version anticipated in 2021.)
+- Francesca Dominici and Roger D. Peng, *Statistical Methods for Environmental Epidemiology with R*, Springer, 2008. (Available online through the CSU library or in print through Springer.)
+

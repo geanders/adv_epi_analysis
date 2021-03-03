@@ -1,0 +1,16 @@
+# Longitudinal cohort study designs
+
+## Coding a survival analysis
+
+## Handling complexity
+
+### Multi-level exposure
+
+### Recurrent outcome
+
+### Time-varying coeffificents
+
+### Using survey results
+
+[e.g., NHANES]
+

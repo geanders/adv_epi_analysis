@@ -1,0 +1,285 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{book}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+  \usepackage{amssymb}
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Advanced Epidemiological Analysis},
+  pdfauthor={Andreas Neophytou and G. Brooke Anderson},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage{longtable,booktabs}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{natbib}
+\bibliographystyle{apalike}
+
+\title{Advanced Epidemiological Analysis}
+\author{Andreas Neophytou and G. Brooke Anderson}
+\date{2021-03-03}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\hypertarget{courseinfo}{%
+\chapter{Course information}\label{courseinfo}}
+
+This is a the coursebook for the Colorado State University course ERHS 732,
+Advanced Epidemiological Analysis. This course provides the opportunity to
+implement theoretical expertise through designing and conducting advanced
+epidemiologic research analyses and to gain in-depth experience analyzing
+datasets from the environmental epidemiology literature.
+
+This class will utilize a variety of instructional formats, including short lectures, readings, topic specific examples from the substantive literature, discussion and directed group work on in-course coding exercises putting lecture and discussion content into practice. A variety of teaching modalities will be used, including group discussions, student directed discussions, and in-class group exercises. It is expected that before coming to class, students will read the required papers for the week, as well as any associated code included in the papers' supplemental materials. Students should come to class prepared to do statistical programming (i.e., bring a laptop with statistical software, download any datasets needed for the week etc). Participation is based on in-class coding exercises based on each week's topic. If a student misses a class, they will be expected to complete the in-course exercise outside of class to receive credit for participation in that exercise. Students will be required to do mid-term and final projects which will be presented in class and submitted as a written write-up describing the project.
+
+\hypertarget{course-learning-objectives}{%
+\section{Course learning objectives}\label{course-learning-objectives}}
+
+The learning objectives for this proposed course complement core epidemiology
+and statistics courses required by the program and provide the opportunity for
+students to implement theoretical skills and knowledge gained in those courses
+in a more applied setting.
+
+Upon successful completion of this course students will be able to:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  List several possible statistical approaches to answering an epidemiological
+  research questions. (\emph{Knowledge})
+\item
+  Choose among analytical approaches learned in previous courses to identify
+  one that is reasonable for an epidemiological research question. (\emph{Application})
+\item
+  Design a plan for cleaning and analyzing data to answer an epidemiological
+  research question, drawing on techniques learned in previous and concurrent
+  courses. (\emph{Synthesis})
+\item
+  Justify the methods and code used to answer an epidemiological research
+  question. (\emph{Evaluation})
+\item
+  Explain the advantages and limitations of a chosen methodological approach
+  for evaluating epidemiological data. (\emph{Evaluation})
+\item
+  Apply advanced epidemiological methods to analyze example data, using a
+  regression modeling framework. (\emph{Application})
+\item
+  Apply statistical programming techniques learned in previous courses to
+  prepare epidemiological data for statistical analysis and to conduct the
+  analysis. (\emph{Application})
+\item
+  Interpret the output from statistical analyses of data for an epidemiological
+  research question. (\emph{Evaluation})
+\item
+  Defend conclusions from their analysis. (\emph{Comprehension})
+\item
+  Write a report describing the methods, results, and conclusions from an
+  epidemiological analysis. (\emph{Application})
+\item
+  Construct a reproducible document with embedded code to clean and analyze
+  data to answer an epidemiological research question. (\emph{Application})
+\end{enumerate}
+
+\hypertarget{meeting-time-and-place}{%
+\section{Meeting time and place}\label{meeting-time-and-place}}
+
+{[}To be determined{]}
+
+\hypertarget{course-grading}{%
+\section{Course grading}\label{course-grading}}
+
+\begin{tabular}{l|r}
+\hline
+Assessment Components & Percentage of Grade\\
+\hline
+Midterm written report & 30\\
+\hline
+Midterm presentation & 15\\
+\hline
+Final written report & 30\\
+\hline
+Final presentation & 15\\
+\hline
+Participation in in-course exercises & 10\\
+\hline
+\end{tabular}
+
+\hypertarget{textbooks-and-course-materials}{%
+\section{Textbooks and Course Materials}\label{textbooks-and-course-materials}}
+
+Readings for this course will focus on peer-reviewed literature that will be
+posted for the students in the class. Additional references that will be useful
+to students throughout the semester include:
+
+\begin{itemize}
+\tightlist
+\item
+  Garrett Grolemund and Hadley Wickham, \emph{R for Data Science}, O'Reilly, 2017. (Available for free online at \url{https://r4ds.had.co.nz/} and in print through
+  most large book sellers.)
+\item
+  Miguel A. Hernan and James M. Robins, \emph{Causal Inference: What If}, Boca Raton: Chapman \& Hall/CRC, 2020. (Available for free online at \url{https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/2021/01/ciwhatif_hernanrobins_31jan21.pdf} with a print version anticipated in 2021.)
+\item
+  Francesca Dominici and Roger D. Peng, \emph{Statistical Methods for Environmental Epidemiology with R}, Springer, 2008. (Available online through the CSU library or in print through Springer.)
+\end{itemize}
+
+\hypertarget{time-series-case-crossover-study-designs}{%
+\chapter{Time series / case-crossover study designs}\label{time-series-case-crossover-study-designs}}
+
+\hypertarget{time-series-data}{%
+\section{Time series data}\label{time-series-data}}
+
+{[}Exploring time series data with daily measurements of health
+outcomes and environmental exposures{]}
+
+\hypertarget{fitting-models}{%
+\section{Fitting models}\label{fitting-models}}
+
+{[}Fitting models under time series and case-crossover study designs{]}
+
+\hypertarget{generalized-linear-models}{%
+\chapter{Generalized linear models}\label{generalized-linear-models}}
+
+\hypertarget{splines-in-glms}{%
+\section{Splines in GLMs}\label{splines-in-glms}}
+
+{[}Using splines to model non-linear associations in a GLM{]}
+
+\hypertarget{cross-basis-functions-in-glms}{%
+\section{Cross-basis functions in GLMs}\label{cross-basis-functions-in-glms}}
+
+{[}Using a cross-basis to model an exposure's association with the
+outcome in two dimensions (dimensions of time and exposure level){]}
+
+\hypertarget{natural-experiments}{%
+\chapter{Natural experiments}\label{natural-experiments}}
+
+\hypertarget{interrupted-time-series}{%
+\section{Interrupted time series}\label{interrupted-time-series}}
+
+{[}Interrupted time series assessing effects of policy/intervention in specific point in time{]}
+
+\hypertarget{difference-in-differences}{%
+\section{Difference-in-differences}\label{difference-in-differences}}
+
+{[}Difference-in differences application for intervention introduced in one point in time{]}
+
+\hypertarget{risk-assessment}{%
+\chapter{Risk assessment}\label{risk-assessment}}
+
+{[}Predict expected heat-related mortality under a climate change scenario{]}
+
+\hypertarget{longitudinal-cohort-study-designs}{%
+\chapter{Longitudinal cohort study designs}\label{longitudinal-cohort-study-designs}}
+
+\hypertarget{coding-a-survival-analysis}{%
+\section{Coding a survival analysis}\label{coding-a-survival-analysis}}
+
+\hypertarget{handling-complexity}{%
+\section{Handling complexity}\label{handling-complexity}}
+
+\hypertarget{multi-level-exposure}{%
+\subsection{Multi-level exposure}\label{multi-level-exposure}}
+
+\hypertarget{recurrent-outcome}{%
+\subsection{Recurrent outcome}\label{recurrent-outcome}}
+
+\hypertarget{time-varying-coeffificents}{%
+\subsection{Time-varying coeffificents}\label{time-varying-coeffificents}}
+
+\hypertarget{using-survey-results}{%
+\subsection{Using survey results}\label{using-survey-results}}
+
+{[}e.g., NHANES{]}
+
+\hypertarget{some-approaches-for-confounding}{%
+\chapter{Some approaches for confounding}\label{some-approaches-for-confounding}}
+
+\hypertarget{inverse-probability-weighting}{%
+\section{Inverse probability weighting}\label{inverse-probability-weighting}}
+
+\hypertarget{propensity-scores}{%
+\section{Propensity scores}\label{propensity-scores}}
+
+{[}Modeling for weights/propensity scores, involves machine learning{]}
+
+\hypertarget{mixed-models}{%
+\chapter{Mixed models}\label{mixed-models}}
+
+{[}Using a mixed modeling framework to help analyze repeated measures{]}
+
+\hypertarget{instrumental-variables}{%
+\chapter{Instrumental variables}\label{instrumental-variables}}
+
+\hypertarget{causal-inference}{%
+\chapter{Causal inference}\label{causal-inference}}
+
+  \bibliography{book.bib}
+
+\end{document}

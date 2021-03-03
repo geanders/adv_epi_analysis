@@ -1,0 +1,11 @@
+# Generalized linear models 
+
+## Splines in GLMs
+
+[Using splines to model non-linear associations in a GLM]
+
+## Cross-basis functions in GLMs
+
+[Using a cross-basis to model an exposure's association with the
+outcome in two dimensions (dimensions of time and exposure level)]
+

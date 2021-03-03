@@ -1,0 +1,9 @@
+# Natural experiments
+
+## Interrupted time series
+
+[Interrupted time series assessing effects of policy/intervention in specific point in time]
+
+## Difference-in-differences
+
+[Difference-in differences application for intervention introduced in one point in time]
