@@ -1,0 +1,5 @@
+book_filename: "adv_epi_analysis"
+delete_merged_file: true
+language:
+  ui:
+    chapter_name: "Chapter "
