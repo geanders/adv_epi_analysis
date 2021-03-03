@@ -10,3 +10,21 @@ link-citations: yes
 description: "This is the coursebook for the Colorado State University course ERHS 732, Advanced Epidemiological Analysis."
 ---
 
+# Overview
+
+This is a the coursebook for the Colorado State University course ERHS 732,
+Advanced Epidemiological Analysis. This course provides the opportunity to
+implement theoretical expertise through designing and conducting advanced
+epidemiologic research analyses and to gain in-depth experience analyzing
+datasets from the environmental epidemiology literature. 
+
+## License
+
+This book is licensed under the [Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International
+License](https://creativecommons.org/licenses/by-nc-sa/4.0/), while all code in
+the book is under the [MIT license](https://opensource.org/licenses/MIT).
+
+Click on the **Next** button (or navigate using the links in the table of
+contents) to continue.
+
