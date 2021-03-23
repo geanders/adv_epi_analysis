@@ -1,6 +1,6 @@
 # Course information {#courseinfo}
 
-test2
+test3
 
 This is a the coursebook for the Colorado State University course ERHS 732,
 Advanced Epidemiological Analysis. This course provides the opportunity to
