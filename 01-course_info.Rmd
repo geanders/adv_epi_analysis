@@ -51,6 +51,7 @@ data to answer an epidemiological research question. (*Application*)
 
 [To be determined]
 
+
 ## Course grading
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
