@@ -5,6 +5,14 @@
 [Exploring time series data with daily measurements of health 
 outcomes and environmental exposures]
 
+*Andreas section*
+
+*Brooke's section*
+
 ## Fitting models
 
 [Fitting models under time series and case-crossover study designs]
+
+*Andreas section*
+
+*Brooke's section*
