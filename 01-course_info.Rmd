@@ -1,6 +1,6 @@
 # Course information {#courseinfo}
 
-test2
+new test
 
 This is a the coursebook for the Colorado State University course ERHS 732,
 Advanced Epidemiological Analysis. This course provides the opportunity to
@@ -81,6 +81,3 @@ to students throughout the semester include:
 most large book sellers.)
 - Miguel A. Hernan and James M. Robins, *Causal Inference: What If*, Boca Raton: Chapman & Hall/CRC, 2020. (Available for free online at https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/2021/01/ciwhatif_hernanrobins_31jan21.pdf with a print version anticipated in 2021.)
 - Francesca Dominici and Roger D. Peng, *Statistical Methods for Environmental Epidemiology with R*, Springer, 2008. (Available online through the CSU library or in print through Springer.)
-
-Test commit 2. 
-
