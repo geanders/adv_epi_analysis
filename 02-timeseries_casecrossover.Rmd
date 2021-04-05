@@ -131,7 +131,7 @@ range(obs$date)
 ```
 
 
-2. Are there any missing dates within this time period?
+2. **Are there any missing dates within this time period?**
 
 There are a few things you should check to answer this question. First
 (and easiest), you can check to see if there are any `NA` values within
@@ -167,7 +167,7 @@ obs %>%
 ```
 
 
-3. Are there seasonal trends in the exposure? In the outcome?
+3. **Are there seasonal trends in the exposure? In the outcome?**
 
 You can use a simple plot to visualize patterns over time in both the exposure
 and the outcome. For example, the following code plots a dot for each daily
@@ -238,7 +238,7 @@ Some winters have stretches with particularly high mortality---these are likely
 a result of seasons with strong influenza outbreaks. You can also see on this 
 plot the impact of the 2003 heat wave on mortality among this oldest age group.
 
-4. Are there long-term trends in the exposure? In the outcome?
+4. **Are there long-term trends in the exposure? In the outcome?**
 
 Some of the plots we created in the last section help in exploring this 
 question. For example, the following plot shows a clear pattern of decreasing
