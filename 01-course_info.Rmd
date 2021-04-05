@@ -4,7 +4,16 @@ This is a the coursebook for the Colorado State University course ERHS 732,
 Advanced Epidemiological Analysis. This course provides the opportunity to
 implement theoretical expertise through designing and conducting advanced
 epidemiologic research analyses and to gain in-depth experience analyzing
-datasets from the environmental epidemiology literature. 
+datasets from the environmental epidemiology literature. This course will
+complement the student's training in advanced epidemiological methods,
+leveraging regression approaches and statistical programming, providing the
+opportunity to implement their theoretical expertise through designing and
+conducting  advanced epidemiologic research analyses. During the course,
+students will gain in-depth experience analyzing two datasets from the
+environmental epidemiology literature---(1) time series data with daily measures
+of weather, air pollution, and cardiorespiratory outcomes in London, England and
+(2) a dataset with measures from the Framingham Heart Study. Additional datasets
+and studies will be discussed and explored as a supplement.
 
 This class will utilize a variety of instructional formats, including short lectures, readings, topic specific examples from the substantive literature, discussion and directed group work on in-course coding exercises putting lecture and discussion content into practice. A variety of teaching modalities will be used, including group discussions, student directed discussions, and in-class group exercises. It is expected that before coming to class, students will read the required papers for the week, as well as any associated code included in the papers’ supplemental materials. Students should come to class prepared to do statistical programming (i.e., bring a laptop with statistical software, download any datasets needed for the week etc). Participation is based on in-class coding exercises based on each week’s topic. If a student misses a class, they will be expected to complete the in-course exercise outside of class to receive credit for participation in that exercise. Students will be required to do mid-term and final projects which will be presented in class and submitted as a written write-up describing the project.
 
