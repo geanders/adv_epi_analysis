@@ -3,11 +3,14 @@ license
 courseinfo
 course-learning-objectives
 meeting-time-and-place
+class-structure-and-expectations
 course-grading
 textbooks-and-course-materials
 time-series-case-crossover-study-designs
+reading
 time-series-data
 fitting-models
+chapter-vocabulary
 generalized-linear-models
 splines-in-glms
 cross-basis-functions-in-glms

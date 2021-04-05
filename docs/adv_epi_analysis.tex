@@ -42,6 +42,46 @@
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
@@ -78,7 +118,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas Neophytou and G. Brooke Anderson}
-\date{2021-03-23}
+\date{2021-04-05}
 
 \begin{document}
 \maketitle
@@ -110,13 +150,20 @@ contents) to continue.
 \hypertarget{courseinfo}{%
 \chapter{Course information}\label{courseinfo}}
 
-new test
-
 This is a the coursebook for the Colorado State University course ERHS 732,
 Advanced Epidemiological Analysis. This course provides the opportunity to
 implement theoretical expertise through designing and conducting advanced
 epidemiologic research analyses and to gain in-depth experience analyzing
-datasets from the environmental epidemiology literature.
+datasets from the environmental epidemiology literature. This course will
+complement the student's training in advanced epidemiological methods,
+leveraging regression approaches and statistical programming, providing the
+opportunity to implement their theoretical expertise through designing and
+conducting advanced epidemiologic research analyses. During the course,
+students will gain in-depth experience analyzing two datasets from the
+environmental epidemiology literature---(1) time series data with daily measures
+of weather, air pollution, and cardiorespiratory outcomes in London, England and
+(2) a dataset with measures from the Framingham Heart Study. Additional datasets
+and studies will be discussed and explored as a supplement.
 
 This class will utilize a variety of instructional formats, including short lectures, readings, topic specific examples from the substantive literature, discussion and directed group work on in-course coding exercises putting lecture and discussion content into practice. A variety of teaching modalities will be used, including group discussions, student directed discussions, and in-class group exercises. It is expected that before coming to class, students will read the required papers for the week, as well as any associated code included in the papers' supplemental materials. Students should come to class prepared to do statistical programming (i.e., bring a laptop with statistical software, download any datasets needed for the week etc). Participation is based on in-class coding exercises based on each week's topic. If a student misses a class, they will be expected to complete the in-course exercise outside of class to receive credit for participation in that exercise. Students will be required to do mid-term and final projects which will be presented in class and submitted as a written write-up describing the project.
 
@@ -186,6 +233,43 @@ Upon successful completion of this course students will be able to:
 
 {[}To be determined{]}
 
+\hypertarget{class-structure-and-expectations}{%
+\section{Class Structure and Expectations}\label{class-structure-and-expectations}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Homework/preparation:} Every two weeks we will focus on a different topic.
+  It is expected that \emph{before} coming to class, students will read the required
+  papers for the week, as well as any associated code included in the papers'
+  supplemental materials. Students should come to class prepared to prepared to do
+  statistical programming (i.e., bring in a laptop with statistical software,
+  download any datasets needed for the week).
+\item
+  \textbf{In-class schedule:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Topic overview: Each class will start with a vocabulary quiz on a select
+    number of the words from the chapter's vocabulary list.
+  \item
+    Discussion of analysis and coding points: Students and faculty will be
+    divided into small groups to discuss the chapter and think more deeply about
+    the content. This is a time to bring up questions and relate the chapter
+    concepts to other datasets and/or analysis methods you are familiar with.
+  \item
+    Group work: In small groups, students will work on designing an
+    epidemiological analysis for the week's topic and developing code to
+    implement that analysis. Students will use the GitHub platform to
+    work collaboratively during and between class meetings.
+  \item
+    Wrap-up: We will reconvene as one group at the end to discuss topics that
+    came up in small group work and to outline expectations for students before
+    the next meeting.
+  \end{itemize}
+\end{itemize}
+
 \hypertarget{course-grading}{%
 \section{Course grading}\label{course-grading}}
 
@@ -226,6 +310,21 @@ to students throughout the semester include:
 \hypertarget{time-series-case-crossover-study-designs}{%
 \chapter{Time series / case-crossover study designs}\label{time-series-case-crossover-study-designs}}
 
+\hypertarget{reading}{%
+\section{Reading}\label{reading}}
+
+The readings for this week are:
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{vicedo2019hands}, with supplemental material available to download by
+  clicking \url{http://links.lww.com/EDE/B504}
+\item
+  \citet{armstrong2014conditional}, with supplemental material available at
+  \url{https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122\#Sec13}
+\end{itemize}
+
 \hypertarget{time-series-data}{%
 \section{Time series data}\label{time-series-data}}
 
@@ -236,6 +335,568 @@ outcomes and environmental exposures{]}
 
 \emph{Brooke's section}
 
+Example datasets are available as part of the supplemental material for
+both of the articles in this chapter's readings. For \citet{vicedo2019hands},
+the example data are available as the file ``lndn\_obs.csv''. These data are
+saved in a csv format, and so they can be read into R using the
+\texttt{read\_csv} function from the \texttt{readr} package (part of the tidyverse).
+For example, you can use the following code to read in these data,
+assuming you have saved them in a ``data'' subdirectory of your current
+working directory:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse) }\CommentTok{\# Loads all the tidyverse packages, including readr}
+\NormalTok{obs }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/lndn\_obs.csv"}\NormalTok{)}
+\NormalTok{obs}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8,279 x 14
+##    date        year month   day   doy dow     all all_0_64 all_65_74 all_75_84
+##    <date>     <dbl> <dbl> <dbl> <dbl> <chr> <dbl>    <dbl>     <dbl>     <dbl>
+##  1 1990-01-01  1990     1     1     1 Mon     220       38        38        82
+##  2 1990-01-02  1990     1     2     2 Tue     257       50        67        87
+##  3 1990-01-03  1990     1     3     3 Wed     245       39        59        86
+##  4 1990-01-04  1990     1     4     4 Thu     226       41        45        77
+##  5 1990-01-05  1990     1     5     5 Fri     236       45        54        85
+##  6 1990-01-06  1990     1     6     6 Sat     235       48        48        84
+##  7 1990-01-07  1990     1     7     7 Sun     231       38        49        96
+##  8 1990-01-08  1990     1     8     8 Mon     235       46        57        76
+##  9 1990-01-09  1990     1     9     9 Tue     250       48        54        96
+## 10 1990-01-10  1990     1    10    10 Wed     214       44        46        62
+## # ... with 8,269 more rows, and 4 more variables: all_85plus <dbl>,
+## #   tmean <dbl>, tmin <dbl>, tmax <dbl>
+\end{verbatim}
+
+This example dataset shows many characteristics that are common for datasets for
+time series studies in environmental epidemiology. General characteristics of
+time series data for environmental epidemiology studies are:
+
+\begin{itemize}
+\tightlist
+\item
+  Observations are given at an aggregated level. For example, instead of
+  individual observations for each person in London, the \texttt{obs} data give
+  counts of deaths throughout London. The level of aggregation is often determined
+  by geopolitical boundaries, for example counties of ZIP codes in the US.
+\item
+  Observations are given at regularly spaced time steps over a period. In the
+  \texttt{obs} dataset, the time step is day. Typically, values will be provided
+  continuously over that time period, with observations for each time step.
+  Occasionally, however, the time series data may only be available for
+  particular seasons (e.g., only warm season dates for an ozone study), or
+  there may be some missing data on either the exposure or health outcome over
+  the course of the study period.
+\item
+  Daily observations are given for the health outcome, for the environmental
+  exposure of interest, and for potential time-varying confounders. In the \texttt{obs}
+  dataset, the health outcome is mortality (from all causes; sometimes, the health
+  outcome will focus on a specific cause of mortality or other health outcome).
+  Counts are given for everyone in the city for each day (\texttt{all} column), as well
+  as for specific age categories (\texttt{all\_0\_64} for all deaths among those up to
+  64 years old, and so on). The exposure of interest in the \texttt{obs} dataset is
+  temperature, and three metrics of this are included (\texttt{tmean}, \texttt{tmin}, and
+  \texttt{tmax}). Day of the week is one time-varying factor that could be a confounder,
+  or at least help explain variation in the outcome (mortality). This is included
+  through the \texttt{dow} variable in the \texttt{obs} data. Sometimes, you will also see a
+  marker for holidays included as a potential time-varying confounder, or other
+  exposure variables (temperature is a potential confounder, for example, when
+  investigating the relationship between air pollution and mortality risk).
+\item
+  Multiple metrics of an exposure and / or multiple health outcome counts
+  may be included for each time step. In the \texttt{obs} example, three metrics of
+  temperature are included (minimum daily temperature, maximum daily temperature,
+  and mean daily temperature). Several counts of mortality are included, providing
+  information for specific age categories in the population.
+\end{itemize}
+
+When working with time series data, it is helpful to start with some exploratory
+data analysis. The following applied exercise will take you through some of the
+questions you might want to answer through this type of exploratory analysis. In
+general, the \texttt{lubridate} package is an excellent tool for working with date data
+in R (although, in the example code above, we mostly used tools from base R).
+You may find it worthwhile to explore this package some more. There is a helpful
+chapter in \citet{wickham2016r}, \url{https://r4ds.had.co.nz/dates-and-times.html}, as well
+as a cheatsheet at
+\url{https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf}. For
+visualizations, if you are still learning techniques in R, two books
+you may find useful are
+\citet{healy2018data} (available online at \url{https://socviz.co/}) and \citet{chang2018r}
+(available online at \url{http://www.cookbook-r.com/Graphs/}).
+
+\emph{Applied: Exploring time series data}
+
+Read the example time series data in R and explore it to answer the following
+questions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  What is the study period for the example \texttt{obs} dataset? (i.e., what
+  dates / years are covered by the time series data?)
+\item
+  Are there any missing dates within this time period?
+\item
+  Are there seasonal trends in the exposure? In the outcome?
+\item
+  Are there long-term trends in the exposure? In the outcome?
+\item
+  Is the outcome associated with day of week? Is the exposure associated
+  with day of week?
+\end{enumerate}
+
+Based on your exploratory analysis in this section, talk about the potential
+for confounding when these data are analyzed to estimate the association between
+daily temperature and city-wide mortality. Is confounding by seasonal trends
+a concern? How about confounding by long-term trends in exposure and mortality?
+How about confounding by day of week?
+
+\emph{Applied exercise: Example code}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{What is the study period for the example \texttt{obs} dataset? (i.e., what
+  dates / years are covered by the time series data?)}
+\end{enumerate}
+
+In the \texttt{obs} dataset, the date of each observation is included in a column called
+\texttt{date}. The data type of this column is ``Date''---you can check this by using
+the \texttt{class} function from base R:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{class}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Date"
+\end{verbatim}
+
+Since this column has a ``Date'' data type, you can run some mathematical function
+calls on it. For example, you can use the \texttt{min} function from base R to get the
+earliest date in the dataset and the \texttt{max} function to get the latest.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{min}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1990-01-01"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{max}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "2012-08-31"
+\end{verbatim}
+
+You can also run the \texttt{range} function to get both the earliest and latest dates
+with a single call:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{range}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1990-01-01" "2012-08-31"
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Are there any missing dates within this time period?
+\end{enumerate}
+
+There are a few things you should check to answer this question. First
+(and easiest), you can check to see if there are any \texttt{NA} values within
+any of the observations in the dataset. The \texttt{summary} function will provide
+a summary of the values in each column of the dataset, including the count
+of missing values (NAs) if there are any:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(obs)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       date                 year          month             day       
+##  Min.   :1990-01-01   Min.   :1990   Min.   : 1.000   Min.   : 1.00  
+##  1st Qu.:1995-09-01   1st Qu.:1995   1st Qu.: 3.000   1st Qu.: 8.00  
+##  Median :2001-05-02   Median :2001   Median : 6.000   Median :16.00  
+##  Mean   :2001-05-02   Mean   :2001   Mean   : 6.464   Mean   :15.73  
+##  3rd Qu.:2006-12-31   3rd Qu.:2006   3rd Qu.: 9.000   3rd Qu.:23.00  
+##  Max.   :2012-08-31   Max.   :2012   Max.   :12.000   Max.   :31.00  
+##       doy            dow                 all           all_0_64   
+##  Min.   :  1.0   Length:8279        Min.   : 81.0   Min.   : 9.0  
+##  1st Qu.: 90.5   Class :character   1st Qu.:138.0   1st Qu.:27.0  
+##  Median :180.0   Mode  :character   Median :157.0   Median :32.0  
+##  Mean   :181.3                      Mean   :160.2   Mean   :32.4  
+##  3rd Qu.:272.0                      3rd Qu.:178.0   3rd Qu.:37.0  
+##  Max.   :366.0                      Max.   :363.0   Max.   :64.0  
+##    all_65_74       all_75_84        all_85plus         tmean       
+##  Min.   : 6.00   Min.   : 17.00   Min.   : 17.00   Min.   :-5.503  
+##  1st Qu.:23.00   1st Qu.: 41.00   1st Qu.: 39.00   1st Qu.: 7.470  
+##  Median :29.00   Median : 49.00   Median : 45.00   Median :11.465  
+##  Mean   :30.45   Mean   : 50.65   Mean   : 46.68   Mean   :11.614  
+##  3rd Qu.:37.00   3rd Qu.: 58.00   3rd Qu.: 53.00   3rd Qu.:15.931  
+##  Max.   :70.00   Max.   :138.00   Max.   :128.00   Max.   :29.143  
+##       tmin             tmax       
+##  Min.   :-8.940   Min.   :-3.785  
+##  1st Qu.: 3.674   1st Qu.:10.300  
+##  Median : 7.638   Median :14.782  
+##  Mean   : 7.468   Mean   :15.058  
+##  3rd Qu.:11.438   3rd Qu.:19.830  
+##  Max.   :20.438   Max.   :37.087
+\end{verbatim}
+
+Based on this analysis, all observations are complete for all dates included
+in the dataset.
+
+However, this does not guarantee that every date between the start date and
+end date of the study period are included in the recorded data. Sometimes,
+some dates might not get recorded at all in the dataset, and the \texttt{summary}
+function won't help you determine when this is the case.
+
+There are a few alternative explorations you can do. First, you can check
+the number of days between the start and end date of the study period, and
+then see if the number of observations in the dataset is the same:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate number of days in study period}
+\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%}            \CommentTok{\# Using piping (\%\textgreater{}\%) throughout to keep code clear}
+  \FunctionTok{pull}\NormalTok{(date) }\SpecialCharTok{\%\textgreater{}\%}   \CommentTok{\# Extract the \textasciigrave{}date\textasciigrave{} column as a vector}
+  \FunctionTok{range}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}      \CommentTok{\# Take the range of dates (earliest and latest)}
+  \FunctionTok{diff}\NormalTok{()           }\CommentTok{\# Calculate time difference from start to finish of study }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Time difference of 8278 days
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Get number of observations in dataset{-}{-}{-}should be 1 more than time difference}
+\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 8279
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Are there seasonal trends in the exposure? In the outcome?
+\end{enumerate}
+
+You can use a simple plot to visualize patterns over time in both the exposure
+and the outcome. For example, the following code plots a dot for each daily
+temperature observation over the study period. The points are set to a smaller
+size (\texttt{size\ =\ 0.5}) and plotted with some transparency (\texttt{alpha\ =\ 0.5}) since
+there are so many observations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-8-1.pdf}
+There is clear evidence here of a strong seasonal trend in mean temperature,
+with values typically lowest in the winter and highest in the summer.
+
+You can plot the outcome variable in the same way:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-9-1.pdf}
+Again, there are seasonal trends, although in this case they are inversed.
+Mortality tends to be highest in the winter and lowest in the summer. Further, the
+seasonal pattern is not equally strong in all years---some years it has a much
+higher winter peak, probably in conjunction with severe influenza seasons.
+
+Another way to look for seasonal trends is with a heatmap-style visualization,
+with day of year along the x-axis and year along the y-axis. This allows you
+to see patterns that repeat around the same time of the year each year (and
+also unusual deviations from normal seaonsal patterns).
+
+For example, here's a plot showing temperature in each year, where the
+observations are aligned on the x-axis by time in year. We've reversed
+the y-axis so that the earliest years in the study period start at the top
+of the visual, then later study years come later---this is a personal style,
+and it would be no problem to leave the y-axis as-is. We've used the
+\texttt{viridis} color scale for the fill, since that has a number of features
+that make it preferable to the default R color scale, including that it
+is perceptible for most types of color blindness and be printed out in grayscale
+and still be correctly interpreted.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(viridis)}
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ doy, }\AttributeTok{y =}\NormalTok{ year, }\AttributeTok{fill =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_tile}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{scale\_fill\_viridis}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-10-1.pdf}
+From this visualization, you can see that temperatures tend to be higher in the
+summer months and lower in the winter months. ``Spells'' of extreme heat or cold
+are visible---where extreme temperatures tend to persist over a period, rather
+than randomly fluctuating within a season. You can also see unusual events, like
+the extreme heat wave in the summer of 2003, indicated with the brightest
+yellow in the plot.
+
+We created the same style of plot for the health outcome. In this case, we
+focused on mortality among the oldest age group, as temperature sensitivity
+tends to increase with age, so this might be where the strongest patterns are
+evident.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ doy, }\AttributeTok{y =}\NormalTok{ year, }\AttributeTok{fill =}\NormalTok{ all\_85plus)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_tile}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{scale\_fill\_viridis}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-11-1.pdf}
+For mortality, there tends to be in increase in the winter compared to the summer.
+Some winters have stretches with particularly high mortality---these are likely
+a result of seasons with strong influenza outbreaks. You can also see on this
+plot the impact of the 2003 heat wave on mortality among this oldest age group.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Are there long-term trends in the exposure? In the outcome?
+\end{enumerate}
+
+Some of the plots we created in the last section help in exploring this
+question. For example, the following plot shows a clear pattern of decreasing
+daily mortality counts, on average, over the course of the study period:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-12-1.pdf}
+It can be helpful to add a smooth line to help detect these longer-term
+patterns, which you can do with \texttt{geom\_smooth}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_smooth}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-13-1.pdf}
+You could also take the median mortality count across each year in the
+study period, although you should take out any years without a full year's
+worth of data before you do this, since there are seasonal trends in the
+outcome:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(year) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{!=} \DecValTok{2012}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Take out the last year}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{median\_mort =} \FunctionTok{median}\NormalTok{(all)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ median\_mort)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  \textbf{Is the outcome associated with day of week? Is the exposure associated
+  with day of week?}
+\end{enumerate}
+
+The data already has day of week as a column in the data (\texttt{dow}). However,
+this is in a character data type, so it doesn't have the order of weekdays
+encoded (e.g., Monday comes before Tuesday). This makes it hard to look for
+patterns related to things like weekend / weekday.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{class}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{dow)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "character"
+\end{verbatim}
+
+We could convert this to a factor and encode the weekday order when we do
+it, but it's even easier to just recreate the column from the \texttt{date} column.
+We used the \texttt{wday} function from the \texttt{lubridate} package to do this---it extracts
+weekday as a factor, with the order of weekdays encoded (using a special
+``ordered'' factor type):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(lubridate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'lubridate'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     date, intersect, setdiff, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{obs }\OtherTok{\textless{}{-}}\NormalTok{ obs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{dow =} \FunctionTok{wday}\NormalTok{(date, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{))}
+
+\FunctionTok{class}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{dow)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "ordered" "factor"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{levels}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{dow)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat"
+\end{verbatim}
+
+We looked at the mean, median, and 25th and 75th quantiles of the mortality
+counts by day of week:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(dow) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\FunctionTok{mean}\NormalTok{(all), }
+            \FunctionTok{median}\NormalTok{(all), }
+            \FunctionTok{quantile}\NormalTok{(all, }\FloatTok{0.25}\NormalTok{), }
+            \FunctionTok{quantile}\NormalTok{(all, }\FloatTok{0.75}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 5
+##   dow   `mean(all)` `median(all)` `quantile(all, 0.25)` `quantile(all, 0.75)`
+## * <ord>       <dbl>         <dbl>                 <dbl>                 <dbl>
+## 1 Sun          156.           154                  136                    173
+## 2 Mon          161.           159                  138                    179
+## 3 Tue          161.           158                  139                    179
+## 4 Wed          160.           157                  138.                   179
+## 5 Thu          161.           158                  139                    179
+## 6 Fri          162.           159                  141                    179
+## 7 Sat          159.           156                  137                    178
+\end{verbatim}
+
+Mortality tends to be a bit higher on weekdays than weekends, but it's not
+a dramatic difference.
+
+We did the same check for temperature:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(dow) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\FunctionTok{mean}\NormalTok{(tmean), }
+            \FunctionTok{median}\NormalTok{(tmean), }
+            \FunctionTok{quantile}\NormalTok{(tmean, }\FloatTok{0.25}\NormalTok{), }
+            \FunctionTok{quantile}\NormalTok{(tmean, }\FloatTok{0.75}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 5
+##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.2~ `quantile(tmean, 0.~
+## * <ord>         <dbl>           <dbl>                 <dbl>                <dbl>
+## 1 Sun            11.6            11.3                  7.48                 15.9
+## 2 Mon            11.6            11.4                  7.33                 15.8
+## 3 Tue            11.5            11.4                  7.48                 15.9
+## 4 Wed            11.7            11.7                  7.64                 16.0
+## 5 Thu            11.6            11.5                  7.57                 16.0
+## 6 Fri            11.6            11.6                  7.41                 15.8
+## 7 Sat            11.6            11.5                  7.53                 15.9
+\end{verbatim}
+
+In this case, there does not seem to be much of a pattern by weekday.
+
+You can also visualize the association using boxplots:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{wday}\NormalTok{(date, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{), }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_boxplot}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-19-1.pdf}
+You can also try violin plots---these show the full distribution better than
+boxplots, which only show quantiles.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ dow, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_violin}\NormalTok{(}\AttributeTok{draw\_quantiles =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.25}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.75}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-20-1.pdf}
+
 \hypertarget{fitting-models}{%
 \section{Fitting models}\label{fitting-models}}
 
@@ -244,6 +905,32 @@ outcomes and environmental exposures{]}
 \emph{Andreas section}
 
 \emph{Brooke's section}
+
+\hypertarget{chapter-vocabulary}{%
+\section{Chapter vocabulary}\label{chapter-vocabulary}}
+
+Each class will start with a vocabulary quiz on a select number of the words
+from the chapter's vocabulary list. The vocabulary words for this chapter are:
+
+\begin{itemize}
+\tightlist
+\item
+  time-series study design
+\item
+  case-crossover study design
+\item
+  exposure
+\item
+  health outcome
+\item
+  confounder
+\item
+  study period
+\item
+  seasonal trends
+\item
+  long-term trends
+\end{itemize}
 
 \hypertarget{generalized-linear-models}{%
 \chapter{Generalized linear models}\label{generalized-linear-models}}

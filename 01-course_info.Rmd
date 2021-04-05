@@ -60,6 +60,29 @@ data to answer an epidemiological research question. (*Application*)
 
 [To be determined]
 
+## Class Structure and Expectations
+
+- **Homework/preparation:** Every two weeks we will focus on a different topic.
+It is expected that *before* coming to class, students will read the required
+papers for the week, as well as any associated code included in the papers'
+supplemental materials. Students should come to class prepared to prepared to do
+statistical programming (i.e., bring in a laptop with statistical software,
+download any datasets needed for the week).
+- **In-class schedule:**
+    + Topic overview: Each class will start with a vocabulary quiz on a select
+    number of the words from the chapter's vocabulary list.
+    + Discussion of analysis and coding points: Students and faculty will be
+    divided into small groups to discuss the chapter and think more deeply about
+    the content.  This is a time to bring up questions and relate the chapter
+    concepts to other datasets and/or analysis methods you are familiar with.
+    + Group work: In small groups, students will work on designing an
+    epidemiological analysis for the week's topic and developing code to 
+    implement that analysis. Students will use the GitHub platform to 
+    work collaboratively during and between class meetings.
+    + Wrap-up: We will reconvene as one group at the end to discuss topics that
+    came up in small group work and to outline expectations for students before
+    the next meeting.
+
 
 ## Course grading
 

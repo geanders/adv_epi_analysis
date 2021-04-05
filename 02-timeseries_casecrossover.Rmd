@@ -1,5 +1,14 @@
 # Time series / case-crossover study designs 
 
+## Reading
+
+The readings for this week are: 
+
+- @vicedo2019hands, with supplemental material available to download by 
+clicking http://links.lww.com/EDE/B504
+- @armstrong2014conditional, with supplemental material available at
+https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13
+
 ## Time series data 
 
 [Exploring time series data with daily measurements of health 
@@ -9,6 +18,328 @@ outcomes and environmental exposures]
 
 *Brooke's section*
 
+Example datasets are available as part of the supplemental material for 
+both of the articles in this chapter's readings. For @vicedo2019hands, 
+the example data are available as the file "lndn_obs.csv". These data are
+saved in a csv format, and so they can be read into R using the 
+`read_csv` function from the `readr` package (part of the tidyverse). 
+For example, you can use the following code to read in these data, 
+assuming you have saved them in a "data" subdirectory of your current
+working directory: 
+
+```{r message = FALSE}
+library(tidyverse) # Loads all the tidyverse packages, including readr
+obs <- read_csv("data/lndn_obs.csv")
+obs
+```
+
+This example dataset shows many characteristics that are common for datasets for
+time series studies in environmental epidemiology. General characteristics of
+time series data for environmental epidemiology studies are:
+
+- Observations are given at an aggregated level. For example, instead of 
+individual observations for each person in London, the `obs` data give 
+counts of deaths throughout London. The level of aggregation is often determined
+by geopolitical boundaries, for example counties of ZIP codes in the US.
+- Observations are given at regularly spaced time steps over a period. In the
+`obs` dataset, the time step is day. Typically, values will be provided 
+continuously over that time period, with observations for each time step. 
+Occasionally, however, the time series data may only be available for 
+particular seasons (e.g., only warm season dates for an ozone study), or
+there may be some missing data on either the exposure or health outcome over
+the course of the study period.
+- Daily observations are given for the health outcome, for the environmental
+exposure of interest, and for potential time-varying confounders. In the `obs`
+dataset, the health outcome is mortality (from all causes; sometimes, the health
+outcome will focus on a specific cause of mortality or other health outcome).
+Counts are given for everyone in the city for each day (`all` column), as well
+as for specific age categories (`all_0_64` for all deaths among those up to 
+64 years old, and so on). The exposure of interest in the `obs` dataset is
+temperature, and three metrics of this are included (`tmean`, `tmin`, and 
+`tmax`). Day of the week is one time-varying factor that could be a confounder, 
+or at least help explain variation in the outcome (mortality). This is included
+through the `dow` variable in the `obs` data. Sometimes, you will also see a 
+marker for holidays included as a potential time-varying confounder, or other
+exposure variables (temperature is a potential confounder, for example, when 
+investigating the relationship between air pollution and mortality risk). 
+- Multiple metrics of an exposure and / or multiple health outcome counts 
+may be included for each time step. In the `obs` example, three metrics of 
+temperature are included (minimum daily temperature, maximum daily temperature, 
+and mean daily temperature). Several counts of mortality are included, providing
+information for specific age categories in the population.
+
+When working with time series data, it is helpful to start with some exploratory
+data analysis. The following applied exercise will take you through some of the
+questions you might want to answer through this type of exploratory analysis. In
+general, the `lubridate` package is an excellent tool for working with date data
+in R (although, in the example code above, we mostly used tools from base R).
+You may find it worthwhile to explore this package some more. There is a helpful
+chapter in @wickham2016r, https://r4ds.had.co.nz/dates-and-times.html, as well
+as a cheatsheet at
+https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf. For 
+visualizations, if you are still learning techniques in R, two books
+you may find useful are
+@healy2018data (available online at https://socviz.co/) and @chang2018r
+(available online at http://www.cookbook-r.com/Graphs/).
+
+*Applied: Exploring time series data*
+
+Read the example time series data in R and explore it to answer the following
+questions: 
+
+1. What is the study period for the example `obs` dataset? (i.e., what 
+dates / years are covered by the time series data?)
+2. Are there any missing dates within this time period?
+3. Are there seasonal trends in the exposure? In the outcome?
+4. Are there long-term trends in the exposure? In the outcome?
+5. Is the outcome associated with day of week? Is the exposure associated
+with day of week? 
+
+Based on your exploratory analysis in this section, talk about the potential
+for confounding when these data are analyzed to estimate the association between
+daily temperature and city-wide mortality. Is confounding by seasonal trends
+a concern? How about confounding by long-term trends in exposure and mortality?
+How about confounding by day of week?
+
+*Applied exercise: Example code*
+
+1. **What is the study period for the example `obs` dataset? (i.e., what 
+dates / years are covered by the time series data?)**
+
+In the `obs` dataset, the date of each observation is included in a column called
+`date`. The data type of this column is "Date"---you can check this by using 
+the `class` function from base R:
+
+```{r}
+class(obs$date)
+```
+
+Since this column has a "Date" data type, you can run some mathematical function
+calls on it. For example, you can use the `min` function from base R to get the
+earliest date in the dataset and the `max` function to get the latest. 
+
+```{r}
+min(obs$date)
+max(obs$date)
+```
+
+You can also run the `range` function to get both the earliest and latest dates
+with a single call:
+
+```{r}
+range(obs$date)
+```
+
+
+2. Are there any missing dates within this time period?
+
+There are a few things you should check to answer this question. First
+(and easiest), you can check to see if there are any `NA` values within
+any of the observations in the dataset. The `summary` function will provide
+a summary of the values in each column of the dataset, including the count 
+of missing values (NAs) if there are any: 
+
+```{r}
+summary(obs)
+```
+Based on this analysis, all observations are complete for all dates included
+in the dataset. 
+
+However, this does not guarantee that every date between the start date and 
+end date of the study period are included in the recorded data. Sometimes, 
+some dates might not get recorded at all in the dataset, and the `summary` 
+function won't help you determine when this is the case.
+
+There are a few alternative explorations you can do. First, you can check 
+the number of days between the start and end date of the study period, and 
+then see if the number of observations in the dataset is the same: 
+
+```{r}
+# Calculate number of days in study period
+obs %>%            # Using piping (%>%) throughout to keep code clear
+  pull(date) %>%   # Extract the `date` column as a vector
+  range() %>%      # Take the range of dates (earliest and latest)
+  diff()           # Calculate time difference from start to finish of study 
+
+# Get number of observations in dataset---should be 1 more than time difference
+obs %>% 
+  nrow()
+```
+
+
+3. Are there seasonal trends in the exposure? In the outcome?
+
+You can use a simple plot to visualize patterns over time in both the exposure
+and the outcome. For example, the following code plots a dot for each daily
+temperature observation over the study period. The points are set to a smaller
+size (`size = 0.5`) and plotted with some transparency (`alpha = 0.5`) since
+there are so many observations.
+
+```{r}
+ggplot(obs, aes(x = date, y = tmean)) + 
+  geom_point(alpha = 0.5, size = 0.5)
+```
+There is clear evidence here of a strong seasonal trend in mean temperature, 
+with values typically lowest in the winter and highest in the summer. 
+
+You can plot the outcome variable in the same way: 
+
+```{r}
+ggplot(obs, aes(x = date, y = all)) + 
+  geom_point(alpha = 0.5, size = 0.5)
+```
+Again, there are seasonal trends, although in this case they are inversed. 
+Mortality tends to be highest in the winter and lowest in the summer. Further, the
+seasonal pattern is not equally strong in all years---some years it has a much
+higher winter peak, probably in conjunction with severe influenza seasons.
+
+Another way to look for seasonal trends is with a heatmap-style visualization, 
+with day of year along the x-axis and year along the y-axis. This allows you 
+to see patterns that repeat around the same time of the year each year (and 
+also unusual deviations from normal seaonsal patterns). 
+
+For example, here's a plot showing temperature in each year, where the
+observations are aligned on the x-axis by time in year. We've reversed
+the y-axis so that the earliest years in the study period start at the top
+of the visual, then later study years come later---this is a personal style, 
+and it would be no problem to leave the y-axis as-is. We've used the 
+`viridis` color scale for the fill, since that has a number of features
+that make it preferable to the default R color scale, including that it 
+is perceptible for most types of color blindness and be printed out in grayscale
+and still be correctly interpreted.
+
+```{r message = FALSE}
+library(viridis)
+ggplot(obs, aes(x = doy, y = year, fill = tmean)) + 
+  geom_tile() +
+  scale_y_reverse() + 
+  scale_fill_viridis()
+```
+From this visualization, you can see that temperatures tend to be higher in the
+summer months and lower in the winter months. "Spells" of extreme heat or cold
+are visible---where extreme temperatures tend to persist over a period, rather
+than randomly fluctuating within a season. You can also see unusual events, like
+the extreme heat wave in the summer of 2003, indicated with the brightest
+yellow in the plot.
+
+We created the same style of plot for the health outcome. In this case, we
+focused on mortality among the oldest age group, as temperature sensitivity
+tends to increase with age, so this might be where the strongest patterns are
+evident. 
+
+```{r}
+ggplot(obs, aes(x = doy, y = year, fill = all_85plus)) + 
+  geom_tile() +
+  scale_y_reverse() + 
+  scale_fill_viridis()
+```
+For mortality, there tends to be in increase in the winter compared to the summer.
+Some winters have stretches with particularly high mortality---these are likely
+a result of seasons with strong influenza outbreaks. You can also see on this 
+plot the impact of the 2003 heat wave on mortality among this oldest age group.
+
+4. Are there long-term trends in the exposure? In the outcome?
+
+Some of the plots we created in the last section help in exploring this 
+question. For example, the following plot shows a clear pattern of decreasing
+daily mortality counts, on average, over the course of the study period: 
+
+```{r}
+ggplot(obs, aes(x = date, y = all)) + 
+  geom_point(alpha = 0.5, size = 0.5)
+```
+It can be helpful to add a smooth line to help detect these longer-term 
+patterns, which you can do with `geom_smooth`: 
+
+```{r message = FALSE}
+ggplot(obs, aes(x = date, y = all)) + 
+  geom_point(alpha = 0.5, size = 0.5) + 
+  geom_smooth()
+```
+You could also take the median mortality count across each year in the 
+study period, although you should take out any years without a full year's 
+worth of data before you do this, since there are seasonal trends in the
+outcome: 
+
+```{r}
+obs %>% 
+  group_by(year) %>% 
+  filter(year != 2012) %>% # Take out the last year
+  summarize(median_mort = median(all)) %>% 
+  ggplot(aes(x = year, y = median_mort)) +
+  geom_line()
+```
+
+
+5. **Is the outcome associated with day of week? Is the exposure associated
+with day of week?**
+
+The data already has day of week as a column in the data (`dow`). However, 
+this is in a character data type, so it doesn't have the order of weekdays
+encoded (e.g., Monday comes before Tuesday). This makes it hard to look for 
+patterns related to things like weekend / weekday. 
+
+```{r}
+class(obs$dow)
+```
+
+We could convert this to a factor and encode the weekday order when we do 
+it, but it's even easier to just recreate the column from the `date` column. 
+We used the `wday` function from the `lubridate` package to do this---it extracts
+weekday as a factor, with the order of weekdays encoded (using a special 
+"ordered" factor type):
+
+```{r}
+library(lubridate)
+obs <- obs %>% 
+  mutate(dow = wday(date, label = TRUE))
+
+class(obs$dow)
+levels(obs$dow)
+```
+
+We looked at the mean, median, and 25th and 75th quantiles of the mortality 
+counts by day of week: 
+
+```{r}
+obs %>% 
+  group_by(dow) %>% 
+  summarize(mean(all), 
+            median(all), 
+            quantile(all, 0.25), 
+            quantile(all, 0.75))
+```
+
+Mortality tends to be a bit higher on weekdays than weekends, but it's not 
+a dramatic difference. 
+
+We did the same check for temperature:
+
+```{r}
+obs %>% 
+  group_by(dow) %>% 
+  summarize(mean(tmean), 
+            median(tmean), 
+            quantile(tmean, 0.25), 
+            quantile(tmean, 0.75))
+```
+
+In this case, there does not seem to be much of a pattern by weekday. 
+
+You can also visualize the association using boxplots:
+
+```{r}
+ggplot(obs, aes(x = wday(date, label = TRUE), y = all)) + 
+  geom_boxplot()
+```
+You can also try violin plots---these show the full distribution better than
+boxplots, which only show quantiles. 
+
+```{r}
+ggplot(obs, aes(x = dow, y = all)) + 
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
+```
+
 ## Fitting models
 
 [Fitting models under time series and case-crossover study designs]
@@ -16,3 +347,17 @@ outcomes and environmental exposures]
 *Andreas section*
 
 *Brooke's section*
+
+## Chapter vocabulary
+
+Each class will start with a vocabulary quiz on a select number of the words
+from the chapter's vocabulary list. The vocabulary words for this chapter are: 
+
+- time-series study design
+- case-crossover study design
+- exposure
+- health outcome
+- confounder
+- study period
+- seasonal trends
+- long-term trends
