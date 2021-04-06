@@ -334,7 +334,7 @@ with a single call:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="time-series-case-crossover-study-designs.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(obs<span class="sc">$</span>date)</span></code></pre></div>
 <pre><code>## [1] &quot;1990-01-01&quot; &quot;2012-08-31&quot;</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>Are there any missing dates within this time period?</li>
+<li><strong>Are there any missing dates within this time period?</strong></li>
 </ol>
 <p>There are a few things you should check to answer this question. First
 (and easiest), you can check to see if there are any <code>NA</code> values within
@@ -390,7 +390,7 @@ then see if the number of observations in the dataset is the same:</p>
 <span id="cb15-3"><a href="time-series-case-crossover-study-designs.html#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div>
 <pre><code>## [1] 8279</code></pre>
 <ol start="3" style="list-style-type: decimal">
-<li>Are there seasonal trends in the exposure? In the outcome?</li>
+<li><strong>Are there seasonal trends in the exposure? In the outcome?</strong></li>
 </ol>
 <p>You can use a simple plot to visualize patterns over time in both the exposure
 and the outcome. For example, the following code plots a dot for each daily
@@ -449,7 +449,7 @@ Some winters have stretches with particularly high mortality—these are likely
 a result of seasons with strong influenza outbreaks. You can also see on this
 plot the impact of the 2003 heat wave on mortality among this oldest age group.</p>
 <ol start="4" style="list-style-type: decimal">
-<li>Are there long-term trends in the exposure? In the outcome?</li>
+<li><strong>Are there long-term trends in the exposure? In the outcome?</strong></li>
 </ol>
 <p>Some of the plots we created in the last section help in exploring this
 question. For example, the following plot shows a clear pattern of decreasing
@@ -555,6 +555,451 @@ boxplots, which only show quantiles.</p>
 <p>[Fitting models under time series and case-crossover study designs]</p>
 <p><em>Andreas section</em></p>
 <p><em>Brooke’s section</em></p>
+<p>One of the readings for this week, <span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>, includes a section
+on fitting exposure-response functions to describe the association between
+daily mean temperature and mortality risk. This article includes example
+code in its supplemental material, with code for fitting the model to
+these time series data in the file named “01EstimationERassociation.r.”
+The model may at first seem complex, but it is made up of a number of
+fairly straightforward pieces (although some may initially seem complex):</p>
+<ul>
+<li>The model framework is a <em>generalized linear model (GLM)</em></li>
+<li>This GLM is fit assuming an <em>error distribution</em> and a <em>link function</em>
+appropriate for count data</li>
+<li>The GLM is fit assuming an <em>error distribution</em> that is also appropriate for
+data that may be <em>overdispersed</em></li>
+<li>The model includes control for day of the week by including a <em>categorical
+variable</em></li>
+<li>The model includes control for long-term and seasonal trends by including
+a <em>spline</em> (in this case, a <em>natural cubic spline</em>) for the day in the study</li>
+<li>The model fits a flexible, non-linear association between temperature
+and mortality risk also using a spline</li>
+<li>The model fits a flexible non-linear association between temperature on
+a series of preceeding days and current day and mortality risk on the
+current day using a <em>distributed lag approach</em></li>
+<li>The model jointly describes both of the two previous non-linear associations
+by fitting these two elements through one construct in the GLM, a
+<em>cross-basis term</em></li>
+</ul>
+<p>In this section, we will work through the elements, building up the code to
+get to the full model that is fit in <span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>.</p>
+<p><em>Fitting a GLM to time series data</em></p>
+<p>The GLM framework unites a number of types of regression models you may have
+previously worked with. One basic regression model that can be fit within this
+framework is a linear regression model. However, the framework also allows you
+to also fit, among others, logistic regression models (useful when the outcome
+variable can only take one of two values, e.g., success / failure or alive /
+dead), Poisson regression models (useful when the outcome variable is a count).</p>
+<p>This generalized framework brings some unity to these different types of
+regression models. From a practical standpoint, it has allowed software
+developers to easily provide a common interface to fit these types of models.
+In R, the common function call to fit GLMs is <code>glm</code>.</p>
+<p>Within the GLM framework, the elements that separate different regression models
+include the link function and the error distribution. The error distribution
+encodes the assumption you are enforcing about how the errors after fitting the
+model are distributed. If the outcome data are normally distributed (a.k.a.,
+follow a Gaussian distribution), after accounting for variance explained in the
+outcome by any of the model covariates, then a linear regression model may be
+appropriate. For count data—like numbers of deaths a day—this is unlikely,
+unless the average daily mortality count is very high (count data tend to
+come closer to a normal distribution the further their average gets from
+0). For binary data—like whether each person in a study population died on
+a given day or not—normally distributed errors are also unlikely. Instead,
+in these two cases, it is typically more appropriate to fit GLMs with
+Poisson and logistic “families,” respectively, where the family designation
+includes an appropriate specification for the variance when fitting the model
+based on these outcome types.</p>
+<p>The other element that distinguishes different types of regression within
+the GLM framework is the link function. The link function applies a transformation
+on the combination of independent variables in the regression equation
+when fitting the model. With normally distributed data, an <em>identity link</em>
+is often appropriate—with this link, the combination of independent variables
+remain unchange (i.e., keep their initial “identity”). With count data, a
+<em>log link</em> is often more appropriate, while with logistic data, a <em>logit link</em>
+is often used.</p>
+<p>Finally, data will often not perfectly adhere to assumptions. For example, the
+Poisson family of GLMs assumes that variance follows a Poisson distribution.
+With this distribution, the variance is equal to the mean. With real-life
+data, this assumption is often not valid, and in many cases the variance in
+real life count data is larger than the mean. This can be accounted for when
+fitting a GLM by setting an error distribution that does not require the
+variance to equal the mean—instead, both a mean value and something like
+a variance are estimated from the data. In environmental epidemiology,
+time series are often fit to allow for this overdispersion. This is because
+if the data are overdispersed but the model does not account for this, the
+standard errors on the estimates of the model parameters may be artificially
+small. If the data are not overdispersed, the model will identify this when
+being fit to the data, so it is typically better to prefer to allow for
+overdispersion in the model (if the size of the data were small, you may
+want to be parsimonious and avoid unneeded complexity in the model, but
+this is typically not the case with time series data).</p>
+<p>In the next section, you will work through the steps of developing a GLM to fit
+the example dataset <code>obs</code>. For now, you will only fit a linear association
+between mean daily temperature and mortality risk, eventually including control
+for day of week. In later work, especially the next chapter, we will build up
+other components of the model, including control for the potential confounders
+of long-term and seasonal patterns, as well as advancing the model to fit
+non-linear associations, distributed by time, through splines, a distributed lag
+approach, and a cross-basis term.</p>
+<p><em>Applied: Fitting a GLM to time series data</em></p>
+<p>In R, the function call used to fit GLMs is <code>glm</code>. Most of you have likely
+covered GLMs, and ideally this function call, in previous courses. If you are
+unfamiliar with its basic use, you will want to refresh yourself on this
+topic. [Add some online resources that go over basics of GLMs in R.]</p>
+<ol style="list-style-type: decimal">
+<li>Fit a GLM to estimate the association between mean daily temperature (as the
+independent variable) and daily mortality count (as the dependent variable),
+first fitting a linear regression. (Since the mortality data are counts, we will
+want to shift to a different type of regression within the GLM framework, but
+this step allows you to develop a simple <code>glm</code> call, and to remember where to
+include the data and the independent and dependent variables within this
+function call.)</li>
+<li>Change your function call to fit a regression model in the Poisson family.</li>
+<li>Change your function call to allow for overdispersion in the outcome data
+(daily mortality count). How does the estimated coefficient for temperature
+change between the model fit for #2 and this model? Check both the central
+estimate and its estimated standard error.</li>
+<li>Change your function call to include control for day of week.</li>
+</ol>
+<p><em>Applied exercise: Example code</em></p>
+<ol style="list-style-type: decimal">
+<li><strong>Fit a GLM to estimate the association between mean daily temperature (as the
+independent variable) and daily mortality count (as the dependent variable),
+first fitting a linear regression.</strong></li>
+</ol>
+<p>To do this, you will use the <code>glm</code> call. If you would like to save model fit
+results to use later, you assign the output a name as an R object
+(<code>mod_linear_reg</code> in the example code). If your study data are in a dataframe,
+you can specify these data in the <code>glm</code> call with the <code>data</code> parameter.
+Once you do this, you can use column names directly in the model formula.
+In the model formula, the dependent variable is specified first (<code>all</code>, the
+column for daily mortality counts for all ages, in this example), followed
+by a tilde (<code>~</code>), followed by all independent variables (only <code>tmean</code> in this
+example). If multiple independent variables are included, they are joined using
+<code>+</code>—we’ll see an example when we start adding control for confounders later.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="time-series-case-crossover-study-designs.html#cb39-1" aria-hidden="true" tabindex="-1"></a>mod_linear_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs)</span></code></pre></div>
+<p>Once you have fit a model and assigned it to an R object, you can explore it
+and use resulting values. First, the print method for a regression model
+gives some summary information. This method is automatically called if you
+enter the model object’s name at the console:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="time-series-case-crossover-study-designs.html#cb40-1" aria-hidden="true" tabindex="-1"></a>mod_linear_reg</span></code></pre></div>
+<pre><code>## 
+## Call:  glm(formula = all ~ tmean, data = obs)
+## 
+## Coefficients:
+## (Intercept)        tmean  
+##     187.647       -2.366  
+## 
+## Degrees of Freedom: 8278 Total (i.e. Null);  8277 Residual
+## Null Deviance:       8161000 
+## Residual Deviance: 6766000   AIC: 79020</code></pre>
+<p>More information is printed if you run the <code>summary</code> method on the model
+object:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="time-series-case-crossover-study-designs.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_linear_reg)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = all ~ tmean, data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -77.301  -20.365   -1.605   17.502  169.280  
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 187.64658    0.73557  255.10   &lt;2e-16 ***
+## tmean        -2.36555    0.05726  -41.31   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for gaussian family taken to be 817.4629)
+## 
+##     Null deviance: 8161196  on 8278  degrees of freedom
+## Residual deviance: 6766140  on 8277  degrees of freedom
+## AIC: 79019
+## 
+## Number of Fisher Scoring iterations: 2</code></pre>
+<p>Make sure you are familiar with the information provided from the model object,
+as well as how to interpret values like the coefficient estimates and their
+standard errors and p-values. These basic elements should have been covered in
+previous coursework (even if a different programming language was used to fit
+the model), and so we will not be covering them in great depth here, but instead
+focusing on some of the more advanced elements of how regression models are
+commonly fit to data from time series and case-crossover study designs in
+environmental epidemiology. For a refresher on the basics of fitting
+statistical models in R, you may want to check out Chapters 22 through 24 of
+<span class="citation"><a href="references.html#ref-wickham2016r" role="doc-biblioref">Wickham and Grolemund</a> (<a href="references.html#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, a book that is available online.</p>
+<p>Finally, there are some newer tools for extracting information from model fit
+objects. The <code>broom</code> package extracts different elements from these objects
+and returns them in a “tidy” data format, which makes it much easier to use
+the output further in analysis with functions from the “tidyverse” suite of
+R packages. These tools are very popular and powerful, and so the <code>broom</code> tools
+can be very useful in working with output from regression modeling in R.</p>
+<p>The <code>broom</code> package includes three main functions for extracting data from
+regression model objects. First, the <code>glance</code> function returns overall data
+about the model fit, including the AIC and BIC:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="time-series-case-crossover-study-designs.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb44-2"><a href="time-series-case-crossover-study-designs.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(mod_linear_reg)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 8
+##   null.deviance df.null  logLik    AIC    BIC deviance df.residual  nobs
+##           &lt;dbl&gt;   &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;
+## 1      8161196.    8278 -39507. 79019. 79041. 6766140.        8277  8279</code></pre>
+<p>The <code>tidy</code> function returns data at the level of the model coefficients,
+including the estimate for each model parameter, its standard error, test
+statistic, and p-value.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="time-series-case-crossover-study-designs.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_linear_reg)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)   188.      0.736      255.        0
+## 2 tmean          -2.37    0.0573     -41.3       0</code></pre>
+<p>Finally, the <code>augment</code> function returns data at the level of the original
+observations, including the fitted value for each observation, the residual
+between the fitted and true value, and some measures of influence on the model
+fit.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="time-series-case-crossover-study-designs.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(mod_linear_reg)</span></code></pre></div>
+<pre><code>## # A tibble: 8,279 x 8
+##      all tmean .fitted .resid .std.resid     .hat .sigma  .cooksd
+##    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+##  1   220  3.91    178.   41.6       1.46 0.000359   28.6 0.000380
+##  2   257  5.55    175.   82.5       2.89 0.000268   28.6 0.00112 
+##  3   245  4.39    177.   67.7       2.37 0.000330   28.6 0.000928
+##  4   226  5.43    175.   51.2       1.79 0.000274   28.6 0.000440
+##  5   236  6.87    171.   64.6       2.26 0.000211   28.6 0.000539
+##  6   235  9.23    166.   69.2       2.42 0.000144   28.6 0.000420
+##  7   231  6.69    172.   59.2       2.07 0.000218   28.6 0.000467
+##  8   235  7.96    169.   66.2       2.31 0.000174   28.6 0.000467
+##  9   250  7.27    170.   79.5       2.78 0.000197   28.6 0.000761
+## 10   214  9.51    165.   48.9       1.71 0.000139   28.6 0.000202
+## # … with 8,269 more rows</code></pre>
+<p>One way you can use <code>augment</code> is to graph the fitted values for each observation
+after fitting the model:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="time-series-case-crossover-study-designs.html#cb50-1" aria-hidden="true" tabindex="-1"></a>mod_linear_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb50-2"><a href="time-series-case-crossover-study-designs.html#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb50-3"><a href="time-series-case-crossover-study-designs.html#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb50-4"><a href="time-series-case-crossover-study-designs.html#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb50-5"><a href="time-series-case-crossover-study-designs.html#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb50-6"><a href="time-series-case-crossover-study-designs.html#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Log(Expected mortality count)&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p>For more on the <code>broom</code> package, including some excellent examples of how it
+can be used to streamline complex regression analyses, see <span class="citation"><a href="references.html#ref-robinson2014broom" role="doc-biblioref">Robinson</a> (<a href="references.html#ref-robinson2014broom" role="doc-biblioref">2014</a>)</span>.
+There is also a nice example of how it can be used in one of the chapters of
+<span class="citation"><a href="references.html#ref-wickham2016r" role="doc-biblioref">Wickham and Grolemund</a> (<a href="references.html#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, available online at <a href="https://r4ds.had.co.nz/many-models.html" class="uri">https://r4ds.had.co.nz/many-models.html</a>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Change your function call to fit a regression model in the Poisson family.</strong></li>
+</ol>
+<p>A linear regression is often not appropriate when fitting a model where the
+outcome variable provides counts, as with the example data. A Poisson regression
+is often preferred. In the <code>glm</code> call, you can specify this with the <code>family</code>
+parameter, for which “poisson” is one choice.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="time-series-case-crossover-study-designs.html#cb51-1" aria-hidden="true" tabindex="-1"></a>mod_pois_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>)</span></code></pre></div>
+<p>One thing to keep in mind with this change is that the model now uses a
+non-identity link between the combination of independent variable(s) and the
+dependent variable. You will need to keep this in mind when you interpret
+the estimates of the regression coefficients. While the coefficient estimate
+for <code>tmean</code> from the linear regression could be interpreted as the expected
+increase in mortality counts for a one-unit (i.e., one degree Celsius) increase
+in temperature, now the estimated coefficient should be interpreted as the
+expected increase in the natural log-transform of mortality count for a one-unit
+increase in temperature.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="time-series-case-crossover-study-designs.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_pois_reg)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = all ~ tmean, family = &quot;poisson&quot;, data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -6.5945  -1.6365  -0.1167   1.3652  12.2221  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  5.2445409  0.0019704 2661.67   &lt;2e-16 ***
+## tmean       -0.0147728  0.0001583  -93.29   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 49297  on 8278  degrees of freedom
+## Residual deviance: 40587  on 8277  degrees of freedom
+## AIC: 97690
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>You can see this even more clearly if you take a look at the association between
+temperature for each observation and the expected mortality count fit by the
+model. First, if you look at the fitted values without transforming, they
+will still be in a state where mortality count is log-transformed. You can
+see by looking at the range of the y-scale that these values are for the log
+of expected mortality, rather than expected mortality, and that the fitted
+association is linear:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="time-series-case-crossover-study-designs.html#cb54-1" aria-hidden="true" tabindex="-1"></a>mod_pois_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb54-2"><a href="time-series-case-crossover-study-designs.html#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb54-3"><a href="time-series-case-crossover-study-designs.html#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb54-4"><a href="time-series-case-crossover-study-designs.html#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(all)), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb54-5"><a href="time-series-case-crossover-study-designs.html#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb54-6"><a href="time-series-case-crossover-study-designs.html#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Log(Expected mortality count)&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p>You can use exponentiation to transform the fitted values back to just be the
+expected mortality count based on the model fit. Once you make this
+transformation, you can see how the link in the Poisson family specification
+enforced a curved relationship between mean daily temperature and the
+untransformed expected mortality count.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="time-series-case-crossover-study-designs.html#cb55-1" aria-hidden="true" tabindex="-1"></a>mod_pois_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb55-2"><a href="time-series-case-crossover-study-designs.html#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb55-3"><a href="time-series-case-crossover-study-designs.html#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb55-4"><a href="time-series-case-crossover-study-designs.html#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb55-5"><a href="time-series-case-crossover-study-designs.html#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb55-6"><a href="time-series-case-crossover-study-designs.html#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Change your function call to allow for overdispersion in the outcome data
+(daily mortality count). How does the estimated coefficient for temperature
+change between the model fit for #2 and this model? Check both the central
+estimate and its estimated standard error.</strong></li>
+</ol>
+<p>In the R <code>glm</code> call, there is a family that is similar to Poisson (including
+using a log link), but that allows for overdispersion. You can specify it
+with the “quasipoisson” choice for the <code>family</code> parameter in the <code>glm</code> call:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="time-series-case-crossover-study-designs.html#cb56-1" aria-hidden="true" tabindex="-1"></a>mod_ovdisp_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>When you use this family, there will be some new information in the summary
+for the model object. It will now include a dispersion parameter. If this
+is close to 1, then the data were close to the assumed variance for a Poisson
+distribution (i.e., there was little evidence of overdispersion). In the
+example, the overdispersion is around 5, suggesting the data are overdispersed
+(this might come down some when we start including independent variables that
+explain some of the variation in the outcome variable, like long-term and
+seasonal trends).</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="time-series-case-crossover-study-designs.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_ovdisp_reg)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = all ~ tmean, family = &quot;quasipoisson&quot;, data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -6.5945  -1.6365  -0.1167   1.3652  12.2221  
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  5.2445409  0.0044087  1189.6   &lt;2e-16 ***
+## tmean       -0.0147728  0.0003543   -41.7   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for quasipoisson family taken to be 5.006304)
+## 
+##     Null deviance: 49297  on 8278  degrees of freedom
+## Residual deviance: 40587  on 8277  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>If you compare the estimates of the temperature coefficient from the Poisson
+regression with those when you allow for overdispersion, you’ll see something
+interesting:</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="time-series-case-crossover-study-designs.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_pois_reg) <span class="sc">%&gt;%</span> </span>
+<span id="cb59-2"><a href="time-series-case-crossover-study-designs.html#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;tmean&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 5
+##   term  estimate std.error statistic p.value
+##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 tmean  -0.0148  0.000158     -93.3       0</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="time-series-case-crossover-study-designs.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_ovdisp_reg) <span class="sc">%&gt;%</span> </span>
+<span id="cb61-2"><a href="time-series-case-crossover-study-designs.html#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;tmean&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 5
+##   term  estimate std.error statistic p.value
+##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 tmean  -0.0148  0.000354     -41.7       0</code></pre>
+<p>The central estimate (<code>estimate</code> column) is very similar. However, the estimated
+standard error is larger when the model allows for overdispersion. This
+indicates that the Poisson model was too simple, and that its inherent
+assumption that data were not overdispersed was problematic. If you naively used
+a Poisson regression in this case, then you would estimate a confidence
+interval on the temperature coefficient that would be too narrow. This could
+cause you to conclude that the estimate was statistically significant when
+you should not have (although in this case, the estimate is statistically
+significant under both models).</p>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Change your function call to include control for day of week.</strong></li>
+</ol>
+<p>Day of week is included in the data as a categorical variable, using a
+data type in R called a factor. It is pretty straightforward to include
+factors as independent variables in calls to <code>glm</code>: you just add the column
+name to the list of other independent variables with a <code>+</code>. In this case,
+we need to do one more step: earlier, we added order to <code>dow</code>, so it would
+“remember” the order of the week days (Monday before Tuesday, etc.). However,
+we need to strip off this order before we include the factor in the <code>glm</code>
+call. One way to do this is with the <code>factor</code> call, specifying <code>ordered = FALSE</code>.
+Here is the full call to fit this model:</p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="time-series-case-crossover-study-designs.html#cb63-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb63-2"><a href="time-series-case-crossover-study-designs.html#cb63-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>When you look at the summary for the model object, you can see that the
+model has fit a separate intercept for six of the seven weekdays. The one
+weekday that isn’t fit (Sunday in this case) serves as a baseline—these
+estimates specify how the log of the expected mortality count is expected
+to differ on, for example, Monday versus Sunday (by about 0.03), if the
+temperature is the same for the two days.</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="time-series-case-crossover-study-designs.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_ctrl_dow)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = all ~ tmean + factor(dow, ordered = FALSE), family = &quot;quasipoisson&quot;, 
+##     data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -6.3211  -1.6476  -0.1313   1.3549  12.5286  
+## 
+## Coefficients:
+##                                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                      5.2208502  0.0065277 799.804  &lt; 2e-16 ***
+## tmean                           -0.0147723  0.0003538 -41.750  &lt; 2e-16 ***
+## factor(dow, ordered = FALSE)Mon  0.0299282  0.0072910   4.105 4.08e-05 ***
+## factor(dow, ordered = FALSE)Tue  0.0292575  0.0072920   4.012 6.07e-05 ***
+## factor(dow, ordered = FALSE)Wed  0.0255224  0.0073020   3.495 0.000476 ***
+## factor(dow, ordered = FALSE)Thu  0.0269580  0.0072985   3.694 0.000222 ***
+## factor(dow, ordered = FALSE)Fri  0.0355431  0.0072834   4.880 1.08e-06 ***
+## factor(dow, ordered = FALSE)Sat  0.0181489  0.0073158   2.481 0.013129 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for quasipoisson family taken to be 4.992004)
+## 
+##     Null deviance: 49297  on 8278  degrees of freedom
+## Residual deviance: 40434  on 8271  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>You can also see from this summary that the coefficients for the day of the
+week are all statistically significant. Even though we didn’t see a big
+difference in mortality counts by day of week in our exploratory analysis,
+this suggests that it does help explain some variance in mortality observations
+and will likely be worth including in the final model.</p>
+<p>The model now includes day of week when fitting an expected mortality count
+for each observation. As a result, if you plot fitted values of expected
+mortality versus mean daily temperature, you’ll see some “hoppiness” in the
+fitted line:</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="time-series-case-crossover-study-designs.html#cb66-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="sc">%&gt;%</span> </span>
+<span id="cb66-2"><a href="time-series-case-crossover-study-designs.html#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb66-3"><a href="time-series-case-crossover-study-designs.html#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb66-4"><a href="time-series-case-crossover-study-designs.html#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb66-5"><a href="time-series-case-crossover-study-designs.html#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb66-6"><a href="time-series-case-crossover-study-designs.html#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p>This is because each fitted value is also incorporating the expected influence
+of day of week on the mortality count, and that varies across the observations
+(i.e., you could have two days with the same temperature, but different
+expected mortality from the model, because they occur on different days).</p>
+<p>If you plot the model fits separately for each day of the week, you’ll see that
+the line is smooth across all observations from the same day of the week:</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="time-series-case-crossover-study-designs.html#cb67-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="sc">%&gt;%</span> </span>
+<span id="cb67-2"><a href="time-series-case-crossover-study-designs.html#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb67-3"><a href="time-series-case-crossover-study-designs.html#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb67-4"><a href="time-series-case-crossover-study-designs.html#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb67-5"><a href="time-series-case-crossover-study-designs.html#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb67-6"><a href="time-series-case-crossover-study-designs.html#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb67-7"><a href="time-series-case-crossover-study-designs.html#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> obs<span class="sc">$</span>dow)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<p><em>Wrapping up</em></p>
+<p>At this point, the coefficient estimates suggests that risk of mortality
+tends to decrease as temperature increases. Do you think this is reasonable?
+What else might be important to build into the model based on your analysis
+up to this point?</p>
 </div>
 <div id="chapter-vocabulary" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Chapter vocabulary</h2>
@@ -569,6 +1014,15 @@ from the chapter’s vocabulary list. The vocabulary words for this chapter are:
 <li>study period</li>
 <li>seasonal trends</li>
 <li>long-term trends</li>
+<li>error distribution</li>
+<li>generalized linear model (GLM)</li>
+<li>link function</li>
+<li>overdispersed</li>
+<li>categorical variable</li>
+<li>spline</li>
+<li>natural cubic spline</li>
+<li>distributed lag</li>
+<li>cross-basis term</li>
 </ul>
 
 </div>

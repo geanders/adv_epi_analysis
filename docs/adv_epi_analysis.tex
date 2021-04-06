@@ -520,7 +520,7 @@ with a single call:
 \setcounter{enumi}{1}
 \tightlist
 \item
-  Are there any missing dates within this time period?
+  \textbf{Are there any missing dates within this time period?}
 \end{enumerate}
 
 There are a few things you should check to answer this question. First
@@ -609,7 +609,7 @@ then see if the number of observations in the dataset is the same:
 \setcounter{enumi}{2}
 \tightlist
 \item
-  Are there seasonal trends in the exposure? In the outcome?
+  \textbf{Are there seasonal trends in the exposure? In the outcome?}
 \end{enumerate}
 
 You can use a simple plot to visualize patterns over time in both the exposure
@@ -702,7 +702,7 @@ plot the impact of the 2003 heat wave on mortality among this oldest age group.
 \setcounter{enumi}{3}
 \tightlist
 \item
-  Are there long-term trends in the exposure? In the outcome?
+  \textbf{Are there long-term trends in the exposure? In the outcome?}
 \end{enumerate}
 
 Some of the plots we created in the last section help in exploring this
@@ -906,6 +906,655 @@ boxplots, which only show quantiles.
 
 \emph{Brooke's section}
 
+One of the readings for this week, \citet{vicedo2019hands}, includes a section
+on fitting exposure-response functions to describe the association between
+daily mean temperature and mortality risk. This article includes example
+code in its supplemental material, with code for fitting the model to
+these time series data in the file named ``01EstimationERassociation.r''.
+The model may at first seem complex, but it is made up of a number of
+fairly straightforward pieces (although some may initially seem complex):
+
+\begin{itemize}
+\tightlist
+\item
+  The model framework is a \emph{generalized linear model (GLM)}
+\item
+  This GLM is fit assuming an \emph{error distribution} and a \emph{link function}
+  appropriate for count data
+\item
+  The GLM is fit assuming an \emph{error distribution} that is also appropriate for
+  data that may be \emph{overdispersed}
+\item
+  The model includes control for day of the week by including a \emph{categorical
+  variable}
+\item
+  The model includes control for long-term and seasonal trends by including
+  a \emph{spline} (in this case, a \emph{natural cubic spline}) for the day in the study
+\item
+  The model fits a flexible, non-linear association between temperature
+  and mortality risk also using a spline
+\item
+  The model fits a flexible non-linear association between temperature on
+  a series of preceeding days and current day and mortality risk on the
+  current day using a \emph{distributed lag approach}
+\item
+  The model jointly describes both of the two previous non-linear associations
+  by fitting these two elements through one construct in the GLM, a
+  \emph{cross-basis term}
+\end{itemize}
+
+In this section, we will work through the elements, building up the code to
+get to the full model that is fit in \citet{vicedo2019hands}.
+
+\emph{Fitting a GLM to time series data}
+
+The GLM framework unites a number of types of regression models you may have
+previously worked with. One basic regression model that can be fit within this
+framework is a linear regression model. However, the framework also allows you
+to also fit, among others, logistic regression models (useful when the outcome
+variable can only take one of two values, e.g., success / failure or alive /
+dead), Poisson regression models (useful when the outcome variable is a count).
+
+This generalized framework brings some unity to these different types of
+regression models. From a practical standpoint, it has allowed software
+developers to easily provide a common interface to fit these types of models.
+In R, the common function call to fit GLMs is \texttt{glm}.
+
+Within the GLM framework, the elements that separate different regression models
+include the link function and the error distribution. The error distribution
+encodes the assumption you are enforcing about how the errors after fitting the
+model are distributed. If the outcome data are normally distributed (a.k.a.,
+follow a Gaussian distribution), after accounting for variance explained in the
+outcome by any of the model covariates, then a linear regression model may be
+appropriate. For count data---like numbers of deaths a day---this is unlikely,
+unless the average daily mortality count is very high (count data tend to
+come closer to a normal distribution the further their average gets from
+0). For binary data---like whether each person in a study population died on
+a given day or not---normally distributed errors are also unlikely. Instead,
+in these two cases, it is typically more appropriate to fit GLMs with
+Poisson and logistic ``families'', respectively, where the family designation
+includes an appropriate specification for the variance when fitting the model
+based on these outcome types.
+
+The other element that distinguishes different types of regression within
+the GLM framework is the link function. The link function applies a transformation
+on the combination of independent variables in the regression equation
+when fitting the model. With normally distributed data, an \emph{identity link}
+is often appropriate---with this link, the combination of independent variables
+remain unchange (i.e., keep their initial ``identity''). With count data, a
+\emph{log link} is often more appropriate, while with logistic data, a \emph{logit link}
+is often used.
+
+Finally, data will often not perfectly adhere to assumptions. For example, the
+Poisson family of GLMs assumes that variance follows a Poisson distribution.
+With this distribution, the variance is equal to the mean. With real-life
+data, this assumption is often not valid, and in many cases the variance in
+real life count data is larger than the mean. This can be accounted for when
+fitting a GLM by setting an error distribution that does not require the
+variance to equal the mean---instead, both a mean value and something like
+a variance are estimated from the data. In environmental epidemiology,
+time series are often fit to allow for this overdispersion. This is because
+if the data are overdispersed but the model does not account for this, the
+standard errors on the estimates of the model parameters may be artificially
+small. If the data are not overdispersed, the model will identify this when
+being fit to the data, so it is typically better to prefer to allow for
+overdispersion in the model (if the size of the data were small, you may
+want to be parsimonious and avoid unneeded complexity in the model, but
+this is typically not the case with time series data).
+
+In the next section, you will work through the steps of developing a GLM to fit
+the example dataset \texttt{obs}. For now, you will only fit a linear association
+between mean daily temperature and mortality risk, eventually including control
+for day of week. In later work, especially the next chapter, we will build up
+other components of the model, including control for the potential confounders
+of long-term and seasonal patterns, as well as advancing the model to fit
+non-linear associations, distributed by time, through splines, a distributed lag
+approach, and a cross-basis term.
+
+\emph{Applied: Fitting a GLM to time series data}
+
+In R, the function call used to fit GLMs is \texttt{glm}. Most of you have likely
+covered GLMs, and ideally this function call, in previous courses. If you are
+unfamiliar with its basic use, you will want to refresh yourself on this
+topic. {[}Add some online resources that go over basics of GLMs in R.{]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Fit a GLM to estimate the association between mean daily temperature (as the
+  independent variable) and daily mortality count (as the dependent variable),
+  first fitting a linear regression. (Since the mortality data are counts, we will
+  want to shift to a different type of regression within the GLM framework, but
+  this step allows you to develop a simple \texttt{glm} call, and to remember where to
+  include the data and the independent and dependent variables within this
+  function call.)
+\item
+  Change your function call to fit a regression model in the Poisson family.
+\item
+  Change your function call to allow for overdispersion in the outcome data
+  (daily mortality count). How does the estimated coefficient for temperature
+  change between the model fit for \#2 and this model? Check both the central
+  estimate and its estimated standard error.
+\item
+  Change your function call to include control for day of week.
+\end{enumerate}
+
+\emph{Applied exercise: Example code}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Fit a GLM to estimate the association between mean daily temperature (as the
+  independent variable) and daily mortality count (as the dependent variable),
+  first fitting a linear regression.}
+\end{enumerate}
+
+To do this, you will use the \texttt{glm} call. If you would like to save model fit
+results to use later, you assign the output a name as an R object
+(\texttt{mod\_linear\_reg} in the example code). If your study data are in a dataframe,
+you can specify these data in the \texttt{glm} call with the \texttt{data} parameter.
+Once you do this, you can use column names directly in the model formula.
+In the model formula, the dependent variable is specified first (\texttt{all}, the
+column for daily mortality counts for all ages, in this example), followed
+by a tilde (\texttt{\textasciitilde{}}), followed by all independent variables (only \texttt{tmean} in this
+example). If multiple independent variables are included, they are joined using
+\texttt{+}---we'll see an example when we start adding control for confounders later.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_linear\_reg }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean, }\AttributeTok{data =}\NormalTok{ obs)}
+\end{Highlighting}
+\end{Shaded}
+
+Once you have fit a model and assigned it to an R object, you can explore it
+and use resulting values. First, the print method for a regression model
+gives some summary information. This method is automatically called if you
+enter the model object's name at the console:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_linear\_reg}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:  glm(formula = all ~ tmean, data = obs)
+## 
+## Coefficients:
+## (Intercept)        tmean  
+##     187.647       -2.366  
+## 
+## Degrees of Freedom: 8278 Total (i.e. Null);  8277 Residual
+## Null Deviance:       8161000 
+## Residual Deviance: 6766000   AIC: 79020
+\end{verbatim}
+
+More information is printed if you run the \texttt{summary} method on the model
+object:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(mod\_linear\_reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = all ~ tmean, data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -77.301  -20.365   -1.605   17.502  169.280  
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 187.64658    0.73557  255.10   <2e-16 ***
+## tmean        -2.36555    0.05726  -41.31   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 817.4629)
+## 
+##     Null deviance: 8161196  on 8278  degrees of freedom
+## Residual deviance: 6766140  on 8277  degrees of freedom
+## AIC: 79019
+## 
+## Number of Fisher Scoring iterations: 2
+\end{verbatim}
+
+Make sure you are familiar with the information provided from the model object,
+as well as how to interpret values like the coefficient estimates and their
+standard errors and p-values. These basic elements should have been covered in
+previous coursework (even if a different programming language was used to fit
+the model), and so we will not be covering them in great depth here, but instead
+focusing on some of the more advanced elements of how regression models are
+commonly fit to data from time series and case-crossover study designs in
+environmental epidemiology. For a refresher on the basics of fitting
+statistical models in R, you may want to check out Chapters 22 through 24 of
+\citet{wickham2016r}, a book that is available online.
+
+Finally, there are some newer tools for extracting information from model fit
+objects. The \texttt{broom} package extracts different elements from these objects
+and returns them in a ``tidy'' data format, which makes it much easier to use
+the output further in analysis with functions from the ``tidyverse'' suite of
+R packages. These tools are very popular and powerful, and so the \texttt{broom} tools
+can be very useful in working with output from regression modeling in R.
+
+The \texttt{broom} package includes three main functions for extracting data from
+regression model objects. First, the \texttt{glance} function returns overall data
+about the model fit, including the AIC and BIC:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(broom)}
+\FunctionTok{glance}\NormalTok{(mod\_linear\_reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 8
+##   null.deviance df.null  logLik    AIC    BIC deviance df.residual  nobs
+##           <dbl>   <int>   <dbl>  <dbl>  <dbl>    <dbl>       <int> <int>
+## 1      8161196.    8278 -39507. 79019. 79041. 6766140.        8277  8279
+\end{verbatim}
+
+The \texttt{tidy} function returns data at the level of the model coefficients,
+including the estimate for each model parameter, its standard error, test
+statistic, and p-value.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tidy}\NormalTok{(mod\_linear\_reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic p.value
+##   <chr>          <dbl>     <dbl>     <dbl>   <dbl>
+## 1 (Intercept)   188.      0.736      255.        0
+## 2 tmean          -2.37    0.0573     -41.3       0
+\end{verbatim}
+
+Finally, the \texttt{augment} function returns data at the level of the original
+observations, including the fitted value for each observation, the residual
+between the fitted and true value, and some measures of influence on the model
+fit.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{augment}\NormalTok{(mod\_linear\_reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8,279 x 8
+##      all tmean .fitted .resid .std.resid     .hat .sigma  .cooksd
+##    <dbl> <dbl>   <dbl>  <dbl>      <dbl>    <dbl>  <dbl>    <dbl>
+##  1   220  3.91    178.   41.6       1.46 0.000359   28.6 0.000380
+##  2   257  5.55    175.   82.5       2.89 0.000268   28.6 0.00112 
+##  3   245  4.39    177.   67.7       2.37 0.000330   28.6 0.000928
+##  4   226  5.43    175.   51.2       1.79 0.000274   28.6 0.000440
+##  5   236  6.87    171.   64.6       2.26 0.000211   28.6 0.000539
+##  6   235  9.23    166.   69.2       2.42 0.000144   28.6 0.000420
+##  7   231  6.69    172.   59.2       2.07 0.000218   28.6 0.000467
+##  8   235  7.96    169.   66.2       2.31 0.000174   28.6 0.000467
+##  9   250  7.27    170.   79.5       2.78 0.000197   28.6 0.000761
+## 10   214  9.51    165.   48.9       1.71 0.000139   28.6 0.000202
+## # ... with 8,269 more rows
+\end{verbatim}
+
+One way you can use \texttt{augment} is to graph the fitted values for each observation
+after fitting the model:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_linear\_reg }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ .fitted), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Log(Expected mortality count)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-27-1.pdf}
+
+For more on the \texttt{broom} package, including some excellent examples of how it
+can be used to streamline complex regression analyses, see \citet{robinson2014broom}.
+There is also a nice example of how it can be used in one of the chapters of
+\citet{wickham2016r}, available online at \url{https://r4ds.had.co.nz/many-models.html}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  \textbf{Change your function call to fit a regression model in the Poisson family.}
+\end{enumerate}
+
+A linear regression is often not appropriate when fitting a model where the
+outcome variable provides counts, as with the example data. A Poisson regression
+is often preferred. In the \texttt{glm} call, you can specify this with the \texttt{family}
+parameter, for which ``poisson'' is one choice.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_pois\_reg }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean, }\AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"poisson"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+One thing to keep in mind with this change is that the model now uses a
+non-identity link between the combination of independent variable(s) and the
+dependent variable. You will need to keep this in mind when you interpret
+the estimates of the regression coefficients. While the coefficient estimate
+for \texttt{tmean} from the linear regression could be interpreted as the expected
+increase in mortality counts for a one-unit (i.e., one degree Celsius) increase
+in temperature, now the estimated coefficient should be interpreted as the
+expected increase in the natural log-transform of mortality count for a one-unit
+increase in temperature.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(mod\_pois\_reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = all ~ tmean, family = "poisson", data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -6.5945  -1.6365  -0.1167   1.3652  12.2221  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)  5.2445409  0.0019704 2661.67   <2e-16 ***
+## tmean       -0.0147728  0.0001583  -93.29   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 49297  on 8278  degrees of freedom
+## Residual deviance: 40587  on 8277  degrees of freedom
+## AIC: 97690
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+You can see this even more clearly if you take a look at the association between
+temperature for each observation and the expected mortality count fit by the
+model. First, if you look at the fitted values without transforming, they
+will still be in a state where mortality count is log-transformed. You can
+see by looking at the range of the y-scale that these values are for the log
+of expected mortality, rather than expected mortality, and that the fitted
+association is linear:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_pois\_reg }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{log}\NormalTok{(all)), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ .fitted), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Log(Expected mortality count)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-30-1.pdf}
+
+You can use exponentiation to transform the fitted values back to just be the
+expected mortality count based on the model fit. Once you make this
+transformation, you can see how the link in the Poisson family specification
+enforced a curved relationship between mean daily temperature and the
+untransformed expected mortality count.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_pois\_reg }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-31-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  \textbf{Change your function call to allow for overdispersion in the outcome data
+  (daily mortality count). How does the estimated coefficient for temperature
+  change between the model fit for \#2 and this model? Check both the central
+  estimate and its estimated standard error.}
+\end{enumerate}
+
+In the R \texttt{glm} call, there is a family that is similar to Poisson (including
+using a log link), but that allows for overdispersion. You can specify it
+with the ``quasipoisson'' choice for the \texttt{family} parameter in the \texttt{glm} call:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_ovdisp\_reg }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean, }\AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+When you use this family, there will be some new information in the summary
+for the model object. It will now include a dispersion parameter. If this
+is close to 1, then the data were close to the assumed variance for a Poisson
+distribution (i.e., there was little evidence of overdispersion). In the
+example, the overdispersion is around 5, suggesting the data are overdispersed
+(this might come down some when we start including independent variables that
+explain some of the variation in the outcome variable, like long-term and
+seasonal trends).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(mod\_ovdisp\_reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = all ~ tmean, family = "quasipoisson", data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -6.5945  -1.6365  -0.1167   1.3652  12.2221  
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  5.2445409  0.0044087  1189.6   <2e-16 ***
+## tmean       -0.0147728  0.0003543   -41.7   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for quasipoisson family taken to be 5.006304)
+## 
+##     Null deviance: 49297  on 8278  degrees of freedom
+## Residual deviance: 40587  on 8277  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+If you compare the estimates of the temperature coefficient from the Poisson
+regression with those when you allow for overdispersion, you'll see something
+interesting:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tidy}\NormalTok{(mod\_pois\_reg) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"tmean"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 5
+##   term  estimate std.error statistic p.value
+##   <chr>    <dbl>     <dbl>     <dbl>   <dbl>
+## 1 tmean  -0.0148  0.000158     -93.3       0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tidy}\NormalTok{(mod\_ovdisp\_reg) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"tmean"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 5
+##   term  estimate std.error statistic p.value
+##   <chr>    <dbl>     <dbl>     <dbl>   <dbl>
+## 1 tmean  -0.0148  0.000354     -41.7       0
+\end{verbatim}
+
+The central estimate (\texttt{estimate} column) is very similar. However, the estimated
+standard error is larger when the model allows for overdispersion. This
+indicates that the Poisson model was too simple, and that its inherent
+assumption that data were not overdispersed was problematic. If you naively used
+a Poisson regression in this case, then you would estimate a confidence
+interval on the temperature coefficient that would be too narrow. This could
+cause you to conclude that the estimate was statistically significant when
+you should not have (although in this case, the estimate is statistically
+significant under both models).
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  \textbf{Change your function call to include control for day of week.}
+\end{enumerate}
+
+Day of week is included in the data as a categorical variable, using a
+data type in R called a factor. It is pretty straightforward to include
+factors as independent variables in calls to \texttt{glm}: you just add the column
+name to the list of other independent variables with a \texttt{+}. In this case,
+we need to do one more step: earlier, we added order to \texttt{dow}, so it would
+``remember'' the order of the week days (Monday before Tuesday, etc.). However,
+we need to strip off this order before we include the factor in the \texttt{glm}
+call. One way to do this is with the \texttt{factor} call, specifying \texttt{ordered\ =\ FALSE}.
+Here is the full call to fit this model:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_ctrl\_dow }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean }\SpecialCharTok{+} \FunctionTok{factor}\NormalTok{(dow, }\AttributeTok{ordered =} \ConstantTok{FALSE}\NormalTok{), }
+                    \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+When you look at the summary for the model object, you can see that the
+model has fit a separate intercept for six of the seven weekdays. The one
+weekday that isn't fit (Sunday in this case) serves as a baseline---these
+estimates specify how the log of the expected mortality count is expected
+to differ on, for example, Monday versus Sunday (by about 0.03), if the
+temperature is the same for the two days.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(mod\_ctrl\_dow)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = all ~ tmean + factor(dow, ordered = FALSE), family = "quasipoisson", 
+##     data = obs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -6.3211  -1.6476  -0.1313   1.3549  12.5286  
+## 
+## Coefficients:
+##                                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                      5.2208502  0.0065277 799.804  < 2e-16 ***
+## tmean                           -0.0147723  0.0003538 -41.750  < 2e-16 ***
+## factor(dow, ordered = FALSE)Mon  0.0299282  0.0072910   4.105 4.08e-05 ***
+## factor(dow, ordered = FALSE)Tue  0.0292575  0.0072920   4.012 6.07e-05 ***
+## factor(dow, ordered = FALSE)Wed  0.0255224  0.0073020   3.495 0.000476 ***
+## factor(dow, ordered = FALSE)Thu  0.0269580  0.0072985   3.694 0.000222 ***
+## factor(dow, ordered = FALSE)Fri  0.0355431  0.0072834   4.880 1.08e-06 ***
+## factor(dow, ordered = FALSE)Sat  0.0181489  0.0073158   2.481 0.013129 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for quasipoisson family taken to be 4.992004)
+## 
+##     Null deviance: 49297  on 8278  degrees of freedom
+## Residual deviance: 40434  on 8271  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+You can also see from this summary that the coefficients for the day of the
+week are all statistically significant. Even though we didn't see a big
+difference in mortality counts by day of week in our exploratory analysis,
+this suggests that it does help explain some variance in mortality observations
+and will likely be worth including in the final model.
+
+The model now includes day of week when fitting an expected mortality count
+for each observation. As a result, if you plot fitted values of expected
+mortality versus mean daily temperature, you'll see some ``hoppiness'' in the
+fitted line:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_ctrl\_dow }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-37-1.pdf}
+
+This is because each fitted value is also incorporating the expected influence
+of day of week on the mortality count, and that varies across the observations
+(i.e., you could have two days with the same temperature, but different
+expected mortality from the model, because they occur on different days).
+
+If you plot the model fits separately for each day of the week, you'll see that
+the line is smooth across all observations from the same day of the week:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_ctrl\_dow }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ obs}\SpecialCharTok{$}\NormalTok{dow)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-38-1.pdf}
+
+\emph{Wrapping up}
+
+At this point, the coefficient estimates suggests that risk of mortality
+tends to decrease as temperature increases. Do you think this is reasonable?
+What else might be important to build into the model based on your analysis
+up to this point?
+
 \hypertarget{chapter-vocabulary}{%
 \section{Chapter vocabulary}\label{chapter-vocabulary}}
 
@@ -930,6 +1579,24 @@ from the chapter's vocabulary list. The vocabulary words for this chapter are:
   seasonal trends
 \item
   long-term trends
+\item
+  error distribution
+\item
+  generalized linear model (GLM)
+\item
+  link function
+\item
+  overdispersed
+\item
+  categorical variable
+\item
+  spline
+\item
+  natural cubic spline
+\item
+  distributed lag
+\item
+  cross-basis term
 \end{itemize}
 
 \hypertarget{generalized-linear-models}{%
