@@ -89,7 +89,6 @@ download any datasets needed for the week).
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(knitr)
-library( tikzDevice )
 
 tribble(
   ~ `Assessment Components`, ~ `Percentage of Grade`, 
@@ -110,5 +109,5 @@ to students throughout the semester include:
 
 - Garrett Grolemund and Hadley Wickham, *R for Data Science*, O’Reilly, 2017. (Available for free online at https://r4ds.had.co.nz/ and in print through
 most large book sellers.)
-- Miguel A. Hern\'{a}n and James M. Robins, *Causal Inference: What If*, Boca Raton: Chapman & Hall/CRC, 2020. (Available for free online at https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/2021/01/ciwhatif_hernanrobins_31jan21.pdf with a print version anticipated in 2021.)
+- Miguel A. Hernn and James M. Robins, *Causal Inference: What If*, Boca Raton: Chapman & Hall/CRC, 2020. (Available for free online at https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/2021/01/ciwhatif_hernanrobins_31jan21.pdf with a print version anticipated in 2021.)
 - Francesca Dominici and Roger D. Peng, *Statistical Methods for Environmental Epidemiology with R*, Springer, 2008. (Available online through the CSU library or in print through Springer.)
