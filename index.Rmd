@@ -1,6 +1,6 @@
 --- 
 title: "Advanced Epidemiological Analysis"
-author: "Andreas Neophytou and G. Brooke Anderson"
+author: "Andreas M. Neophytou and G. Brooke Anderson"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
