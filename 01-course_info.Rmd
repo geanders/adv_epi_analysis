@@ -89,6 +89,7 @@ download any datasets needed for the week).
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(knitr)
+library( tikzDevice )
 
 tribble(
   ~ `Assessment Components`, ~ `Percentage of Grade`, 
