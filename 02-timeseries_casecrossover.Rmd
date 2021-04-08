@@ -418,12 +418,9 @@ is often used.
 
 Finally, data will often not perfectly adhere to assumptions. For example, the
 Poisson family of GLMs assumes that variance follows a Poisson distribution 
-(The probability mass function for a Poisson distribution is denoted by $f(k;\lambda)=Pr[X=k]= \displaystyle \frac{\lambda^{k}e^{-\lambda}}{k!}$, where 
+(The probability mass function for Poisson distribution $X \sim {\sf Poisson}(\mu)$ is denoted by $f(k;\lambda)=Pr[X=k]= \displaystyle \frac{\lambda^{k}e^{-\lambda}}{k!}$, where 
 $k$ is the number of occurences, and $\lambda$ is equal to the expected number of 
-cases). With this distribution, the variance is equal to the mean ($\lambda=E(X)=Var(X)$). With real-life data, this assumption is often not valid, and in many cases the 
-variance in  real life count data is larger than the mean. This can be accounted  
-for when fitting a GLM by setting an error distribution that does not require the 
-variance to equal the mean---instead, both a mean value and something like a 
+cases and $\mu=\lambda$). With this distribution, the variance is equal to the mean ($\lambda=E(X)=Var(X)$). With real-life data, this assumption is often not valid, and in many cases the variance in  real life count data is larger than the mean. This can be accounted  for when fitting a GLM by setting an error distribution that does not require the variance to equal the mean---instead, both a mean value and something like a 
 variance are estimated from the data, assuming an overdispersion parameter $\phi$ 
 so that $Var(X)=\phi E(X)$. In environmental epidemiology, time series 
 are often fit to allow for this overdispersion. This is because if the data are overdispersed but the model does not account for this, the standard errors on the 
@@ -627,7 +624,7 @@ mod_ovdisp_reg <- glm(all ~ tmean, data = obs, family = "quasipoisson")
 ```
 
 When you use this family, there will be some new information in the summary
-for the model object. It will now include a dispersion parameter. If this 
+for the model object. It will now include a dispersion parameter ($\phi$). If this 
 is close to 1, then the data were close to the assumed variance for a Poisson
 distribution (i.e., there was little evidence of overdispersion). In the 
 example, the overdispersion is around 5, suggesting the data are overdispersed
