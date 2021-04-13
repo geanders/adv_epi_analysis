@@ -34,13 +34,14 @@ obs
 ```
 
 This example dataset shows many characteristics that are common for datasets for
-time series studies in environmental epidemiology. General characteristics of
-time series data for environmental epidemiology studies are:
+time series studies in environmental epidemiology. Time series data are essentially 
+a sequence of data points repeatedly taken over a certain time interval (e.g. day,
+week, month etc). General characteristics of time series data for environmental epidemiology studies are:
 
 - Observations are given at an aggregated level. For example, instead of 
 individual observations for each person in London, the `obs` data give 
-counts of deaths throughout London. The level of aggregation is often determined
-by geopolitical boundaries, for example counties of ZIP codes in the US.
+counts of deaths throughout London. The level of aggregation is often determined 
+by geopolitical boundaries, for example counties of ZIP codes  in the US.
 - Observations are given at regularly spaced time steps over a period. In the
 `obs` dataset, the time step is day. Typically, values will be provided 
 continuously over that time period, with observations for each time step. 
