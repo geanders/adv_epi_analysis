@@ -43,8 +43,8 @@ individual observations for each person in London, the `obs` data give
 counts of deaths throughout London. The level of aggregation is often determined 
 by geopolitical boundaries, for example counties of ZIP codes  in the US.
 - Observations are given at regularly spaced time steps over a period. In the
-`obs` dataset, the time step is day. Typically, values will be provided 
-continuously over that time period, with observations for each time step. 
+`obs` dataset, the time interval is day. Typically, values will be provided 
+continuously over that time period, with observations for each time interval. 
 Occasionally, however, the time series data may only be available for 
 particular seasons (e.g., only warm season dates for an ozone study), or
 there may be some missing data on either the exposure or health outcome over
@@ -52,17 +52,18 @@ the course of the study period.
 - Daily observations are given for the health outcome, for the environmental
 exposure of interest, and for potential time-varying confounders. In the `obs`
 dataset, the health outcome is mortality (from all causes; sometimes, the health
-outcome will focus on a specific cause of mortality or other health outcome).
-Counts are given for everyone in the city for each day (`all` column), as well
-as for specific age categories (`all_0_64` for all deaths among those up to 
-64 years old, and so on). The exposure of interest in the `obs` dataset is
-temperature, and three metrics of this are included (`tmean`, `tmin`, and 
-`tmax`). Day of the week is one time-varying factor that could be a confounder, 
-or at least help explain variation in the outcome (mortality). This is included
-through the `dow` variable in the `obs` data. Sometimes, you will also see a 
-marker for holidays included as a potential time-varying confounder, or other
-exposure variables (temperature is a potential confounder, for example, when 
-investigating the relationship between air pollution and mortality risk). 
+outcome will focus on a specific cause of mortality or other health outcomes such 
+as hospitalizations or emergency room visits). Counts are given for everyone in 
+the city for each day (`all` column), as well as for specific age categories 
+(`all_0_64` for all deaths among those up to 64 years old, and so on). The 
+exposure of interest in the `obs` dataset is temperature, and three metrics of 
+this are included (`tmean`, `tmin`, and `tmax`). Day of the week is one 
+time-varying factor that could be a confounder, or at least help explain 
+variation in the outcome (mortality). This is included through the `dow` variable 
+in the `obs` data. Sometimes, you will also see a marker for holidays included 
+as a potential time-varying confounder, or other exposure variables (temperature 
+is a potential confounder, for example, when  investigating the relationship 
+between air pollution and mortality risk). 
 - Multiple metrics of an exposure and / or multiple health outcome counts 
 may be included for each time step. In the `obs` example, three metrics of 
 temperature are included (minimum daily temperature, maximum daily temperature, 
@@ -234,7 +235,7 @@ ggplot(obs, aes(x = doy, y = year, fill = all_85plus)) +
   scale_y_reverse() + 
   scale_fill_viridis()
 ```
-For mortality, there tends to be in increase in the winter compared to the summer.
+For mortality, there tends to be an increase in the winter compared to the summer.
 Some winters have stretches with particularly high mortality---these are likely
 a result of seasons with strong influenza outbreaks. You can also see on this 
 plot the impact of the 2003 heat wave on mortality among this oldest age group.
@@ -385,7 +386,8 @@ previously worked with. One basic regression model that can be fit within this
 framework is a linear regression model. However, the framework also allows you
 to also fit, among others, logistic regression models (useful when the outcome
 variable can only take one of two values, e.g., success / failure or alive /
-dead), Poisson regression models (useful when the outcome variable is a count).
+dead), Poisson regression models (useful when the outcome variable is a count or 
+rate).
 
 This generalized framework brings some unity to these different types of 
 regression models. From a practical standpoint, it has allowed software 
