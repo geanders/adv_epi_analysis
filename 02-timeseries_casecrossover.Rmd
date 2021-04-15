@@ -423,7 +423,7 @@ Finally, data will often not perfectly adhere to assumptions. For example, the
 Poisson family of GLMs assumes that variance follows a Poisson distribution 
 (The probability mass function for Poisson distribution $X \sim {\sf Poisson}(\mu)$ is denoted by $f(k;\lambda)=Pr[X=k]= \displaystyle \frac{\lambda^{k}e^{-\lambda}}{k!}$, where 
 $k$ is the number of occurences, and $\lambda$ is equal to the expected number of 
-cases and $\mu=\lambda$). With this distribution, the variance is equal to the mean ($\lambda=E(X)=Var(X)$). With real-life data, this assumption is often not valid, and in many cases the variance in  real life count data is larger than the mean. This can be accounted  for when fitting a GLM by setting an error distribution that does not require the variance to equal the mean---instead, both a mean value and something like a 
+cases and $\mu=\lambda$). With this distribution, the variance is equal to the mean ($\mu=E(X)=Var(X)$). With real-life data, this assumption is often not valid, and in many cases the variance in  real life count data is larger than the mean. This can be accounted  for when fitting a GLM by setting an error distribution that does not require the variance to equal the mean---instead, both a mean value and something like a 
 variance are estimated from the data, assuming an overdispersion parameter $\phi$ 
 so that $Var(X)=\phi E(X)$. In environmental epidemiology, time series 
 are often fit to allow for this overdispersion. This is because if the data are overdispersed but the model does not account for this, the standard errors on the 
@@ -470,10 +470,12 @@ independent variable) and daily mortality count (as the dependent variable),
 first fitting a linear regression.**
 
 This is the model you are fitting:
+
               $Y_{t}=\beta_{0}+\beta_{1}X_{t}+\epsilon$ 
+              
 where $Y_{t}$ is the mortality count on day $t$, $X_{t}$ is the mean temperature 
 for day $t$ and $\epsilon$ is the error term. Since this is a linear model we are 
-assuming a Gaussian error distribution $\epsilon \sim {\sf Normal}(0, \sigma^{2})$,
+assuming a Gaussian error distribution $\epsilon \sim {\sf N}(0, \sigma^{2})$,
 where $\sigma^{2}$ is the variance not explained by the covariates (here just 
 temperature). 
 
@@ -572,7 +574,16 @@ There is also a nice example of how it can be used in one of the chapters of
 
 A linear regression is often not appropriate when fitting a model where the 
 outcome variable provides counts, as with the example data. A Poisson regression
-is often preferred. In the `glm` call, you can specify this with the `family`
+is often preferred. 
+
+For a count distribution were $Y \sim {\sf Poisson(\mu)}$ we typically fit a model
+such as 
+
+$g(Y)=\beta_{0}+\beta_{1}X$, where $g()$ represents the link function, in this 
+case a log function so that  $log(Y)=\beta_{0}+\beta_{1}X$. We can also express 
+this as $Y=exp(\beta_{0}+\beta_{1}X)$.
+
+In the `glm` call, you can specify this with the `family`
 parameter, for which "poisson" is one choice.
 
 ```{r}
