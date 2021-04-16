@@ -471,9 +471,9 @@ first fitting a linear regression.**
 
 This is the model you are fitting:
 
-              $Y_{t}=\beta_{0}+\beta_{1}X_{t}+\epsilon$ 
+$Y_{t}=\beta_{0}+\beta_{1}X1_{t}+\epsilon$ 
               
-where $Y_{t}$ is the mortality count on day $t$, $X_{t}$ is the mean temperature 
+where $Y_{t}$ is the mortality count on day $t$, $X1_{t}$ is the mean temperature 
 for day $t$ and $\epsilon$ is the error term. Since this is a linear model we are 
 assuming a Gaussian error distribution $\epsilon \sim {\sf N}(0, \sigma^{2})$,
 where $\sigma^{2}$ is the variance not explained by the covariates (here just 
@@ -579,9 +579,9 @@ is often preferred.
 For a count distribution were $Y \sim {\sf Poisson(\mu)}$ we typically fit a model
 such as 
 
-$g(Y)=\beta_{0}+\beta_{1}X$, where $g()$ represents the link function, in this 
-case a log function so that  $log(Y)=\beta_{0}+\beta_{1}X$. We can also express 
-this as $Y=exp(\beta_{0}+\beta_{1}X)$.
+$g(Y)=\beta_{0}+\beta_{1}X1$, where $g()$ represents the link function, in this 
+case a log function so that  $log(Y)=\beta_{0}+\beta_{1}X1$. We can also express 
+this as $Y=exp(\beta_{0}+\beta_{1}X1)$.
 
 In the `glm` call, you can specify this with the `family`
 parameter, for which "poisson" is one choice.
@@ -685,14 +685,20 @@ significant under both models).
 4. **Change your function call to include control for day of week.**
 
 Day of week is included in the data as a categorical variable, using a 
-data type in R called a factor. It is pretty straightforward to include
-factors as independent variables in calls to `glm`: you just add the column
-name to the list of other independent variables with a `+`. In this case, 
-we need to do one more step: earlier, we added order to `dow`, so it would
-"remember" the order of the week days (Monday before Tuesday, etc.). However, 
-we need to strip off this order before we include the factor in the `glm` 
-call. One way to do this is with the `factor` call, specifying `ordered = FALSE`. 
-Here is the full call to fit this model:
+data type in R called a factor. You are now essentially fitting this model:
+
+$log(Y)=\beta_{0}+\beta_{1}X1+\gamma^{'}X2$,
+
+where $X2$ is a categorical variable for day of the week and $\gamma^{'}$ 
+represents a vector of parameters associated with each category.
+
+It is pretty straightforward to include factors as independent variables in calls 
+to `glm`: you just add the column name to the list of other independent variables 
+with a `+`. In this case, we need to do one more step: earlier, we added order to
+`dow`, so it would "remember" the order of the week days (Monday before Tuesday, 
+etc.). However, we need to strip off this order before we include the factor in 
+the `glm` call. One way to do this is with the `factor` call, specifying 
+`ordered = FALSE`. Here is the full call to fit this model:
 
 ```{r}
 mod_ctrl_dow <- glm(all ~ tmean + factor(dow, ordered = FALSE), 
@@ -700,11 +706,11 @@ mod_ctrl_dow <- glm(all ~ tmean + factor(dow, ordered = FALSE),
 ```
 
 When you look at the summary for the model object, you can see that the 
-model has fit a separate intercept for six of the seven weekdays. The one
-weekday that isn't fit (Sunday in this case) serves as a baseline---these 
-estimates specify how the log of the expected mortality count is expected
-to differ on, for example, Monday versus Sunday (by about 0.03), if the 
-temperature is the same for the two days. 
+model has fit a separate model parameter for six of the seven weekdays. The one
+weekday that isn't fit (Sunday in this case) serves as a baseline ---these 
+estimates specify how the log of the expected mortality count is expected to 
+differ on, for example, Monday versus Sunday (by about 0.03), if the temperature 
+is the same for the two days. 
 
 ```{r}
 summary(mod_ctrl_dow)
