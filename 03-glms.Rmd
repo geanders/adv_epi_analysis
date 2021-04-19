@@ -4,6 +4,28 @@
 
 [Using splines to model non-linear associations in a GLM]
 
+We saw from the latest model with a linear for mean daily temperature that the 
+suggested effect on mortality is a decrease in daily mortality counts with 
+increasing temperature. However, as you've probably guessed that's probably not 
+entirely accurate. A linear term for the effect of exposure restricts us to an 
+effect that can be fitted with a straigh line (either a null effect or a 
+monotonically increasing or decresing effect with increasing exposure). We can 
+capture non-linear patterns in effects, by using different functions of X. 
+Examples are $\sqrt{X}$, $X^{2}$, or more complex smoothing funtions, such as 
+polynomial or splines. Regression splines are simple parametric smoothing function, 
+which fit separate polynomial in each interval of the range of the predictor; these 
+can be linear, quadratic, and cubic. An example of a (in this case cubic) spline 
+function is $X+X^{2}+X^{3}+I((X>X_{0})*(X-X_{0})^3)$.This particular function is 
+a cubic spline with four degrees of freedom ($df=4$) and one not ($X_{0}$). 
+
+Regression splines can be fit in a GLM via the package `splines`. Two commonly 
+used examples of regression splines are b-splines and natural cubic 
+splines. @vicedo2019hands uses natural cubic splines.
+
+
+
+
+
 ## Cross-basis functions in GLMs
 
 [Using a cross-basis to model an exposure's association with the
