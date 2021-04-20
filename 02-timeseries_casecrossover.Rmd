@@ -2,7 +2,7 @@
 
 ## Reading
 
-The readings for this week are: 
+The readings for this chapter are: 
 
 - @vicedo2019hands, with supplemental material available to download by 
 clicking http://links.lww.com/EDE/B504
@@ -10,13 +10,6 @@ clicking http://links.lww.com/EDE/B504
 https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13
 
 ## Time series data 
-
-[Exploring time series data with daily measurements of health 
-outcomes and environmental exposures]
-
-*Andreas section*
-
-*Brooke's section*
 
 Example datasets are available as part of the supplemental material for 
 both of the articles in this chapter's readings. For @vicedo2019hands, 
@@ -190,6 +183,7 @@ You can plot the outcome variable in the same way:
 ggplot(obs, aes(x = date, y = all)) + 
   geom_point(alpha = 0.5, size = 0.5)
 ```
+
 Again, there are seasonal trends, although in this case they are inversed. 
 Mortality tends to be highest in the winter and lowest in the summer. Further, the
 seasonal pattern is not equally strong in all years---some years it has a much
@@ -217,6 +211,7 @@ ggplot(obs, aes(x = doy, y = year, fill = tmean)) +
   scale_y_reverse() + 
   scale_fill_viridis()
 ```
+
 From this visualization, you can see that temperatures tend to be higher in the
 summer months and lower in the winter months. "Spells" of extreme heat or cold
 are visible---where extreme temperatures tend to persist over a period, rather
@@ -235,6 +230,7 @@ ggplot(obs, aes(x = doy, y = year, fill = all_85plus)) +
   scale_y_reverse() + 
   scale_fill_viridis()
 ```
+
 For mortality, there tends to be an increase in the winter compared to the summer.
 Some winters have stretches with particularly high mortality---these are likely
 a result of seasons with strong influenza outbreaks. You can also see on this 
@@ -250,6 +246,7 @@ daily mortality counts, on average, over the course of the study period:
 ggplot(obs, aes(x = date, y = all)) + 
   geom_point(alpha = 0.5, size = 0.5)
 ```
+
 It can be helpful to add a smooth line to help detect these longer-term 
 patterns, which you can do with `geom_smooth`: 
 
@@ -258,6 +255,7 @@ ggplot(obs, aes(x = date, y = all)) +
   geom_point(alpha = 0.5, size = 0.5) + 
   geom_smooth()
 ```
+
 You could also take the median mortality count across each year in the 
 study period, although you should take out any years without a full year's 
 worth of data before you do this, since there are seasonal trends in the
@@ -334,6 +332,7 @@ You can also visualize the association using boxplots:
 ggplot(obs, aes(x = wday(date, label = TRUE), y = all)) + 
   geom_boxplot()
 ```
+
 You can also try violin plots---these show the full distribution better than
 boxplots, which only show quantiles. 
 
@@ -343,12 +342,6 @@ ggplot(obs, aes(x = dow, y = all)) +
 ```
 
 ## Fitting models
-
-[Fitting models under time series and case-crossover study designs]
-
-*Andreas section*
-
-*Brooke's section*
 
 One of the readings for this week, @vicedo2019hands, includes a section 
 on fitting exposure-response functions to describe the association between 
@@ -502,6 +495,7 @@ enter the model object's name at the console:
 ```{r}
 mod_linear_reg
 ```
+
 More information is printed if you run the `summary` method on the model 
 object: 
 
@@ -603,6 +597,7 @@ increase in temperature.
 ```{r}
 summary(mod_pois_reg)
 ```
+
 You can see this even more clearly if you take a look at the association between
 temperature for each observation and the expected mortality count fit by the 
 model. First, if you look at the fitted values without transforming, they 

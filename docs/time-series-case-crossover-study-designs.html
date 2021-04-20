@@ -21,10 +21,10 @@
   <meta name="twitter:description" content="This is the coursebook for the Colorado State University course ERHS 732, Advanced Epidemiological Analysis." />
   
 
-<meta name="author" content="Andreas Neophytou and G. Brooke Anderson" />
+<meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-04-05" />
+<meta name="date" content="2021-04-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -156,6 +156,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.1</b> Splines in GLMs</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.2</b> Cross-basis functions in GLMs</a></li>
+<li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#chapter-vocabulary-1"><i class="fa fa-check"></i><b>4.3</b> Chapter vocabulary</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
 <ul>
@@ -207,7 +208,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 3</span> Time series / case-crossover study designs</h1>
 <div id="reading" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Reading</h2>
-<p>The readings for this week are:</p>
+<p>The readings for this chapter are:</p>
 <ul>
 <li><span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>, with supplemental material available to download by
 clicking <a href="http://links.lww.com/EDE/B504" class="uri">http://links.lww.com/EDE/B504</a></li>
@@ -217,10 +218,6 @@ clicking <a href="http://links.lww.com/EDE/B504" class="uri">http://links.lww.co
 </div>
 <div id="time-series-data" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Time series data</h2>
-<p>[Exploring time series data with daily measurements of health
-outcomes and environmental exposures]</p>
-<p><em>Andreas section</em></p>
-<p><em>Brooke’s section</em></p>
 <p>Example datasets are available as part of the supplemental material for
 both of the articles in this chapter’s readings. For <span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>,
 the example data are available as the file “lndn_obs.csv.” These data are
@@ -248,16 +245,17 @@ working directory:</p>
 ## # … with 8,269 more rows, and 4 more variables: all_85plus &lt;dbl&gt;, tmean &lt;dbl&gt;,
 ## #   tmin &lt;dbl&gt;, tmax &lt;dbl&gt;</code></pre>
 <p>This example dataset shows many characteristics that are common for datasets for
-time series studies in environmental epidemiology. General characteristics of
-time series data for environmental epidemiology studies are:</p>
+time series studies in environmental epidemiology. Time series data are essentially
+a sequence of data points repeatedly taken over a certain time interval (e.g. day,
+week, month etc). General characteristics of time series data for environmental epidemiology studies are:</p>
 <ul>
 <li>Observations are given at an aggregated level. For example, instead of
 individual observations for each person in London, the <code>obs</code> data give
 counts of deaths throughout London. The level of aggregation is often determined
 by geopolitical boundaries, for example counties of ZIP codes in the US.</li>
 <li>Observations are given at regularly spaced time steps over a period. In the
-<code>obs</code> dataset, the time step is day. Typically, values will be provided
-continuously over that time period, with observations for each time step.
+<code>obs</code> dataset, the time interval is day. Typically, values will be provided
+continuously over that time period, with observations for each time interval.
 Occasionally, however, the time series data may only be available for
 particular seasons (e.g., only warm season dates for an ozone study), or
 there may be some missing data on either the exposure or health outcome over
@@ -265,17 +263,18 @@ the course of the study period.</li>
 <li>Daily observations are given for the health outcome, for the environmental
 exposure of interest, and for potential time-varying confounders. In the <code>obs</code>
 dataset, the health outcome is mortality (from all causes; sometimes, the health
-outcome will focus on a specific cause of mortality or other health outcome).
-Counts are given for everyone in the city for each day (<code>all</code> column), as well
-as for specific age categories (<code>all_0_64</code> for all deaths among those up to
-64 years old, and so on). The exposure of interest in the <code>obs</code> dataset is
-temperature, and three metrics of this are included (<code>tmean</code>, <code>tmin</code>, and
-<code>tmax</code>). Day of the week is one time-varying factor that could be a confounder,
-or at least help explain variation in the outcome (mortality). This is included
-through the <code>dow</code> variable in the <code>obs</code> data. Sometimes, you will also see a
-marker for holidays included as a potential time-varying confounder, or other
-exposure variables (temperature is a potential confounder, for example, when
-investigating the relationship between air pollution and mortality risk).</li>
+outcome will focus on a specific cause of mortality or other health outcomes such
+as hospitalizations or emergency room visits). Counts are given for everyone in
+the city for each day (<code>all</code> column), as well as for specific age categories
+(<code>all_0_64</code> for all deaths among those up to 64 years old, and so on). The
+exposure of interest in the <code>obs</code> dataset is temperature, and three metrics of
+this are included (<code>tmean</code>, <code>tmin</code>, and <code>tmax</code>). Day of the week is one
+time-varying factor that could be a confounder, or at least help explain
+variation in the outcome (mortality). This is included through the <code>dow</code> variable
+in the <code>obs</code> data. Sometimes, you will also see a marker for holidays included
+as a potential time-varying confounder, or other exposure variables (temperature
+is a potential confounder, for example, when investigating the relationship
+between air pollution and mortality risk).</li>
 <li>Multiple metrics of an exposure and / or multiple health outcome counts
 may be included for each time step. In the <code>obs</code> example, three metrics of
 temperature are included (minimum daily temperature, maximum daily temperature,
@@ -405,8 +404,8 @@ with values typically lowest in the winter and highest in the summer.</p>
 <p>You can plot the outcome variable in the same way:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="time-series-case-crossover-study-designs.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
 <span id="cb18-2"><a href="time-series-case-crossover-study-designs.html#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" />
-Again, there are seasonal trends, although in this case they are inversed.
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Again, there are seasonal trends, although in this case they are inversed.
 Mortality tends to be highest in the winter and lowest in the summer. Further, the
 seasonal pattern is not equally strong in all years—some years it has a much
 higher winter peak, probably in conjunction with severe influenza seasons.</p>
@@ -428,8 +427,8 @@ and still be correctly interpreted.</p>
 <span id="cb19-3"><a href="time-series-case-crossover-study-designs.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
 <span id="cb19-4"><a href="time-series-case-crossover-study-designs.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span> </span>
 <span id="cb19-5"><a href="time-series-case-crossover-study-designs.html#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-10-1.png" width="672" />
-From this visualization, you can see that temperatures tend to be higher in the
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>From this visualization, you can see that temperatures tend to be higher in the
 summer months and lower in the winter months. “Spells” of extreme heat or cold
 are visible—where extreme temperatures tend to persist over a period, rather
 than randomly fluctuating within a season. You can also see unusual events, like
@@ -443,8 +442,8 @@ evident.</p>
 <span id="cb20-2"><a href="time-series-case-crossover-study-designs.html#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
 <span id="cb20-3"><a href="time-series-case-crossover-study-designs.html#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span> </span>
 <span id="cb20-4"><a href="time-series-case-crossover-study-designs.html#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" />
-For mortality, there tends to be in increase in the winter compared to the summer.
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>For mortality, there tends to be an increase in the winter compared to the summer.
 Some winters have stretches with particularly high mortality—these are likely
 a result of seasons with strong influenza outbreaks. You can also see on this
 plot the impact of the 2003 heat wave on mortality among this oldest age group.</p>
@@ -456,14 +455,14 @@ question. For example, the following plot shows a clear pattern of decreasing
 daily mortality counts, on average, over the course of the study period:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="time-series-case-crossover-study-designs.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
 <span id="cb21-2"><a href="time-series-case-crossover-study-designs.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-12-1.png" width="672" />
-It can be helpful to add a smooth line to help detect these longer-term
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>It can be helpful to add a smooth line to help detect these longer-term
 patterns, which you can do with <code>geom_smooth</code>:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="time-series-case-crossover-study-designs.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
 <span id="cb22-2"><a href="time-series-case-crossover-study-designs.html#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
 <span id="cb22-3"><a href="time-series-case-crossover-study-designs.html#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" />
-You could also take the median mortality count across each year in the
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>You could also take the median mortality count across each year in the
 study period, although you should take out any years without a full year’s
 worth of data before you do this, since there are seasonal trends in the
 outcome:</p>
@@ -543,8 +542,8 @@ a dramatic difference.</p>
 <p>You can also visualize the association using boxplots:</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="time-series-case-crossover-study-designs.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>), <span class="at">y =</span> all)) <span class="sc">+</span> </span>
 <span id="cb37-2"><a href="time-series-case-crossover-study-designs.html#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-19-1.png" width="672" />
-You can also try violin plots—these show the full distribution better than
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>You can also try violin plots—these show the full distribution better than
 boxplots, which only show quantiles.</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="time-series-case-crossover-study-designs.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> dow, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
 <span id="cb38-2"><a href="time-series-case-crossover-study-designs.html#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">draw_quantiles =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>))</span></code></pre></div>
@@ -552,9 +551,6 @@ boxplots, which only show quantiles.</p>
 </div>
 <div id="fitting-models" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Fitting models</h2>
-<p>[Fitting models under time series and case-crossover study designs]</p>
-<p><em>Andreas section</em></p>
-<p><em>Brooke’s section</em></p>
 <p>One of the readings for this week, <span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>, includes a section
 on fitting exposure-response functions to describe the association between
 daily mean temperature and mortality risk. This article includes example
@@ -589,7 +585,8 @@ previously worked with. One basic regression model that can be fit within this
 framework is a linear regression model. However, the framework also allows you
 to also fit, among others, logistic regression models (useful when the outcome
 variable can only take one of two values, e.g., success / failure or alive /
-dead), Poisson regression models (useful when the outcome variable is a count).</p>
+dead), Poisson regression models (useful when the outcome variable is a count or
+rate).</p>
 <p>This generalized framework brings some unity to these different types of
 regression models. From a practical standpoint, it has allowed software
 developers to easily provide a common interface to fit these types of models.
@@ -606,7 +603,7 @@ come closer to a normal distribution the further their average gets from
 0). For binary data—like whether each person in a study population died on
 a given day or not—normally distributed errors are also unlikely. Instead,
 in these two cases, it is typically more appropriate to fit GLMs with
-Poisson and logistic “families,” respectively, where the family designation
+Poisson and binomial “families,” respectively, where the family designation
 includes an appropriate specification for the variance when fitting the model
 based on these outcome types.</p>
 <p>The other element that distinguishes different types of regression within
@@ -614,25 +611,22 @@ the GLM framework is the link function. The link function applies a transformati
 on the combination of independent variables in the regression equation
 when fitting the model. With normally distributed data, an <em>identity link</em>
 is often appropriate—with this link, the combination of independent variables
-remain unchange (i.e., keep their initial “identity”). With count data, a
-<em>log link</em> is often more appropriate, while with logistic data, a <em>logit link</em>
+remain unchanged (i.e., keep their initial “identity”). With count data, a
+<em>log link</em> is often more appropriate, while with binomial data, a <em>logit link</em>
 is often used.</p>
 <p>Finally, data will often not perfectly adhere to assumptions. For example, the
-Poisson family of GLMs assumes that variance follows a Poisson distribution.
-With this distribution, the variance is equal to the mean. With real-life
-data, this assumption is often not valid, and in many cases the variance in
-real life count data is larger than the mean. This can be accounted for when
-fitting a GLM by setting an error distribution that does not require the
-variance to equal the mean—instead, both a mean value and something like
-a variance are estimated from the data. In environmental epidemiology,
-time series are often fit to allow for this overdispersion. This is because
-if the data are overdispersed but the model does not account for this, the
-standard errors on the estimates of the model parameters may be artificially
-small. If the data are not overdispersed, the model will identify this when
-being fit to the data, so it is typically better to prefer to allow for
-overdispersion in the model (if the size of the data were small, you may
-want to be parsimonious and avoid unneeded complexity in the model, but
-this is typically not the case with time series data).</p>
+Poisson family of GLMs assumes that variance follows a Poisson distribution
+(The probability mass function for Poisson distribution <span class="math inline">\(X \sim {\sf Poisson}(\mu)\)</span> is denoted by <span class="math inline">\(f(k;\mu)=Pr[X=k]= \displaystyle \frac{\mu^{k}e^{-\mu}}{k!}\)</span>, where
+<span class="math inline">\(k\)</span> is the number of occurences, and <span class="math inline">\(\mu\)</span> is equal to the expected number of
+cases). With this distribution, the variance is equal to the mean (<span class="math inline">\(\mu=E(X)=Var(X)\)</span>). With real-life data, this assumption is often not valid, and in many cases the variance in real life count data is larger than the mean. This can be accounted for when fitting a GLM by setting an error distribution that does not require the variance to equal the mean—instead, both a mean value and something like a
+variance are estimated from the data, assuming an overdispersion parameter <span class="math inline">\(\phi\)</span>
+so that <span class="math inline">\(Var(X)=\phi E(X)\)</span>. In environmental epidemiology, time series
+are often fit to allow for this overdispersion. This is because if the data are overdispersed but the model does not account for this, the standard errors on the
+estimates of the model parameters may be artificially small. If the data are not overdispersed (<span class="math inline">\(\phi=1\)</span>), the model will identify this when being fit to the data,
+so it is typically better to prefer to allow for overdispersion in the model
+(if the size of the data were small, you may want to be parsimonious and avoid
+unneeded complexity in the model, but this is typically not the case with time
+series data).</p>
 <p>In the next section, you will work through the steps of developing a GLM to fit
 the example dataset <code>obs</code>. For now, you will only fit a linear association
 between mean daily temperature and mortality risk, eventually including control
@@ -667,6 +661,13 @@ estimate and its estimated standard error.</li>
 independent variable) and daily mortality count (as the dependent variable),
 first fitting a linear regression.</strong></li>
 </ol>
+<p>This is the model you are fitting:</p>
+<p><span class="math inline">\(Y_{t}=\beta_{0}+\beta_{1}X1_{t}+\epsilon\)</span></p>
+<p>where <span class="math inline">\(Y_{t}\)</span> is the mortality count on day <span class="math inline">\(t\)</span>, <span class="math inline">\(X1_{t}\)</span> is the mean temperature
+for day <span class="math inline">\(t\)</span> and <span class="math inline">\(\epsilon\)</span> is the error term. Since this is a linear model we are
+assuming a Gaussian error distribution <span class="math inline">\(\epsilon \sim {\sf N}(0, \sigma^{2})\)</span>,
+where <span class="math inline">\(\sigma^{2}\)</span> is the variance not explained by the covariates (here just
+temperature).</p>
 <p>To do this, you will use the <code>glm</code> call. If you would like to save model fit
 results to use later, you assign the output a name as an R object
 (<code>mod_linear_reg</code> in the example code). If your study data are in a dataframe,
@@ -789,7 +790,13 @@ There is also a nice example of how it can be used in one of the chapters of
 </ol>
 <p>A linear regression is often not appropriate when fitting a model where the
 outcome variable provides counts, as with the example data. A Poisson regression
-is often preferred. In the <code>glm</code> call, you can specify this with the <code>family</code>
+is often preferred.</p>
+<p>For a count distribution were <span class="math inline">\(Y \sim {\sf Poisson(\mu)}\)</span> we typically fit a model
+such as</p>
+<p><span class="math inline">\(g(Y)=\beta_{0}+\beta_{1}X1\)</span>, where <span class="math inline">\(g()\)</span> represents the link function, in this
+case a log function so that <span class="math inline">\(log(Y)=\beta_{0}+\beta_{1}X1\)</span>. We can also express
+this as <span class="math inline">\(Y=exp(\beta_{0}+\beta_{1}X1)\)</span>.</p>
+<p>In the <code>glm</code> call, you can specify this with the <code>family</code>
 parameter, for which “poisson” is one choice.</p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="time-series-case-crossover-study-designs.html#cb51-1" aria-hidden="true" tabindex="-1"></a>mod_pois_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>)</span></code></pre></div>
 <p>One thing to keep in mind with this change is that the model now uses a
@@ -861,7 +868,7 @@ using a log link), but that allows for overdispersion. You can specify it
 with the “quasipoisson” choice for the <code>family</code> parameter in the <code>glm</code> call:</p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="time-series-case-crossover-study-designs.html#cb56-1" aria-hidden="true" tabindex="-1"></a>mod_ovdisp_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>When you use this family, there will be some new information in the summary
-for the model object. It will now include a dispersion parameter. If this
+for the model object. It will now include a dispersion parameter (<span class="math inline">\(\phi\)</span>). If this
 is close to 1, then the data were close to the assumed variance for a Poisson
 distribution (i.e., there was little evidence of overdispersion). In the
 example, the overdispersion is around 5, suggesting the data are overdispersed
@@ -919,22 +926,25 @@ significant under both models).</p>
 <li><strong>Change your function call to include control for day of week.</strong></li>
 </ol>
 <p>Day of week is included in the data as a categorical variable, using a
-data type in R called a factor. It is pretty straightforward to include
-factors as independent variables in calls to <code>glm</code>: you just add the column
-name to the list of other independent variables with a <code>+</code>. In this case,
-we need to do one more step: earlier, we added order to <code>dow</code>, so it would
-“remember” the order of the week days (Monday before Tuesday, etc.). However,
-we need to strip off this order before we include the factor in the <code>glm</code>
-call. One way to do this is with the <code>factor</code> call, specifying <code>ordered = FALSE</code>.
-Here is the full call to fit this model:</p>
+data type in R called a factor. You are now essentially fitting this model:</p>
+<p><span class="math inline">\(log(Y)=\beta_{0}+\beta_{1}X1+\gamma^{&#39;}X2\)</span>,</p>
+<p>where <span class="math inline">\(X2\)</span> is a categorical variable for day of the week and <span class="math inline">\(\gamma^{&#39;}\)</span>
+represents a vector of parameters associated with each category.</p>
+<p>It is pretty straightforward to include factors as independent variables in calls
+to <code>glm</code>: you just add the column name to the list of other independent variables
+with a <code>+</code>. In this case, we need to do one more step: earlier, we added order to
+<code>dow</code>, so it would “remember” the order of the week days (Monday before Tuesday,
+etc.). However, we need to strip off this order before we include the factor in
+the <code>glm</code> call. One way to do this is with the <code>factor</code> call, specifying
+<code>ordered = FALSE</code>. Here is the full call to fit this model:</p>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="time-series-case-crossover-study-designs.html#cb63-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>), </span>
 <span id="cb63-2"><a href="time-series-case-crossover-study-designs.html#cb63-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>When you look at the summary for the model object, you can see that the
-model has fit a separate intercept for six of the seven weekdays. The one
-weekday that isn’t fit (Sunday in this case) serves as a baseline—these
-estimates specify how the log of the expected mortality count is expected
-to differ on, for example, Monday versus Sunday (by about 0.03), if the
-temperature is the same for the two days.</p>
+model has fit a separate model parameter for six of the seven weekdays. The one
+weekday that isn’t fit (Sunday in this case) serves as a baseline —these
+estimates specify how the log of the expected mortality count is expected to
+differ on, for example, Monday versus Sunday (by about 0.03), if the temperature
+is the same for the two days.</p>
 <div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="time-series-case-crossover-study-designs.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_ctrl_dow)</span></code></pre></div>
 <pre><code>## 
 ## Call:
@@ -1083,6 +1093,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

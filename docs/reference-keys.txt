@@ -14,6 +14,7 @@ chapter-vocabulary
 generalized-linear-models
 splines-in-glms
 cross-basis-functions-in-glms
+chapter-vocabulary-1
 natural-experiments
 interrupted-time-series
 difference-in-differences

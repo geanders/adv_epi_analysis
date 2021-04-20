@@ -21,10 +21,10 @@
   <meta name="twitter:description" content="This is the coursebook for the Colorado State University course ERHS 732, Advanced Epidemiological Analysis." />
   
 
-<meta name="author" content="Andreas Neophytou and G. Brooke Anderson" />
+<meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-04-05" />
+<meta name="date" content="2021-04-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -156,6 +156,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.1</b> Splines in GLMs</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.2</b> Cross-basis functions in GLMs</a></li>
+<li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#chapter-vocabulary-1"><i class="fa fa-check"></i><b>4.3</b> Chapter vocabulary</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
 <ul>
@@ -205,14 +206,334 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="generalized-linear-models" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Generalized linear models</h1>
+<p>The readings for this chapter are the same as for the last chapter:</p>
+<ul>
+<li><span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>, with supplemental material available to download by
+clicking <a href="http://links.lww.com/EDE/B504" class="uri">http://links.lww.com/EDE/B504</a></li>
+<li><span class="citation"><a href="references.html#ref-armstrong2014conditional" role="doc-biblioref">Armstrong, Gasparrini, and Tobias</a> (<a href="references.html#ref-armstrong2014conditional" role="doc-biblioref">2014</a>)</span>, with supplemental material available at
+<a href="https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13" class="uri">https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13</a></li>
+</ul>
 <div id="splines-in-glms" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Splines in GLMs</h2>
-<p>[Using splines to model non-linear associations in a GLM]</p>
+<p>We saw from the latest model with a linear for mean daily temperature that the
+suggested effect on mortality is a decrease in daily mortality counts with
+increasing temperature. However, as you’ve probably guessed that’s probably not
+entirely accurate. A linear term for the effect of exposure restricts us to an
+effect that can be fitted with a straight line (either a null effect or a
+monotonically increasing or decreasing effect with increasing exposure).</p>
+<p>This clearly is problematic in some cases. One example is when exploring the
+association between temperature and health risk. Based on human physiology,
+we would expect many health risks to be elevated at temperature extremes,
+whether those are extreme cold or extreme heat. A linear term would be
+inadequate to describe this kind of U-shaped association. Other effects might
+have a threshold—for example, heat stroke might have a very low risk at
+most temperatures, only increasing with temperature above a certain threshold.
+[Maybe add images of these kinds of associations?]</p>
+<p>We can
+capture non-linear patterns in effects, by using different functions of X.
+Examples are <span class="math inline">\(\sqrt{X}\)</span>, <span class="math inline">\(X^{2}\)</span>, or more complex smoothing functions, such as
+polynomials or splines. Polynomials might at first make a lot of sense,
+especially since you’ve likely come across polynomial terms in mathematics
+classes since grade school. However, it turns out that they have some undesirable
+properties. A key one is that they can have extreme behavior, particularly
+when using a high-order polynomial, and particularly outside the range of
+data that are available to fit the model.</p>
+<p>An alternative that is generally preferred for environmental epidemiology
+studies is the regression spline.
+Regression splines are simple parametric smoothing function,
+which fit separate polynomial in each interval of the range of the predictor; these
+can be linear, quadratic, and cubic. An example of a (in this case cubic) spline
+function is <span class="math inline">\(X+X^{2}+X^{3}+I((X&gt;X_{0})*(X-X_{0})^3)\)</span>.This particular function is
+a cubic spline with four degrees of freedom (<span class="math inline">\(df=4\)</span>) and one not (<span class="math inline">\(X_{0}\)</span>).
+A special type of spline called a natural cubic spline is particularly popular.
+Unlike a polynomial function, a natural cubic spline “behaves” better outside
+the range of the data used to fit the model—they are constrained to continue
+on a [linear?] trajectory once they pass beyond the range of the data.
+[Maybe add more / clarify / add references on the point of why splines versus
+polynomials.]</p>
+<p>Regression splines can be fit in a GLM via the package <code>splines</code>. Two commonly
+used examples of regression splines are b-splines and natural cubic
+splines. <span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> uses natural cubic splines.</p>
+<p><em>Applied: Including a spline in a GLM</em></p>
+<p>For this exercise, you will continue to build up the model that you began in
+the examples in the previous chapter. The example uses the data provided with
+one of this chapter’s readings, <span class="citation"><a href="references.html#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="references.html#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>.</p>
+<ol style="list-style-type: decimal">
+<li>Start by fitting a somewhat simple model—how are daily mortality counts
+associated with (a) a linear and (b) a non-linear function of time? Is a linear
+term appropriate to describe this association? What types of patterns are
+captured by a non-linear function that are missed by a linear function?</li>
+<li>In the last chapter, the final version of the model used a GLM with an
+overdispersed Poisson distribution, including control for day of week.
+Start from this model and add control for long-term and seasonal trends
+over the study period.</li>
+<li>Refine your model to fit for a non-linear, rather than linear, function
+of temperature in the model. Does a non-linear term seem to be more
+appropriate than a linear term?</li>
+</ol>
+<p><em>Applied exercise: Example code</em></p>
+<ol style="list-style-type: decimal">
+<li><strong>Start by fitting a somewhat simple model—how are daily mortality counts
+associated with (a) a linear and (b) a non-linear function of time?</strong></li>
+</ol>
+<p>It is helpful to start by loading the R packages you are likely to need, as
+well as the example dataset. You may also need to re-load the example data
+and perform the steps taken to clean it in the last chapter:</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="generalized-linear-models.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
+<span id="cb68-2"><a href="generalized-linear-models.html#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb68-3"><a href="generalized-linear-models.html#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb68-4"><a href="generalized-linear-models.html#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb68-5"><a href="generalized-linear-models.html#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb68-6"><a href="generalized-linear-models.html#cb68-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-7"><a href="generalized-linear-models.html#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load and clean the data</span></span>
+<span id="cb68-8"><a href="generalized-linear-models.html#cb68-8" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-9"><a href="generalized-linear-models.html#cb68-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dow =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<p>For this first question, the aim is to model the association between time and
+daily mortality counts within the example data. This approach is often used
+to explore and, if needed, adjust for temporal factors in the data.</p>
+<p>There are a number of factors that can act over time to create patterns in both
+environmental exposures and health outcomes. For example, there may be changes
+in air pollution exposures over the years of a study because of changes in
+regulations or growth or decline of factories and automobile traffic in an area.
+Changes in health care and in population demographics can cause patterns in
+health outcomes over the study period. At a shorter, seasonal term, there are
+also factors that could influence both exposures and outcomes, including
+seasonal changes in climate, seasonal changes in emissions, and seasonal
+patterns in health outcomes.</p>
+<p>It can be difficult to pinpoint and measure these temporal factors, and so
+instead a common practice is to include model control based on the time in the
+study. This can be measured, for example, as the day since the start of the
+study period.</p>
+<p>You can easily add a column for day in study for a dataset that
+includes date. R saves dates in a special format, which we’re using the in
+<code>obs</code> dataset:</p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="generalized-linear-models.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(obs<span class="sc">$</span>date)</span></code></pre></div>
+<pre><code>## [1] &quot;Date&quot;</code></pre>
+<p>However, this is just a fancy overlay on a value that’s ultimately saved as
+a number. Like most Unix programs, the date is saved as the number of days
+since the Unix “epoch,” January 1, 1970. You can take advantage of this
+convention—if you use <code>as.numeric</code> around a date in R, it will give you a
+number that gets one unit higher for every new date. Here’s the example for
+the first date in our example data:</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="generalized-linear-models.html#cb71-1" aria-hidden="true" tabindex="-1"></a>obs<span class="sc">$</span>date[<span class="dv">1</span>]</span></code></pre></div>
+<pre><code>## [1] &quot;1990-01-01&quot;</code></pre>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="generalized-linear-models.html#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(obs<span class="sc">$</span>date[<span class="dv">1</span>]) </span></code></pre></div>
+<pre><code>## [1] 7305</code></pre>
+<p>And here’s the example for the next date:</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="generalized-linear-models.html#cb75-1" aria-hidden="true" tabindex="-1"></a>obs<span class="sc">$</span>date[<span class="dv">2</span>]</span></code></pre></div>
+<pre><code>## [1] &quot;1990-01-02&quot;</code></pre>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="generalized-linear-models.html#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(obs<span class="sc">$</span>date[<span class="dv">2</span>])</span></code></pre></div>
+<pre><code>## [1] 7306</code></pre>
+<p>You can use this convention to add a column that gives days since the first
+study date. While you could also use the <code>1:n()</code> call to get a number for
+each row that goes from 1 to the number of rows, that approach would not
+catch any “skips” in dates in the data (e.g., missing dates if only warm-season
+data are included). The use of the dates is more robust:</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="generalized-linear-models.html#cb79-1" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
+<span id="cb79-2"><a href="generalized-linear-models.html#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> <span class="fu">as.numeric</span>(date) <span class="sc">-</span> <span class="fu">first</span>(<span class="fu">as.numeric</span>(date)))</span>
+<span id="cb79-3"><a href="generalized-linear-models.html#cb79-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-4"><a href="generalized-linear-models.html#cb79-4" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb79-5"><a href="generalized-linear-models.html#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, time)</span></code></pre></div>
+<pre><code>## # A tibble: 8,279 x 2
+##    date        time
+##    &lt;date&gt;     &lt;dbl&gt;
+##  1 1990-01-01     0
+##  2 1990-01-02     1
+##  3 1990-01-03     2
+##  4 1990-01-04     3
+##  5 1990-01-05     4
+##  6 1990-01-06     5
+##  7 1990-01-07     6
+##  8 1990-01-08     7
+##  9 1990-01-09     8
+## 10 1990-01-10     9
+## # … with 8,269 more rows</code></pre>
+<p>As a next step, it is always useful to use exploratory data analysis to look
+at the patterns that might exist for an association, before you start designing
+and fitting the regression model.</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="generalized-linear-models.html#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, </span>
+<span id="cb81-2"><a href="generalized-linear-models.html#cb81-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> all)) <span class="sc">+</span></span>
+<span id="cb81-3"><a href="generalized-linear-models.html#cb81-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<p>There are clear patterns between time and daily mortality counts in these data.
+First, there is a clear long-term pattern, with mortality rates declining on
+average over time. Second, there are clear seasonal patterns, with higher
+mortality generally in the winter and lower rates in the summer.</p>
+<p>To model this, we can start with fitting a linear term. In the last chapter,
+we determined that the mortality outcome data can be fit using a GLM with a
+Poisson family, allowing for overdispersion as it is common in real-life
+count data like these. To include time as a linear term, we can just include
+that column name to the right of the <code>~</code> in the model formula:</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="generalized-linear-models.html#cb82-1" aria-hidden="true" tabindex="-1"></a>mod_time <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> time, </span>
+<span id="cb82-2"><a href="generalized-linear-models.html#cb82-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>You can use the <code>augment</code> function from the <code>broom</code> package to pull out the
+fitted estimate for each of the original observations and plot that, along
+with the observed data, to get an idea of what this model has captured:</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="generalized-linear-models.html#cb83-1" aria-hidden="true" tabindex="-1"></a>mod_time <span class="sc">%&gt;%</span> </span>
+<span id="cb83-2"><a href="generalized-linear-models.html#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb83-3"><a href="generalized-linear-models.html#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time)) <span class="sc">+</span> </span>
+<span id="cb83-4"><a href="generalized-linear-models.html#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb83-5"><a href="generalized-linear-models.html#cb83-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb83-6"><a href="generalized-linear-models.html#cb83-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-46-1.png" width="672" />
+This linear trend captures the long-term trend in mortality rates fairly well in
+this case. This won’t always be the case, as there may be some health
+outcomes—or some study populations—where the long-term pattern over the
+study period might be less linear than in this example. Further, the linear
+term is completely unsuccessful in capturing the shorter-term trends in mortality
+rate. These oscillate, and so would be impossible to capture over multiple
+years with a linear trend.</p>
+<p>Instead, it’s helpful to use a non-linear term for time in the model. We can
+use a natural cubic spline for this, using the <code>ns</code> function from the <code>splines</code>
+package. You will need to clarify how flexible the spline function should be,
+and this can be specified through the degrees of freedom for the spline. A
+spline with more degrees of freedom will be “wigglier” over a given data range
+compared to a spline with fewer degrees of freedom. Let’s start by using
+158 degrees of freedom, which translates to about 7 degrees of freedom per year:</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="generalized-linear-models.html#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb84-2"><a href="generalized-linear-models.html#cb84-2" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb84-3"><a href="generalized-linear-models.html#cb84-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>You can visualize the model results in a similar way to how we visualized the
+last model. However, there is one extra step. The <code>augment</code> function only
+carries through columns in the original data (<code>obs</code>) that were directly used
+in fitting the model. Now that we’re using a transformation of the <code>time</code>
+column, by wrapping it in <code>ns</code>, the <code>time</code> column is no longer included in the
+<code>augment</code> output. However, we can easily add it back in using <code>mutate</code>,
+pulling it from the original <code>obs</code> dataset, and then proceed as before.</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="generalized-linear-models.html#cb85-1" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin <span class="sc">%&gt;%</span> </span>
+<span id="cb85-2"><a href="generalized-linear-models.html#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb85-3"><a href="generalized-linear-models.html#cb85-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> obs<span class="sc">$</span>time) <span class="sc">%&gt;%</span> </span>
+<span id="cb85-4"><a href="generalized-linear-models.html#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time)) <span class="sc">+</span> </span>
+<span id="cb85-5"><a href="generalized-linear-models.html#cb85-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb85-6"><a href="generalized-linear-models.html#cb85-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb85-7"><a href="generalized-linear-models.html#cb85-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p>The non-linear term for time has allowed enough flexibility that the model now
+captures both long-term and seasonal trends in the data.</p>
+<p>[More on how to pick a good d.f. for an env. epi. model like this]. In practice,
+researchers often using about 6–8 degrees of freedom per year of the study, in
+the case of year-round data. You can explore how changing the degrees of freedom
+changes the way the model fits to the observed data. As you use more degrees of
+freedom, the line will capture very short-term effects, and may start to
+interfere with the shorter-term associations between environmental exposures and
+health risk that you are trying to capture. Even in the example model we just
+fit, for example, it looks like the control for time may be capturing some
+patterns that were likely caused by heatwaves (the rare summer peaks, including
+one from the 1995 heatwave). Conversely, if too few degrees of freedom are used,
+the model will shift to look much more like the linear model, with inadequate
+control for seasonal patterns.</p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="generalized-linear-models.html#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A model with many less d.f. for the time spline</span></span>
+<span id="cb86-2"><a href="generalized-linear-models.html#cb86-2" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin_lowdf <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">10</span>), </span>
+<span id="cb86-3"><a href="generalized-linear-models.html#cb86-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
+<span id="cb86-4"><a href="generalized-linear-models.html#cb86-4" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin_lowdf <span class="sc">%&gt;%</span> </span>
+<span id="cb86-5"><a href="generalized-linear-models.html#cb86-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb86-6"><a href="generalized-linear-models.html#cb86-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> obs<span class="sc">$</span>time) <span class="sc">%&gt;%</span> </span>
+<span id="cb86-7"><a href="generalized-linear-models.html#cb86-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time)) <span class="sc">+</span> </span>
+<span id="cb86-8"><a href="generalized-linear-models.html#cb86-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb86-9"><a href="generalized-linear-models.html#cb86-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb86-10"><a href="generalized-linear-models.html#cb86-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="generalized-linear-models.html#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A model with many more d.f. for the time spline</span></span>
+<span id="cb87-2"><a href="generalized-linear-models.html#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (Takes a little while to run)</span></span>
+<span id="cb87-3"><a href="generalized-linear-models.html#cb87-3" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin_highdf <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">1000</span>), </span>
+<span id="cb87-4"><a href="generalized-linear-models.html#cb87-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
+<span id="cb87-5"><a href="generalized-linear-models.html#cb87-5" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin_highdf <span class="sc">%&gt;%</span> </span>
+<span id="cb87-6"><a href="generalized-linear-models.html#cb87-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb87-7"><a href="generalized-linear-models.html#cb87-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> obs<span class="sc">$</span>time) <span class="sc">%&gt;%</span> </span>
+<span id="cb87-8"><a href="generalized-linear-models.html#cb87-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time)) <span class="sc">+</span> </span>
+<span id="cb87-9"><a href="generalized-linear-models.html#cb87-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb87-10"><a href="generalized-linear-models.html#cb87-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb87-11"><a href="generalized-linear-models.html#cb87-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<p>In all cases, when you fit a non-linear function of an explanatory variable,
+it will make the model summary results look much more complicated, e.g.:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="generalized-linear-models.html#cb88-1" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin_lowdf <span class="sc">%&gt;%</span> </span>
+<span id="cb88-2"><a href="generalized-linear-models.html#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 11 x 5
+##    term                estimate std.error statistic   p.value
+##    &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1 (Intercept)           5.26     0.00948    555.   0.       
+##  2 ns(time, df = 10)1   -0.0260   0.0119      -2.18 2.93e-  2
+##  3 ns(time, df = 10)2   -0.0860   0.0155      -5.56 2.85e-  8
+##  4 ns(time, df = 10)3   -0.114    0.0139      -8.15 4.01e- 16
+##  5 ns(time, df = 10)4   -0.196    0.0151     -13.0  4.47e- 38
+##  6 ns(time, df = 10)5   -0.187    0.0148     -12.6  2.80e- 36
+##  7 ns(time, df = 10)6   -0.315    0.0154     -20.5  5.62e- 91
+##  8 ns(time, df = 10)7   -0.337    0.0154     -21.9  1.95e-103
+##  9 ns(time, df = 10)8   -0.358    0.0135     -26.5  1.56e-148
+## 10 ns(time, df = 10)9   -0.467    0.0244     -19.2  4.49e- 80
+## 11 ns(time, df = 10)10  -0.392    0.0126     -31.2  8.01e-202</code></pre>
+<p>You can see that there are multiple model coefficients for the variable fit
+using a spline function, one less than the number of degrees of freedom. These
+model coefficients are very hard to interpret on their own. When we are using
+the spline to <em>control</em> for a factor that might serve as a confounder of the
+association of interest, we typically won’t need to try to interpret these
+model coefficients—instead, we are interested in accounting for how this
+factor explains variability in the outcome, without needing to quantify the
+association as a key result. However, there are also cases where we want to
+use a spline to fit the association with the exposure that we are interested
+in. In this case, we will want to be able to interpret model coefficients from
+the spline. Later in this chapter, we will introduce the <code>dlnm</code> package, which
+includes functions to both fit and interpret natural cubic splines within
+GLMs for environmental epidemiology.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Start from the last model created in the last chapter and add control for
+long-term and seasonal trends over the study period.</strong></li>
+</ol>
+<p>The last model fit in the last chapter was the following, which fits for the
+association between a linear term of temperature and mortality risk, with control
+for day of week:</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="generalized-linear-models.html#cb90-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb90-2"><a href="generalized-linear-models.html#cb90-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>To add control for long-term and seasonal trends, you can take the natural cubic
+spline function of temperature that you just fit and include it among the
+explanatory / independent variables from the model in the last chapter. If you
+want to control for only long-term trends, a linear term of the <code>time</code> column
+could work, as we discovered in the first part of this chapter’s exercise.
+However, seasonal trends could certainly confound the association of interest.
+Mortality rates have a clear seasonal pattern, and temperature does as well,
+and these patterns create the potential for confounding when we look at how
+temperature and mortality risk are associated, beyond any seasonally-driven
+pathways.</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="generalized-linear-models.html#cb91-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow_time <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb91-2"><a href="generalized-linear-models.html#cb91-2" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb91-3"><a href="generalized-linear-models.html#cb91-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>You can see the influence of this seasonal confounding if you look at the model
+results. When we look at the results from the model that did not control for
+long-term and seasonal trends, we get an estimate that mortality rates tend to
+be lower on days with higher temperature, with a negative term for <code>tmean</code>:</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="generalized-linear-models.html#cb92-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="sc">%&gt;%</span> </span>
+<span id="cb92-2"><a href="generalized-linear-models.html#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb92-3"><a href="generalized-linear-models.html#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;tmean&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 5
+##   term  estimate std.error statistic p.value
+##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 tmean  -0.0148  0.000354     -41.7       0</code></pre>
+<p>Conversely, when we include control for long-term and seasonal trends, the
+estimated association between mortality rates and temperature is reversed,
+estimating increased mortality rates on days with higher temperature, <em>controlling
+for long-term and seasonal trends</em>:</p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="generalized-linear-models.html#cb94-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow_time <span class="sc">%&gt;%</span> </span>
+<span id="cb94-2"><a href="generalized-linear-models.html#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb94-3"><a href="generalized-linear-models.html#cb94-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;tmean&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 5
+##   term  estimate std.error statistic  p.value
+##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 tmean  0.00370  0.000395      9.36 1.02e-20</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Refine your model to fit for a non-linear, rather than linear, function
+of temperature in the model.</strong></li>
+</ol>
 </div>
 <div id="cross-basis-functions-in-glms" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Cross-basis functions in GLMs</h2>
 <p>[Using a cross-basis to model an exposure’s association with the
 outcome in two dimensions (dimensions of time and exposure level)]</p>
+</div>
+<div id="chapter-vocabulary-1" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Chapter vocabulary</h2>
+<p>Each class will start with a vocabulary quiz on a select number of the words
+from the chapter’s vocabulary list. The vocabulary words for this chapter are:</p>
 
 </div>
 </div>
@@ -272,6 +593,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
