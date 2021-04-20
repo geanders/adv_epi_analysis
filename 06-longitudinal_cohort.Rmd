@@ -1,5 +1,10 @@
 # Longitudinal cohort study designs
 
+The readings for this chapter are
+
+-@andersson201970
+
+
 ## Coding a survival analysis
 
 ## Handling complexity
