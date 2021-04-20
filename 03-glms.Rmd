@@ -262,7 +262,7 @@ mod_time_nonlin_lowdf %>%
 ```{r}
 # A model with many more d.f. for the time spline
 # (Takes a little while to run)
-mod_time_nonlin_highdf <- glm(all ~ ns(time, df = 1000), 
+mod_time_nonlin_highdf <- glm(all ~ ns(time, df = 400), 
                              data = obs, family = "quasipoisson")
 mod_time_nonlin_highdf %>% 
   augment() %>% 
