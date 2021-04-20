@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-04-19" />
+<meta name="date" content="2021-04-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,7 +33,6 @@
   
 <link rel="prev" href="risk-assessment.html"/>
 <link rel="next" href="some-approaches-for-confounding.html"/>
-<script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,20 +50,24 @@
 
 
 
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -84,7 +87,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -133,50 +136,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Advanced Epidemiological Analysis</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
-<ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a><ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i><b>1.1</b> License</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a>
-<ul>
+<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a><ul>
 <li class="chapter" data-level="2.1" data-path="courseinfo.html"><a href="courseinfo.html#course-learning-objectives"><i class="fa fa-check"></i><b>2.1</b> Course learning objectives</a></li>
 <li class="chapter" data-level="2.2" data-path="courseinfo.html"><a href="courseinfo.html#meeting-time-and-place"><i class="fa fa-check"></i><b>2.2</b> Meeting time and place</a></li>
 <li class="chapter" data-level="2.3" data-path="courseinfo.html"><a href="courseinfo.html#class-structure-and-expectations"><i class="fa fa-check"></i><b>2.3</b> Class Structure and Expectations</a></li>
 <li class="chapter" data-level="2.4" data-path="courseinfo.html"><a href="courseinfo.html#course-grading"><i class="fa fa-check"></i><b>2.4</b> Course grading</a></li>
 <li class="chapter" data-level="2.5" data-path="courseinfo.html"><a href="courseinfo.html#textbooks-and-course-materials"><i class="fa fa-check"></i><b>2.5</b> Textbooks and Course Materials</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover study designs</a>
-<ul>
+<li class="chapter" data-level="3" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover study designs</a><ul>
 <li class="chapter" data-level="3.1" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#reading"><i class="fa fa-check"></i><b>3.1</b> Reading</a></li>
 <li class="chapter" data-level="3.2" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#time-series-data"><i class="fa fa-check"></i><b>3.2</b> Time series data</a></li>
 <li class="chapter" data-level="3.3" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#fitting-models"><i class="fa fa-check"></i><b>3.3</b> Fitting models</a></li>
 <li class="chapter" data-level="3.4" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#chapter-vocabulary"><i class="fa fa-check"></i><b>3.4</b> Chapter vocabulary</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a>
-<ul>
+<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a><ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.1</b> Splines in GLMs</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.2</b> Cross-basis functions in GLMs</a></li>
 <li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#chapter-vocabulary-1"><i class="fa fa-check"></i><b>4.3</b> Chapter vocabulary</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
-<ul>
+<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a><ul>
 <li class="chapter" data-level="5.1" data-path="natural-experiments.html"><a href="natural-experiments.html#interrupted-time-series"><i class="fa fa-check"></i><b>5.1</b> Interrupted time series</a></li>
 <li class="chapter" data-level="5.2" data-path="natural-experiments.html"><a href="natural-experiments.html#difference-in-differences"><i class="fa fa-check"></i><b>5.2</b> Difference-in-differences</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="risk-assessment.html"><a href="risk-assessment.html"><i class="fa fa-check"></i><b>6</b> Risk assessment</a></li>
-<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a>
-<ul>
+<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a><ul>
 <li class="chapter" data-level="7.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.1</b> Coding a survival analysis</a></li>
-<li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.2</b> Handling complexity</a>
-<ul>
+<li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.2</b> Handling complexity</a><ul>
 <li class="chapter" data-level="7.2.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.2.1</b> Multi-level exposure</a></li>
 <li class="chapter" data-level="7.2.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.2.2</b> Recurrent outcome</a></li>
 <li class="chapter" data-level="7.2.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.2.3</b> Time-varying coeffificents</a></li>
 <li class="chapter" data-level="7.2.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.2.4</b> Using survey results</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a>
-<ul>
+<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a><ul>
 <li class="chapter" data-level="8.1" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#inverse-probability-weighting"><i class="fa fa-check"></i><b>8.1</b> Inverse probability weighting</a></li>
 <li class="chapter" data-level="8.2" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#propensity-scores"><i class="fa fa-check"></i><b>8.2</b> Propensity scores</a></li>
 </ul></li>
@@ -204,23 +199,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="longitudinal-cohort-study-designs" class="section level1" number="7">
+<div id="longitudinal-cohort-study-designs" class="section level1">
 <h1><span class="header-section-number">Chapter 7</span> Longitudinal cohort study designs</h1>
-<div id="coding-a-survival-analysis" class="section level2" number="7.1">
+<div id="coding-a-survival-analysis" class="section level2">
 <h2><span class="header-section-number">7.1</span> Coding a survival analysis</h2>
 </div>
-<div id="handling-complexity" class="section level2" number="7.2">
+<div id="handling-complexity" class="section level2">
 <h2><span class="header-section-number">7.2</span> Handling complexity</h2>
-<div id="multi-level-exposure" class="section level3" number="7.2.1">
+<div id="multi-level-exposure" class="section level3">
 <h3><span class="header-section-number">7.2.1</span> Multi-level exposure</h3>
 </div>
-<div id="recurrent-outcome" class="section level3" number="7.2.2">
+<div id="recurrent-outcome" class="section level3">
 <h3><span class="header-section-number">7.2.2</span> Recurrent outcome</h3>
 </div>
-<div id="time-varying-coeffificents" class="section level3" number="7.2.3">
+<div id="time-varying-coeffificents" class="section level3">
 <h3><span class="header-section-number">7.2.3</span> Time-varying coeffificents</h3>
 </div>
-<div id="using-survey-results" class="section level3" number="7.2.4">
+<div id="using-survey-results" class="section level3">
 <h3><span class="header-section-number">7.2.4</span> Using survey results</h3>
 <p>[e.g., NHANES]</p>
 
