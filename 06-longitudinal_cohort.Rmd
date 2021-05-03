@@ -18,13 +18,23 @@ meant as general backgroud on how to fit survival analysis models.
 
 ## Longitudinal cohort data
 Example datasets are available online, but also made available to you on the course 
-website. For the Framingham Heart Study the example data are available as the file "". 
+website. For the Framingham Heart Study the example data are available as the file 
+"frmgham2.csv". It is saved in a csv format, and so they can be read into R using the 
+`read_csv` function from the `readr` package (part of the tidyverse). You can use the following code to read in these data, assuming you have saved them in a "data" subdirectory of your current
+working directory: 
+
+```{r message = FALSE}
+library(tidyverse) # Loads all the tidyverse packages, including readr
+obs <- read_csv("data/frmgham2.csv")
+obs
+```
 
 
 If we take a look at this dataset we see that there are some differences compated 
 to a time-series dataset. You will notice that there is an `id` variable. This is 
 the unique identifier for unit for which we have repeated observations for over time.
 In this case the `id` variable represents a unique identifier for each study participant.
+
 
 
 ## Coding a survival analysis
