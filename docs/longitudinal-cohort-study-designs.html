@@ -33,6 +33,7 @@
   
 <link rel="prev" href="risk-assessment.html"/>
 <link rel="next" href="some-approaches-for-confounding.html"/>
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -50,24 +51,20 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -87,7 +84,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -136,43 +133,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Advanced Epidemiological Analysis</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i><b>1.1</b> License</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a><ul>
+<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="courseinfo.html"><a href="courseinfo.html#course-learning-objectives"><i class="fa fa-check"></i><b>2.1</b> Course learning objectives</a></li>
 <li class="chapter" data-level="2.2" data-path="courseinfo.html"><a href="courseinfo.html#meeting-time-and-place"><i class="fa fa-check"></i><b>2.2</b> Meeting time and place</a></li>
 <li class="chapter" data-level="2.3" data-path="courseinfo.html"><a href="courseinfo.html#class-structure-and-expectations"><i class="fa fa-check"></i><b>2.3</b> Class Structure and Expectations</a></li>
 <li class="chapter" data-level="2.4" data-path="courseinfo.html"><a href="courseinfo.html#course-grading"><i class="fa fa-check"></i><b>2.4</b> Course grading</a></li>
 <li class="chapter" data-level="2.5" data-path="courseinfo.html"><a href="courseinfo.html#textbooks-and-course-materials"><i class="fa fa-check"></i><b>2.5</b> Textbooks and Course Materials</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover study designs</a><ul>
+<li class="chapter" data-level="3" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover study designs</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#reading"><i class="fa fa-check"></i><b>3.1</b> Reading</a></li>
 <li class="chapter" data-level="3.2" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#time-series-data"><i class="fa fa-check"></i><b>3.2</b> Time series data</a></li>
 <li class="chapter" data-level="3.3" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#fitting-models"><i class="fa fa-check"></i><b>3.3</b> Fitting models</a></li>
 <li class="chapter" data-level="3.4" data-path="time-series-case-crossover-study-designs.html"><a href="time-series-case-crossover-study-designs.html#chapter-vocabulary"><i class="fa fa-check"></i><b>3.4</b> Chapter vocabulary</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a><ul>
+<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a>
+<ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.1</b> Splines in GLMs</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.2</b> Cross-basis functions in GLMs</a></li>
 <li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#chapter-vocabulary-1"><i class="fa fa-check"></i><b>4.3</b> Chapter vocabulary</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a><ul>
+<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
+<ul>
 <li class="chapter" data-level="5.1" data-path="natural-experiments.html"><a href="natural-experiments.html#interrupted-time-series"><i class="fa fa-check"></i><b>5.1</b> Interrupted time series</a></li>
 <li class="chapter" data-level="5.2" data-path="natural-experiments.html"><a href="natural-experiments.html#difference-in-differences"><i class="fa fa-check"></i><b>5.2</b> Difference-in-differences</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="risk-assessment.html"><a href="risk-assessment.html"><i class="fa fa-check"></i><b>6</b> Risk assessment</a></li>
-<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a><ul>
+<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a>
+<ul>
 <li class="chapter" data-level="7.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#longitudinal-cohort-data"><i class="fa fa-check"></i><b>7.1</b> Longitudinal cohort data</a></li>
 <li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.2</b> Coding a survival analysis</a></li>
-<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a><ul>
+<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a>
+<ul>
 <li class="chapter" data-level="7.3.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.3.1</b> Multi-level exposure</a></li>
 <li class="chapter" data-level="7.3.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.3.2</b> Recurrent outcome</a></li>
 <li class="chapter" data-level="7.3.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.3.3</b> Time-varying coeffificents</a></li>
 <li class="chapter" data-level="7.3.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.3.4</b> Using survey results</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a><ul>
+<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a>
+<ul>
 <li class="chapter" data-level="8.1" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#inverse-probability-weighting"><i class="fa fa-check"></i><b>8.1</b> Inverse probability weighting</a></li>
 <li class="chapter" data-level="8.2" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#propensity-scores"><i class="fa fa-check"></i><b>8.2</b> Propensity scores</a></li>
 </ul></li>
@@ -200,30 +205,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="longitudinal-cohort-study-designs" class="section level1">
+<div id="longitudinal-cohort-study-designs" class="section level1" number="7">
 <h1><span class="header-section-number">Chapter 7</span> Longitudinal cohort study designs</h1>
 <p>The readings for this chapter are</p>
 <ul>
-<li><p><span class="citation">Andersson et al. (<a href="#ref-andersson201970" role="doc-biblioref">2019</a>)</span></p></li>
-<li><p><span class="citation">Wong et al. (<a href="#ref-wong1989risk" role="doc-biblioref">1989</a>)</span></p></li>
+<li><p><span class="citation"><a href="references.html#ref-andersson201970" role="doc-biblioref">Andersson et al.</a> (<a href="references.html#ref-andersson201970" role="doc-biblioref">2019</a>)</span></p></li>
+<li><p><span class="citation"><a href="references.html#ref-wong1989risk" role="doc-biblioref">Wong et al.</a> (<a href="references.html#ref-wong1989risk" role="doc-biblioref">1989</a>)</span></p></li>
 </ul>
 <p>The following are a series of instructional papers on survival analysis, that are
 meant as general background on how to fit survival analysis models.</p>
 <ul>
-<li><p><span class="citation">Clark et al. (<a href="#ref-clark2003survival" role="doc-biblioref">2003</a>)</span></p></li>
-<li><p><span class="citation">M. J. Bradburn et al. (<a href="#ref-bradburn2003survival" role="doc-biblioref">2003</a>)</span></p></li>
-<li><p><span class="citation">Bradburn et al. (<a href="#ref-bradburn2003survival2" role="doc-biblioref">2003</a>)</span></p></li>
+<li><p><span class="citation"><a href="references.html#ref-clark2003survival" role="doc-biblioref">Clark et al.</a> (<a href="references.html#ref-clark2003survival" role="doc-biblioref">2003</a>)</span></p></li>
+<li><p><span class="citation"><a href="references.html#ref-bradburn2003survival" role="doc-biblioref">Bradburn et al.</a> (<a href="references.html#ref-bradburn2003survival" role="doc-biblioref">2003a</a>)</span></p></li>
+<li><p><span class="citation"><a href="references.html#ref-bradburn2003survival2" role="doc-biblioref">Bradburn et al.</a> (<a href="references.html#ref-bradburn2003survival2" role="doc-biblioref">2003b</a>)</span></p></li>
 </ul>
-<div id="longitudinal-cohort-data" class="section level2">
+<div id="longitudinal-cohort-data" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> Longitudinal cohort data</h2>
 <p>Example datasets are available online, but also made available to you on the course
 website. For the Framingham Heart Study the example data are available as the file
-“frmgham2.csv”. It is saved in a csv format, and so they can be read into R using the
+“frmgham2.csv.” It is saved in a csv format, and so they can be read into R using the
 <code>read_csv</code> function from the <code>readr</code> package (part of the tidyverse). You can use the following code to read in these data, assuming you have saved them in a “data” subdirectory of your current
 working directory:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="longitudinal-cohort-study-designs.html#cb103-1"></a><span class="kw">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
-<span id="cb103-2"><a href="longitudinal-cohort-study-designs.html#cb103-2"></a>fhs &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/frmgham2.csv&quot;</span>)</span>
-<span id="cb103-3"><a href="longitudinal-cohort-study-designs.html#cb103-3"></a>fhs</span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="longitudinal-cohort-study-designs.html#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
+<span id="cb98-2"><a href="longitudinal-cohort-study-designs.html#cb98-2" aria-hidden="true" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/frmgham2.csv&quot;</span>)</span>
+<span id="cb98-3"><a href="longitudinal-cohort-study-designs.html#cb98-3" aria-hidden="true" tabindex="-1"></a>fhs</span></code></pre></div>
 <pre><code>## # A tibble: 11,627 x 39
 ##    RANDID   SEX TOTCHOL   AGE SYSBP DIABP CURSMOKE CIGPDAY   BMI DIABETES BPMEDS
 ##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
@@ -252,6 +257,34 @@ In this case the <code>RANDID</code> variable represents a unique identifier for
 <li>The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.</li>
 <li>Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (<code>SEX</code>, <code>educ</code>), while others will vary with each exam.</li>
 </ul>
+<p>From a data management perspective, we might want to change all the column names
+to be in lowercase, rather than uppercase. This will save our pinkies some
+work as we code with the data! You can make that change with the following
+code, using the <code>str_to_lower</code> function from the <code>stringr</code> package (part of
+the <code>tidyverse</code>):</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="longitudinal-cohort-study-designs.html#cb100-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb100-2"><a href="longitudinal-cohort-study-designs.html#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(<span class="at">.funs =</span> str_to_lower)</span>
+<span id="cb100-3"><a href="longitudinal-cohort-study-designs.html#cb100-3" aria-hidden="true" tabindex="-1"></a>fhs</span></code></pre></div>
+<pre><code>## # A tibble: 11,627 x 39
+##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
+##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+##  1   2448     1     195    39  106   70          0       0  27.0        0      0
+##  2   2448     1     209    52  121   66          0       0  NA          0      0
+##  3   6238     2     250    46  121   81          0       0  28.7        0      0
+##  4   6238     2     260    52  105   69.5        0       0  29.4        0      0
+##  5   6238     2     237    58  108   66          0       0  28.5        0      0
+##  6   9428     1     245    48  128.  80          1      20  25.3        0      0
+##  7   9428     1     283    54  141   89          1      30  25.3        0      0
+##  8  10552     2     225    61  150   95          1      30  28.6        0      0
+##  9  10552     2     232    67  183  109          1      20  30.2        0      0
+## 10  11252     2     285    46  130   84          1      23  23.1        0      0
+## # … with 11,617 more rows, and 28 more variables: heartrte &lt;dbl&gt;,
+## #   glucose &lt;dbl&gt;, educ &lt;dbl&gt;, prevchd &lt;dbl&gt;, prevap &lt;dbl&gt;, prevmi &lt;dbl&gt;,
+## #   prevstrk &lt;dbl&gt;, prevhyp &lt;dbl&gt;, time &lt;dbl&gt;, period &lt;dbl&gt;, hdlc &lt;dbl&gt;,
+## #   ldlc &lt;dbl&gt;, death &lt;dbl&gt;, angina &lt;dbl&gt;, hospmi &lt;dbl&gt;, mi_fchd &lt;dbl&gt;,
+## #   anychd &lt;dbl&gt;, stroke &lt;dbl&gt;, cvd &lt;dbl&gt;, hyperten &lt;dbl&gt;, timeap &lt;dbl&gt;,
+## #   timemi &lt;dbl&gt;, timemifc &lt;dbl&gt;, timechd &lt;dbl&gt;, timestrk &lt;dbl&gt;, timecvd &lt;dbl&gt;,
+## #   timedth &lt;dbl&gt;, timehyp &lt;dbl&gt;</code></pre>
 <p><em>Applied exercise: Exploring longitudinal cohort data</em>
 Read the example cohort data in R and explore it to answer the following
 questions:</p>
@@ -270,62 +303,148 @@ smoking and risk of incident MI.</p>
 <li><strong>What is the number of participants and the number of observations in the <code>fhs</code> dataset? (i.e what is the sample size and number of person-time observations)</strong></li>
 </ol>
 <p>In the <code>fhs</code> dataset, the number of participants will be equal to the number of unique ID’s (The <code>RANDID</code> variable which takes a unique value for each participant). We can extract this using the <code>unique</code> function nested within the <code>length</code> function</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="longitudinal-cohort-study-designs.html#cb105-1"></a><span class="kw">length</span>(<span class="kw">unique</span>(fhs<span class="op">$</span>RANDID))</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="longitudinal-cohort-study-designs.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(fhs<span class="sc">$</span>randid))</span></code></pre></div>
 <pre><code>## [1] 4434</code></pre>
+<p>If you’d like to use <code>tidyverse</code> tools to answer this question, you can do
+that, as well. The pipe operator (<code>%&gt;%</code>) works on any type of object—it will
+take your current output and include it as the first parameter value for the
+function call you pipe into. If you want to perform operations on a column of
+a dataframe, you can use <code>pull</code> to extract it from the dataframe as a vector, and
+then pipe that into vector operations:</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="longitudinal-cohort-study-designs.html#cb104-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb104-2"><a href="longitudinal-cohort-study-designs.html#cb104-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb104-3"><a href="longitudinal-cohort-study-designs.html#cb104-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb104-4"><a href="longitudinal-cohort-study-designs.html#cb104-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">length</span>()</span></code></pre></div>
+<pre><code>## [1] 4434</code></pre>
+<p>It’s entirely a personal choice whether you use the <code>$</code> operator and “nesting”
+of function calls, versus <code>pull</code> and piping to do a series of function calls.
+You can see you get the same result, so it just comes down to the style that
+you will find easiest to understand when you look at your code later.</p>
 <p>The number of person-time observations will actually be equal to the length of the dataset.
 The <code>dim</code> function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="longitudinal-cohort-study-designs.html#cb107-1"></a><span class="kw">dim</span>(fhs)</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="longitudinal-cohort-study-designs.html#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(fhs)</span></code></pre></div>
 <pre><code>## [1] 11627    39</code></pre>
 <p>We see that there is approximately an average of 2 to 3 observations per participants.</p>
+<p>When you know there are repeated measurements, it can be helpful to explore
+how much variation there is in the number of observations per study subject.
+You could do that in this dataset with the following code:</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="longitudinal-cohort-study-designs.html#cb108-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb108-2"><a href="longitudinal-cohort-study-designs.html#cb108-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by the study subject identifier and then count the rows for each</span></span>
+<span id="cb108-3"><a href="longitudinal-cohort-study-designs.html#cb108-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb108-4"><a href="longitudinal-cohort-study-designs.html#cb108-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb108-5"><a href="longitudinal-cohort-study-designs.html#cb108-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder the dataset so the subjects with the most observations come first</span></span>
+<span id="cb108-6"><a href="longitudinal-cohort-study-designs.html#cb108-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> </span>
+<span id="cb108-7"><a href="longitudinal-cohort-study-designs.html#cb108-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 2
+## # Groups:   randid [6]
+##   randid     n
+##    &lt;dbl&gt; &lt;int&gt;
+## 1   6238     3
+## 2  11252     3
+## 3  11263     3
+## 4  12806     3
+## 5  14367     3
+## 6  16365     3</code></pre>
+<p>You can visualize this, as well. A histogram is one good choice:</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="longitudinal-cohort-study-designs.html#cb110-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb110-2"><a href="longitudinal-cohort-study-designs.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by the study subject identifier and then count the rows for each</span></span>
+<span id="cb110-3"><a href="longitudinal-cohort-study-designs.html#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb110-4"><a href="longitudinal-cohort-study-designs.html#cb110-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb110-5"><a href="longitudinal-cohort-study-designs.html#cb110-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> n)) <span class="sc">+</span> </span>
+<span id="cb110-6"><a href="longitudinal-cohort-study-designs.html#cb110-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-64-1.png" width="672" />
+All study subjects have between one and three measurements. Most of the study
+subjects (over 3,000) have three measurements recorded in the dataset.</p>
 <ol start="2" style="list-style-type: decimal">
-<li><p><em>Is there any missingness in the data?</em>
-WE can check for missingness</p></li>
-<li><p><em>How many participants die? What is the distribution of age at time of death?</em></p></li>
+<li><em>Is there any missingness in the data?</em></li>
+</ol>
+<p>We can check for missingness in a number of ways. There are a couple of great
+packages, <code>visdat</code> and <code>naniar</code>, that include functions for investigating
+missingness in a dataset. If you don’t have these installed, you can install
+them using <code>install.packages("naniar")</code> and <code>install.packages("visdat")</code>. The
+<code>naniar</code> package has <a href="https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html">a vignette with
+examples</a>
+that is a nice starting point for working with both packages.</p>
+<p>The <code>vis_miss</code> function shows missingness in a dataset in a way that lets you
+get a top-level snapshot:</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="longitudinal-cohort-study-designs.html#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
+<span id="cb111-2"><a href="longitudinal-cohort-study-designs.html#cb111-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vis_miss</span>(fhs)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-65-1.png" width="672" />
+Another was to visualize this is with <code>gg_miss_var</code>:</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="longitudinal-cohort-study-designs.html#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb112-2"><a href="longitudinal-cohort-study-designs.html#cb112-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-66-1.png" width="672" /></p>
+<p>Many of the variables are available for all observations, with no missingness,
+including records of the subject’s ID, measures of death, stroke, CVD, and other
+events, age, sex, and BMI. Some of the measured values from visits are missing
+occasionally, like the total cholesterol, and glucose. Other measures asked of
+the participants (number of cigarettes per day, education) are occasionally
+missing. Two of the variables—<code>hdlc</code> and <code>ldlc</code>—are missing more often than
+they are available.</p>
+<p>You can also do faceting with the <code>gg_miss_var</code> function. For
+example, you could see if missingness varies by the period of the observation:</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="longitudinal-cohort-study-designs.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> period)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-67-1.png" width="672" /></p>
+<p>You may also want to check if missingness varies with whether an observation
+was associated with death of the study subject:</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="longitudinal-cohort-study-designs.html#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> death)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
+<p>There are also functions in these packages that allow you to look at how
+missingness is related across variables. For example, both <code>glucose</code> and
+<code>totchol</code> are continuous variables, and both are occasionally missing. You
+can use the geom function <code>geom_miss_point</code> from the <code>nanair</code> package
+with a ggplot object to explore patterns of missingness among these two
+variables:</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="longitudinal-cohort-study-designs.html#cb115-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb115-2"><a href="longitudinal-cohort-study-designs.html#cb115-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
+<span id="cb115-3"><a href="longitudinal-cohort-study-designs.html#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>()</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<p>The lower left corner shows the observations where both values are missing—it
+looks like there aren’t too many. For observations with one missing but not the
+other (the points in red along the x- and y-axes), it looks like the distribution
+across the non-missing variable is pretty similar to that for observations
+with both measurements avaiable. In other words, <code>totchol</code> has a similar
+distribution among observations where <code>glucose</code> is available as observations
+where <code>glucose</code> is missing.</p>
+<p>You can also do things like facet by sex to explore patterns at a finer level:</p>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="longitudinal-cohort-study-designs.html#cb116-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb116-2"><a href="longitudinal-cohort-study-designs.html#cb116-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
+<span id="cb116-3"><a href="longitudinal-cohort-study-designs.html#cb116-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>() <span class="sc">+</span> </span>
+<span id="cb116-4"><a href="longitudinal-cohort-study-designs.html#cb116-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sex)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-70-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li><em>How many participants die? What is the distribution of age at time of death?</em></li>
 </ol>
 <p>The <code>DEATH</code> variable in the <code>fhs</code> data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.</p>
 <p>Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observtion that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will constrcut a variable like this in <code>fhs</code> below.</p>
+<ol start="4" style="list-style-type: decimal">
+<li><p><em>What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?</em></p></li>
+<li><p><em>What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers</em></p></li>
+</ol>
 </div>
-<div id="coding-a-survival-analysis" class="section level2">
+<div id="coding-a-survival-analysis" class="section level2" number="7.2">
 <h2><span class="header-section-number">7.2</span> Coding a survival analysis</h2>
 <p>In the context of survival analysis what is modelled is time to an event. This is
 a bit different than the models in the <code>glm</code> family that model an outcome that follows
 a particular distribution. The <code>survival</code> package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional
-hazards model that was also applied in <span class="citation">Wong et al. (<a href="#ref-wong1989risk" role="doc-biblioref">1989</a>)</span>.</p>
+hazards model that was also applied in <span class="citation"><a href="references.html#ref-wong1989risk" role="doc-biblioref">Wong et al.</a> (<a href="references.html#ref-wong1989risk" role="doc-biblioref">1989</a>)</span>.</p>
 </div>
-<div id="handling-complexity" class="section level2">
+<div id="handling-complexity" class="section level2" number="7.3">
 <h2><span class="header-section-number">7.3</span> Handling complexity</h2>
-<div id="multi-level-exposure" class="section level3">
+<div id="multi-level-exposure" class="section level3" number="7.3.1">
 <h3><span class="header-section-number">7.3.1</span> Multi-level exposure</h3>
 </div>
-<div id="recurrent-outcome" class="section level3">
+<div id="recurrent-outcome" class="section level3" number="7.3.2">
 <h3><span class="header-section-number">7.3.2</span> Recurrent outcome</h3>
 </div>
-<div id="time-varying-coeffificents" class="section level3">
+<div id="time-varying-coeffificents" class="section level3" number="7.3.3">
 <h3><span class="header-section-number">7.3.3</span> Time-varying coeffificents</h3>
 </div>
-<div id="using-survey-results" class="section level3">
+<div id="using-survey-results" class="section level3" number="7.3.4">
 <h3><span class="header-section-number">7.3.4</span> Using survey results</h3>
 <p>[e.g., NHANES]</p>
 
 </div>
-</div>
-</div>
-<h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-andersson201970">
-<p>Andersson, Charlotte, Andrew D Johnson, Emelia J Benjamin, Daniel Levy, and Ramachandran S Vasan. 2019. “70-Year Legacy of the Framingham Heart Study.” <em>Nature Reviews Cardiology</em>, 1.</p>
-</div>
-<div id="ref-bradburn2003survival2">
-<p>Bradburn, Michael J, Taane G Clark, Sharon B Love, and Douglas G Altman. 2003. “Survival Analysis Part Iii: Multivariate Data Analysis–Choosing a Model and Assessing Its Adequacy and Fit.” <em>British Journal of Cancer</em> 89 (4): 605–11.</p>
-</div>
-<div id="ref-bradburn2003survival">
-<p>Bradburn, Mike J, Taane G Clark, Sharon B Love, and Douglas G Altman. 2003. “Survival Analysis Part Ii: Multivariate Data Analysis–an Introduction to Concepts and Methods.” <em>British Journal of Cancer</em> 89 (3): 431–36.</p>
-</div>
-<div id="ref-clark2003survival">
-<p>Clark, Taane G, Michael J Bradburn, Sharon B Love, and Douglas G Altman. 2003. “Survival Analysis Part I: Basic Concepts and First Analyses.” <em>British Journal of Cancer</em> 89 (2): 232–38.</p>
-</div>
-<div id="ref-wong1989risk">
-<p>Wong, Nathan D, Adrienne Cupples, Adrian M Ostfeld, Daniel Levy, and William B Kannel. 1989. “Risk Factors for Long-Term Coronary Prognosis After Initial Myocardial Infarction: The Framingham Study.” <em>American Journal of Epidemiology</em> 130 (3): 469–80.</p>
 </div>
 </div>
             </section>

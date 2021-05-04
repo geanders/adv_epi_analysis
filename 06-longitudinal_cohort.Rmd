@@ -36,6 +36,19 @@ In this case the `RANDID` variable represents a unique identifier for each study
 - The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.
 - Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (`SEX`, `educ`), while others will vary with each exam.
 
+From a data management perspective, we might want to change all the column names
+to be in lowercase, rather than uppercase. This will save our pinkies some 
+work as we code with the data! You can make that change with the following 
+code, using the `str_to_lower` function from the `stringr` package (part of 
+the `tidyverse`): 
+
+```{r}
+fhs <- fhs %>% 
+  rename_all(.funs = str_to_lower)
+fhs
+```
+
+
 *Applied exercise: Exploring longitudinal cohort data*
 Read the example cohort data in R and explore it to answer the following
 questions: 
@@ -57,8 +70,27 @@ smoking and risk of incident MI.
 In the `fhs` dataset, the number of participants will be equal to the number of unique ID's (The `RANDID` variable which takes a unique value for each participant). We can extract this using the `unique` function nested within the `length` function
 
 ```{r}
-length(unique(fhs$RANDID))
+length(unique(fhs$randid))
 ```
+
+If you'd like to use `tidyverse` tools to answer this question, you can do 
+that, as well. The pipe operator (`%>%`) works on any type of object---it will 
+take your current output and include it as the first parameter value for the
+function call you pipe into. If you want to perform operations on a column of 
+a dataframe, you can use `pull` to extract it from the dataframe as a vector, and
+then pipe that into vector operations: 
+
+```{r}
+fhs %>% 
+  pull(randid) %>% 
+  unique() %>% 
+  length()
+```
+
+It's entirely a personal choice whether you use the `$` operator and "nesting"
+of function calls, versus `pull` and piping to do a series of function calls.
+You can see you get the same result, so it just comes down to the style that 
+you will find easiest to understand when you look at your code later.
 
 The number of person-time observations will actually be equal to the length of the dataset.
 The `dim` function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.
@@ -67,17 +99,118 @@ The `dim` function gives us the length (number of rows) and width (number of col
 dim(fhs)
 ```
  We see that there is approximately an average of 2 to 3 observations per participants. 
+ 
+When you know there are repeated measurements, it can be helpful to explore
+how much variation there is in the number of observations per study subject. 
+You could do that in this dataset with the following code: 
 
+```{r}
+fhs %>% 
+  # Group by the study subject identifier and then count the rows for each
+  group_by(randid) %>% 
+  count() %>% 
+  # Reorder the dataset so the subjects with the most observations come first
+  arrange(desc(n)) %>% 
+  head()
+```
+You can visualize this, as well. A histogram is one good choice: 
+
+```{r message = FALSE, warning = FALSE}
+fhs %>% 
+  # Group by the study subject identifier and then count the rows for each
+  group_by(randid) %>% 
+  count() %>% 
+  ggplot(aes(x = n)) + 
+  geom_histogram()
+```
+All study subjects have between one and three measurements. Most of the study 
+subjects (over 3,000) have three measurements recorded in the dataset. 
 
 2. *Is there any missingness in the data?*
-WE can check for missingness 
+
+We can check for missingness in a number of ways. There are a couple of great
+packages, `visdat` and `naniar`, that include functions for investigating
+missingness in a dataset. If you don't have these installed, you can install
+them using `install.packages("naniar")` and `install.packages("visdat")`. The
+`naniar` package has [a vignette with
+examples](https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html)
+that is a nice starting point for working with both packages.
+
+The `vis_miss` function shows missingness in a dataset in a way that lets you 
+get a top-level snapshot:
+
+```{r}
+library(visdat)
+vis_miss(fhs)
+```
+Another was to visualize this is with `gg_miss_var`: 
+
+```{r}
+library(naniar)
+gg_miss_var(fhs)
+```
+
+Many of the variables are available for all observations, with no missingness,
+including records of the subject's ID, measures of death, stroke, CVD, and other
+events, age, sex, and BMI. Some of the measured values from visits are missing
+occasionally, like the total cholesterol, and glucose. Other measures asked of
+the participants (number of cigarettes per day, education) are occasionally
+missing. Two of the variables---`hdlc` and `ldlc`---are missing more often than 
+they are available. 
+
+You can also do faceting with the `gg_miss_var` function. For
+example, you could see if missingness varies by the period of the observation: 
+
+```{r}
+gg_miss_var(fhs, facet = period)
+```
+
+You may also want to check if missingness varies with whether an observation
+was associated with death of the study subject: 
+
+```{r}
+gg_miss_var(fhs, facet = death)
+```
+
+There are also functions in these packages that allow you to look at how 
+missingness is related across variables. For example, both `glucose` and 
+`totchol` are continuous variables, and both are occasionally missing. You
+can use the geom function `geom_miss_point` from the `nanair` package
+with a ggplot object to explore patterns of missingness among these two 
+variables: 
+
+```{r}
+fhs %>% 
+  ggplot(aes(x = glucose, y = totchol)) + 
+  geom_miss_point()
+```
+
+The lower left corner shows the observations where both values are missing---it
+looks like there aren't too many. For observations with one missing but not the 
+other (the points in red along the x- and y-axes), it looks like the distribution
+across the non-missing variable is pretty similar to that for observations
+with both measurements avaiable. In other words, `totchol` has a similar 
+distribution among observations where `glucose` is available as observations
+where `glucose` is missing.
+
+You can also do things like facet by sex to explore patterns at a finer level:
+
+```{r}
+fhs %>% 
+  ggplot(aes(x = glucose, y = totchol)) + 
+  geom_miss_point() + 
+  facet_wrap(~ sex)
+```
 
 3. *How many participants die? What is the distribution of age at time of death?*
 
 The `DEATH` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths. 
 
-Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observtion that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will constrcut a variable like this in `fhs` below.
+Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
 
+4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
+
+5. *What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers*
 
 
 ## Coding a survival analysis
