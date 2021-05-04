@@ -33,7 +33,7 @@ fhs
 In this case the `RANDID` variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time. 
 - The `TIME` variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. (`TIME=0` for the first observation of each participant).
 - Number of observations varies between participants (typical)
-- The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 6 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (annual, biannual), resulting in a more balanced dataset.
+- The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.
 - Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (`SEX`, `educ`), while others will vary with each exam.
 
 *Applied exercise: Exploring longitudinal cohort data*
@@ -66,13 +66,28 @@ The `dim` function gives us the length (number of rows) and width (number of col
 ```{r}
 dim(fhs)
 ```
- We see that there is approximately an average of 2 to 3 observations per participants. This is in line with the descing of the Framingham Heart study, 
+ We see that there is approximately an average of 2 to 3 observations per participants. 
+
+
+2. *Is there any missingness in the data?*
+WE can check for missingness 
+
+3. *How many participants die? What is the distribution of age at time of death?*
+
+The `DEATH` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths. 
+
+Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observtion that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will constrcut a variable like this in `fhs` below.
+
+
 
 ## Coding a survival analysis
 In the context of survival analysis what is modelled is time to an event. This is
 a bit different than the models in the `glm` family that model an outcome that follows
 a particular distribution. The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional 
 hazards model that was also applied in @wong1989risk.
+
+
+
 
 
 
