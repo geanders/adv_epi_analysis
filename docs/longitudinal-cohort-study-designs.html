@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-05-03" />
+<meta name="date" content="2021-05-04" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -249,7 +249,7 @@ working directory:</p>
 In this case the <code>RANDID</code> variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time.</li>
 <li>The <code>TIME</code> variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. (<code>TIME=0</code> for the first observation of each participant).</li>
 <li>Number of observations varies between participants (typical)</li>
-<li>The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 6 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (annual, biannual), resulting in a more balanced dataset.</li>
+<li>The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.</li>
 <li>Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (<code>SEX</code>, <code>educ</code>), while others will vary with each exam.</li>
 </ul>
 <p><em>Applied exercise: Exploring longitudinal cohort data</em>
@@ -276,7 +276,14 @@ smoking and risk of incident MI.</p>
 The <code>dim</code> function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.</p>
 <div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="longitudinal-cohort-study-designs.html#cb107-1"></a><span class="kw">dim</span>(fhs)</span></code></pre></div>
 <pre><code>## [1] 11627    39</code></pre>
-<p>We see that there is approximately an average of 2 to 3 observations per participants. This is in line with the descing of the Framingham Heart study,</p>
+<p>We see that there is approximately an average of 2 to 3 observations per participants.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p><em>Is there any missingness in the data?</em>
+WE can check for missingness</p></li>
+<li><p><em>How many participants die? What is the distribution of age at time of death?</em></p></li>
+</ol>
+<p>The <code>DEATH</code> variable in the <code>fhs</code> data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.</p>
+<p>Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observtion that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will constrcut a variable like this in <code>fhs</code> below.</p>
 </div>
 <div id="coding-a-survival-analysis" class="section level2">
 <h2><span class="header-section-number">7.2</span> Coding a survival analysis</h2>
