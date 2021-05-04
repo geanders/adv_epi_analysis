@@ -190,6 +190,8 @@ mod_time %>%
   geom_line(aes(y = exp(.fitted)), color = "red") + 
   labs(x = "Date in study", y = "Expected mortality count") 
 ```
+[Check for `termplot`]
+
 This linear trend captures the long-term trend in mortality rates fairly well in
 this case. This won't always be the case, as there may be some health
 outcomes---or some study populations---where the long-term pattern over the
@@ -347,6 +349,37 @@ mod_ctrl_dow_time %>%
 
 3. **Refine your model to fit for a non-linear, rather than linear, function 
 of temperature in the model.**
+
+You can use a spline in the same way to fit a non-linear function for the 
+exposure of interest in the model (temperature). We'll start there. However, 
+as mentioned earlier, it's a bit tricky to interpret the coefficients from the
+fit model---you no longer generate a single coefficient for the exposure of
+interest, but instead several related to the spline. Therefore, once we show
+how to fit using `ns` directly, we'll show how you can do the same thing using
+specialized functions in the `dlnm` package. This package includes a lot of 
+nice functions for not only fitting an association using a non-linear term, 
+but also for interpreting the results after the model is fit.
+
+First, here is code that can be used to fit the model using `ns` directly, 
+similarly to the approach we used to control for temporal patterns with a
+flexible function:
+
+```{r}
+mod_ctrl_nl_temp <- glm(all ~ ns(tmean, 4) + factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+```
+
+```{r}
+mod_time_nonlin_highdf %>% 
+  augment() %>% 
+  mutate(tmean = obs$tmean) %>% 
+  ggplot(aes(x = tmean)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_point(aes(y = exp(.fitted)), color = "red",  size = 0.4) + 
+  labs(x = "Daily mean temperature", y = "Expected mortality count") 
+```
+
 
 
 ## Cross-basis functions in GLMs
