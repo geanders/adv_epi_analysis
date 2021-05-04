@@ -20,6 +20,7 @@ interrupted-time-series
 difference-in-differences
 risk-assessment
 longitudinal-cohort-study-designs
+longitudinal-cohort-data
 coding-a-survival-analysis
 handling-complexity
 multi-level-exposure
