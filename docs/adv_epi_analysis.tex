@@ -113,7 +113,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-04-21}
+\date{2021-05-03}
 
 \begin{document}
 \maketitle
@@ -2180,10 +2180,146 @@ from the chapter's vocabulary list. The vocabulary words for this chapter are:
 
 The readings for this chapter are
 
-\citeyearpar{andersson201970}
+\begin{itemize}
+\item
+  \citet{andersson201970}
+\item
+  \citet{wong1989risk}
+\end{itemize}
+
+The following are a series of instructional papers on survival analysis, that are
+meant as general background on how to fit survival analysis models.
+
+\begin{itemize}
+\item
+  \citet{clark2003survival}
+\item
+  \citet{bradburn2003survival}
+\item
+  \citet{bradburn2003survival2}
+\end{itemize}
+
+\hypertarget{longitudinal-cohort-data}{%
+\section{Longitudinal cohort data}\label{longitudinal-cohort-data}}
+
+Example datasets are available online, but also made available to you on the course
+website. For the Framingham Heart Study the example data are available as the file
+``frmgham2.csv''. It is saved in a csv format, and so they can be read into R using the
+\texttt{read\_csv} function from the \texttt{readr} package (part of the tidyverse). You can use the following code to read in these data, assuming you have saved them in a ``data'' subdirectory of your current
+working directory:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse) }\CommentTok{# Loads all the tidyverse packages, including readr}
+\NormalTok{fhs <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"data/frmgham2.csv"}\NormalTok{)}
+\NormalTok{fhs}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 11,627 x 39
+##    RANDID   SEX TOTCHOL   AGE SYSBP DIABP CURSMOKE CIGPDAY   BMI DIABETES BPMEDS
+##     <dbl> <dbl>   <dbl> <dbl> <dbl> <dbl>    <dbl>   <dbl> <dbl>    <dbl>  <dbl>
+##  1   2448     1     195    39  106   70          0       0  27.0        0      0
+##  2   2448     1     209    52  121   66          0       0  NA          0      0
+##  3   6238     2     250    46  121   81          0       0  28.7        0      0
+##  4   6238     2     260    52  105   69.5        0       0  29.4        0      0
+##  5   6238     2     237    58  108   66          0       0  28.5        0      0
+##  6   9428     1     245    48  128.  80          1      20  25.3        0      0
+##  7   9428     1     283    54  141   89          1      30  25.3        0      0
+##  8  10552     2     225    61  150   95          1      30  28.6        0      0
+##  9  10552     2     232    67  183  109          1      20  30.2        0      0
+## 10  11252     2     285    46  130   84          1      23  23.1        0      0
+## # ... with 11,617 more rows, and 28 more variables: HEARTRTE <dbl>,
+## #   GLUCOSE <dbl>, educ <dbl>, PREVCHD <dbl>, PREVAP <dbl>, PREVMI <dbl>,
+## #   PREVSTRK <dbl>, PREVHYP <dbl>, TIME <dbl>, PERIOD <dbl>, HDLC <dbl>,
+## #   LDLC <dbl>, DEATH <dbl>, ANGINA <dbl>, HOSPMI <dbl>, MI_FCHD <dbl>,
+## #   ANYCHD <dbl>, STROKE <dbl>, CVD <dbl>, HYPERTEN <dbl>, TIMEAP <dbl>,
+## #   TIMEMI <dbl>, TIMEMIFC <dbl>, TIMECHD <dbl>, TIMESTRK <dbl>, TIMECVD <dbl>,
+## #   TIMEDTH <dbl>, TIMEHYP <dbl>
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  One important difference compared to a time-series dataset is the \texttt{RANDID} variable. This is the unique identifier for unit for which we have repeated observations for over time.
+  In this case the \texttt{RANDID} variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time.
+\item
+  The \texttt{TIME} variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. (\texttt{TIME=0} for the first observation of each participant).
+\item
+  Number of observations varies between participants (typical)
+\item
+  The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 6 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (annual, biannual), resulting in a more balanced dataset.
+\item
+  Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (\texttt{SEX}, \texttt{educ}), while others will vary with each exam.
+\end{itemize}
+
+\emph{Applied exercise: Exploring longitudinal cohort data}
+Read the example cohort data in R and explore it to answer the following
+questions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  What is the number of participants and number of observations in the \texttt{fhs} dataset?
+\item
+  Is there any missingness in the data?
+\item
+  How many participants die? What is the distribution of age at time of death?
+\item
+  What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?
+\item
+  What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers
+\end{enumerate}
+
+Based on this exploratory exercise in this section, talk about the potential
+for confounding when these data are analyzed to estimate the association between
+smoking and risk of incident MI.
+
+\emph{Applied exercise: Example code}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{What is the number of participants and the number of observations in the \texttt{fhs} dataset? (i.e what is the sample size and number of person-time observations)}
+\end{enumerate}
+
+In the \texttt{fhs} dataset, the number of participants will be equal to the number of unique ID's (The \texttt{RANDID} variable which takes a unique value for each participant). We can extract this using the \texttt{unique} function nested within the \texttt{length} function
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{length}\NormalTok{(}\KeywordTok{unique}\NormalTok{(fhs}\OperatorTok{$}\NormalTok{RANDID))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4434
+\end{verbatim}
+
+The number of person-time observations will actually be equal to the length of the dataset.
+The \texttt{dim} function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(fhs)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 11627    39
+\end{verbatim}
+
+We see that there is approximately an average of 2 to 3 observations per participants. This is in line with the descing of the Framingham Heart study,
 
 \hypertarget{coding-a-survival-analysis}{%
 \section{Coding a survival analysis}\label{coding-a-survival-analysis}}
+
+In the context of survival analysis what is modelled is time to an event. This is
+a bit different than the models in the \texttt{glm} family that model an outcome that follows
+a particular distribution. The \texttt{survival} package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional
+hazards model that was also applied in \citet{wong1989risk}.
 
 \hypertarget{handling-complexity}{%
 \section{Handling complexity}\label{handling-complexity}}
