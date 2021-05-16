@@ -206,6 +206,17 @@ fhs %>%
 
 The `DEATH` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths. 
 
+It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the `fhs` data using  `tidyverse` tools as following:
+
+```{r}
+fhs_first <- fhs %>% 
+  group_by(randid) %>% 
+  filter(row_number(value) == 1)
+```
+
+In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death=1`. 
+
+
 Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
 
 4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
