@@ -235,9 +235,15 @@ a bit different than the models in the `glm` family that model an outcome that f
 a particular distribution. The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional 
 hazards model that was also applied in @wong1989risk.
 
+The Cox proportional hazards model in a simple form has this form
 
+$log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
 
+where $\lambda(t)$ represent the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The above model can also be writen as 
 
+$\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}$
+
+$e^{\beta_{1}$ is the hazard ratio comparing those hose with $X=1$ and $X=0$
 
 
 
