@@ -214,8 +214,13 @@ fhs_first <- fhs %>%
   filter(row_number(value) == 1)
 ```
 
-In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death=1`. 
+In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death=1`. For example, we can use the `sum` function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the `sum` function will give as the number of deaths in the sample. 
 
+```{r}
+sum(fhs_first$death) 
+```
+
+Conversely using `tidyverse` tools 
 
 Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
 
