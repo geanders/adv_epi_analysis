@@ -245,6 +245,10 @@ $\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}$
 
 $e^{\beta_{1}$ is the hazard ratio comparing those hose with $X=1$ and $X=0$
 
+Using the `fhs` data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI. 
+
+
+
 
 
 ## Handling complexity
