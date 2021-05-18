@@ -5,13 +5,12 @@
 \documentclass[
 ]{book}
 \usepackage{lmodern}
-\usepackage{amsmath}
+\usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
-  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -83,7 +82,6 @@
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
-\usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
 \makeatletter
@@ -92,7 +90,7 @@
 % Allow footnotes in longtable head/foot
 \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
 \makesavenoteenv{longtable}
-\usepackage{graphicx}
+\usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -110,15 +108,12 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
-\ifluatex
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-05-04}
+\date{2021-05-18}
 
 \begin{document}
 \maketitle
@@ -339,8 +334,8 @@ working directory:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(tidyverse) }\CommentTok{\# Loads all the tidyverse packages, including readr}
-\NormalTok{obs }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/lndn\_obs.csv"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(tidyverse) }\CommentTok{# Loads all the tidyverse packages, including readr}
+\NormalTok{obs <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"data/lndn_obs.csv"}\NormalTok{)}
 \NormalTok{obs}
 \end{Highlighting}
 \end{Shaded}
@@ -465,7 +460,7 @@ the \texttt{class} function from base R:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{class}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\KeywordTok{class}\NormalTok{(obs}\OperatorTok{$}\NormalTok{date)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -479,7 +474,7 @@ earliest date in the dataset and the \texttt{max} function to get the latest.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{min}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\KeywordTok{min}\NormalTok{(obs}\OperatorTok{$}\NormalTok{date)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -489,7 +484,7 @@ earliest date in the dataset and the \texttt{max} function to get the latest.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{max}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\KeywordTok{max}\NormalTok{(obs}\OperatorTok{$}\NormalTok{date)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -502,7 +497,7 @@ with a single call:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{range}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\KeywordTok{range}\NormalTok{(obs}\OperatorTok{$}\NormalTok{date)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -526,7 +521,7 @@ of missing values (NAs) if there are any:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(obs)}
+\KeywordTok{summary}\NormalTok{(obs)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -575,11 +570,11 @@ then see if the number of observations in the dataset is the same:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Calculate number of days in study period}
-\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%}            \CommentTok{\# Using piping (\%\textgreater{}\%) throughout to keep code clear}
-  \FunctionTok{pull}\NormalTok{(date) }\SpecialCharTok{\%\textgreater{}\%}   \CommentTok{\# Extract the \textasciigrave{}date\textasciigrave{} column as a vector}
-  \FunctionTok{range}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}      \CommentTok{\# Take the range of dates (earliest and latest)}
-  \FunctionTok{diff}\NormalTok{()           }\CommentTok{\# Calculate time difference from start to finish of study }
+\CommentTok{# Calculate number of days in study period}
+\NormalTok{obs }\OperatorTok{%>%}\StringTok{            }\CommentTok{# Using piping (%>%) throughout to keep code clear}
+\StringTok{  }\KeywordTok{pull}\NormalTok{(date) }\OperatorTok{%>%}\StringTok{   }\CommentTok{# Extract the `date` column as a vector}
+\StringTok{  }\KeywordTok{range}\NormalTok{() }\OperatorTok{%>%}\StringTok{      }\CommentTok{# Take the range of dates (earliest and latest)}
+\StringTok{  }\KeywordTok{diff}\NormalTok{()           }\CommentTok{# Calculate time difference from start to finish of study }
 \end{Highlighting}
 \end{Shaded}
 
@@ -589,9 +584,9 @@ then see if the number of observations in the dataset is the same:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Get number of observations in dataset{-}{-}{-}should be 1 more than time difference}
-\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{nrow}\NormalTok{()}
+\CommentTok{# Get number of observations in dataset---should be 1 more than time difference}
+\NormalTok{obs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{nrow}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -615,8 +610,8 @@ there are so many observations.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -628,8 +623,8 @@ You can plot the outcome variable in the same way:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ all)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -657,11 +652,24 @@ and still be correctly interpreted.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(viridis)}
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ doy, }\AttributeTok{y =}\NormalTok{ year, }\AttributeTok{fill =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_tile}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{scale\_y\_reverse}\NormalTok{() }\SpecialCharTok{+} 
-  \FunctionTok{scale\_fill\_viridis}\NormalTok{()}
+\KeywordTok{library}\NormalTok{(viridis)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'viridis' was built under R version 4.0.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'viridisLite' was built under R version 4.0.1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ doy, }\DataTypeTok{y =}\NormalTok{ year, }\DataTypeTok{fill =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_tile}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_reverse}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_fill_viridis}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -681,10 +689,10 @@ evident.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ doy, }\AttributeTok{y =}\NormalTok{ year, }\AttributeTok{fill =}\NormalTok{ all\_85plus)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_tile}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{scale\_y\_reverse}\NormalTok{() }\SpecialCharTok{+} 
-  \FunctionTok{scale\_fill\_viridis}\NormalTok{()}
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ doy, }\DataTypeTok{y =}\NormalTok{ year, }\DataTypeTok{fill =}\NormalTok{ all_85plus)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_tile}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_reverse}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_fill_viridis}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -709,8 +717,8 @@ daily mortality counts, on average, over the course of the study period:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ all)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -721,9 +729,9 @@ patterns, which you can do with \texttt{geom\_smooth}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_smooth}\NormalTok{()}
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ all)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -736,14 +744,18 @@ outcome:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{group\_by}\NormalTok{(year) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{!=} \DecValTok{2012}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Take out the last year}
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{median\_mort =} \FunctionTok{median}\NormalTok{(all)) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ median\_mort)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_line}\NormalTok{()}
+\NormalTok{obs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(year) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(year }\OperatorTok{!=}\StringTok{ }\DecValTok{2012}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# Take out the last year}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{median_mort =} \KeywordTok{median}\NormalTok{(all)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ year, }\DataTypeTok{y =}\NormalTok{ median_mort)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## `summarise()` ungrouping output (override with `.groups` argument)
+\end{verbatim}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-14-1.pdf}
 
@@ -763,7 +775,7 @@ patterns related to things like weekend / weekday.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{class}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{dow)}
+\KeywordTok{class}\NormalTok{(obs}\OperatorTok{$}\NormalTok{dow)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -779,9 +791,13 @@ weekday as a factor, with the order of weekdays encoded (using a special
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(lubridate)}
+\KeywordTok{library}\NormalTok{(lubridate)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'lubridate' was built under R version 4.0.2
+\end{verbatim}
 
 \begin{verbatim}
 ## 
@@ -796,10 +812,10 @@ weekday as a factor, with the order of weekdays encoded (using a special
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{obs }\OtherTok{\textless{}{-}}\NormalTok{ obs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{dow =} \FunctionTok{wday}\NormalTok{(date, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{))}
+\NormalTok{obs <-}\StringTok{ }\NormalTok{obs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{dow =} \KeywordTok{wday}\NormalTok{(date, }\DataTypeTok{label =} \OtherTok{TRUE}\NormalTok{))}
 
-\FunctionTok{class}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{dow)}
+\KeywordTok{class}\NormalTok{(obs}\OperatorTok{$}\NormalTok{dow)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -809,7 +825,7 @@ weekday as a factor, with the order of weekdays encoded (using a special
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{levels}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{dow)}
+\KeywordTok{levels}\NormalTok{(obs}\OperatorTok{$}\NormalTok{dow)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -822,19 +838,23 @@ counts by day of week:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{group\_by}\NormalTok{(dow) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{summarize}\NormalTok{(}\FunctionTok{mean}\NormalTok{(all), }
-            \FunctionTok{median}\NormalTok{(all), }
-            \FunctionTok{quantile}\NormalTok{(all, }\FloatTok{0.25}\NormalTok{), }
-            \FunctionTok{quantile}\NormalTok{(all, }\FloatTok{0.75}\NormalTok{))}
+\NormalTok{obs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(dow) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\KeywordTok{mean}\NormalTok{(all), }
+            \KeywordTok{median}\NormalTok{(all), }
+            \KeywordTok{quantile}\NormalTok{(all, }\FloatTok{0.25}\NormalTok{), }
+            \KeywordTok{quantile}\NormalTok{(all, }\FloatTok{0.75}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
+## `summarise()` ungrouping output (override with `.groups` argument)
+\end{verbatim}
+
+\begin{verbatim}
 ## # A tibble: 7 x 5
 ##   dow   `mean(all)` `median(all)` `quantile(all, 0.25)` `quantile(all, 0.75)`
-## * <ord>       <dbl>         <dbl>                 <dbl>                 <dbl>
+##   <ord>       <dbl>         <dbl>                 <dbl>                 <dbl>
 ## 1 Sun          156.           154                  136                    173
 ## 2 Mon          161.           159                  138                    179
 ## 3 Tue          161.           158                  139                    179
@@ -851,19 +871,23 @@ We did the same check for temperature:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{group\_by}\NormalTok{(dow) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{summarize}\NormalTok{(}\FunctionTok{mean}\NormalTok{(tmean), }
-            \FunctionTok{median}\NormalTok{(tmean), }
-            \FunctionTok{quantile}\NormalTok{(tmean, }\FloatTok{0.25}\NormalTok{), }
-            \FunctionTok{quantile}\NormalTok{(tmean, }\FloatTok{0.75}\NormalTok{))}
+\NormalTok{obs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(dow) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\KeywordTok{mean}\NormalTok{(tmean), }
+            \KeywordTok{median}\NormalTok{(tmean), }
+            \KeywordTok{quantile}\NormalTok{(tmean, }\FloatTok{0.25}\NormalTok{), }
+            \KeywordTok{quantile}\NormalTok{(tmean, }\FloatTok{0.75}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
+## `summarise()` ungrouping output (override with `.groups` argument)
+\end{verbatim}
+
+\begin{verbatim}
 ## # A tibble: 7 x 5
 ##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.2~ `quantile(tmean, 0.~
-## * <ord>         <dbl>           <dbl>                 <dbl>                <dbl>
+##   <ord>         <dbl>           <dbl>                 <dbl>                <dbl>
 ## 1 Sun            11.6            11.3                  7.48                 15.9
 ## 2 Mon            11.6            11.4                  7.33                 15.8
 ## 3 Tue            11.5            11.4                  7.48                 15.9
@@ -879,8 +903,8 @@ You can also visualize the association using boxplots:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{wday}\NormalTok{(date, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{), }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_boxplot}\NormalTok{()}
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{wday}\NormalTok{(date, }\DataTypeTok{label =} \OtherTok{TRUE}\NormalTok{), }\DataTypeTok{y =}\NormalTok{ all)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -891,8 +915,8 @@ boxplots, which only show quantiles.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ dow, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_violin}\NormalTok{(}\AttributeTok{draw\_quantiles =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.25}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.75}\NormalTok{))}
+\KeywordTok{ggplot}\NormalTok{(obs, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ dow, }\DataTypeTok{y =}\NormalTok{ all)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_violin}\NormalTok{(}\DataTypeTok{draw_quantiles =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.25}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.75}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1067,7 +1091,7 @@ example). If multiple independent variables are included, they are joined using
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_linear\_reg }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean, }\AttributeTok{data =}\NormalTok{ obs)}
+\NormalTok{mod_linear_reg <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\NormalTok{tmean, }\DataTypeTok{data =}\NormalTok{ obs)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1078,7 +1102,7 @@ enter the model object's name at the console:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_linear\_reg}
+\NormalTok{mod_linear_reg}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1100,7 +1124,7 @@ object:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(mod\_linear\_reg)}
+\KeywordTok{summary}\NormalTok{(mod_linear_reg)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1153,8 +1177,8 @@ about the model fit, including the AIC and BIC:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(broom)}
-\FunctionTok{glance}\NormalTok{(mod\_linear\_reg)}
+\KeywordTok{library}\NormalTok{(broom)}
+\KeywordTok{glance}\NormalTok{(mod_linear_reg)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1171,7 +1195,7 @@ statistic, and p-value.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{tidy}\NormalTok{(mod\_linear\_reg)}
+\KeywordTok{tidy}\NormalTok{(mod_linear_reg)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1190,7 +1214,7 @@ fit.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{augment}\NormalTok{(mod\_linear\_reg)}
+\KeywordTok{augment}\NormalTok{(mod_linear_reg)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1216,12 +1240,12 @@ after fitting the model:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_linear\_reg }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ .fitted), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Log(Expected mortality count)"}\NormalTok{)}
+\NormalTok{mod_linear_reg }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ .fitted), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Log(Expected mortality count)"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1256,7 +1280,7 @@ parameter, for which ``poisson'' is one choice.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_pois\_reg }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean, }\AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"poisson"}\NormalTok{)}
+\NormalTok{mod_pois_reg <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\NormalTok{tmean, }\DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"poisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1272,7 +1296,7 @@ increase in temperature.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(mod\_pois\_reg)}
+\KeywordTok{summary}\NormalTok{(mod_pois_reg)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1311,12 +1335,12 @@ association is linear:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_pois\_reg }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{log}\NormalTok{(all)), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ .fitted), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Log(Expected mortality count)"}\NormalTok{)}
+\NormalTok{mod_pois_reg }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{log}\NormalTok{(all)), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ .fitted), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Log(Expected mortality count)"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1330,12 +1354,12 @@ untransformed expected mortality count.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_pois\_reg }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{)}
+\NormalTok{mod_pois_reg }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1358,7 +1382,7 @@ with the ``quasipoisson'' choice for the \texttt{family} parameter in the \textt
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ovdisp\_reg }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean, }\AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_ovdisp_reg <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\NormalTok{tmean, }\DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1373,7 +1397,7 @@ seasonal trends).
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(mod\_ovdisp\_reg)}
+\KeywordTok{summary}\NormalTok{(mod_ovdisp_reg)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1408,8 +1432,8 @@ interesting:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{tidy}\NormalTok{(mod\_pois\_reg) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"tmean"}\NormalTok{)}
+\KeywordTok{tidy}\NormalTok{(mod_pois_reg) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "tmean"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1422,8 +1446,8 @@ interesting:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{tidy}\NormalTok{(mod\_ovdisp\_reg) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"tmean"}\NormalTok{)}
+\KeywordTok{tidy}\NormalTok{(mod_ovdisp_reg) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "tmean"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1470,8 +1494,8 @@ the \texttt{glm} call. One way to do this is with the \texttt{factor} call, spec
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_dow }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean }\SpecialCharTok{+} \FunctionTok{factor}\NormalTok{(dow, }\AttributeTok{ordered =} \ConstantTok{FALSE}\NormalTok{), }
-                    \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_ctrl_dow <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\NormalTok{tmean }\OperatorTok{+}\StringTok{ }\KeywordTok{factor}\NormalTok{(dow, }\DataTypeTok{ordered =} \OtherTok{FALSE}\NormalTok{), }
+                    \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1484,7 +1508,7 @@ is the same for the two days.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(mod\_ctrl\_dow)}
+\KeywordTok{summary}\NormalTok{(mod_ctrl_dow)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1533,12 +1557,12 @@ fitted line:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_dow }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{)}
+\NormalTok{mod_ctrl_dow }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1554,13 +1578,13 @@ the line is smooth across all observations from the same day of the week:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_dow }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ obs}\SpecialCharTok{$}\NormalTok{dow)}
+\NormalTok{mod_ctrl_dow }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{obs}\OperatorTok{$}\NormalTok{dow)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1720,15 +1744,15 @@ and perform the steps taken to clean it in the last chapter:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Load some packages that will likely be useful}
-\FunctionTok{library}\NormalTok{(tidyverse)}
-\FunctionTok{library}\NormalTok{(viridis)}
-\FunctionTok{library}\NormalTok{(lubridate)}
-\FunctionTok{library}\NormalTok{(broom)}
+\CommentTok{# Load some packages that will likely be useful}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(viridis)}
+\KeywordTok{library}\NormalTok{(lubridate)}
+\KeywordTok{library}\NormalTok{(broom)}
 
-\CommentTok{\# Load and clean the data}
-\NormalTok{obs }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/lndn\_obs.csv"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{dow =} \FunctionTok{wday}\NormalTok{(date, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{))}
+\CommentTok{# Load and clean the data}
+\NormalTok{obs <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"data/lndn_obs.csv"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{dow =} \KeywordTok{wday}\NormalTok{(date, }\DataTypeTok{label =} \OtherTok{TRUE}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1757,7 +1781,7 @@ includes date. R saves dates in a special format, which we're using the in
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{class}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date)}
+\KeywordTok{class}\NormalTok{(obs}\OperatorTok{$}\NormalTok{date)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1774,7 +1798,7 @@ the first date in our example data:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{obs}\SpecialCharTok{$}\NormalTok{date[}\DecValTok{1}\NormalTok{]}
+\NormalTok{obs}\OperatorTok{$}\NormalTok{date[}\DecValTok{1}\NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1784,7 +1808,7 @@ the first date in our example data:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{as.numeric}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date[}\DecValTok{1}\NormalTok{]) }
+\KeywordTok{as.numeric}\NormalTok{(obs}\OperatorTok{$}\NormalTok{date[}\DecValTok{1}\NormalTok{]) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -1796,7 +1820,7 @@ And here's the example for the next date:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{obs}\SpecialCharTok{$}\NormalTok{date[}\DecValTok{2}\NormalTok{]}
+\NormalTok{obs}\OperatorTok{$}\NormalTok{date[}\DecValTok{2}\NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1806,7 +1830,7 @@ And here's the example for the next date:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{as.numeric}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{date[}\DecValTok{2}\NormalTok{])}
+\KeywordTok{as.numeric}\NormalTok{(obs}\OperatorTok{$}\NormalTok{date[}\DecValTok{2}\NormalTok{])}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1822,11 +1846,11 @@ data are included). The use of the dates is more robust:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{obs }\OtherTok{\textless{}{-}}\NormalTok{ obs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{time =} \FunctionTok{as.numeric}\NormalTok{(date) }\SpecialCharTok{{-}} \FunctionTok{first}\NormalTok{(}\FunctionTok{as.numeric}\NormalTok{(date)))}
+\NormalTok{obs <-}\StringTok{ }\NormalTok{obs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{time =} \KeywordTok{as.numeric}\NormalTok{(date) }\OperatorTok{-}\StringTok{ }\KeywordTok{first}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(date)))}
 
-\NormalTok{obs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{select}\NormalTok{(date, time)}
+\NormalTok{obs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(date, time)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1853,9 +1877,9 @@ and fitting the regression model.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(obs, }
-       \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ time, }\AttributeTok{y =}\NormalTok{ all)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(obs, }
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time, }\DataTypeTok{y =}\NormalTok{ all)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.5}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1874,8 +1898,8 @@ that column name to the right of the \texttt{\textasciitilde{}} in the model for
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_time }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ time, }
-                \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_time <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\NormalTok{time, }
+                \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1885,12 +1909,12 @@ with the observed data, to get an idea of what this model has captured:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_time }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ time)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
+\NormalTok{mod_time }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -1915,9 +1939,9 @@ compared to a spline with fewer degrees of freedom. Let's start by using
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(splines)}
-\NormalTok{mod\_time\_nonlin }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{158}\NormalTok{), }
-                       \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(splines)}
+\NormalTok{mod_time_nonlin <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\KeywordTok{ns}\NormalTok{(time, }\DataTypeTok{df =} \DecValTok{158}\NormalTok{), }
+                       \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1931,13 +1955,13 @@ pulling it from the original \texttt{obs} dataset, and then proceed as before.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_time\_nonlin }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{time =}\NormalTok{ obs}\SpecialCharTok{$}\NormalTok{time) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ time)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
+\NormalTok{mod_time_nonlin }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{time =}\NormalTok{ obs}\OperatorTok{$}\NormalTok{time) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -1961,16 +1985,16 @@ control for seasonal patterns.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# A model with many less d.f. for the time spline}
-\NormalTok{mod\_time\_nonlin\_lowdf }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{10}\NormalTok{), }
-                             \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
-\NormalTok{mod\_time\_nonlin\_lowdf }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{time =}\NormalTok{ obs}\SpecialCharTok{$}\NormalTok{time) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ time)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
+\CommentTok{# A model with many less d.f. for the time spline}
+\NormalTok{mod_time_nonlin_lowdf <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\KeywordTok{ns}\NormalTok{(time, }\DataTypeTok{df =} \DecValTok{10}\NormalTok{), }
+                             \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_time_nonlin_lowdf }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{time =}\NormalTok{ obs}\OperatorTok{$}\NormalTok{time) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -1978,17 +2002,17 @@ control for seasonal patterns.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# A model with many more d.f. for the time spline}
-\CommentTok{\# (Takes a little while to run)}
-\NormalTok{mod\_time\_nonlin\_highdf }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{400}\NormalTok{), }
-                             \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
-\NormalTok{mod\_time\_nonlin\_highdf }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{time =}\NormalTok{ obs}\SpecialCharTok{$}\NormalTok{time) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ time)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
+\CommentTok{# A model with many more d.f. for the time spline}
+\CommentTok{# (Takes a little while to run)}
+\NormalTok{mod_time_nonlin_highdf <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\KeywordTok{ns}\NormalTok{(time, }\DataTypeTok{df =} \DecValTok{400}\NormalTok{), }
+                             \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_time_nonlin_highdf }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{time =}\NormalTok{ obs}\OperatorTok{$}\NormalTok{time) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Date in study"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -1999,8 +2023,8 @@ it will make the model summary results look much more complicated, e.g.:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_time\_nonlin\_lowdf }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{tidy}\NormalTok{()}
+\NormalTok{mod_time_nonlin_lowdf }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2050,8 +2074,8 @@ for day of week:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_dow }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean }\SpecialCharTok{+} \FunctionTok{factor}\NormalTok{(dow, }\AttributeTok{ordered =} \ConstantTok{FALSE}\NormalTok{), }
-                    \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_ctrl_dow <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\NormalTok{tmean }\OperatorTok{+}\StringTok{ }\KeywordTok{factor}\NormalTok{(dow, }\DataTypeTok{ordered =} \OtherTok{FALSE}\NormalTok{), }
+                    \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2068,9 +2092,9 @@ pathways.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_dow\_time }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tmean }\SpecialCharTok{+} \FunctionTok{factor}\NormalTok{(dow, }\AttributeTok{ordered =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
-                           \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{158}\NormalTok{), }
-                         \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_ctrl_dow_time <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\NormalTok{tmean }\OperatorTok{+}\StringTok{ }\KeywordTok{factor}\NormalTok{(dow, }\DataTypeTok{ordered =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{                           }\KeywordTok{ns}\NormalTok{(time, }\DataTypeTok{df =} \DecValTok{158}\NormalTok{), }
+                         \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2081,9 +2105,9 @@ be lower on days with higher temperature, with a negative term for \texttt{tmean
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_dow }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"tmean"}\NormalTok{)}
+\NormalTok{mod_ctrl_dow }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "tmean"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2101,9 +2125,9 @@ for long-term and seasonal trends}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_dow\_time }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"tmean"}\NormalTok{)}
+\NormalTok{mod_ctrl_dow_time }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "tmean"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2139,21 +2163,21 @@ flexible function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_ctrl\_nl\_temp }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ns}\NormalTok{(tmean, }\DecValTok{4}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{factor}\NormalTok{(dow, }\AttributeTok{ordered =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
-                          \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{158}\NormalTok{), }
-                        \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\NormalTok{mod_ctrl_nl_temp <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(all }\OperatorTok{~}\StringTok{ }\KeywordTok{ns}\NormalTok{(tmean, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{factor}\NormalTok{(dow, }\DataTypeTok{ordered =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{                          }\KeywordTok{ns}\NormalTok{(time, }\DataTypeTok{df =} \DecValTok{158}\NormalTok{), }
+                        \DataTypeTok{data =}\NormalTok{ obs, }\DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_time\_nonlin\_highdf }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{augment}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{tmean =}\NormalTok{ obs}\SpecialCharTok{$}\NormalTok{tmean) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{exp}\NormalTok{(.fitted)), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{,  }\AttributeTok{size =} \FloatTok{0.4}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Daily mean temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
+\NormalTok{mod_time_nonlin_highdf }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{tmean =}\NormalTok{ obs}\OperatorTok{$}\NormalTok{tmean) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ tmean)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ all), }\DataTypeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted)), }\DataTypeTok{color =} \StringTok{"red"}\NormalTok{,  }\DataTypeTok{size =} \FloatTok{0.4}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Daily mean temperature"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -2224,8 +2248,8 @@ working directory:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(tidyverse) }\CommentTok{\# Loads all the tidyverse packages, including readr}
-\NormalTok{fhs }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/frmgham2.csv"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(tidyverse) }\CommentTok{# Loads all the tidyverse packages, including readr}
+\NormalTok{fhs <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"data/frmgham2.csv"}\NormalTok{)}
 \NormalTok{fhs}
 \end{Highlighting}
 \end{Shaded}
@@ -2276,8 +2300,8 @@ the \texttt{tidyverse}):
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{rename\_all}\NormalTok{(}\AttributeTok{.funs =}\NormalTok{ str\_to\_lower)}
+\NormalTok{fhs <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_all}\NormalTok{(}\DataTypeTok{.funs =}\NormalTok{ str_to_lower)}
 \NormalTok{fhs}
 \end{Highlighting}
 \end{Shaded}
@@ -2341,7 +2365,7 @@ In the \texttt{fhs} dataset, the number of participants will be equal to the num
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(fhs}\SpecialCharTok{$}\NormalTok{randid))}
+\KeywordTok{length}\NormalTok{(}\KeywordTok{unique}\NormalTok{(fhs}\OperatorTok{$}\NormalTok{randid))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2358,10 +2382,10 @@ then pipe that into vector operations:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{pull}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{unique}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{length}\NormalTok{()}
+\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{pull}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{unique}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{length}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2379,7 +2403,7 @@ The \texttt{dim} function gives us the length (number of rows) and width (number
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{dim}\NormalTok{(fhs)}
+\KeywordTok{dim}\NormalTok{(fhs)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2395,13 +2419,13 @@ You could do that in this dataset with the following code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
-  \CommentTok{\# Group by the study subject identifier and then count the rows for each}
-  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{count}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \CommentTok{\# Reorder the dataset so the subjects with the most observations come first}
-  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(n)) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{head}\NormalTok{()}
+\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\CommentTok{# Group by the study subject identifier and then count the rows for each}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{count}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\CommentTok{# Reorder the dataset so the subjects with the most observations come first}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(n)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{head}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2422,12 +2446,12 @@ You can visualize this, as well. A histogram is one good choice:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
-  \CommentTok{\# Group by the study subject identifier and then count the rows for each}
-  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{count}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ n)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_histogram}\NormalTok{()}
+\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\CommentTok{# Group by the study subject identifier and then count the rows for each}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{count}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ n)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2456,8 +2480,17 @@ get a top-level snapshot:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(visdat)}
-\FunctionTok{vis\_miss}\NormalTok{(fhs)}
+\KeywordTok{library}\NormalTok{(visdat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'visdat' was built under R version 4.0.2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{vis_miss}\NormalTok{(fhs)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2466,8 +2499,17 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(naniar)}
-\FunctionTok{gg\_miss\_var}\NormalTok{(fhs)}
+\KeywordTok{library}\NormalTok{(naniar)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'naniar' was built under R version 4.0.2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{gg_miss_var}\NormalTok{(fhs)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2486,7 +2528,7 @@ example, you could see if missingness varies by the period of the observation:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{gg\_miss\_var}\NormalTok{(fhs, }\AttributeTok{facet =}\NormalTok{ period)}
+\KeywordTok{gg_miss_var}\NormalTok{(fhs, }\DataTypeTok{facet =}\NormalTok{ period)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2497,7 +2539,7 @@ was associated with death of the study subject:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{gg\_miss\_var}\NormalTok{(fhs, }\AttributeTok{facet =}\NormalTok{ death)}
+\KeywordTok{gg_miss_var}\NormalTok{(fhs, }\DataTypeTok{facet =}\NormalTok{ death)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2512,9 +2554,9 @@ variables:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ glucose, }\AttributeTok{y =}\NormalTok{ totchol)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_miss\_point}\NormalTok{()}
+\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ glucose, }\DataTypeTok{y =}\NormalTok{ totchol)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_miss_point}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2532,10 +2574,10 @@ You can also do things like facet by sex to explore patterns at a finer level:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ glucose, }\AttributeTok{y =}\NormalTok{ totchol)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_miss\_point}\NormalTok{() }\SpecialCharTok{+} 
-  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex)}
+\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ glucose, }\DataTypeTok{y =}\NormalTok{ totchol)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_miss_point}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{sex)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2551,7 +2593,31 @@ You can also do things like facet by sex to explore patterns at a finer level:
 
 The \texttt{DEATH} variable in the \texttt{fhs} data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
 
-Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observtion that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will constrcut a variable like this in \texttt{fhs} below.
+It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the \texttt{fhs} data using \texttt{tidyverse} tools as following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{slice}\NormalTok{(1L)}
+\end{Highlighting}
+\end{Shaded}
+
+In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including \texttt{death=1}. For example, we can use the \texttt{sum} function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the \texttt{sum} function will give as the number of deaths in the sample.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{sum}\NormalTok{(fhs_first}\OperatorTok{$}\NormalTok{death) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1550
+\end{verbatim}
+
+Conversely using \texttt{tidyverse} tools
+
+Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in \texttt{fhs} below.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -2569,6 +2635,19 @@ In the context of survival analysis what is modelled is time to an event. This i
 a bit different than the models in the \texttt{glm} family that model an outcome that follows
 a particular distribution. The \texttt{survival} package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional
 hazards model that was also applied in \citet{wong1989risk}.
+
+The Cox proportional hazards model in a simple form has this form
+
+\(log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X\)
+
+where \(\lambda(t)\) represent the hazard at time \(t\), \(\lambda_{0}(t)\) is the baseline hazard at time \(t\), and \(\beta_{1}\) is the log hazard for those with \(X=1\) compared to \(X=0\). The baseline hazard \(\lambda_{0}(t)\) is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, \(\lambda_{0}(t)\) is not estimated by the model.
+The above model can also be writen as
+
+\(\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}\)
+
+\(e^{\beta_{1}}\) is the hazard ratio comparing those hose with \(X=1\) and \(X=0\)
+
+Using the \texttt{fhs} data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI.
 
 \hypertarget{handling-complexity}{%
 \section{Handling complexity}\label{handling-complexity}}

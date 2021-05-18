@@ -218,6 +218,46 @@ fhs %>%
 We need to think some about this convention of recording the data when we count
 the deaths.
 
+It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the `fhs` data using  `tidyverse` tools. The `group_by` functions groups data by unique values of designated variables (here `randid`) and the `slice` function selects rows as designated.
+
+```{r}
+fhs_first <- fhs %>% 
+  group_by(randid) %>% 
+  slice(1L)
+```
+
+Alternatively you can use the `slice_head` function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the `group_by` function, we will be slicing rows beginning from the first observation for each `randid`
+
+```{r}
+fhs_first <- fhs %>% 
+  group_by(randid) %>% 
+  slice_head(n=1)
+```
+
+We can similarly select the last observation for each participant 
+
+```{r}
+fhs_last <- fhs %>% 
+  group_by(randid) %>% 
+  slice(n())
+```
+
+or using the `slice_tail` function
+
+```{r}
+fhs_last <- fhs %>% 
+  group_by(randid) %>% 
+  slice_tail(n=1)
+```
+
+In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death=1`. For example, we can use the `sum` function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the `sum` function will give as the number of deaths in the sample. 
+
+```{r}
+sum(fhs_first$death) 
+```
+
+Conversely using `tidyverse` tools
+
 Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
 
 4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
@@ -231,7 +271,18 @@ a bit different than the models in the `glm` family that model an outcome that f
 a particular distribution. The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional 
 hazards model that was also applied in @wong1989risk.
 
+The Cox proportional hazards model in a simple form has this form
 
+$log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
+
+where $\lambda(t)$ represent the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The baseline hazard $\lambda_{0}(t)$ is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, $\lambda_{0}(t)$ is not estimated by the model. 
+The above model can also be writen as 
+
+$\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}$
+
+$e^{\beta_{1}}$ is the hazard ratio comparing those hose with $X=1$ and $X=0$
+
+Using the `fhs` data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI. 
 
 *Note: Variables of interest to continue with: 
 for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi` smoking or not
