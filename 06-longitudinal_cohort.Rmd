@@ -239,7 +239,8 @@ The Cox proportional hazards model in a simple form has this form
 
 $log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
 
-where $\lambda(t)$ represent the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The above model can also be writen as 
+where $\lambda(t)$ represent the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The baseline hazard $\lambda_{0}(t)$ is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, $\lambda_{0}(t)$ is not estimated by the model. 
+The above model can also be writen as 
 
 $\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}$
 
