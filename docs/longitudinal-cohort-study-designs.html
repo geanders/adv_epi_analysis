@@ -226,9 +226,9 @@ website. For the Framingham Heart Study the example data are available as the fi
 “frmgham2.csv.” It is saved in a csv format, and so they can be read into R using the
 <code>read_csv</code> function from the <code>readr</code> package (part of the tidyverse). You can use the following code to read in these data, assuming you have saved them in a “data” subdirectory of your current
 working directory:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="longitudinal-cohort-study-designs.html#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
-<span id="cb98-2"><a href="longitudinal-cohort-study-designs.html#cb98-2" aria-hidden="true" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/frmgham2.csv&quot;</span>)</span>
-<span id="cb98-3"><a href="longitudinal-cohort-study-designs.html#cb98-3" aria-hidden="true" tabindex="-1"></a>fhs</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="longitudinal-cohort-study-designs.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
+<span id="cb104-2"><a href="longitudinal-cohort-study-designs.html#cb104-2" aria-hidden="true" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/frmgham2.csv&quot;</span>)</span>
+<span id="cb104-3"><a href="longitudinal-cohort-study-designs.html#cb104-3" aria-hidden="true" tabindex="-1"></a>fhs</span></code></pre></div>
 <pre><code>## # A tibble: 11,627 x 39
 ##    RANDID   SEX TOTCHOL   AGE SYSBP DIABP CURSMOKE CIGPDAY   BMI DIABETES BPMEDS
 ##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
@@ -262,9 +262,9 @@ to be in lowercase, rather than uppercase. This will save our pinkies some
 work as we code with the data! You can make that change with the following
 code, using the <code>str_to_lower</code> function from the <code>stringr</code> package (part of
 the <code>tidyverse</code>):</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="longitudinal-cohort-study-designs.html#cb100-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb100-2"><a href="longitudinal-cohort-study-designs.html#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(<span class="at">.funs =</span> str_to_lower)</span>
-<span id="cb100-3"><a href="longitudinal-cohort-study-designs.html#cb100-3" aria-hidden="true" tabindex="-1"></a>fhs</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="longitudinal-cohort-study-designs.html#cb106-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb106-2"><a href="longitudinal-cohort-study-designs.html#cb106-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(<span class="at">.funs =</span> str_to_lower)</span>
+<span id="cb106-3"><a href="longitudinal-cohort-study-designs.html#cb106-3" aria-hidden="true" tabindex="-1"></a>fhs</span></code></pre></div>
 <pre><code>## # A tibble: 11,627 x 39
 ##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
 ##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
@@ -303,7 +303,7 @@ smoking and risk of incident MI.</p>
 <li><strong>What is the number of participants and the number of observations in the <code>fhs</code> dataset? (i.e what is the sample size and number of person-time observations)</strong></li>
 </ol>
 <p>In the <code>fhs</code> dataset, the number of participants will be equal to the number of unique ID’s (The <code>RANDID</code> variable which takes a unique value for each participant). We can extract this using the <code>unique</code> function nested within the <code>length</code> function</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="longitudinal-cohort-study-designs.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(fhs<span class="sc">$</span>randid))</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="longitudinal-cohort-study-designs.html#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(fhs<span class="sc">$</span>randid))</span></code></pre></div>
 <pre><code>## [1] 4434</code></pre>
 <p>If you’d like to use <code>tidyverse</code> tools to answer this question, you can do
 that, as well. The pipe operator (<code>%&gt;%</code>) works on any type of object—it will
@@ -311,10 +311,10 @@ take your current output and include it as the first parameter value for the
 function call you pipe into. If you want to perform operations on a column of
 a dataframe, you can use <code>pull</code> to extract it from the dataframe as a vector, and
 then pipe that into vector operations:</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="longitudinal-cohort-study-designs.html#cb104-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb104-2"><a href="longitudinal-cohort-study-designs.html#cb104-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb104-3"><a href="longitudinal-cohort-study-designs.html#cb104-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb104-4"><a href="longitudinal-cohort-study-designs.html#cb104-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">length</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="longitudinal-cohort-study-designs.html#cb110-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb110-2"><a href="longitudinal-cohort-study-designs.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb110-3"><a href="longitudinal-cohort-study-designs.html#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb110-4"><a href="longitudinal-cohort-study-designs.html#cb110-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">length</span>()</span></code></pre></div>
 <pre><code>## [1] 4434</code></pre>
 <p>It’s entirely a personal choice whether you use the <code>$</code> operator and “nesting”
 of function calls, versus <code>pull</code> and piping to do a series of function calls.
@@ -322,19 +322,19 @@ You can see you get the same result, so it just comes down to the style that
 you will find easiest to understand when you look at your code later.</p>
 <p>The number of person-time observations will actually be equal to the length of the dataset.
 The <code>dim</code> function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="longitudinal-cohort-study-designs.html#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(fhs)</span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="longitudinal-cohort-study-designs.html#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(fhs)</span></code></pre></div>
 <pre><code>## [1] 11627    39</code></pre>
 <p>We see that there is approximately an average of 2 to 3 observations per participants.</p>
 <p>When you know there are repeated measurements, it can be helpful to explore
 how much variation there is in the number of observations per study subject.
 You could do that in this dataset with the following code:</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="longitudinal-cohort-study-designs.html#cb108-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb108-2"><a href="longitudinal-cohort-study-designs.html#cb108-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by the study subject identifier and then count the rows for each</span></span>
-<span id="cb108-3"><a href="longitudinal-cohort-study-designs.html#cb108-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb108-4"><a href="longitudinal-cohort-study-designs.html#cb108-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb108-5"><a href="longitudinal-cohort-study-designs.html#cb108-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder the dataset so the subjects with the most observations come first</span></span>
-<span id="cb108-6"><a href="longitudinal-cohort-study-designs.html#cb108-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> </span>
-<span id="cb108-7"><a href="longitudinal-cohort-study-designs.html#cb108-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="longitudinal-cohort-study-designs.html#cb114-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb114-2"><a href="longitudinal-cohort-study-designs.html#cb114-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by the study subject identifier and then count the rows for each</span></span>
+<span id="cb114-3"><a href="longitudinal-cohort-study-designs.html#cb114-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb114-4"><a href="longitudinal-cohort-study-designs.html#cb114-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb114-5"><a href="longitudinal-cohort-study-designs.html#cb114-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reorder the dataset so the subjects with the most observations come first</span></span>
+<span id="cb114-6"><a href="longitudinal-cohort-study-designs.html#cb114-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> </span>
+<span id="cb114-7"><a href="longitudinal-cohort-study-designs.html#cb114-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 2
 ## # Groups:   randid [6]
 ##   randid     n
@@ -346,13 +346,13 @@ You could do that in this dataset with the following code:</p>
 ## 5  14367     3
 ## 6  16365     3</code></pre>
 <p>You can visualize this, as well. A histogram is one good choice:</p>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="longitudinal-cohort-study-designs.html#cb110-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb110-2"><a href="longitudinal-cohort-study-designs.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by the study subject identifier and then count the rows for each</span></span>
-<span id="cb110-3"><a href="longitudinal-cohort-study-designs.html#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb110-4"><a href="longitudinal-cohort-study-designs.html#cb110-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb110-5"><a href="longitudinal-cohort-study-designs.html#cb110-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> n)) <span class="sc">+</span> </span>
-<span id="cb110-6"><a href="longitudinal-cohort-study-designs.html#cb110-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-64-1.png" width="672" />
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="longitudinal-cohort-study-designs.html#cb116-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb116-2"><a href="longitudinal-cohort-study-designs.html#cb116-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by the study subject identifier and then count the rows for each</span></span>
+<span id="cb116-3"><a href="longitudinal-cohort-study-designs.html#cb116-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb116-4"><a href="longitudinal-cohort-study-designs.html#cb116-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb116-5"><a href="longitudinal-cohort-study-designs.html#cb116-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> n)) <span class="sc">+</span> </span>
+<span id="cb116-6"><a href="longitudinal-cohort-study-designs.html#cb116-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-69-1.png" width="672" />
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.</p>
 <ol start="2" style="list-style-type: decimal">
@@ -367,13 +367,13 @@ examples</a>
 that is a nice starting point for working with both packages.</p>
 <p>The <code>vis_miss</code> function shows missingness in a dataset in a way that lets you
 get a top-level snapshot:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="longitudinal-cohort-study-designs.html#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
-<span id="cb111-2"><a href="longitudinal-cohort-study-designs.html#cb111-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vis_miss</span>(fhs)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-65-1.png" width="672" />
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="longitudinal-cohort-study-designs.html#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
+<span id="cb117-2"><a href="longitudinal-cohort-study-designs.html#cb117-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vis_miss</span>(fhs)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-70-1.png" width="672" />
 Another was to visualize this is with <code>gg_miss_var</code>:</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="longitudinal-cohort-study-designs.html#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
-<span id="cb112-2"><a href="longitudinal-cohort-study-designs.html#cb112-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-66-1.png" width="672" /></p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="longitudinal-cohort-study-designs.html#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb118-2"><a href="longitudinal-cohort-study-designs.html#cb118-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-71-1.png" width="672" /></p>
 <p>Many of the variables are available for all observations, with no missingness,
 including records of the subject’s ID, measures of death, stroke, CVD, and other
 events, age, sex, and BMI. Some of the measured values from visits are missing
@@ -383,22 +383,22 @@ missing. Two of the variables—<code>hdlc</code> and <code>ldlc</code>—are mi
 they are available.</p>
 <p>You can also do faceting with the <code>gg_miss_var</code> function. For
 example, you could see if missingness varies by the period of the observation:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="longitudinal-cohort-study-designs.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> period)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-67-1.png" width="672" /></p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="longitudinal-cohort-study-designs.html#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> period)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-72-1.png" width="672" /></p>
 <p>You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="longitudinal-cohort-study-designs.html#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> death)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="longitudinal-cohort-study-designs.html#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> death)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-73-1.png" width="672" /></p>
 <p>There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both <code>glucose</code> and
 <code>totchol</code> are continuous variables, and both are occasionally missing. You
 can use the geom function <code>geom_miss_point</code> from the <code>nanair</code> package
 with a ggplot object to explore patterns of missingness among these two
 variables:</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="longitudinal-cohort-study-designs.html#cb115-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb115-2"><a href="longitudinal-cohort-study-designs.html#cb115-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
-<span id="cb115-3"><a href="longitudinal-cohort-study-designs.html#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="longitudinal-cohort-study-designs.html#cb121-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb121-2"><a href="longitudinal-cohort-study-designs.html#cb121-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
+<span id="cb121-3"><a href="longitudinal-cohort-study-designs.html#cb121-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>()</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
 <p>The lower left corner shows the observations where both values are missing—it
 looks like there aren’t too many. For observations with one missing but not the
 other (the points in red along the x- and y-axes), it looks like the distribution
@@ -407,11 +407,11 @@ with both measurements avaiable. In other words, <code>totchol</code> has a simi
 distribution among observations where <code>glucose</code> is available as observations
 where <code>glucose</code> is missing.</p>
 <p>You can also do things like facet by sex to explore patterns at a finer level:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="longitudinal-cohort-study-designs.html#cb116-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb116-2"><a href="longitudinal-cohort-study-designs.html#cb116-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
-<span id="cb116-3"><a href="longitudinal-cohort-study-designs.html#cb116-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>() <span class="sc">+</span> </span>
-<span id="cb116-4"><a href="longitudinal-cohort-study-designs.html#cb116-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sex)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-70-1.png" width="672" /></p>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="longitudinal-cohort-study-designs.html#cb122-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb122-2"><a href="longitudinal-cohort-study-designs.html#cb122-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
+<span id="cb122-3"><a href="longitudinal-cohort-study-designs.html#cb122-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>() <span class="sc">+</span> </span>
+<span id="cb122-4"><a href="longitudinal-cohort-study-designs.html#cb122-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sex)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
 <ol start="3" style="list-style-type: decimal">
 <li><em>How many participants die? What is the distribution of age at time of death?</em></li>
 </ol>
@@ -419,9 +419,9 @@ where <code>glucose</code> is missing.</p>
 <p>If you arrange by the random ID and look at <code>period</code> and <code>death</code> for each subject,
 you can see that the <code>death</code> variable is the same for all periods for each
 subject:</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="longitudinal-cohort-study-designs.html#cb117-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb117-2"><a href="longitudinal-cohort-study-designs.html#cb117-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb117-3"><a href="longitudinal-cohort-study-designs.html#cb117-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(randid, period, death)</span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="longitudinal-cohort-study-designs.html#cb123-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb123-2"><a href="longitudinal-cohort-study-designs.html#cb123-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb123-3"><a href="longitudinal-cohort-study-designs.html#cb123-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(randid, period, death)</span></code></pre></div>
 <pre><code>## # A tibble: 11,627 x 3
 ##    randid period death
 ##     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
@@ -439,23 +439,23 @@ subject:</p>
 <p>We need to think some about this convention of recording the data when we count
 the deaths.</p>
 <p>It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the <code>fhs</code> data using <code>tidyverse</code> tools. The <code>group_by</code> functions groups data by unique values of designated variables (here <code>randid</code>) and the <code>slice</code> function selects rows as designated.</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="longitudinal-cohort-study-designs.html#cb119-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb119-2"><a href="longitudinal-cohort-study-designs.html#cb119-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-3"><a href="longitudinal-cohort-study-designs.html#cb119-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(1L)</span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="longitudinal-cohort-study-designs.html#cb125-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb125-2"><a href="longitudinal-cohort-study-designs.html#cb125-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb125-3"><a href="longitudinal-cohort-study-designs.html#cb125-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(1L)</span></code></pre></div>
 <p>Alternatively you can use the <code>slice_head</code> function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the <code>group_by</code> function, we will be slicing rows beginning from the first observation for each <code>randid</code></p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="longitudinal-cohort-study-designs.html#cb120-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb120-2"><a href="longitudinal-cohort-study-designs.html#cb120-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb120-3"><a href="longitudinal-cohort-study-designs.html#cb120-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="longitudinal-cohort-study-designs.html#cb126-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb126-2"><a href="longitudinal-cohort-study-designs.html#cb126-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-3"><a href="longitudinal-cohort-study-designs.html#cb126-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n=</span><span class="dv">1</span>)</span></code></pre></div>
 <p>We can similarly select the last observation for each participant</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="longitudinal-cohort-study-designs.html#cb121-1" aria-hidden="true" tabindex="-1"></a>fhs_last <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb121-2"><a href="longitudinal-cohort-study-designs.html#cb121-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb121-3"><a href="longitudinal-cohort-study-designs.html#cb121-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">n</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="longitudinal-cohort-study-designs.html#cb127-1" aria-hidden="true" tabindex="-1"></a>fhs_last <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb127-2"><a href="longitudinal-cohort-study-designs.html#cb127-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-3"><a href="longitudinal-cohort-study-designs.html#cb127-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">n</span>())</span></code></pre></div>
 <p>or using the <code>slice_tail</code> function</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="longitudinal-cohort-study-designs.html#cb122-1" aria-hidden="true" tabindex="-1"></a>fhs_last <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb122-2"><a href="longitudinal-cohort-study-designs.html#cb122-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb122-3"><a href="longitudinal-cohort-study-designs.html#cb122-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="longitudinal-cohort-study-designs.html#cb128-1" aria-hidden="true" tabindex="-1"></a>fhs_last <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb128-2"><a href="longitudinal-cohort-study-designs.html#cb128-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb128-3"><a href="longitudinal-cohort-study-designs.html#cb128-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n=</span><span class="dv">1</span>)</span></code></pre></div>
 <p>In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including <code>death=1</code>. For example, we can use the <code>sum</code> function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the <code>sum</code> function will give as the number of deaths in the sample.</p>
-<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="longitudinal-cohort-study-designs.html#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(fhs_first<span class="sc">$</span>death) </span></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="longitudinal-cohort-study-designs.html#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(fhs_first<span class="sc">$</span>death) </span></code></pre></div>
 <pre><code>## [1] 1550</code></pre>
 <p>Conversely using <code>tidyverse</code> tools</p>
 <p>Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in <code>fhs</code> below.</p>

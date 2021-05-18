@@ -2174,10 +2174,110 @@ from the chapter's vocabulary list. The vocabulary words for this chapter are:
 \hypertarget{natural-experiments}{%
 \chapter{Natural experiments}\label{natural-experiments}}
 
+The readings for this chapter are:
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{bernal2017interrupted} (on interrupted time series), with a correction to an equation in the paper at \url{https://academic.oup.com/ije/article/49/4/1414/5900884}. Example data and R code for the paper are available \href{https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/ije/49/4/10.1093_ije_dyaa118/1/dyaa118_supplementary_data.zip?Expires=1623897009\&Signature=BzYQrBg60cMKHYeDU~OIZYIFuRgEIPwQsWMjzON0dB~fL8y-8x4xdGIJQBBPgDxBIoUIGnjmShVf1jlVqzloo3IldAdVC78TZ~~XseYdJ9c590QRAR6m7mH~VbPe-fCnQSnZF0z2Qw9PZcSGITZeNr4YXPVY-~gtpgBeZiN0MpgEVBLVT5fYhhQBGbp0vxl1bKdUfNtF71fdVJrglkhSG8-M24A07LmAr8jThx4MQmSAzKCxA4VZLRE6To8zC3-rJlxyWiqrSTFsVQM2SN4R6UuxYoRsILRcIAr2sUfqgmaSlxBiYAf71PdGSrnBcXX3l0l7yuAftX5PYTwMKTyxOA__\&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA}{to download} through a Supplemental Appendix.
+\item
+  \citet{barone2011effects}, the scientific paper highlighted as an example in the tutorial in the previous reading
+\item
+  \citet{bor2014regression} (on interrupted time series)
+\item
+  \citet{casey2018retirements} (on difference-in-differences)
+\item
+  \citet{mendola2018invited}, an Invited Commentary on the previous reading
+\end{itemize}
+
 \hypertarget{interrupted-time-series}{%
 \section{Interrupted time series}\label{interrupted-time-series}}
 
 {[}Interrupted time series assessing effects of policy/intervention in specific point in time{]}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load some packages that will likely be useful}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(viridis)}
+\FunctionTok{library}\NormalTok{(lubridate)}
+\FunctionTok{library}\NormalTok{(broom)}
+
+\CommentTok{\# Load and clean the data}
+\NormalTok{obs }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/lndn\_obs.csv"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{dow =} \FunctionTok{wday}\NormalTok{(date, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{time =} \FunctionTok{as.numeric}\NormalTok{(date) }\SpecialCharTok{{-}} \FunctionTok{first}\NormalTok{(}\FunctionTok{as.numeric}\NormalTok{(date)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{london\_summer\_2012 }\OtherTok{\textless{}{-}}\NormalTok{ obs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{ymd}\NormalTok{(}\StringTok{"2012{-}06{-}01"}\NormalTok{) }\SpecialCharTok{\textless{}=}\NormalTok{ date }\SpecialCharTok{\&}\NormalTok{ date }\SpecialCharTok{\textless{}=} \FunctionTok{ymd}\NormalTok{(}\StringTok{"2012{-}09{-}30"}\NormalTok{))}
+
+\NormalTok{london\_olympic\_dates }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}\AttributeTok{date =} \FunctionTok{ymd}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"2012{-}07{-}27"}\NormalTok{, }\StringTok{"2012{-}08{-}12"}\NormalTok{)))}
+
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{geom\_polygon}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{ymd}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"2012{-}07{-}27"}\NormalTok{, }\StringTok{"2012{-}08{-}12"}\NormalTok{, }
+                             \StringTok{"2012{-}08{-}12"}\NormalTok{, }\StringTok{"2012{-}07{-}27"}\NormalTok{)), }
+                   \AttributeTok{y =} \FunctionTok{c}\NormalTok{(}\ConstantTok{Inf}\NormalTok{, }\ConstantTok{Inf}\NormalTok{, }\SpecialCharTok{{-}}\ConstantTok{Inf}\NormalTok{, }\SpecialCharTok{{-}}\ConstantTok{Inf}\NormalTok{)), }\AttributeTok{fill =} \StringTok{"cyan"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.2}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{data =}\NormalTok{ london\_summer\_2012, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Date"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Mean daily temperature"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-59-1.pdf}
+
+Example data from \citet{bernal2017interrupted}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sicily }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/sicily.csv"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{date =} \FunctionTok{paste}\NormalTok{(year, month, }\StringTok{"15"}\NormalTok{), }\CommentTok{\# Use middle of the month for plotting}
+         \AttributeTok{date =} \FunctionTok{ymd}\NormalTok{(date))}
+\end{Highlighting}
+\end{Shaded}
+
+Identify dates of the smoking band:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sicily }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(smokban) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{slice}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FunctionTok{n}\NormalTok{()))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 8
+## # Groups:   smokban [2]
+##    year month  aces  time smokban     pop  stdpop date      
+##   <dbl> <dbl> <dbl> <dbl>   <dbl>   <dbl>   <dbl> <date>    
+## 1  2002     1   728     1       0 364277. 379875. 2002-01-15
+## 2  2004    12   886    36       0 364700. 383428. 2004-12-15
+## 3  2005     1   831    37       1 364421. 388153. 2005-01-15
+## 4  2006    11   912    59       1 363833. 390712. 2006-11-15
+\end{verbatim}
+
+Recreate Figure 1 from \citet{bernal2017interrupted}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{geom\_polygon}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{ymd}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"2005{-}01{-}01"}\NormalTok{, }\StringTok{"2006{-}11{-}30"}\NormalTok{, }
+                         \StringTok{"2006{-}11{-}30"}\NormalTok{, }\StringTok{"2005{-}01{-}01"}\NormalTok{)), }
+               \AttributeTok{y =} \FunctionTok{c}\NormalTok{(}\ConstantTok{Inf}\NormalTok{, }\ConstantTok{Inf}\NormalTok{, }\SpecialCharTok{{-}}\ConstantTok{Inf}\NormalTok{, }\SpecialCharTok{{-}}\ConstantTok{Inf}\NormalTok{)), }\AttributeTok{fill =} \StringTok{"lightgray"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{data =}\NormalTok{ sicily, }
+             \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =} \DecValTok{10000} \SpecialCharTok{*} \DecValTok{10} \SpecialCharTok{*}\NormalTok{ aces }\SpecialCharTok{/}\NormalTok{ stdpop), }\AttributeTok{shape =} \DecValTok{21}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{data =}\NormalTok{ sicily, }
+              \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ date, }\AttributeTok{y =} \DecValTok{10000} \SpecialCharTok{*} \DecValTok{10} \SpecialCharTok{*}\NormalTok{ aces }\SpecialCharTok{/}\NormalTok{ stdpop), }\CommentTok{\# Need the extra 10 to line up with Figure in paper{-}{-}{-}figure out why}
+              \AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{, }\AttributeTok{linetype =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Std rate x 10 000"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{theme\_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-62-1.pdf}
 
 \hypertarget{difference-in-differences}{%
 \section{Difference-in-differences}\label{difference-in-differences}}
@@ -2431,7 +2531,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-64-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-69-1.pdf}
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
 
@@ -2461,7 +2561,7 @@ get a top-level snapshot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-65-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-70-1.pdf}
 Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \begin{Shaded}
@@ -2471,7 +2571,7 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-66-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-71-1.pdf}
 
 Many of the variables are available for all observations, with no missingness,
 including records of the subject's ID, measures of death, stroke, CVD, and other
@@ -2490,7 +2590,7 @@ example, you could see if missingness varies by the period of the observation:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-67-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-72-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:
@@ -2501,7 +2601,7 @@ was associated with death of the study subject:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-68-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-73-1.pdf}
 
 There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both \texttt{glucose} and
@@ -2518,7 +2618,7 @@ variables:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-69-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-74-1.pdf}
 
 The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
@@ -2539,7 +2639,7 @@ You can also do things like facet by sex to explore patterns at a finer level:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-70-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-75-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
