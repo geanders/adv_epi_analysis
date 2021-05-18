@@ -6,6 +6,7 @@ The readings for this chapter are:
 - @barone2011effects, the scientific paper highlighted as an example in the tutorial in the previous reading
 - @bor2014regression (on interrupted time series)
 - @casey2018retirements (on difference-in-differences)
+- @mendola2018invited, an Invited Commentary on the previous reading
 
 ## Interrupted time series
 
