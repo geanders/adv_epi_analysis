@@ -204,7 +204,19 @@ fhs %>%
 
 3. *How many participants die? What is the distribution of age at time of death?*
 
-The `DEATH` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths. 
+The `DEATH` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
+
+If you arrange by the random ID and look at `period` and `death` for each subject,
+you can see that the `death` variable is the same for all periods for each
+subject:
+
+```{r}
+fhs %>% 
+  arrange(randid) %>% 
+  select(randid, period, death)
+```
+We need to think some about this convention of recording the data when we count
+the deaths.
 
 Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
 
@@ -221,7 +233,9 @@ hazards model that was also applied in @wong1989risk.
 
 
 
-
+*Note: Variables of interest to continue with: 
+for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi` smoking or not
+for long. analysis, `timemi` and `timestrk` and `hyperten`, exposure: `cigpday`, `sysbp`, `diabp`, `bmi`*
 
 
 
