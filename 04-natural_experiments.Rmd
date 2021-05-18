@@ -1,5 +1,11 @@
 # Natural experiments
 
+The readings for this chapter are: 
+
+- @bernal2017interrupted (on interrupted time series), with a correction to an equation in the paper at https://academic.oup.com/ije/article/49/4/1414/5900884. Example data and R code for the paper are available [to download](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/ije/49/4/10.1093_ije_dyaa118/1/dyaa118_supplementary_data.zip?Expires=1623897009&Signature=BzYQrBg60cMKHYeDU~OIZYIFuRgEIPwQsWMjzON0dB~fL8y-8x4xdGIJQBBPgDxBIoUIGnjmShVf1jlVqzloo3IldAdVC78TZ~~XseYdJ9c590QRAR6m7mH~VbPe-fCnQSnZF0z2Qw9PZcSGITZeNr4YXPVY-~gtpgBeZiN0MpgEVBLVT5fYhhQBGbp0vxl1bKdUfNtF71fdVJrglkhSG8-M24A07LmAr8jThx4MQmSAzKCxA4VZLRE6To8zC3-rJlxyWiqrSTFsVQM2SN4R6UuxYoRsILRcIAr2sUfqgmaSlxBiYAf71PdGSrnBcXX3l0l7yuAftX5PYTwMKTyxOA__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA) through a Supplemental Appendix.
+- @bor2014regression (on interrupted time series)
+- @casey2018retirements (on difference-in-differences)
+
 ## Interrupted time series
 
 [Interrupted time series assessing effects of policy/intervention in specific point in time]
@@ -30,6 +36,40 @@ ggplot() +
   geom_line(data = london_summer_2012, aes(x = date, y = tmean)) + 
   labs(x = "Date", y = "Mean daily temperature")
 ```
+
+Example data from @bernal2017interrupted: 
+
+```{r message = FALSE}
+sicily <- read_csv("data/sicily.csv") %>% 
+  mutate(date = paste(year, month, "15"), # Use middle of the month for plotting
+         date = ymd(date))
+```
+
+Identify dates of the smoking band: 
+
+```{r}
+sicily %>% 
+  group_by(smokban) %>% 
+  slice(c(1, n()))
+```
+
+
+Recreate Figure 1 from @bernal2017interrupted: 
+
+```{r message = FALSE}
+ggplot() + 
+  geom_polygon(aes(x = ymd(c("2005-01-01", "2006-11-30", 
+                         "2006-11-30", "2005-01-01")), 
+               y = c(Inf, Inf, -Inf, -Inf)), fill = "lightgray") + 
+  geom_point(data = sicily, 
+             aes(x = date, y = 10000 * 10 * aces / stdpop), shape = 21) + 
+  geom_smooth(data = sicily, 
+              aes(x = date, y = 10000 * 10 * aces / stdpop), # Need the extra 10 to line up with Figure in paper---figure out why
+              method = "lm", se = FALSE, color = "red", linetype = 3) + 
+  labs(x = "Year", y = "Std rate x 10 000") + 
+  theme_classic()
+```
+
 
 ## Difference-in-differences
 
