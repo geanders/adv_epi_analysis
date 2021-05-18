@@ -438,7 +438,7 @@ hazards model that was also applied in <span class="citation">Wong et al. (<a hr
 <p>where <span class="math inline">\(\lambda(t)\)</span> represent the hazard at time <span class="math inline">\(t\)</span>, <span class="math inline">\(\lambda_{0}(t)\)</span> is the baseline hazard at time <span class="math inline">\(t\)</span>, and <span class="math inline">\(\beta_{1}\)</span> is the log hazard for those with <span class="math inline">\(X=1\)</span> compared to <span class="math inline">\(X=0\)</span>. The baseline hazard <span class="math inline">\(\lambda_{0}(t)\)</span> is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, <span class="math inline">\(\lambda_{0}(t)\)</span> is not estimated by the model.
 The above model can also be writen as</p>
 <p><span class="math inline">\(\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}\)</span></p>
-<p><span class="math inline">\(e^{\beta_{1}\)</span> is the hazard ratio comparing those hose with <span class="math inline">\(X=1\)</span> and <span class="math inline">\(X=0\)</span></p>
+<p><span class="math inline">\(e^{\beta_{1}}\)</span> is the hazard ratio comparing those hose with <span class="math inline">\(X=1\)</span> and <span class="math inline">\(X=0\)</span></p>
 <p>Using the <code>fhs</code> data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI.</p>
 </div>
 <div id="handling-complexity" class="section level2">
