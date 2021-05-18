@@ -4,6 +4,33 @@
 
 [Interrupted time series assessing effects of policy/intervention in specific point in time]
 
+```{r message = FALSE, warning = FALSE}
+# Load some packages that will likely be useful
+library(tidyverse)
+library(viridis)
+library(lubridate)
+library(broom)
+
+# Load and clean the data
+obs <- read_csv("data/lndn_obs.csv") %>% 
+  mutate(dow = wday(date, label = TRUE)) %>% 
+  mutate(time = as.numeric(date) - first(as.numeric(date)))
+```
+
+```{r}
+london_summer_2012 <- obs %>% 
+  filter(ymd("2012-06-01") <= date & date <= ymd("2012-09-30"))
+
+london_olympic_dates <- tibble(date = ymd(c("2012-07-27", "2012-08-12")))
+
+ggplot() + 
+  geom_polygon(aes(x = ymd(c("2012-07-27", "2012-08-12", 
+                             "2012-08-12", "2012-07-27")), 
+                   y = c(Inf, Inf, -Inf, -Inf)), fill = "cyan", alpha = 0.2) + 
+  geom_line(data = london_summer_2012, aes(x = date, y = tmean)) + 
+  labs(x = "Date", y = "Mean daily temperature")
+```
+
 ## Difference-in-differences
 
 [Difference-in differences application for intervention introduced in one point in time]
