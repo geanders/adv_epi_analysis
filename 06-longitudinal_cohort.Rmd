@@ -211,7 +211,7 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 ```{r}
 fhs_first <- fhs %>% 
   group_by(randid) %>% 
-  filter(row_number(value) == 1)
+  slice(1L)
 ```
 
 In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death=1`. For example, we can use the `sum` function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the `sum` function will give as the number of deaths in the sample. 
