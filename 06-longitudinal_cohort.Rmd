@@ -273,6 +273,8 @@ $S(t)=Pr[T>t]=1-F(t)$, where $S(t)$ is survival at time $t$ and $F(t)$ is failur
 $t$ is bounded by $[0,\infty)$ and $S(t)$ is non-increasing as $t$ becomes greater. 
 At $t=0$, $S(t)=1$ and conversely as $t$ approaches $\infty$, $S(t)=0$ 
 
+
+
 The Cox proportional hazards model in a simple form has this form
 
 $log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
