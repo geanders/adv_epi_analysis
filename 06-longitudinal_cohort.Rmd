@@ -266,10 +266,12 @@ Survival or time-to-event outcomes in longitudinal cohort data will often be tim
 
 
 ## Coding a survival analysis
-In the context of survival analysis what is modelled is time to an event. This is
-a bit different than the models in the `glm` family that model an outcome that follows
-a particular distribution. The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional 
-hazards model that was also applied in @wong1989risk.
+In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk.
+
+In the example of all cause mortality as the event of interest let's denote  $T$ is time to death and $T\geq 0$. We define the survival function as 
+$S(t)=Pr[T>t]=1-F(t)$, where $S(t)$ is survival at time $t$ and $F(t)$ is failure at time $t$ (failure here is death). This survival function is the probability that a participant survives past time $t$. 
+$t$ is bounded by $[0,\infty)$ and $S(t)$ is non-increasing as $t$ becomes greater. 
+At $t=0$, $S(t)=1$ and conversely as $t$ approaches $\infty$, $S(t)=0$ 
 
 The Cox proportional hazards model in a simple form has this form
 
