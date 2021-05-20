@@ -282,6 +282,7 @@ Time to event $t$ is bounded by $[0,\infty)$ and $S(t)$ is non-increasing as $t$
 
 Another useful function is the hazard Function, $h(t)$, which is the instantaneous potential of experiencing an event at time $t$, conditional on having survived to that time ($h(t)=\frac{Pr[t<T\leq t+\Delta t|T>t]}{\Delta t}=\frac{f(t)}{S(t)}$). The cumulative Hazard Function, $H(t)$ is defined as the integral of the hazard function from time $0$ to time $t$, which equals the area under the curve $h(t)$ between time $0$ and time $t$ ($H(t)=\int_{0}^{t}h(u)du$).
 If we know any of $S(t)$, $H(t)$ or $h(t)$, we can derive the rest based on the following relationships:
+
 $h(t)=\frac{\partial log(S(t))}{\partial t}$
 
 $H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
