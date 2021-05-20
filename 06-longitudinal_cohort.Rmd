@@ -287,7 +287,6 @@ $h(t)=\frac{\partial log(S(t))}{\partial t}$
 $H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
 
 
-
 The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk.
 
 
