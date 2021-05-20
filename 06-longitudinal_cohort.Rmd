@@ -273,14 +273,24 @@ In the context of survival analysis what is modelled is time to an event (also r
 \item the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participants that dies from a different cause is considered censored)
 \end{itemize}
 
-These are all types of right censoring and in simple survival analysis they are considered to be uninformative (not related to exposure). 
+These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome then adjustment for censoring has to happen.
+
+Let's assume that we are interested in all cause mortality as the event of interest let's denote  $T$ is time to death and $T\geq 0$. We define the survival function as 
+$S(t)=Pr[T>t]=1-F(t)$, where the survival function $S(t)$ is the probability that a participant survives past time $t$ ($Pr[T>t]=1$). $F(t)$ is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, $R(t)$) or the probability that that an individual will have a survival time less than or equal to t ($[Pr(T≤t)]$)
+
+Time to event $t$ is bounded by $[0,\infty)$ and $S(t)$ is non-increasing as $t$ becomes greater. At $t=0$, $S(t)=1$ and conversely as $t$ approaches $\infty$, $S(t)=0$. A property of the survival and probabilty density function is $S(t) = 1 – F(t)$: the survival function and the probability density function (or cumulative incidence function ($R(t)$) sum to 1.
+
+Another useful function is the hazard Function, $h(t)$, which is the instantaneous potential of experiencing an event at time $t$, conditional on having survived to that time ($h(t)=\frac{Pr[t<T\leq t+\Delta t|T>t]}{\Delta t}=\frac{f(t)}{S(t)}$). The cumulative Hazard Function, $H(t)$ is defined as the integral of the hazard function from time $0$ to time $t$, which equals the area under the curve $h(t)$ between time $0$ and time $t$ ($H(t)=\int_{0}^{t}h(u)du$).
+If we know any of $S(t)$, $H(t)$ or $h(t)$, we can derive the rest based on the following relationships:
+$h(t)=\frac{\partial log(S(t))}{\partial t}$
+
+$H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
+
+
 
 The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk.
 
-In the example of all cause mortality as the event of interest let's denote  $T$ is time to death and $T\geq 0$. We define the survival function as 
-$S(t)=Pr[T>t]=1-F(t)$, where $S(t)$ is survival at time $t$ and $F(t)$ is failure at time $t$ (failure here is death). This survival function is the probability that a participant survives past time $t$. 
-$t$ is bounded by $[0,\infty)$ and $S(t)$ is non-increasing as $t$ becomes greater. 
-At $t=0$, $S(t)=1$ and conversely as $t$ approaches $\infty$, $S(t)=0$ 
+
 
 
 
