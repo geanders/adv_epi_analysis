@@ -266,7 +266,16 @@ Survival or time-to-event outcomes in longitudinal cohort data will often be tim
 
 
 ## Coding a survival analysis
-In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk.
+In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered  'censored'. Censoring can occur in three ways:
+\begin{itemize}
+\item the participant does not experience the event of interest before the study end
+\item the participant is lossed to follow-up before experiencing the event of interest
+\item the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participants that dies from a different cause is considered censored)
+\end{itemize}
+
+These are all types of right censoring and in simple survival analysis they are considered to be uninformative (not related to exposure). 
+
+The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk.
 
 In the example of all cause mortality as the event of interest let's denote  $T$ is time to death and $T\geq 0$. We define the survival function as 
 $S(t)=Pr[T>t]=1-F(t)$, where $S(t)$ is survival at time $t$ and $F(t)$ is failure at time $t$ (failure here is death). This survival function is the probability that a participant survives past time $t$. 
