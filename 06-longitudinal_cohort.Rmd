@@ -284,6 +284,15 @@ mean_agedth = mean(agedth),
 max_agedth = max(agedth))
 ```
 
+We can also check on these values by groups of interest such as sex
+
+```{r}
+fhs_first %>% 
+group_by(sex) %>%
+summarize(min_agedth = min(agedth),
+mean_agedth = mean(agedth),
+max_agedth = max(agedth))
+```
 
 4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
 
