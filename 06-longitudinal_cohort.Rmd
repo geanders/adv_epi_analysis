@@ -98,7 +98,7 @@ The `dim` function gives us the length (number of rows) and width (number of col
 ```{r}
 dim(fhs)
 ```
- We see that there is approximately an average of 2 to 3 observations per participants. 
+We see that there is approximately an average of 2 to 3 observations per participants. 
  
 When you know there are repeated measurements, it can be helpful to explore
 how much variation there is in the number of observations per study subject. 
@@ -204,7 +204,7 @@ fhs %>%
 
 3. *How many participants die? What is the distribution of age at time of death?*
 
-The `DEATH` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
+The `death` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
 
 If you arrange by the random ID and look at `period` and `death` for each subject,
 you can see that the `death` variable is the same for all periods for each
@@ -256,9 +256,27 @@ In this dataset we can extract statistics on baseline covariates on the individu
 sum(fhs_first$death) 
 ```
 
-Conversely using `tidyverse` tools
+Conversely using `tidyverse` tools we can extract the number of observations with `death=1` using the `count` function
 
-Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
+```{r}
+fhs_first %>% 
+count(death) 
+```
+
+
+Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
+
+In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The `age` variable in `fhs` represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for `age` would be less than the age at death. We will use the `timedth` variable to help us determine the actual age at death. The value of `timedth` is the number of days from beginning of follow-up until death for those with `death=1`, while it is a fixed value of `timedth=8766` (the maximum duration of follow-up) for those with `death=0`.
+
+We can create a new age at death variable for those with `death=1` using the `age` at baseline and `timedth` values
+
+```{r}
+fhs_first %>% 
+mutate(agedth=age+timedth/365.25)
+```
+
+We can then get summary statistics on this new variable 
+
 
 4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
 
