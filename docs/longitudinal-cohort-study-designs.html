@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-05-20" />
+<meta name="date" content="2021-07-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -412,7 +412,7 @@ where <code>glucose</code> is missing.</p>
 <ol start="3" style="list-style-type: decimal">
 <li><em>How many participants die? What is the distribution of age at time of death?</em></li>
 </ol>
-<p>The <code>DEATH</code> variable in the <code>fhs</code> data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.</p>
+<p>The <code>death</code> variable in the <code>fhs</code> data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.</p>
 <p>If you arrange by the random ID and look at <code>period</code> and <code>death</code> for each subject,
 you can see that the <code>death</code> variable is the same for all periods for each
 subject:</p>
@@ -438,24 +438,60 @@ the deaths.</p>
 <p>It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the <code>fhs</code> data using <code>tidyverse</code> tools. The <code>group_by</code> functions groups data by unique values of designated variables (here <code>randid</code>) and the <code>slice</code> function selects rows as designated.</p>
 <div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="longitudinal-cohort-study-designs.html#cb136-1"></a>fhs_first &lt;-<span class="st"> </span>fhs <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb136-2"><a href="longitudinal-cohort-study-designs.html#cb136-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb136-3"><a href="longitudinal-cohort-study-designs.html#cb136-3"></a><span class="st">  </span><span class="kw">slice</span>(1L)</span></code></pre></div>
+<span id="cb136-3"><a href="longitudinal-cohort-study-designs.html#cb136-3"></a><span class="st">  </span><span class="kw">slice</span>(1L)<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb136-4"><a href="longitudinal-cohort-study-designs.html#cb136-4"></a><span class="kw">ungroup</span>()</span></code></pre></div>
 <p>Alternatively you can use the <code>slice_head</code> function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the <code>group_by</code> function, we will be slicing rows beginning from the first observation for each <code>randid</code></p>
 <div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="longitudinal-cohort-study-designs.html#cb137-1"></a>fhs_first &lt;-<span class="st"> </span>fhs <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb137-2"><a href="longitudinal-cohort-study-designs.html#cb137-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb137-3"><a href="longitudinal-cohort-study-designs.html#cb137-3"></a><span class="st">  </span><span class="kw">slice_head</span>(<span class="dt">n=</span><span class="dv">1</span>)</span></code></pre></div>
+<span id="cb137-3"><a href="longitudinal-cohort-study-designs.html#cb137-3"></a><span class="st">  </span><span class="kw">slice_head</span>(<span class="dt">n=</span><span class="dv">1</span>)<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb137-4"><a href="longitudinal-cohort-study-designs.html#cb137-4"></a><span class="kw">ungroup</span>()</span></code></pre></div>
 <p>We can similarly select the last observation for each participant</p>
 <div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="longitudinal-cohort-study-designs.html#cb138-1"></a>fhs_last &lt;-<span class="st"> </span>fhs <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb138-2"><a href="longitudinal-cohort-study-designs.html#cb138-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb138-3"><a href="longitudinal-cohort-study-designs.html#cb138-3"></a><span class="st">  </span><span class="kw">slice</span>(<span class="kw">n</span>())</span></code></pre></div>
+<span id="cb138-3"><a href="longitudinal-cohort-study-designs.html#cb138-3"></a><span class="st">  </span><span class="kw">slice</span>(<span class="kw">n</span>())<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb138-4"><a href="longitudinal-cohort-study-designs.html#cb138-4"></a><span class="kw">ungroup</span>()</span></code></pre></div>
 <p>or using the <code>slice_tail</code> function</p>
 <div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="longitudinal-cohort-study-designs.html#cb139-1"></a>fhs_last &lt;-<span class="st"> </span>fhs <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb139-2"><a href="longitudinal-cohort-study-designs.html#cb139-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb139-3"><a href="longitudinal-cohort-study-designs.html#cb139-3"></a><span class="st">  </span><span class="kw">slice_tail</span>(<span class="dt">n=</span><span class="dv">1</span>)</span></code></pre></div>
+<span id="cb139-3"><a href="longitudinal-cohort-study-designs.html#cb139-3"></a><span class="st">  </span><span class="kw">slice_tail</span>(<span class="dt">n=</span><span class="dv">1</span>)<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb139-4"><a href="longitudinal-cohort-study-designs.html#cb139-4"></a><span class="kw">ungroup</span>()</span></code></pre></div>
 <p>In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including <code>death=1</code>. For example, we can use the <code>sum</code> function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the <code>sum</code> function will give as the number of deaths in the sample.</p>
 <div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="longitudinal-cohort-study-designs.html#cb140-1"></a><span class="kw">sum</span>(fhs_first<span class="op">$</span>death) </span></code></pre></div>
 <pre><code>## [1] 1550</code></pre>
-<p>Conversely using <code>tidyverse</code> tools</p>
-<p>Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in <code>fhs</code> below.</p>
+<p>Conversely using <code>tidyverse</code> tools we can extract the number of observations with <code>death=1</code> using the <code>count</code> function</p>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="longitudinal-cohort-study-designs.html#cb142-1"></a>fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb142-2"><a href="longitudinal-cohort-study-designs.html#cb142-2"></a><span class="kw">count</span>(death) </span></code></pre></div>
+<pre><code>## # A tibble: 2 x 2
+##   death     n
+##   &lt;dbl&gt; &lt;int&gt;
+## 1     0  2884
+## 2     1  1550</code></pre>
+<p>Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in <code>fhs</code> below.</p>
+<p>In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The <code>age</code> variable in <code>fhs</code> represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for <code>age</code> would be less than the age at death. We will use the <code>timedth</code> variable to help us determine the actual age at death. The value of <code>timedth</code> is the number of days from beginning of follow-up until death for those with <code>death=1</code>, while it is a fixed value of <code>timedth=8766</code> (the maximum duration of follow-up) for those with <code>death=0</code>.</p>
+<p>We can create a new age at death variable for those with <code>death=1</code> using the <code>age</code> at baseline and <code>timedth</code> values</p>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="longitudinal-cohort-study-designs.html#cb144-1"></a>fhs_first&lt;-fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb144-2"><a href="longitudinal-cohort-study-designs.html#cb144-2"></a><span class="kw">mutate</span>(<span class="dt">agedth=</span>age<span class="op">+</span>timedth<span class="op">/</span><span class="fl">365.25</span>)</span></code></pre></div>
+<p>We can then get summary statistics on this new variable</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="longitudinal-cohort-study-designs.html#cb145-1"></a>fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb145-2"><a href="longitudinal-cohort-study-designs.html#cb145-2"></a><span class="kw">summarize</span>(<span class="dt">min_agedth =</span> <span class="kw">min</span>(agedth),</span>
+<span id="cb145-3"><a href="longitudinal-cohort-study-designs.html#cb145-3"></a><span class="dt">mean_agedth =</span> <span class="kw">mean</span>(agedth),</span>
+<span id="cb145-4"><a href="longitudinal-cohort-study-designs.html#cb145-4"></a><span class="dt">max_agedth =</span> <span class="kw">max</span>(agedth))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 3
+##   min_agedth mean_agedth max_agedth
+##        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+## 1       38.4        70.5         93</code></pre>
+<p>We can also check on these values by groups of interest such as sex</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="longitudinal-cohort-study-designs.html#cb147-1"></a>fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb147-2"><a href="longitudinal-cohort-study-designs.html#cb147-2"></a><span class="kw">group_by</span>(sex) <span class="op">%&gt;%</span></span>
+<span id="cb147-3"><a href="longitudinal-cohort-study-designs.html#cb147-3"></a><span class="kw">summarize</span>(<span class="dt">min_agedth =</span> <span class="kw">min</span>(agedth),</span>
+<span id="cb147-4"><a href="longitudinal-cohort-study-designs.html#cb147-4"></a><span class="dt">mean_agedth =</span> <span class="kw">mean</span>(agedth),</span>
+<span id="cb147-5"><a href="longitudinal-cohort-study-designs.html#cb147-5"></a><span class="dt">max_agedth =</span> <span class="kw">max</span>(agedth))</span></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##     sex min_agedth mean_agedth max_agedth
+##   &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+## 1     1       41.6        69.5       91.1
+## 2     2       38.4        71.3       93</code></pre>
 <ol start="4" style="list-style-type: decimal">
 <li><p><em>What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?</em></p></li>
 <li><p><em>What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers</em></p></li>
@@ -470,8 +506,8 @@ In the context of survival analysis what is modelled is time to an event (also r
 <span class="math inline">\(S(t)=Pr[T&gt;t]=1-F(t)\)</span>, where the survival function <span class="math inline">\(S(t)\)</span> is the probability that a participant survives past time <span class="math inline">\(t\)</span> (<span class="math inline">\(Pr[T&gt;t]=1\)</span>). <span class="math inline">\(F(t)\)</span> is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, <span class="math inline">\(R(t)\)</span>) or the probability that that an individual will have a survival time less than or equal to t (<span class="math inline">\([Pr(T≤t)]\)</span>)</p>
 <p>Time to event <span class="math inline">\(t\)</span> is bounded by <span class="math inline">\([0,\infty)\)</span> and <span class="math inline">\(S(t)\)</span> is non-increasing as <span class="math inline">\(t\)</span> becomes greater. At <span class="math inline">\(t=0\)</span>, <span class="math inline">\(S(t)=1\)</span> and conversely as <span class="math inline">\(t\)</span> approaches <span class="math inline">\(\infty\)</span>, <span class="math inline">\(S(t)=0\)</span>. A property of the survival and probabilty density function is <span class="math inline">\(S(t) = 1 – F(t)\)</span>: the survival function and the probability density function (or cumulative incidence function (<span class="math inline">\(R(t)\)</span>) sum to 1.</p>
 <p>Another useful function is the hazard Function, <span class="math inline">\(h(t)\)</span>, which is the instantaneous potential of experiencing an event at time <span class="math inline">\(t\)</span>, conditional on having survived to that time (<span class="math inline">\(h(t)=\frac{Pr[t&lt;T\leq t+\Delta t|T&gt;t]}{\Delta t}=\frac{f(t)}{S(t)}\)</span>). The cumulative Hazard Function, <span class="math inline">\(H(t)\)</span> is defined as the integral of the hazard function from time <span class="math inline">\(0\)</span> to time <span class="math inline">\(t\)</span>, which equals the area under the curve <span class="math inline">\(h(t)\)</span> between time <span class="math inline">\(0\)</span> and time <span class="math inline">\(t\)</span> (<span class="math inline">\(H(t)=\int_{0}^{t}h(u)du\)</span>).
-If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math inline">\(H(t)\)</span> or <span class="math inline">\(h(t)\)</span>, we can derive the rest based on the following relationships:
-<span class="math inline">\(h(t)=\frac{\partial log(S(t))}{\partial t}\)</span></p>
+If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math inline">\(H(t)\)</span> or <span class="math inline">\(h(t)\)</span>, we can derive the rest based on the following relationships:</p>
+<p><span class="math inline">\(h(t)=\frac{\partial log(S(t))}{\partial t}\)</span></p>
 <p><span class="math inline">\(H(t)=-log(S(t))\)</span> and conversely <span class="math inline">\(S(t)=exp(-H(t))\)</span></p>
 <p>The <code>survival</code> package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in <span class="citation">Wong et al. (<a href="#ref-wong1989risk" role="doc-biblioref">1989</a>)</span>.</p>
 <p>The Cox proportional hazards model in a simple form has this form</p>

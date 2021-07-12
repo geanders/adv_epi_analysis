@@ -113,7 +113,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-05-20}
+\date{2021-07-12}
 
 \begin{document}
 \maketitle
@@ -2691,7 +2691,7 @@ You can also do things like facet by sex to explore patterns at a finer level:
   \emph{How many participants die? What is the distribution of age at time of death?}
 \end{enumerate}
 
-The \texttt{DEATH} variable in the \texttt{fhs} data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
+The \texttt{death} variable in the \texttt{fhs} data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
 
 If you arrange by the random ID and look at \texttt{period} and \texttt{death} for each subject,
 you can see that the \texttt{death} variable is the same for all periods for each
@@ -2731,7 +2731,8 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 \begin{Highlighting}[]
 \NormalTok{fhs_first <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{slice}\NormalTok{(1L)}
+\StringTok{  }\KeywordTok{slice}\NormalTok{(1L)}\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2741,7 +2742,8 @@ Alternatively you can use the \texttt{slice\_head} function, which allows us to 
 \begin{Highlighting}[]
 \NormalTok{fhs_first <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{slice_head}\NormalTok{(}\DataTypeTok{n=}\DecValTok{1}\NormalTok{)}
+\StringTok{  }\KeywordTok{slice_head}\NormalTok{(}\DataTypeTok{n=}\DecValTok{1}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2751,7 +2753,8 @@ We can similarly select the last observation for each participant
 \begin{Highlighting}[]
 \NormalTok{fhs_last <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{slice}\NormalTok{(}\KeywordTok{n}\NormalTok{())}
+\StringTok{  }\KeywordTok{slice}\NormalTok{(}\KeywordTok{n}\NormalTok{())}\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2761,7 +2764,8 @@ or using the \texttt{slice\_tail} function
 \begin{Highlighting}[]
 \NormalTok{fhs_last <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{slice_tail}\NormalTok{(}\DataTypeTok{n=}\DecValTok{1}\NormalTok{)}
+\StringTok{  }\KeywordTok{slice_tail}\NormalTok{(}\DataTypeTok{n=}\DecValTok{1}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2777,9 +2781,77 @@ In this dataset we can extract statistics on baseline covariates on the individu
 ## [1] 1550
 \end{verbatim}
 
-Conversely using \texttt{tidyverse} tools
+Conversely using \texttt{tidyverse} tools we can extract the number of observations with \texttt{death=1} using the \texttt{count} function
 
-Survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in \texttt{fhs} below.
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{count}\NormalTok{(death) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   death     n
+##   <dbl> <int>
+## 1     0  2884
+## 2     1  1550
+\end{verbatim}
+
+Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in \texttt{fhs} below.
+
+In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The \texttt{age} variable in \texttt{fhs} represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for \texttt{age} would be less than the age at death. We will use the \texttt{timedth} variable to help us determine the actual age at death. The value of \texttt{timedth} is the number of days from beginning of follow-up until death for those with \texttt{death=1}, while it is a fixed value of \texttt{timedth=8766} (the maximum duration of follow-up) for those with \texttt{death=0}.
+
+We can create a new age at death variable for those with \texttt{death=1} using the \texttt{age} at baseline and \texttt{timedth} values
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first<-fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{agedth=}\NormalTok{age}\OperatorTok{+}\NormalTok{timedth}\OperatorTok{/}\FloatTok{365.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We can then get summary statistics on this new variable
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{min_agedth =} \KeywordTok{min}\NormalTok{(agedth),}
+\DataTypeTok{mean_agedth =} \KeywordTok{mean}\NormalTok{(agedth),}
+\DataTypeTok{max_agedth =} \KeywordTok{max}\NormalTok{(agedth))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##   min_agedth mean_agedth max_agedth
+##        <dbl>       <dbl>      <dbl>
+## 1       38.4        70.5         93
+\end{verbatim}
+
+We can also check on these values by groups of interest such as sex
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{group_by}\NormalTok{(sex) }\OperatorTok{%>%}
+\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{min_agedth =} \KeywordTok{min}\NormalTok{(agedth),}
+\DataTypeTok{mean_agedth =} \KeywordTok{mean}\NormalTok{(agedth),}
+\DataTypeTok{max_agedth =} \KeywordTok{max}\NormalTok{(agedth))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` ungrouping output (override with `.groups` argument)
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 2 x 4
+##     sex min_agedth mean_agedth max_agedth
+##   <dbl>      <dbl>       <dbl>      <dbl>
+## 1     1       41.6        69.5       91.1
+## 2     2       38.4        71.3       93
+\end{verbatim}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -2810,6 +2882,7 @@ Time to event \(t\) is bounded by \([0,\infty)\) and \(S(t)\) is non-increasing 
 
 Another useful function is the hazard Function, \(h(t)\), which is the instantaneous potential of experiencing an event at time \(t\), conditional on having survived to that time (\(h(t)=\frac{Pr[t<T\leq t+\Delta t|T>t]}{\Delta t}=\frac{f(t)}{S(t)}\)). The cumulative Hazard Function, \(H(t)\) is defined as the integral of the hazard function from time \(0\) to time \(t\), which equals the area under the curve \(h(t)\) between time \(0\) and time \(t\) (\(H(t)=\int_{0}^{t}h(u)du\)).
 If we know any of \(S(t)\), \(H(t)\) or \(h(t)\), we can derive the rest based on the following relationships:
+
 \(h(t)=\frac{\partial log(S(t))}{\partial t}\)
 
 \(H(t)=-log(S(t))\) and conversely \(S(t)=exp(-H(t))\)
