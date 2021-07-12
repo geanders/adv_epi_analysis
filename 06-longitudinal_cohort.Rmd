@@ -223,7 +223,8 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 ```{r}
 fhs_first <- fhs %>% 
   group_by(randid) %>% 
-  slice(1L)
+  slice(1L)%>% 
+ungroup()
 ```
 
 Alternatively you can use the `slice_head` function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the `group_by` function, we will be slicing rows beginning from the first observation for each `randid`
@@ -231,7 +232,8 @@ Alternatively you can use the `slice_head` function, which allows us to slice a 
 ```{r}
 fhs_first <- fhs %>% 
   group_by(randid) %>% 
-  slice_head(n=1)
+  slice_head(n=1)%>% 
+ungroup()
 ```
 
 We can similarly select the last observation for each participant 
@@ -239,7 +241,8 @@ We can similarly select the last observation for each participant
 ```{r}
 fhs_last <- fhs %>% 
   group_by(randid) %>% 
-  slice(n())
+  slice(n())%>% 
+ungroup()
 ```
 
 or using the `slice_tail` function
@@ -247,7 +250,8 @@ or using the `slice_tail` function
 ```{r}
 fhs_last <- fhs %>% 
   group_by(randid) %>% 
-  slice_tail(n=1)
+  slice_tail(n=1)%>% 
+ungroup()
 ```
 
 In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death=1`. For example, we can use the `sum` function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the `sum` function will give as the number of deaths in the sample. 
@@ -271,7 +275,7 @@ In order to estimate the distribution of age at death among those participants w
 We can create a new age at death variable for those with `death=1` using the `age` at baseline and `timedth` values
 
 ```{r}
-fhs_first %>% 
+fhs_first<-fhs_first %>% 
 mutate(agedth=age+timedth/365.25)
 ```
 
