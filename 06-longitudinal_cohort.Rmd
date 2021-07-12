@@ -277,6 +277,13 @@ mutate(agedth=age+timedth/365.25)
 
 We can then get summary statistics on this new variable 
 
+```{r}
+fhs_first %>% 
+summarize(min_agedth = min(agedth),
+mean_agedth = mean(agedth),
+max_agedth = max(agedth))
+```
+
 
 4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
 
