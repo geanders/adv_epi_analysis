@@ -300,6 +300,33 @@ max_agedth = max(agedth))
 
 4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
 
+Similar to the question about death (all-cause mortality) we can look at disease incidence, for example myocardial infarction (MI). The `fhs` dataset has the `hospmi` variable as an indicator for any participant who had a hospitalization due to MI and `timemi` gives the number of days from beginning of follow up to the hospitalization due to MI. We can create an age at incident MI hospitalizaton in a similar fashion as the example for age at death.
+
+```{r}
+fhs_first<-fhs_first %>% 
+mutate(agemi=age+timemi/365.25)
+```
+
+We can then get summary statistics on this new `agemi` variable 
+
+```{r}
+fhs_first %>% 
+summarize(min_agemi = min(agemi),
+mean_agemi = mean(agemi),
+max_agemi = max(agemi))
+```
+
+And by sex
+```{r}
+fhs_first %>% 
+group_by(sex)  %>% 
+summarize(min_agemi = min(agemi),
+mean_agemi = mean(agemi),
+max_agemi = max(agemi))
+```
+We can see that the distribution of age at incident MI hospitalization among males and females is similar, but with males being somehwat younger on average at the time of incident MI.
+
+
 5. *What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers*
 
 
