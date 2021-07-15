@@ -113,7 +113,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-07-12}
+\date{2021-07-15}
 
 \begin{document}
 \maketitle
@@ -2731,8 +2731,7 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 \begin{Highlighting}[]
 \NormalTok{fhs_first <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{slice}\NormalTok{(1L)}\OperatorTok{%>%}\StringTok{ }
-\KeywordTok{ungroup}\NormalTok{()}
+\StringTok{  }\KeywordTok{slice}\NormalTok{(1L)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2856,8 +2855,79 @@ We can also check on these values by groups of interest such as sex
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \setcounter{enumi}{3}
+\tightlist
 \item
   \emph{What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?}
+\end{enumerate}
+
+Similar to the question about death (all-cause mortality) we can look at disease incidence, for example myocardial infarction (MI). The \texttt{fhs} dataset has the \texttt{hospmi} variable as an indicator for any participant who had a hospitalization due to MI and \texttt{timemi} gives the number of days from beginning of follow up to the hospitalization due to MI. We can create an age at incident MI hospitalizaton in a similar fashion as the example for age at death.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first<-fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{agemi=}\NormalTok{age}\OperatorTok{+}\NormalTok{timemi}\OperatorTok{/}\FloatTok{365.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We can then get summary statistics on this new \texttt{agemi} variable
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{min_agemi =} \KeywordTok{min}\NormalTok{(agemi),}
+\DataTypeTok{mean_agemi =} \KeywordTok{mean}\NormalTok{(agemi),}
+\DataTypeTok{max_agemi =} \KeywordTok{max}\NormalTok{(agemi))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##   min_agemi mean_agemi max_agemi
+##       <dbl>      <dbl>     <dbl>
+## 1        37       69.7        93
+\end{verbatim}
+
+And by sex
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{group_by}\NormalTok{(sex)  }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{min_agemi =} \KeywordTok{min}\NormalTok{(agemi),}
+\DataTypeTok{mean_agemi =} \KeywordTok{mean}\NormalTok{(agemi),}
+\DataTypeTok{max_agemi =} \KeywordTok{max}\NormalTok{(agemi))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` ungrouping output (override with `.groups` argument)
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 2 x 4
+##     sex min_agemi mean_agemi max_agemi
+##   <dbl>     <dbl>      <dbl>     <dbl>
+## 1     1      37         68.2      91.1
+## 2     2      38.4       70.9      93
+\end{verbatim}
+
+We can see that the mean age at incident MI hospitalization among males and females is similar, but with males being somewhat younger on average at the time of incident MI. We can take a closer look at the distibution using boxplots:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\CommentTok{# define the axes for the boxplot}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ sex, }\DataTypeTok{y=}\NormalTok{agemi)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-89-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
 \item
   \emph{What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers}
 \end{enumerate}

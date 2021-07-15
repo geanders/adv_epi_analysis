@@ -223,7 +223,8 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 ```{r}
 fhs_first <- fhs %>% 
   group_by(randid) %>% 
-  slice(1L)
+  slice(1L)%>%
+  ungroup()
 ```
 
 Alternatively you can use the `slice_head` function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the `group_by` function, we will be slicing rows beginning from the first observation for each `randid`
@@ -331,7 +332,27 @@ fhs_first %>%
   ggplot(aes(x = sex, y=agemi)) + 
   geom_boxplot()
 ```
+We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of `sex=1` and `sex=2` which are the values for males and females respectively. This is an indicator that the sex variable is of class `numeric` and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
 
+```{r}
+class(fhs_first$sex)
+```
+
+We can trasform the variable to one of class `factor` in order for it to be trated as a cateogrical variable
+
+```{r}
+fhs_first<-fhs_first %>% 
+mutate(sex=as.factor(sex))
+```
+
+If we repeat the function for the boxplot now we get separate boxplots by sex
+
+```{r message = FALSE, warning = FALSE}
+fhs_first %>% 
+  # define the axes for the boxplot
+  ggplot(aes(x = sex, y=agemi)) + 
+  geom_boxplot()
+```
 
 5. *What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers*
 
