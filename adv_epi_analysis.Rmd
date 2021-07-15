@@ -1,0 +1,1847 @@
+--- 
+title: "Advanced Epidemiological Analysis"
+author: "Andreas M. Neophytou and G. Brooke Anderson"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib]
+biblio-style: apalike
+link-citations: yes
+description: "This is the coursebook for the Colorado State University course ERHS 732, Advanced Epidemiological Analysis."
+---
+
+# Overview
+
+This is a the coursebook for the Colorado State University course ERHS 732,
+Advanced Epidemiological Analysis. This course provides the opportunity to
+implement theoretical expertise through designing and conducting advanced
+epidemiologic research analyses and to gain in-depth experience analyzing
+datasets from the environmental epidemiology literature. 
+
+## License
+
+This book is licensed under the [Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International
+License](https://creativecommons.org/licenses/by-nc-sa/4.0/), while all code in
+the book is under the [MIT license](https://opensource.org/licenses/MIT).
+
+Click on the **Next** button (or navigate using the links in the table of
+contents) to continue.
+
+
+<!--chapter:end:index.Rmd-->
+
+# Course information {#courseinfo}
+
+This is a the coursebook for the Colorado State University course ERHS 732,
+Advanced Epidemiological Analysis. This course provides the opportunity to
+implement theoretical expertise through designing and conducting advanced
+epidemiologic research analyses and to gain in-depth experience analyzing
+datasets from the environmental epidemiology literature. This course will
+complement the student's training in advanced epidemiological methods,
+leveraging regression approaches and statistical programming, providing the
+opportunity to implement their theoretical expertise through designing and
+conducting  advanced epidemiologic research analyses. During the course,
+students will gain in-depth experience analyzing two datasets from the
+environmental epidemiology literature---(1) time series data with daily measures
+of weather, air pollution, and cardiorespiratory outcomes in London, England and
+(2) a dataset with measures from the Framingham Heart Study. Additional datasets
+and studies will be discussed and explored as a supplement.
+
+This class will utilize a variety of instructional formats, including short lectures, readings, topic specific examples from the substantive literature, discussion and directed group work on in-course coding exercises putting lecture and discussion content into practice. A variety of teaching modalities will be used, including group discussions, student directed discussions, and in-class group exercises. It is expected that before coming to class, students will read the required papers for the week, as well as any associated code included in the papers’ supplemental materials. Students should come to class prepared to do statistical programming (i.e., bring a laptop with statistical software, download any datasets needed for the week etc). Participation is based on in-class coding exercises based on each week’s topic. If a student misses a class, they will be expected to complete the in-course exercise outside of class to receive credit for participation in that exercise. Students will be required to do mid-term and final projects which will be presented in class and submitted as a written write-up describing the project.
+
+Prerequisites for this course are: 
+
+- ERHS 534 or ERHS 535 and 
+- ERHS 640 and 
+- STAR 511 or STAT 511A or STAT 511B
+
+## Course learning objectives
+
+The learning objectives for this proposed course complement core epidemiology
+and statistics courses required by the program and provide the opportunity for
+students to implement theoretical skills and knowledge gained in those courses
+in a more applied setting. 
+
+Upon successful completion of this course students will be able to:
+
+1. List several possible statistical approaches to answering an epidemiological
+research questions. (*Knowledge*)
+2. Choose among analytical approaches learned in previous courses to identify
+one that is reasonable for an epidemiological research question. (*Application*)
+3. Design a plan for cleaning and analyzing data to answer an epidemiological
+research question, drawing on techniques learned in previous and concurrent
+courses. (*Synthesis*)
+4. Justify the methods and code used to answer an epidemiological research
+question. (*Evaluation*)
+5. Explain the advantages and limitations of a chosen methodological approach
+for evaluating epidemiological data. (*Evaluation*)
+6. Apply advanced epidemiological methods to analyze example data, using a
+regression modeling framework. (*Application*)
+7. Apply statistical programming techniques learned in previous courses to
+prepare epidemiological data for statistical analysis and to conduct the
+analysis. (*Application*)
+8. Interpret the output from statistical analyses of data for an epidemiological
+research question. (*Evaluation*)
+9. Defend conclusions from their analysis. (*Comprehension*)
+10. Write a report describing the methods, results, and conclusions from an
+epidemiological analysis. (*Application*)
+11. Construct a reproducible document with embedded code to clean and analyze
+data to answer an epidemiological research question. (*Application*)
+
+## Meeting time and place
+
+[To be determined]
+
+## Class Structure and Expectations
+
+- **Homework/preparation:** Every two weeks we will focus on a different topic.
+It is expected that *before* coming to class, students will read the required
+papers for the week, as well as any associated code included in the papers'
+supplemental materials. Students should come to class prepared to prepared to do
+statistical programming (i.e., bring in a laptop with statistical software,
+download any datasets needed for the week).
+- **In-class schedule:**
+    + Topic overview: Each class will start with a vocabulary quiz on a select
+    number of the words from the chapter's vocabulary list.
+    + Discussion of analysis and coding points: Students and faculty will be
+    divided into small groups to discuss the chapter and think more deeply about
+    the content.  This is a time to bring up questions and relate the chapter
+    concepts to other datasets and/or analysis methods you are familiar with.
+    + Group work: In small groups, students will work on designing an
+    epidemiological analysis for the week's topic and developing code to 
+    implement that analysis. Students will use the GitHub platform to 
+    work collaboratively during and between class meetings.
+    + Wrap-up: We will reconvene as one group at the end to discuss topics that
+    came up in small group work and to outline expectations for students before
+    the next meeting.
+
+
+## Course grading
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(knitr)
+
+tribble(
+  ~ `Assessment Components`, ~ `Percentage of Grade`, 
+  "Midterm written report", 30, 
+  "Midterm presentation", 15, 
+  "Final written report", 30, 
+  "Final presentation", 15, 
+  "Participation in in-course exercises", 10
+) %>% 
+  kable()
+```
+
+## Textbooks and Course Materials
+
+Readings for this course will focus on peer-reviewed literature that will be
+posted for the students in the class. Additional references that will be useful
+to students throughout the semester include:
+
+- Garrett Grolemund and Hadley Wickham, *R for Data Science*, O’Reilly, 2017. (Available for free online at https://r4ds.had.co.nz/ and in print through
+most large book sellers.)
+- Miguel A. Hernán and James M. Robins, *Causal Inference: What If*, Boca Raton: Chapman & Hall/CRC, 2020. (Available for free online at https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/2021/01/ciwhatif_hernanrobins_31jan21.pdf with a print version anticipated in 2021.)
+- Francesca Dominici and Roger D. Peng, *Statistical Methods for Environmental Epidemiology with R*, Springer, 2008. (Available online through the CSU library or in print through Springer.)
+
+<!--chapter:end:01-course_info.Rmd-->
+
+# Time series / case-crossover study designs 
+
+## Reading
+
+The readings for this chapter are: 
+
+- @vicedo2019hands, with supplemental material available to download by 
+clicking http://links.lww.com/EDE/B504
+- @armstrong2014conditional, with supplemental material available at
+https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13
+
+## Time series data 
+
+Example datasets are available as part of the supplemental material for 
+both of the articles in this chapter's readings. For @vicedo2019hands, 
+the example data are available as the file "lndn_obs.csv". These data are
+saved in a csv format, and so they can be read into R using the 
+`read_csv` function from the `readr` package (part of the tidyverse). 
+For example, you can use the following code to read in these data, 
+assuming you have saved them in a "data" subdirectory of your current
+working directory: 
+
+```{r message = FALSE}
+library(tidyverse) # Loads all the tidyverse packages, including readr
+obs <- read_csv("data/lndn_obs.csv")
+obs
+```
+
+This example dataset shows many characteristics that are common for datasets for
+time series studies in environmental epidemiology. Time series data are essentially 
+a sequence of data points repeatedly taken over a certain time interval (e.g. day,
+week, month etc). General characteristics of time series data for environmental epidemiology studies are:
+
+- Observations are given at an aggregated level. For example, instead of 
+individual observations for each person in London, the `obs` data give 
+counts of deaths throughout London. The level of aggregation is often determined 
+by geopolitical boundaries, for example counties of ZIP codes  in the US.
+- Observations are given at regularly spaced time steps over a period. In the
+`obs` dataset, the time interval is day. Typically, values will be provided 
+continuously over that time period, with observations for each time interval. 
+Occasionally, however, the time series data may only be available for 
+particular seasons (e.g., only warm season dates for an ozone study), or
+there may be some missing data on either the exposure or health outcome over
+the course of the study period.
+- Daily observations are given for the health outcome, for the environmental
+exposure of interest, and for potential time-varying confounders. In the `obs`
+dataset, the health outcome is mortality (from all causes; sometimes, the health
+outcome will focus on a specific cause of mortality or other health outcomes such 
+as hospitalizations or emergency room visits). Counts are given for everyone in 
+the city for each day (`all` column), as well as for specific age categories 
+(`all_0_64` for all deaths among those up to 64 years old, and so on). The 
+exposure of interest in the `obs` dataset is temperature, and three metrics of 
+this are included (`tmean`, `tmin`, and `tmax`). Day of the week is one 
+time-varying factor that could be a confounder, or at least help explain 
+variation in the outcome (mortality). This is included through the `dow` variable 
+in the `obs` data. Sometimes, you will also see a marker for holidays included 
+as a potential time-varying confounder, or other exposure variables (temperature 
+is a potential confounder, for example, when  investigating the relationship 
+between air pollution and mortality risk). 
+- Multiple metrics of an exposure and / or multiple health outcome counts 
+may be included for each time step. In the `obs` example, three metrics of 
+temperature are included (minimum daily temperature, maximum daily temperature, 
+and mean daily temperature). Several counts of mortality are included, providing
+information for specific age categories in the population.
+
+When working with time series data, it is helpful to start with some exploratory
+data analysis. The following applied exercise will take you through some of the
+questions you might want to answer through this type of exploratory analysis. In
+general, the `lubridate` package is an excellent tool for working with date data
+in R (although, in the example code above, we mostly used tools from base R).
+You may find it worthwhile to explore this package some more. There is a helpful
+chapter in @wickham2016r, https://r4ds.had.co.nz/dates-and-times.html, as well
+as a cheatsheet at
+https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf. For 
+visualizations, if you are still learning techniques in R, two books
+you may find useful are
+@healy2018data (available online at https://socviz.co/) and @chang2018r
+(available online at http://www.cookbook-r.com/Graphs/).
+
+*Applied: Exploring time series data*
+
+Read the example time series data in R and explore it to answer the following
+questions: 
+
+1. What is the study period for the example `obs` dataset? (i.e., what 
+dates / years are covered by the time series data?)
+2. Are there any missing dates within this time period?
+3. Are there seasonal trends in the exposure? In the outcome?
+4. Are there long-term trends in the exposure? In the outcome?
+5. Is the outcome associated with day of week? Is the exposure associated
+with day of week? 
+
+Based on your exploratory analysis in this section, talk about the potential
+for confounding when these data are analyzed to estimate the association between
+daily temperature and city-wide mortality. Is confounding by seasonal trends
+a concern? How about confounding by long-term trends in exposure and mortality?
+How about confounding by day of week?
+
+*Applied exercise: Example code*
+
+1. **What is the study period for the example `obs` dataset? (i.e., what 
+dates / years are covered by the time series data?)**
+
+In the `obs` dataset, the date of each observation is included in a column called
+`date`. The data type of this column is "Date"---you can check this by using 
+the `class` function from base R:
+
+```{r}
+class(obs$date)
+```
+
+Since this column has a "Date" data type, you can run some mathematical function
+calls on it. For example, you can use the `min` function from base R to get the
+earliest date in the dataset and the `max` function to get the latest. 
+
+```{r}
+min(obs$date)
+max(obs$date)
+```
+
+You can also run the `range` function to get both the earliest and latest dates
+with a single call:
+
+```{r}
+range(obs$date)
+```
+
+
+2. **Are there any missing dates within this time period?**
+
+There are a few things you should check to answer this question. First
+(and easiest), you can check to see if there are any `NA` values within
+any of the observations in the dataset. The `summary` function will provide
+a summary of the values in each column of the dataset, including the count 
+of missing values (NAs) if there are any: 
+
+```{r}
+summary(obs)
+```
+Based on this analysis, all observations are complete for all dates included
+in the dataset. 
+
+However, this does not guarantee that every date between the start date and 
+end date of the study period are included in the recorded data. Sometimes, 
+some dates might not get recorded at all in the dataset, and the `summary` 
+function won't help you determine when this is the case.
+
+There are a few alternative explorations you can do. First, you can check 
+the number of days between the start and end date of the study period, and 
+then see if the number of observations in the dataset is the same: 
+
+```{r}
+# Calculate number of days in study period
+obs %>%            # Using piping (%>%) throughout to keep code clear
+  pull(date) %>%   # Extract the `date` column as a vector
+  range() %>%      # Take the range of dates (earliest and latest)
+  diff()           # Calculate time difference from start to finish of study 
+
+# Get number of observations in dataset---should be 1 more than time difference
+obs %>% 
+  nrow()
+```
+
+
+3. **Are there seasonal trends in the exposure? In the outcome?**
+
+You can use a simple plot to visualize patterns over time in both the exposure
+and the outcome. For example, the following code plots a dot for each daily
+temperature observation over the study period. The points are set to a smaller
+size (`size = 0.5`) and plotted with some transparency (`alpha = 0.5`) since
+there are so many observations.
+
+```{r}
+ggplot(obs, aes(x = date, y = tmean)) + 
+  geom_point(alpha = 0.5, size = 0.5)
+```
+There is clear evidence here of a strong seasonal trend in mean temperature, 
+with values typically lowest in the winter and highest in the summer. 
+
+You can plot the outcome variable in the same way: 
+
+```{r}
+ggplot(obs, aes(x = date, y = all)) + 
+  geom_point(alpha = 0.5, size = 0.5)
+```
+
+Again, there are seasonal trends, although in this case they are inversed. 
+Mortality tends to be highest in the winter and lowest in the summer. Further, the
+seasonal pattern is not equally strong in all years---some years it has a much
+higher winter peak, probably in conjunction with severe influenza seasons.
+
+Another way to look for seasonal trends is with a heatmap-style visualization, 
+with day of year along the x-axis and year along the y-axis. This allows you 
+to see patterns that repeat around the same time of the year each year (and 
+also unusual deviations from normal seaonsal patterns). 
+
+For example, here's a plot showing temperature in each year, where the
+observations are aligned on the x-axis by time in year. We've reversed
+the y-axis so that the earliest years in the study period start at the top
+of the visual, then later study years come later---this is a personal style, 
+and it would be no problem to leave the y-axis as-is. We've used the 
+`viridis` color scale for the fill, since that has a number of features
+that make it preferable to the default R color scale, including that it 
+is perceptible for most types of color blindness and be printed out in grayscale
+and still be correctly interpreted.
+
+```{r message = FALSE}
+library(viridis)
+ggplot(obs, aes(x = doy, y = year, fill = tmean)) + 
+  geom_tile() +
+  scale_y_reverse() + 
+  scale_fill_viridis()
+```
+
+From this visualization, you can see that temperatures tend to be higher in the
+summer months and lower in the winter months. "Spells" of extreme heat or cold
+are visible---where extreme temperatures tend to persist over a period, rather
+than randomly fluctuating within a season. You can also see unusual events, like
+the extreme heat wave in the summer of 2003, indicated with the brightest
+yellow in the plot.
+
+We created the same style of plot for the health outcome. In this case, we
+focused on mortality among the oldest age group, as temperature sensitivity
+tends to increase with age, so this might be where the strongest patterns are
+evident. 
+
+```{r}
+ggplot(obs, aes(x = doy, y = year, fill = all_85plus)) + 
+  geom_tile() +
+  scale_y_reverse() + 
+  scale_fill_viridis()
+```
+
+For mortality, there tends to be an increase in the winter compared to the summer.
+Some winters have stretches with particularly high mortality---these are likely
+a result of seasons with strong influenza outbreaks. You can also see on this 
+plot the impact of the 2003 heat wave on mortality among this oldest age group.
+
+4. **Are there long-term trends in the exposure? In the outcome?**
+
+Some of the plots we created in the last section help in exploring this 
+question. For example, the following plot shows a clear pattern of decreasing
+daily mortality counts, on average, over the course of the study period: 
+
+```{r}
+ggplot(obs, aes(x = date, y = all)) + 
+  geom_point(alpha = 0.5, size = 0.5)
+```
+
+It can be helpful to add a smooth line to help detect these longer-term 
+patterns, which you can do with `geom_smooth`: 
+
+```{r message = FALSE}
+ggplot(obs, aes(x = date, y = all)) + 
+  geom_point(alpha = 0.5, size = 0.5) + 
+  geom_smooth()
+```
+
+You could also take the median mortality count across each year in the 
+study period, although you should take out any years without a full year's 
+worth of data before you do this, since there are seasonal trends in the
+outcome: 
+
+```{r}
+obs %>% 
+  group_by(year) %>% 
+  filter(year != 2012) %>% # Take out the last year
+  summarize(median_mort = median(all)) %>% 
+  ggplot(aes(x = year, y = median_mort)) +
+  geom_line()
+```
+
+
+5. **Is the outcome associated with day of week? Is the exposure associated
+with day of week?**
+
+The data already has day of week as a column in the data (`dow`). However, 
+this is in a character data type, so it doesn't have the order of weekdays
+encoded (e.g., Monday comes before Tuesday). This makes it hard to look for 
+patterns related to things like weekend / weekday. 
+
+```{r}
+class(obs$dow)
+```
+
+We could convert this to a factor and encode the weekday order when we do 
+it, but it's even easier to just recreate the column from the `date` column. 
+We used the `wday` function from the `lubridate` package to do this---it extracts
+weekday as a factor, with the order of weekdays encoded (using a special 
+"ordered" factor type):
+
+```{r}
+library(lubridate)
+obs <- obs %>% 
+  mutate(dow = wday(date, label = TRUE))
+
+class(obs$dow)
+levels(obs$dow)
+```
+
+We looked at the mean, median, and 25th and 75th quantiles of the mortality 
+counts by day of week: 
+
+```{r}
+obs %>% 
+  group_by(dow) %>% 
+  summarize(mean(all), 
+            median(all), 
+            quantile(all, 0.25), 
+            quantile(all, 0.75))
+```
+
+Mortality tends to be a bit higher on weekdays than weekends, but it's not 
+a dramatic difference. 
+
+We did the same check for temperature:
+
+```{r}
+obs %>% 
+  group_by(dow) %>% 
+  summarize(mean(tmean), 
+            median(tmean), 
+            quantile(tmean, 0.25), 
+            quantile(tmean, 0.75))
+```
+
+In this case, there does not seem to be much of a pattern by weekday. 
+
+You can also visualize the association using boxplots:
+
+```{r}
+ggplot(obs, aes(x = wday(date, label = TRUE), y = all)) + 
+  geom_boxplot()
+```
+
+You can also try violin plots---these show the full distribution better than
+boxplots, which only show quantiles. 
+
+```{r}
+ggplot(obs, aes(x = dow, y = all)) + 
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
+```
+
+## Fitting models
+
+One of the readings for this week, @vicedo2019hands, includes a section 
+on fitting exposure-response functions to describe the association between 
+daily mean temperature and mortality risk. This article includes example
+code in its supplemental material, with code for fitting the model to 
+these time series data in the file named "01EstimationERassociation.r".
+The model may at first seem complex, but it is made up of a number of 
+fairly straightforward pieces (although some may initially seem complex): 
+
+- The model framework is a *generalized linear model (GLM)*
+- This GLM is fit assuming an *error distribution* and a *link function*
+appropriate for count data 
+- The GLM is fit assuming an *error distribution* that is also appropriate for
+data that may be *overdispersed*
+- The model includes control for day of the week by including a *categorical
+variable*
+- The model includes control for long-term and seasonal trends by including
+a *spline* (in this case, a *natural cubic spline*) for the day in the study
+- The model fits a flexible, non-linear association between temperature 
+and mortality risk also using a spline
+- The model fits a flexible non-linear association between temperature on 
+a series of preceeding days and current day and mortality risk on the 
+current day using a *distributed lag approach*
+- The model jointly describes both of the two previous non-linear associations
+by fitting these two elements through one construct in the GLM, a 
+*cross-basis term*
+
+In this section, we will work through the elements, building up the code to 
+get to the full model that is fit in @vicedo2019hands.
+
+*Fitting a GLM to time series data*
+
+The GLM framework unites a number of types of regression models you may have
+previously worked with. One basic regression model that can be fit within this
+framework is a linear regression model. However, the framework also allows you
+to also fit, among others, logistic regression models (useful when the outcome
+variable can only take one of two values, e.g., success / failure or alive /
+dead), Poisson regression models (useful when the outcome variable is a count or 
+rate).
+
+This generalized framework brings some unity to these different types of 
+regression models. From a practical standpoint, it has allowed software 
+developers to easily provide a common interface to fit these types of models. 
+In R, the common function call to fit GLMs is `glm`. 
+
+Within the GLM framework, the elements that separate different regression models
+include the link function and the error distribution. The error distribution
+encodes the assumption you are enforcing about how the errors after fitting the
+model are distributed. If the outcome data are normally distributed (a.k.a.,
+follow a Gaussian distribution), after accounting for variance explained in the
+outcome by any of the model covariates, then a linear regression model may be
+appropriate. For count data---like numbers of deaths a day---this is unlikely, 
+unless the average daily mortality count is very high (count data tend to 
+come closer to a normal distribution the further their average gets from 
+0). For binary data---like whether each person in a study population died on 
+a given day or not---normally distributed errors are also unlikely. Instead, 
+in these two cases, it is typically more appropriate to fit GLMs with 
+Poisson and binomial "families", respectively, where the family designation 
+includes an appropriate specification for the variance when fitting the model
+based on these outcome types. 
+
+The other element that distinguishes different types of regression within 
+the GLM framework is the link function. The link function applies a transformation
+on the combination of independent variables in the regression equation 
+when fitting the model. With normally distributed data, an *identity link*
+is often appropriate---with this link, the combination of independent variables
+remain unchanged (i.e., keep their initial "identity"). With count data, a 
+*log link* is often more appropriate, while with binomial data, a *logit link*
+is often used. 
+
+Finally, data will often not perfectly adhere to assumptions. For example, the
+Poisson family of GLMs assumes that variance follows a Poisson distribution 
+(The probability mass function for Poisson distribution $X \sim {\sf Poisson}(\mu)$ is denoted by $f(k;\mu)=Pr[X=k]= \displaystyle \frac{\mu^{k}e^{-\mu}}{k!}$, where 
+$k$ is the number of occurences, and $\mu$ is equal to the expected number of 
+cases). With this distribution, the variance is equal to the mean ($\mu=E(X)=Var(X)$). With real-life data, this assumption is often not valid, and in many cases the variance in  real life count data is larger than the mean. This can be accounted  for when fitting a GLM by setting an error distribution that does not require the variance to equal the mean---instead, both a mean value and something like a 
+variance are estimated from the data, assuming an overdispersion parameter $\phi$ 
+so that $Var(X)=\phi E(X)$. In environmental epidemiology, time series 
+are often fit to allow for this overdispersion. This is because if the data are overdispersed but the model does not account for this, the standard errors on the 
+estimates of the model parameters may be artificially small. If the data are not overdispersed ($\phi=1$), the model will identify this when being fit to the data, 
+so it is typically better to prefer to allow for overdispersion in the model 
+(if the size of the data were small, you may want to be parsimonious and avoid 
+unneeded complexity in the model, but this is typically not the case with time 
+series data). 
+
+In the next section, you will work through the steps of developing a GLM to fit
+the example dataset `obs`. For now, you will only fit a linear association
+between mean daily temperature and mortality risk, eventually including control
+for day of week. In later work, especially the next chapter, we will build up
+other components of the model, including control for the potential confounders
+of long-term and seasonal patterns, as well as advancing the model to fit
+non-linear associations, distributed by time, through splines, a distributed lag
+approach, and a cross-basis term.
+
+*Applied: Fitting a GLM to time series data*
+
+In R, the function call used to fit GLMs is `glm`. Most of you have likely 
+covered GLMs, and ideally this function call, in previous courses. If you are
+unfamiliar with its basic use, you will want to refresh yourself on this 
+topic. [Add some online resources that go over basics of GLMs in R.]
+
+1. Fit a GLM to estimate the association between mean daily temperature (as the
+independent variable) and daily mortality count (as the dependent variable),
+first fitting a linear regression. (Since the mortality data are counts, we will
+want to shift to a different type of regression within the GLM framework, but
+this step allows you to develop a simple `glm` call, and to remember where to
+include the data and the independent and dependent variables within this
+function call.)
+2. Change your function call to fit a regression model in the Poisson family.
+3. Change your function call to allow for overdispersion in the outcome data 
+(daily mortality count). How does the estimated coefficient for temperature
+change between the model fit for #2 and this model? Check both the central 
+estimate and its estimated standard error.
+4. Change your function call to include control for day of week. 
+ 
+*Applied exercise: Example code*
+
+1. **Fit a GLM to estimate the association between mean daily temperature (as the
+independent variable) and daily mortality count (as the dependent variable),
+first fitting a linear regression.**
+
+This is the model you are fitting:
+
+$Y_{t}=\beta_{0}+\beta_{1}X1_{t}+\epsilon$ 
+              
+where $Y_{t}$ is the mortality count on day $t$, $X1_{t}$ is the mean temperature 
+for day $t$ and $\epsilon$ is the error term. Since this is a linear model we are 
+assuming a Gaussian error distribution $\epsilon \sim {\sf N}(0, \sigma^{2})$,
+where $\sigma^{2}$ is the variance not explained by the covariates (here just 
+temperature). 
+
+To do this, you will use the `glm` call. If you would like to save model fit
+results to use later, you assign the output a name as an R object
+(`mod_linear_reg` in the example code). If your study data are in a dataframe, 
+you can specify these data in the `glm` call with the `data` parameter. 
+Once you do this, you can use column names directly in the model formula. 
+In the model formula, the dependent variable is specified first (`all`, the 
+column for daily mortality counts for all ages, in this example), followed
+by a tilde (`~`), followed by all independent variables (only `tmean` in this
+example). If multiple independent variables are included, they are joined using
+`+`---we'll see an example when we start adding control for confounders later.
+
+```{r}
+mod_linear_reg <- glm(all ~ tmean, data = obs)
+```
+
+Once you have fit a model and assigned it to an R object, you can explore it
+and use resulting values. First, the print method for a regression model
+gives some summary information. This method is automatically called if you 
+enter the model object's name at the console: 
+
+```{r}
+mod_linear_reg
+```
+
+More information is printed if you run the `summary` method on the model 
+object: 
+
+```{r}
+summary(mod_linear_reg)
+```
+
+Make sure you are familiar with the information provided from the model object,
+as well as how to interpret values like the coefficient estimates and their
+standard errors and p-values. These basic elements should have been covered in
+previous coursework (even if a different programming language was used to fit
+the model), and so we will not be covering them in great depth here, but instead
+focusing on some of the more advanced elements of how regression models are
+commonly fit to data from time series and case-crossover study designs in
+environmental epidemiology. For a refresher on the basics of fitting 
+statistical models in R, you may want to check out Chapters 22 through 24 of
+@wickham2016r, a book that is available online.
+
+Finally, there are some newer tools for extracting information from model fit 
+objects. The `broom` package extracts different elements from these objects
+and returns them in a "tidy" data format, which makes it much easier to use
+the output further in analysis with functions from the "tidyverse" suite of
+R packages. These tools are very popular and powerful, and so the `broom` tools
+can be very useful in working with output from regression modeling in R. 
+
+The `broom` package includes three main functions for extracting data from 
+regression model objects. First, the `glance` function returns overall data 
+about the model fit, including the AIC and BIC:
+
+```{r}
+library(broom)
+glance(mod_linear_reg)
+```
+
+The `tidy` function returns data at the level of the model coefficients, 
+including the estimate for each model parameter, its standard error, test 
+statistic, and p-value.
+
+```{r}
+tidy(mod_linear_reg)
+```
+
+Finally, the `augment` function returns data at the level of the original 
+observations, including the fitted value for each observation, the residual
+between the fitted and true value, and some measures of influence on the model
+fit.
+
+```{r}
+augment(mod_linear_reg)
+```
+
+One way you can use `augment` is to graph the fitted values for each observation
+after fitting the model: 
+
+```{r}
+mod_linear_reg %>% 
+  augment() %>% 
+  ggplot(aes(x = tmean)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = .fitted), color = "red") + 
+  labs(x = "Mean daily temperature", y = "Log(Expected mortality count)")
+```
+
+For more on the `broom` package, including some excellent examples of how it
+can be used to streamline complex regression analyses, see @robinson2014broom. 
+There is also a nice example of how it can be used in one of the chapters of
+@wickham2016r, available online at https://r4ds.had.co.nz/many-models.html. 
+
+2. **Change your function call to fit a regression model in the Poisson family.**
+
+A linear regression is often not appropriate when fitting a model where the 
+outcome variable provides counts, as with the example data. A Poisson regression
+is often preferred. 
+
+For a count distribution were $Y \sim {\sf Poisson(\mu)}$ we typically fit a model
+such as 
+
+$g(Y)=\beta_{0}+\beta_{1}X1$, where $g()$ represents the link function, in this 
+case a log function so that  $log(Y)=\beta_{0}+\beta_{1}X1$. We can also express 
+this as $Y=exp(\beta_{0}+\beta_{1}X1)$.
+
+In the `glm` call, you can specify this with the `family`
+parameter, for which "poisson" is one choice.
+
+```{r}
+mod_pois_reg <- glm(all ~ tmean, data = obs, family = "poisson")
+```
+
+One thing to keep in mind with this change is that the model now uses a 
+non-identity link between the combination of independent variable(s) and the 
+dependent variable. You will need to keep this in mind when you interpret 
+the estimates of the regression coefficients. While the coefficient estimate
+for `tmean` from the linear regression could be interpreted as the expected 
+increase in mortality counts for a one-unit (i.e., one degree Celsius) increase
+in temperature, now the estimated coefficient should be interpreted as the
+expected increase in the natural log-transform of mortality count for a one-unit
+increase in temperature. 
+
+```{r}
+summary(mod_pois_reg)
+```
+
+You can see this even more clearly if you take a look at the association between
+temperature for each observation and the expected mortality count fit by the 
+model. First, if you look at the fitted values without transforming, they 
+will still be in a state where mortality count is log-transformed. You can 
+see by looking at the range of the y-scale that these values are for the log
+of expected mortality, rather than expected mortality, and that the fitted
+association is linear: 
+
+```{r}
+mod_pois_reg %>% 
+  augment() %>% 
+  ggplot(aes(x = tmean)) + 
+  geom_point(aes(y = log(all)), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = .fitted), color = "red") + 
+  labs(x = "Mean daily temperature", y = "Log(Expected mortality count)")
+```
+
+You can use exponentiation to transform the fitted values back to just be the
+expected mortality count based on the model fit. Once you make this
+transformation, you can see how the link in the Poisson family specification
+enforced a curved relationship between mean daily temperature and the
+untransformed expected mortality count.
+
+```{r}
+mod_pois_reg %>% 
+  augment() %>% 
+  ggplot(aes(x = tmean)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = exp(.fitted)), color = "red") + 
+  labs(x = "Mean daily temperature", y = "Expected mortality count")
+```
+
+3. **Change your function call to allow for overdispersion in the outcome data 
+(daily mortality count). How does the estimated coefficient for temperature
+change between the model fit for #2 and this model? Check both the central 
+estimate and its estimated standard error.**
+
+In the R `glm` call, there is a family that is similar to Poisson (including
+using a log link), but that allows for overdispersion. You can specify it 
+with the "quasipoisson" choice for the `family` parameter in the `glm` call:
+
+```{r}
+mod_ovdisp_reg <- glm(all ~ tmean, data = obs, family = "quasipoisson")
+```
+
+When you use this family, there will be some new information in the summary
+for the model object. It will now include a dispersion parameter ($\phi$). If this 
+is close to 1, then the data were close to the assumed variance for a Poisson
+distribution (i.e., there was little evidence of overdispersion). In the 
+example, the overdispersion is around 5, suggesting the data are overdispersed
+(this might come down some when we start including independent variables that
+explain some of the variation in the outcome variable, like long-term and
+seasonal trends). 
+
+```{r}
+summary(mod_ovdisp_reg)
+```
+
+If you compare the estimates of the temperature coefficient from the Poisson
+regression with those when you allow for overdispersion, you'll see something
+interesting: 
+
+```{r}
+tidy(mod_pois_reg) %>% 
+  filter(term == "tmean")
+tidy(mod_ovdisp_reg) %>% 
+  filter(term == "tmean")
+```
+
+The central estimate (`estimate` column) is very similar. However, the estimated
+standard error is larger when the model allows for overdispersion. This
+indicates that the Poisson model was too simple, and that its inherent 
+assumption that data were not overdispersed was problematic. If you naively used
+a Poisson regression in this case, then you would estimate a confidence 
+interval on the temperature coefficient that would be too narrow. This could 
+cause you to conclude that the estimate was statistically significant when 
+you should not have (although in this case, the estimate is statistically 
+significant under both models). 
+
+4. **Change your function call to include control for day of week.**
+
+Day of week is included in the data as a categorical variable, using a 
+data type in R called a factor. You are now essentially fitting this model:
+
+$log(Y)=\beta_{0}+\beta_{1}X1+\gamma^{'}X2$,
+
+where $X2$ is a categorical variable for day of the week and $\gamma^{'}$ 
+represents a vector of parameters associated with each category.
+
+It is pretty straightforward to include factors as independent variables in calls 
+to `glm`: you just add the column name to the list of other independent variables 
+with a `+`. In this case, we need to do one more step: earlier, we added order to
+`dow`, so it would "remember" the order of the week days (Monday before Tuesday, 
+etc.). However, we need to strip off this order before we include the factor in 
+the `glm` call. One way to do this is with the `factor` call, specifying 
+`ordered = FALSE`. Here is the full call to fit this model:
+
+```{r}
+mod_ctrl_dow <- glm(all ~ tmean + factor(dow, ordered = FALSE), 
+                    data = obs, family = "quasipoisson")
+```
+
+When you look at the summary for the model object, you can see that the 
+model has fit a separate model parameter for six of the seven weekdays. The one
+weekday that isn't fit (Sunday in this case) serves as a baseline ---these 
+estimates specify how the log of the expected mortality count is expected to 
+differ on, for example, Monday versus Sunday (by about 0.03), if the temperature 
+is the same for the two days. 
+
+```{r}
+summary(mod_ctrl_dow)
+```
+
+You can also see from this summary that the coefficients for the day of the
+week are all statistically significant. Even though we didn't see a big 
+difference in mortality counts by day of week in our exploratory analysis, 
+this suggests that it does help explain some variance in mortality observations
+and will likely be worth including in the final model. 
+
+The model now includes day of week when fitting an expected mortality count
+for each observation. As a result, if you plot fitted values of expected
+mortality versus mean daily temperature, you'll see some "hoppiness" in the 
+fitted line: 
+
+```{r}
+mod_ctrl_dow %>% 
+  augment() %>% 
+  ggplot(aes(x = tmean)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = exp(.fitted)), color = "red") + 
+  labs(x = "Mean daily temperature", y = "Expected mortality count")
+```
+
+This is because each fitted value is also incorporating the expected influence
+of day of week on the mortality count, and that varies across the observations
+(i.e., you could have two days with the same temperature, but different 
+expected mortality from the model, because they occur on different days). 
+
+If you plot the model fits separately for each day of the week, you'll see that 
+the line is smooth across all observations from the same day of the week:
+
+```{r}
+mod_ctrl_dow %>% 
+  augment() %>% 
+  ggplot(aes(x = tmean)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = exp(.fitted)), color = "red") + 
+  labs(x = "Mean daily temperature", y = "Expected mortality count") + 
+  facet_wrap(~ obs$dow)
+```
+
+*Wrapping up*
+
+At this point, the coefficient estimates suggests that risk of mortality 
+tends to decrease as temperature increases. Do you think this is reasonable?
+What else might be important to build into the model based on your analysis
+up to this point?
+
+## Chapter vocabulary
+
+Each class will start with a vocabulary quiz on a select number of the words
+from the chapter's vocabulary list. The vocabulary words for this chapter are: 
+
+- time-series study design
+- case-crossover study design
+- exposure
+- health outcome
+- confounder
+- study period
+- seasonal trends
+- long-term trends
+- error distribution
+- generalized linear model (GLM)
+- link function
+- overdispersed
+- categorical variable
+- spline
+- natural cubic spline
+- distributed lag
+- cross-basis term
+
+<!--chapter:end:02-timeseries_casecrossover.Rmd-->
+
+# Generalized linear models 
+
+The readings for this chapter are the same as for the last chapter: 
+
+- @vicedo2019hands, with supplemental material available to download by 
+clicking http://links.lww.com/EDE/B504
+- @armstrong2014conditional, with supplemental material available at
+https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13
+
+## Splines in GLMs
+
+We saw from the latest model with a linear for mean daily temperature that the 
+suggested effect on mortality is a decrease in daily mortality counts with 
+increasing temperature. However, as you've probably guessed that's probably not 
+entirely accurate. A linear term for the effect of exposure restricts us to an 
+effect that can be fitted with a straight line (either a null effect or a 
+monotonically increasing or decreasing effect with increasing exposure). 
+
+This clearly is problematic in some cases. One example is when exploring the
+association between temperature and health risk. Based on human physiology, 
+we would expect many health risks to be elevated at temperature extremes, 
+whether those are extreme cold or extreme heat. A linear term would be 
+inadequate to describe this kind of U-shaped association. Other effects might
+have a threshold---for example, heat stroke might have a very low risk at 
+most temperatures, only increasing with temperature above a certain threshold.
+[Maybe add images of these kinds of associations?]
+
+We can 
+capture non-linear patterns in effects, by using different functions of X. 
+Examples are $\sqrt{X}$, $X^{2}$, or more complex smoothing functions, such as 
+polynomials or splines. Polynomials might at first make a lot of sense, 
+especially since you've likely come across polynomial terms in mathematics
+classes since grade school. However, it turns out that they have some undesirable
+properties. A key one is that they can have extreme behavior, particularly
+when using a high-order polynomial, and particularly outside the range of 
+data that are available to fit the model.
+
+An alternative that is generally preferred for environmental epidemiology 
+studies is the regression spline.
+Regression splines are simple parametric smoothing function, 
+which fit separate polynomial in each interval of the range of the predictor; these 
+can be linear, quadratic, and cubic. An example of a (in this case cubic) spline 
+function is $X+X^{2}+X^{3}+I((X>X_{0})*(X-X_{0})^3)$.This particular function is 
+a cubic spline with four degrees of freedom ($df=4$) and one not ($X_{0}$). 
+A special type of spline called a natural cubic spline is particularly popular.
+Unlike a polynomial function, a natural cubic spline "behaves" better outside
+the range of the data used to fit the model---they are constrained to continue
+on a [linear?] trajectory once they pass beyond the range of the data. 
+[Maybe add more / clarify / add references on the point of why splines versus
+polynomials.]
+
+Regression splines can be fit in a GLM via the package `splines`. Two commonly 
+used examples of regression splines are b-splines and natural cubic 
+splines. @vicedo2019hands uses natural cubic splines.
+
+*Applied: Including a spline in a GLM*
+
+For this exercise, you will continue to build up the model that you began in 
+the examples in the previous chapter. The example uses the data provided with 
+one of this chapter's readings, @vicedo2019hands.
+
+1. Start by fitting a somewhat simple model---how are daily mortality counts
+associated with (a) a linear and (b) a non-linear function of time? Is a linear
+term appropriate to describe this association? What types of patterns are 
+captured by a non-linear function that are missed by a linear function?
+2. In the last chapter, the final version of the model used a GLM with an 
+overdispersed Poisson distribution, including control for day of week. 
+Start from this model and add control for long-term and seasonal trends 
+over the study period. 
+3. Refine your model to fit for a non-linear, rather than linear, function 
+of temperature in the model. Does a non-linear term seem to be more 
+appropriate than a linear term?
+
+*Applied exercise: Example code*
+
+1. **Start by fitting a somewhat simple model---how are daily mortality counts
+associated with (a) a linear and (b) a non-linear function of time?**
+
+It is helpful to start by loading the R packages you are likely to need, as
+well as the example dataset. You may also need to re-load the example data
+and perform the steps taken to clean it in the last chapter: 
+
+```{r message = FALSE, warning = FALSE}
+# Load some packages that will likely be useful
+library(tidyverse)
+library(viridis)
+library(lubridate)
+library(broom)
+
+# Load and clean the data
+obs <- read_csv("data/lndn_obs.csv") %>% 
+  mutate(dow = wday(date, label = TRUE))
+```
+
+For this first question, the aim is to model the association between time and
+daily mortality counts within the example data. This approach is often used
+to explore and, if needed, adjust for temporal factors in the data. 
+
+There are a number of factors that can act over time to create patterns in both
+environmental exposures and health outcomes. For example, there may be changes
+in air pollution exposures over the years of a study because of changes in
+regulations or growth or decline of factories and automobile traffic in an area.
+Changes in health care and in population demographics can cause patterns in
+health outcomes over the study period. At a shorter, seasonal term, there are
+also factors that could influence both exposures and outcomes, including
+seasonal changes in climate, seasonal changes in emissions, and seasonal
+patterns in health outcomes. 
+
+It can be difficult to pinpoint and measure these temporal factors, and so
+instead a common practice is to include model control based on the time in the
+study. This can be measured, for example, as the day since the start of the 
+study period. 
+
+You can easily add a column for day in study for a dataset that
+includes date. R saves dates in a special format, which we're using the in 
+`obs` dataset: 
+
+```{r}
+class(obs$date)
+```
+
+However, this is just a fancy overlay on a value that's ultimately saved as 
+a number. Like most Unix programs, the date is saved as the number of days 
+since the Unix "epoch", January 1, 1970. You can take advantage of this 
+convention---if you use `as.numeric` around a date in R, it will give you a 
+number that gets one unit higher for every new date. Here's the example for
+the first date in our example data:
+
+```{r}
+obs$date[1]
+as.numeric(obs$date[1]) 
+```
+
+And here's the example for the next date:
+
+```{r}
+obs$date[2]
+as.numeric(obs$date[2])
+```
+
+You can use this convention to add a column that gives days since the first
+study date. While you could also use the `1:n()` call to get a number for 
+each row that goes from 1 to the number of rows, that approach would not 
+catch any "skips" in dates in the data (e.g., missing dates if only warm-season
+data are included). The use of the dates is more robust:
+
+```{r}
+obs <- obs %>% 
+  mutate(time = as.numeric(date) - first(as.numeric(date)))
+
+obs %>% 
+  select(date, time)
+```
+
+As a next step, it is always useful to use exploratory data analysis to look 
+at the patterns that might exist for an association, before you start designing
+and fitting the regression model. 
+
+```{r}
+ggplot(obs, 
+       aes(x = time, y = all)) +
+  geom_point(size = 0.5, alpha = 0.5)
+```
+
+There are clear patterns between time and daily mortality counts in these data. 
+First, there is a clear long-term pattern, with mortality rates declining on 
+average over time. Second, there are clear seasonal patterns, with higher 
+mortality generally in the winter and lower rates in the summer. 
+
+To model this, we can start with fitting a linear term. In the last chapter, 
+we determined that the mortality outcome data can be fit using a GLM with a
+Poisson family, allowing for overdispersion as it is common in real-life
+count data like these. To include time as a linear term, we can just include
+that column name to the right of the `~` in the model formula:
+
+```{r}
+mod_time <- glm(all ~ time, 
+                data = obs, family = "quasipoisson")
+```
+
+You can use the `augment` function from the `broom` package to pull out the
+fitted estimate for each of the original observations and plot that, along
+with the observed data, to get an idea of what this model has captured:
+
+```{r}
+mod_time %>% 
+  augment() %>% 
+  ggplot(aes(x = time)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = exp(.fitted)), color = "red") + 
+  labs(x = "Date in study", y = "Expected mortality count") 
+```
+[Check for `termplot`]
+
+This linear trend captures the long-term trend in mortality rates fairly well in
+this case. This won't always be the case, as there may be some health
+outcomes---or some study populations---where the long-term pattern over the
+study period might be less linear than in this example. Further, the linear 
+term is completely unsuccessful in capturing the shorter-term trends in mortality 
+rate. These oscillate, and so would be impossible to capture over multiple 
+years with a linear trend. 
+
+Instead, it's helpful to use a non-linear term for time in the model. We can 
+use a natural cubic spline for this, using the `ns` function from the `splines`
+package. You will need to clarify how flexible the spline function should be, 
+and this can be specified through the degrees of freedom for the spline. A 
+spline with more degrees of freedom will be "wigglier" over a given data range
+compared to a spline with fewer degrees of freedom. Let's start by using 
+158 degrees of freedom, which translates to about 7 degrees of freedom per year:
+
+```{r}
+library(splines)
+mod_time_nonlin <- glm(all ~ ns(time, df = 158), 
+                       data = obs, family = "quasipoisson")
+```
+
+You can visualize the model results in a similar way to how we visualized the
+last model. However, there is one extra step. The `augment` function only 
+carries through columns in the original data (`obs`) that were directly used
+in fitting the model. Now that we're using a transformation of the `time`
+column, by wrapping it in `ns`, the `time` column is no longer included in the 
+`augment` output. However, we can easily add it back in using `mutate`, 
+pulling it from the original `obs` dataset, and then proceed as before.
+
+```{r}
+mod_time_nonlin %>% 
+  augment() %>% 
+  mutate(time = obs$time) %>% 
+  ggplot(aes(x = time)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = exp(.fitted)), color = "red") + 
+  labs(x = "Date in study", y = "Expected mortality count") 
+```
+
+The non-linear term for time has allowed enough flexibility that the model now
+captures both long-term and seasonal trends in the data. 
+
+[More on how to pick a good d.f. for an env. epi. model like this]. In practice,
+researchers often using about 6--8 degrees of freedom per year of the study, in
+the case of year-round data. You can explore how changing the degrees of freedom
+changes the way the model fits to the observed data. As you use more degrees of
+freedom, the line will capture very short-term effects, and may start to
+interfere with the shorter-term associations between environmental exposures and
+health risk that you are trying to capture. Even in the example model we just
+fit, for example, it looks like the control for time may be capturing some
+patterns that were likely caused by heatwaves (the rare summer peaks, including
+one from the 1995 heatwave). Conversely, if too few degrees of freedom are used, 
+the model will shift to look much more like the linear model, with inadequate
+control for seasonal patterns.
+
+```{r}
+# A model with many less d.f. for the time spline
+mod_time_nonlin_lowdf <- glm(all ~ ns(time, df = 10), 
+                             data = obs, family = "quasipoisson")
+mod_time_nonlin_lowdf %>% 
+  augment() %>% 
+  mutate(time = obs$time) %>% 
+  ggplot(aes(x = time)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = exp(.fitted)), color = "red") + 
+  labs(x = "Date in study", y = "Expected mortality count") 
+```
+
+```{r}
+# A model with many more d.f. for the time spline
+# (Takes a little while to run)
+mod_time_nonlin_highdf <- glm(all ~ ns(time, df = 400), 
+                             data = obs, family = "quasipoisson")
+mod_time_nonlin_highdf %>% 
+  augment() %>% 
+  mutate(time = obs$time) %>% 
+  ggplot(aes(x = time)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_line(aes(y = exp(.fitted)), color = "red") + 
+  labs(x = "Date in study", y = "Expected mortality count") 
+```
+
+In all cases, when you fit a non-linear function of an explanatory variable, 
+it will make the model summary results look much more complicated, e.g.: 
+
+```{r}
+mod_time_nonlin_lowdf %>% 
+  tidy()
+```
+
+You can see that there are multiple model coefficients for the variable fit 
+using a spline function, one less than the number of degrees of freedom. These
+model coefficients are very hard to interpret on their own. When we are using 
+the spline to *control* for a factor that might serve as a confounder of the
+association of interest, we typically won't need to try to interpret these
+model coefficients---instead, we are interested in accounting for how this
+factor explains variability in the outcome, without needing to quantify the
+association as a key result. However, there are also cases where we want to 
+use a spline to fit the association with the exposure that we are interested
+in. In this case, we will want to be able to interpret model coefficients from
+the spline. Later in this chapter, we will introduce the `dlnm` package, which 
+includes functions to both fit and interpret natural cubic splines within 
+GLMs for environmental epidemiology.
+
+2. **Start from the last model created in the last chapter and add control for 
+long-term and seasonal trends over the study period.**
+
+The last model fit in the last chapter was the following, which fits for the 
+association between a linear term of temperature and mortality risk, with control
+for day of week: 
+
+```{r}
+mod_ctrl_dow <- glm(all ~ tmean + factor(dow, ordered = FALSE), 
+                    data = obs, family = "quasipoisson")
+```
+
+To add control for long-term and seasonal trends, you can take the natural cubic
+spline function of temperature that you just fit and include it among the
+explanatory / independent variables from the model in the last chapter. If you 
+want to control for only long-term trends, a linear term of the `time` column 
+could work, as we discovered in the first part of this chapter's exercise. 
+However, seasonal trends could certainly confound the association of interest. 
+Mortality rates have a clear seasonal pattern, and temperature does as well, 
+and these patterns create the potential for confounding when we look at how
+temperature and mortality risk are associated, beyond any seasonally-driven 
+pathways. 
+
+```{r}
+mod_ctrl_dow_time <- glm(all ~ tmean + factor(dow, ordered = FALSE) +
+                           ns(time, df = 158), 
+                         data = obs, family = "quasipoisson")
+```
+
+You can see the influence of this seasonal confounding if you look at the model
+results. When we look at the results from the model that did not control for
+long-term and seasonal trends, we get an estimate that mortality rates tend to 
+be lower on days with higher temperature, with a negative term for `tmean`: 
+
+```{r}
+mod_ctrl_dow %>% 
+  tidy() %>% 
+  filter(term == "tmean")
+```
+Conversely, when we include control for long-term and seasonal trends, the 
+estimated association between mortality rates and temperature is reversed, 
+estimating increased mortality rates on days with higher temperature, *controlling
+for long-term and seasonal trends*:
+
+```{r}
+mod_ctrl_dow_time %>% 
+  tidy() %>% 
+  filter(term == "tmean")
+```
+
+3. **Refine your model to fit for a non-linear, rather than linear, function 
+of temperature in the model.**
+
+You can use a spline in the same way to fit a non-linear function for the 
+exposure of interest in the model (temperature). We'll start there. However, 
+as mentioned earlier, it's a bit tricky to interpret the coefficients from the
+fit model---you no longer generate a single coefficient for the exposure of
+interest, but instead several related to the spline. Therefore, once we show
+how to fit using `ns` directly, we'll show how you can do the same thing using
+specialized functions in the `dlnm` package. This package includes a lot of 
+nice functions for not only fitting an association using a non-linear term, 
+but also for interpreting the results after the model is fit.
+
+First, here is code that can be used to fit the model using `ns` directly, 
+similarly to the approach we used to control for temporal patterns with a
+flexible function:
+
+```{r}
+mod_ctrl_nl_temp <- glm(all ~ ns(tmean, 4) + factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+```
+
+```{r}
+mod_time_nonlin_highdf %>% 
+  augment() %>% 
+  mutate(tmean = obs$tmean) %>% 
+  ggplot(aes(x = tmean)) + 
+  geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
+  geom_point(aes(y = exp(.fitted)), color = "red",  size = 0.4) + 
+  labs(x = "Daily mean temperature", y = "Expected mortality count") 
+```
+
+
+
+## Cross-basis functions in GLMs
+
+[Using a cross-basis to model an exposure's association with the
+outcome in two dimensions (dimensions of time and exposure level)]
+
+## Chapter vocabulary
+
+Each class will start with a vocabulary quiz on a select number of the words
+from the chapter's vocabulary list. The vocabulary words for this chapter are: 
+
+<!--chapter:end:03-glms.Rmd-->
+
+# Natural experiments
+
+The readings for this chapter are: 
+
+- @bernal2017interrupted (on interrupted time series), with a correction to an equation in the paper at https://academic.oup.com/ije/article/49/4/1414/5900884. Example data and R code for the paper are available [to download](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/ije/49/4/10.1093_ije_dyaa118/1/dyaa118_supplementary_data.zip?Expires=1623897009&Signature=BzYQrBg60cMKHYeDU~OIZYIFuRgEIPwQsWMjzON0dB~fL8y-8x4xdGIJQBBPgDxBIoUIGnjmShVf1jlVqzloo3IldAdVC78TZ~~XseYdJ9c590QRAR6m7mH~VbPe-fCnQSnZF0z2Qw9PZcSGITZeNr4YXPVY-~gtpgBeZiN0MpgEVBLVT5fYhhQBGbp0vxl1bKdUfNtF71fdVJrglkhSG8-M24A07LmAr8jThx4MQmSAzKCxA4VZLRE6To8zC3-rJlxyWiqrSTFsVQM2SN4R6UuxYoRsILRcIAr2sUfqgmaSlxBiYAf71PdGSrnBcXX3l0l7yuAftX5PYTwMKTyxOA__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA) through a Supplemental Appendix.
+- @barone2011effects, the scientific paper highlighted as an example in the tutorial in the previous reading
+- @bor2014regression (on interrupted time series)
+- @casey2018retirements (on difference-in-differences)
+- @mendola2018invited, an Invited Commentary on the previous reading
+
+## Interrupted time series
+
+[Interrupted time series assessing effects of policy/intervention in specific point in time]
+
+```{r message = FALSE, warning = FALSE}
+# Load some packages that will likely be useful
+library(tidyverse)
+library(viridis)
+library(lubridate)
+library(broom)
+
+# Load and clean the data
+obs <- read_csv("data/lndn_obs.csv") %>% 
+  mutate(dow = wday(date, label = TRUE)) %>% 
+  mutate(time = as.numeric(date) - first(as.numeric(date)))
+```
+
+```{r}
+london_summer_2012 <- obs %>% 
+  filter(ymd("2012-06-01") <= date & date <= ymd("2012-09-30"))
+
+london_olympic_dates <- tibble(date = ymd(c("2012-07-27", "2012-08-12")))
+
+ggplot() + 
+  geom_polygon(aes(x = ymd(c("2012-07-27", "2012-08-12", 
+                             "2012-08-12", "2012-07-27")), 
+                   y = c(Inf, Inf, -Inf, -Inf)), fill = "cyan", alpha = 0.2) + 
+  geom_line(data = london_summer_2012, aes(x = date, y = tmean)) + 
+  labs(x = "Date", y = "Mean daily temperature")
+```
+
+Example data from @bernal2017interrupted: 
+
+```{r message = FALSE}
+sicily <- read_csv("data/sicily.csv") %>% 
+  mutate(date = paste(year, month, "15"), # Use middle of the month for plotting
+         date = ymd(date))
+```
+
+Identify dates of the smoking band: 
+
+```{r}
+sicily %>% 
+  group_by(smokban) %>% 
+  slice(c(1, n()))
+```
+
+
+Recreate Figure 1 from @bernal2017interrupted: 
+
+```{r message = FALSE}
+ggplot() + 
+  geom_polygon(aes(x = ymd(c("2005-01-01", "2006-11-30", 
+                         "2006-11-30", "2005-01-01")), 
+               y = c(Inf, Inf, -Inf, -Inf)), fill = "lightgray") + 
+  geom_point(data = sicily, 
+             aes(x = date, y = 10000 * 10 * aces / stdpop), shape = 21) + 
+  geom_smooth(data = sicily, 
+              aes(x = date, y = 10000 * 10 * aces / stdpop), # Need the extra 10 to line up with Figure in paper---figure out why
+              method = "lm", se = FALSE, color = "red", linetype = 3) + 
+  labs(x = "Year", y = "Std rate x 10 000") + 
+  theme_classic()
+```
+
+
+## Difference-in-differences
+
+[Difference-in differences application for intervention introduced in one point in time]
+
+<!--chapter:end:04-natural_experiments.Rmd-->
+
+# Risk assessment
+
+[Predict expected heat-related mortality under a climate change scenario]
+
+<!--chapter:end:05-risk_assessment.Rmd-->
+
+# Longitudinal cohort study designs
+
+The readings for this chapter are
+
+- @andersson201970
+
+- @wong1989risk
+
+The following are a series of instructional papers on survival analysis, that are 
+meant as general background on how to fit survival analysis models.  
+
+- @clark2003survival
+
+- @bradburn2003survival
+
+- @bradburn2003survival2
+
+
+## Longitudinal cohort data
+Example datasets are available online, but also made available to you on the course 
+website. For the Framingham Heart Study the example data are available as the file 
+"frmgham2.csv". It is saved in a csv format, and so they can be read into R using the 
+`read_csv` function from the `readr` package (part of the tidyverse). You can use the following code to read in these data, assuming you have saved them in a "data" subdirectory of your current
+working directory: 
+
+```{r message = FALSE}
+library(tidyverse) # Loads all the tidyverse packages, including readr
+fhs <- read_csv("data/frmgham2.csv")
+fhs
+```
+
+- One important difference compared to a time-series dataset is the `RANDID` variable. This is the unique identifier for unit for which we have repeated observations for over time.
+In this case the `RANDID` variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time. 
+- The `TIME` variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. (`TIME=0` for the first observation of each participant).
+- Number of observations varies between participants (typical)
+- The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.
+- Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (`SEX`, `educ`), while others will vary with each exam.
+
+From a data management perspective, we might want to change all the column names
+to be in lowercase, rather than uppercase. This will save our pinkies some 
+work as we code with the data! You can make that change with the following 
+code, using the `str_to_lower` function from the `stringr` package (part of 
+the `tidyverse`): 
+
+```{r}
+fhs <- fhs %>% 
+  rename_all(.funs = str_to_lower)
+fhs
+```
+
+
+*Applied exercise: Exploring longitudinal cohort data*
+Read the example cohort data in R and explore it to answer the following
+questions: 
+
+1. What is the number of participants and number of observations in the `fhs` dataset?
+2. Is there any missingness in the data?
+3. How many participants die? What is the distribution of age at time of death?
+4. What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females? 
+5. What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers
+
+Based on this exploratory exercise in this section, talk about the potential
+for confounding when these data are analyzed to estimate the association between
+smoking and risk of incident MI. 
+
+*Applied exercise: Example code*
+
+1. **What is the number of participants and the number of observations in the `fhs` dataset? (i.e what is the sample size and number of person-time observations)**
+
+In the `fhs` dataset, the number of participants will be equal to the number of unique ID's (The `RANDID` variable which takes a unique value for each participant). We can extract this using the `unique` function nested within the `length` function
+
+```{r}
+length(unique(fhs$randid))
+```
+
+If you'd like to use `tidyverse` tools to answer this question, you can do 
+that, as well. The pipe operator (`%>%`) works on any type of object---it will 
+take your current output and include it as the first parameter value for the
+function call you pipe into. If you want to perform operations on a column of 
+a dataframe, you can use `pull` to extract it from the dataframe as a vector, and
+then pipe that into vector operations: 
+
+```{r}
+fhs %>% 
+  pull(randid) %>% 
+  unique() %>% 
+  length()
+```
+
+It's entirely a personal choice whether you use the `$` operator and "nesting"
+of function calls, versus `pull` and piping to do a series of function calls.
+You can see you get the same result, so it just comes down to the style that 
+you will find easiest to understand when you look at your code later.
+
+The number of person-time observations will actually be equal to the length of the dataset.
+The `dim` function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.
+
+```{r}
+dim(fhs)
+```
+We see that there is approximately an average of 2 to 3 observations per participants. 
+ 
+When you know there are repeated measurements, it can be helpful to explore
+how much variation there is in the number of observations per study subject. 
+You could do that in this dataset with the following code: 
+
+```{r}
+fhs %>% 
+  # Group by the study subject identifier and then count the rows for each
+  group_by(randid) %>% 
+  count() %>% 
+  # Reorder the dataset so the subjects with the most observations come first
+  arrange(desc(n)) %>% 
+  head()
+```
+You can visualize this, as well. A histogram is one good choice: 
+
+```{r message = FALSE, warning = FALSE}
+fhs %>% 
+  # Group by the study subject identifier and then count the rows for each
+  group_by(randid) %>% 
+  count() %>% 
+  ggplot(aes(x = n)) + 
+  geom_histogram()
+```
+All study subjects have between one and three measurements. Most of the study 
+subjects (over 3,000) have three measurements recorded in the dataset. 
+
+2. *Is there any missingness in the data?*
+
+We can check for missingness in a number of ways. There are a couple of great
+packages, `visdat` and `naniar`, that include functions for investigating
+missingness in a dataset. If you don't have these installed, you can install
+them using `install.packages("naniar")` and `install.packages("visdat")`. The
+`naniar` package has [a vignette with
+examples](https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html)
+that is a nice starting point for working with both packages.
+
+The `vis_miss` function shows missingness in a dataset in a way that lets you 
+get a top-level snapshot:
+
+```{r}
+library(visdat)
+vis_miss(fhs)
+```
+Another was to visualize this is with `gg_miss_var`: 
+
+```{r}
+library(naniar)
+gg_miss_var(fhs)
+```
+
+Many of the variables are available for all observations, with no missingness,
+including records of the subject's ID, measures of death, stroke, CVD, and other
+events, age, sex, and BMI. Some of the measured values from visits are missing
+occasionally, like the total cholesterol, and glucose. Other measures asked of
+the participants (number of cigarettes per day, education) are occasionally
+missing. Two of the variables---`hdlc` and `ldlc`---are missing more often than 
+they are available. 
+
+You can also do faceting with the `gg_miss_var` function. For
+example, you could see if missingness varies by the period of the observation: 
+
+```{r}
+gg_miss_var(fhs, facet = period)
+```
+
+You may also want to check if missingness varies with whether an observation
+was associated with death of the study subject: 
+
+```{r}
+gg_miss_var(fhs, facet = death)
+```
+
+There are also functions in these packages that allow you to look at how 
+missingness is related across variables. For example, both `glucose` and 
+`totchol` are continuous variables, and both are occasionally missing. You
+can use the geom function `geom_miss_point` from the `nanair` package
+with a ggplot object to explore patterns of missingness among these two 
+variables: 
+
+```{r}
+fhs %>% 
+  ggplot(aes(x = glucose, y = totchol)) + 
+  geom_miss_point()
+```
+
+The lower left corner shows the observations where both values are missing---it
+looks like there aren't too many. For observations with one missing but not the 
+other (the points in red along the x- and y-axes), it looks like the distribution
+across the non-missing variable is pretty similar to that for observations
+with both measurements avaiable. In other words, `totchol` has a similar 
+distribution among observations where `glucose` is available as observations
+where `glucose` is missing.
+
+You can also do things like facet by sex to explore patterns at a finer level:
+
+```{r}
+fhs %>% 
+  ggplot(aes(x = glucose, y = totchol)) + 
+  geom_miss_point() + 
+  facet_wrap(~ sex)
+```
+
+3. *How many participants die? What is the distribution of age at time of death?*
+
+The `death` variable in the `fhs` data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
+
+If you arrange by the random ID and look at `period` and `death` for each subject,
+you can see that the `death` variable is the same for all periods for each
+subject:
+
+```{r}
+fhs %>% 
+  arrange(randid) %>% 
+  select(randid, period, death)
+```
+We need to think some about this convention of recording the data when we count
+the deaths.
+
+It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the `fhs` data using  `tidyverse` tools. The `group_by` functions groups data by unique values of designated variables (here `randid`) and the `slice` function selects rows as designated.
+
+```{r}
+fhs_first <- fhs %>% 
+  group_by(randid) %>% 
+  slice(1L)%>% 
+```
+
+Alternatively you can use the `slice_head` function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the `group_by` function, we will be slicing rows beginning from the first observation for each `randid`
+
+```{r}
+fhs_first <- fhs %>% 
+  group_by(randid) %>% 
+  slice_head(n=1)%>% 
+ungroup()
+```
+
+We can similarly select the last observation for each participant 
+
+```{r}
+fhs_last <- fhs %>% 
+  group_by(randid) %>% 
+  slice(n())%>% 
+ungroup()
+```
+
+or using the `slice_tail` function
+
+```{r}
+fhs_last <- fhs %>% 
+  group_by(randid) %>% 
+  slice_tail(n=1)%>% 
+ungroup()
+```
+
+In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death=1`. For example, we can use the `sum` function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the `sum` function will give as the number of deaths in the sample. 
+
+```{r}
+sum(fhs_first$death) 
+```
+
+Conversely using `tidyverse` tools we can extract the number of observations with `death=1` using the `count` function
+
+```{r}
+fhs_first %>% 
+count(death) 
+```
+
+
+Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below.
+
+In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The `age` variable in `fhs` represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for `age` would be less than the age at death. We will use the `timedth` variable to help us determine the actual age at death. The value of `timedth` is the number of days from beginning of follow-up until death for those with `death=1`, while it is a fixed value of `timedth=8766` (the maximum duration of follow-up) for those with `death=0`.
+
+We can create a new age at death variable for those with `death=1` using the `age` at baseline and `timedth` values
+
+```{r}
+fhs_first<-fhs_first %>% 
+mutate(agedth=age+timedth/365.25)
+```
+
+We can then get summary statistics on this new variable 
+
+```{r}
+fhs_first %>% 
+summarize(min_agedth = min(agedth),
+mean_agedth = mean(agedth),
+max_agedth = max(agedth))
+```
+
+We can also check on these values by groups of interest such as sex
+
+```{r}
+fhs_first %>% 
+group_by(sex) %>%
+summarize(min_agedth = min(agedth),
+mean_agedth = mean(agedth),
+max_agedth = max(agedth))
+```
+
+4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
+
+Similar to the question about death (all-cause mortality) we can look at disease incidence, for example myocardial infarction (MI). The `fhs` dataset has the `hospmi` variable as an indicator for any participant who had a hospitalization due to MI and `timemi` gives the number of days from beginning of follow up to the hospitalization due to MI. We can create an age at incident MI hospitalizaton in a similar fashion as the example for age at death.
+
+```{r}
+fhs_first<-fhs_first %>% 
+mutate(agemi=age+timemi/365.25)
+```
+
+We can then get summary statistics on this new `agemi` variable 
+
+```{r}
+fhs_first %>% 
+summarize(min_agemi = min(agemi),
+mean_agemi = mean(agemi),
+max_agemi = max(agemi))
+```
+
+And by sex
+```{r}
+fhs_first %>% 
+group_by(sex)  %>% 
+summarize(min_agemi = min(agemi),
+mean_agemi = mean(agemi),
+max_agemi = max(agemi))
+```
+We can see that the mean age at incident MI hospitalization among males and females is similar, but with males being somewhat younger on average at the time of incident MI. We can take a closer look at the distibution using boxplots:
+
+```{r message = FALSE, warning = FALSE}
+fhs_first %>% 
+  # define the axes for the boxplot
+  ggplot(aes(x = sex, y=agemi)) + 
+  geom_hboxplot()
+```
+
+
+5. *What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers*
+
+
+## Coding a survival analysis
+In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered  'censored'. Censoring can occur in three ways:
+\begin{itemize}
+\item the participant does not experience the event of interest before the study end
+\item the participant is lossed to follow-up before experiencing the event of interest
+\item the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participants that dies from a different cause is considered censored)
+\end{itemize}
+
+These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome then adjustment for censoring has to happen.
+
+Let's assume that we are interested in all cause mortality as the event of interest let's denote  $T$ is time to death and $T\geq 0$. We define the survival function as 
+$S(t)=Pr[T>t]=1-F(t)$, where the survival function $S(t)$ is the probability that a participant survives past time $t$ ($Pr[T>t]=1$). $F(t)$ is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, $R(t)$) or the probability that that an individual will have a survival time less than or equal to t ($[Pr(T≤t)]$)
+
+Time to event $t$ is bounded by $[0,\infty)$ and $S(t)$ is non-increasing as $t$ becomes greater. At $t=0$, $S(t)=1$ and conversely as $t$ approaches $\infty$, $S(t)=0$. A property of the survival and probabilty density function is $S(t) = 1 – F(t)$: the survival function and the probability density function (or cumulative incidence function ($R(t)$) sum to 1.
+
+Another useful function is the hazard Function, $h(t)$, which is the instantaneous potential of experiencing an event at time $t$, conditional on having survived to that time ($h(t)=\frac{Pr[t<T\leq t+\Delta t|T>t]}{\Delta t}=\frac{f(t)}{S(t)}$). The cumulative Hazard Function, $H(t)$ is defined as the integral of the hazard function from time $0$ to time $t$, which equals the area under the curve $h(t)$ between time $0$ and time $t$ ($H(t)=\int_{0}^{t}h(u)du$).
+If we know any of $S(t)$, $H(t)$ or $h(t)$, we can derive the rest based on the following relationships:
+
+$h(t)=\frac{\partial log(S(t))}{\partial t}$
+
+$H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
+
+
+The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk.
+
+
+
+
+
+The Cox proportional hazards model in a simple form has this form
+
+$log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
+
+where $\lambda(t)$ represent the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The baseline hazard $\lambda_{0}(t)$ is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, $\lambda_{0}(t)$ is not estimated by the model. 
+The above model can also be writen as 
+
+$\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}$
+
+$e^{\beta_{1}}$ is the hazard ratio comparing those hose with $X=1$ and $X=0$
+
+Using the `fhs` data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI. 
+
+*Note: Variables of interest to continue with: 
+for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi` smoking or not
+for long. analysis, `timemi` and `timestrk` and `hyperten`, exposure: `cigpday`, `sysbp`, `diabp`, `bmi`*
+
+
+
+## Handling complexity
+
+### Multi-level exposure
+
+### Recurrent outcome
+
+### Time-varying coeffificents
+
+### Using survey results
+
+[e.g., NHANES]
+
+
+<!--chapter:end:06-longitudinal_cohort.Rmd-->
+
+# Some approaches for confounding
+
+## Inverse probability weighting
+
+## Propensity scores
+
+[Modeling for weights/propensity scores, involves machine learning]
+
+<!--chapter:end:07-approaches_for_confounding.Rmd-->
+
+# Mixed models
+
+[Using a mixed modeling framework to help analyze repeated measures]
+
+
+<!--chapter:end:08-mixed_models.Rmd-->
+
+# Instrumental variables 
+
+<!--chapter:end:09-instrumental_variables.Rmd-->
+
+# Causal inference
+
+<!--chapter:end:10-causal_inference.Rmd-->
+
+`r if (knitr::is_html_output()) '
+# References {-}
+'`
+
+<!--chapter:end:11-references.Rmd-->
+

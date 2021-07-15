@@ -223,7 +223,7 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 ```{r}
 fhs_first <- fhs %>% 
   group_by(randid) %>% 
-  slice(1L)%>% 
+  slice(1L)
 ```
 
 Alternatively you can use the `slice_head` function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the `group_by` function, we will be slicing rows beginning from the first observation for each `randid`
