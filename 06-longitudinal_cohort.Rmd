@@ -329,7 +329,7 @@ We can see that the mean age at incident MI hospitalization among males and fema
 fhs_first %>% 
   # define the axes for the boxplot
   ggplot(aes(x = sex, y=agemi)) + 
-  geom_hboxplot()
+  geom_boxplot()
 ```
 
 
