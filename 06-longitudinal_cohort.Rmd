@@ -224,7 +224,6 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 fhs_first <- fhs %>% 
   group_by(randid) %>% 
   slice(1L)%>% 
-ungroup()
 ```
 
 Alternatively you can use the `slice_head` function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the `group_by` function, we will be slicing rows beginning from the first observation for each `randid`
@@ -324,7 +323,14 @@ summarize(min_agemi = min(agemi),
 mean_agemi = mean(agemi),
 max_agemi = max(agemi))
 ```
-We can see that the distribution of age at incident MI hospitalization among males and females is similar, but with males being somehwat younger on average at the time of incident MI.
+We can see that the mean age at incident MI hospitalization among males and females is similar, but with males being somewhat younger on average at the time of incident MI. We can take a closer look at the distibution using boxplots:
+
+```{r message = FALSE, warning = FALSE}
+fhs_first %>% 
+  # define the axes for the boxplot
+  ggplot(aes(x = sex, y=agemi)) + 
+  geom_hboxplot()
+```
 
 
 5. *What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers*
