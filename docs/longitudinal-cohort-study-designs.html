@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-07-15" />
+<meta name="date" content="2021-07-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -438,7 +438,8 @@ the deaths.</p>
 <p>It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the <code>fhs</code> data using <code>tidyverse</code> tools. The <code>group_by</code> functions groups data by unique values of designated variables (here <code>randid</code>) and the <code>slice</code> function selects rows as designated.</p>
 <div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="longitudinal-cohort-study-designs.html#cb136-1"></a>fhs_first &lt;-<span class="st"> </span>fhs <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb136-2"><a href="longitudinal-cohort-study-designs.html#cb136-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb136-3"><a href="longitudinal-cohort-study-designs.html#cb136-3"></a><span class="st">  </span><span class="kw">slice</span>(1L)</span></code></pre></div>
+<span id="cb136-3"><a href="longitudinal-cohort-study-designs.html#cb136-3"></a><span class="st">  </span><span class="kw">slice</span>(1L)<span class="op">%&gt;%</span></span>
+<span id="cb136-4"><a href="longitudinal-cohort-study-designs.html#cb136-4"></a><span class="st">  </span><span class="kw">ungroup</span>()</span></code></pre></div>
 <p>Alternatively you can use the <code>slice_head</code> function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the <code>group_by</code> function, we will be slicing rows beginning from the first observation for each <code>randid</code></p>
 <div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="longitudinal-cohort-study-designs.html#cb137-1"></a>fhs_first &lt;-<span class="st"> </span>fhs <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb137-2"><a href="longitudinal-cohort-study-designs.html#cb137-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span><span class="st"> </span></span>
@@ -523,7 +524,19 @@ the deaths.</p>
 <span id="cb156-2"><a href="longitudinal-cohort-study-designs.html#cb156-2"></a><span class="st">  </span><span class="co"># define the axes for the boxplot</span></span>
 <span id="cb156-3"><a href="longitudinal-cohort-study-designs.html#cb156-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sex, <span class="dt">y=</span>agemi)) <span class="op">+</span><span class="st"> </span></span>
 <span id="cb156-4"><a href="longitudinal-cohort-study-designs.html#cb156-4"></a><span class="st">  </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-89-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-89-1.png" width="672" />
+We see that R didn’t return two separate boxplots by sex, but rather one centered between the two values of <code>sex=1</code> and <code>sex=2</code> which are the values for males and females respectively. This is an indicator that the sex variable is of class <code>numeric</code> and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:</p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="longitudinal-cohort-study-designs.html#cb157-1"></a><span class="kw">class</span>(fhs_first<span class="op">$</span>sex)</span></code></pre></div>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<p>We can trasform the variable to one of class <code>factor</code> in order for it to be trated as a cateogrical variable</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="longitudinal-cohort-study-designs.html#cb159-1"></a>fhs_first&lt;-fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb159-2"><a href="longitudinal-cohort-study-designs.html#cb159-2"></a><span class="kw">mutate</span>(<span class="dt">sex=</span><span class="kw">as.factor</span>(sex))</span></code></pre></div>
+<p>If we repeat the function for the boxplot now we get separate boxplots by sex</p>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="longitudinal-cohort-study-designs.html#cb160-1"></a>fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb160-2"><a href="longitudinal-cohort-study-designs.html#cb160-2"></a><span class="st">  </span><span class="co"># define the axes for the boxplot</span></span>
+<span id="cb160-3"><a href="longitudinal-cohort-study-designs.html#cb160-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sex, <span class="dt">y=</span>agemi)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb160-4"><a href="longitudinal-cohort-study-designs.html#cb160-4"></a><span class="st">  </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-92-1.png" width="672" /></p>
 <ol start="5" style="list-style-type: decimal">
 <li><em>What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers</em></li>
 </ol>

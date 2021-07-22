@@ -113,7 +113,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-07-15}
+\date{2021-07-22}
 
 \begin{document}
 \maketitle
@@ -2731,7 +2731,8 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 \begin{Highlighting}[]
 \NormalTok{fhs_first <-}\StringTok{ }\NormalTok{fhs }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(randid) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{slice}\NormalTok{(1L)}
+\StringTok{  }\KeywordTok{slice}\NormalTok{(1L)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2923,6 +2924,39 @@ We can see that the mean age at incident MI hospitalization among males and fema
 \end{Shaded}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-89-1.pdf}
+We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of \texttt{sex=1} and \texttt{sex=2} which are the values for males and females respectively. This is an indicator that the sex variable is of class \texttt{numeric} and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{class}\NormalTok{(fhs_first}\OperatorTok{$}\NormalTok{sex)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "numeric"
+\end{verbatim}
+
+We can trasform the variable to one of class \texttt{factor} in order for it to be trated as a cateogrical variable
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first<-fhs_first }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{sex=}\KeywordTok{as.factor}\NormalTok{(sex))}
+\end{Highlighting}
+\end{Shaded}
+
+If we repeat the function for the boxplot now we get separate boxplots by sex
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs_first }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\CommentTok{# define the axes for the boxplot}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ sex, }\DataTypeTok{y=}\NormalTok{agemi)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-92-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
