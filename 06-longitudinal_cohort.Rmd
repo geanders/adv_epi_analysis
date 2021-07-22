@@ -354,8 +354,11 @@ fhs_first %>%
   geom_boxplot()
 ```
 
+We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
+
 5. *What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers*
 
+Similar to the exercise above we can compare BMI distributions by MI case status. 
 
 ## Coding a survival analysis
 In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered  'censored'. Censoring can occur in three ways:
@@ -380,11 +383,23 @@ $h(t)=\frac{\partial log(S(t))}{\partial t}$
 $H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
 
 
-The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk.
+The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk. A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.
+
+In R we would estimate Survival $S(t)$ with all-cause mortality representing failure as follows:
+```{r}
+library(survival)
+ S1=Surv(fhs_first$timedth,fhs_first$death)
+ S1
+```
+
+We
 
 
-
-
+```{r}
+fit1<-survfit(Surv(timedth, death) ~ 1, data = fhs_first)
+summary(fit1)
+plot(fit1, xlab="Time to death",ylab=expression(hat(S)*"(t)"))
+```
 
 The Cox proportional hazards model in a simple form has this form
 
