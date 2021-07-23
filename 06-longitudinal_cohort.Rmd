@@ -402,7 +402,7 @@ summary(fit1)
 fit1 %>%
 ggsurvplot(xlab="Time to death (days)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
-We can see that as follow-up time increases survival decreases or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
+We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the `Surv` function, substituting time of death with respect to follow-up time with age at death.
 
@@ -412,7 +412,7 @@ summary(fit2)
 fit2 %>%
 ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
-We see that the shape of this survival curve is different, with virtually noone dying until they reach their 40s, and then a sharper drop in survival as age increases. 
+We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases. 
 
 
 
