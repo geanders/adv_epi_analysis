@@ -396,9 +396,11 @@ The numbers assigned to each individual is their censoring times, with each numb
 
 
 ```{r}
+library(survminer) ##for plotting survival plots with ggplot2
 fit1<-survfit(Surv(timedth, death) ~ 1, data = fhs_first)
 summary(fit1)
-plot(fit1, xlab="Time to death (days)",ylab=expression(hat(S)*"(t)"))
+fit1 %>%
+ggsurvplot(xlab="Time to death (days)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
 We can see that as follow-up time increases survival decreases or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
@@ -407,7 +409,8 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 ```{r}
 fit2<-survfit(Surv(agedth, death) ~ 1, data = fhs_first)
 summary(fit2)
-plot(fit2, xlab="Age (years)",ylab=expression(hat(S)*"(t)"))
+fit2 %>%
+ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
 We see that the shape of this survival curve is different, with virtually noone dying until they reach their 40s, and then a sharper drop in survival as age increases. 
 
