@@ -392,14 +392,27 @@ library(survival)
  S1
 ```
 
-We
+The numbers assigned to each individual is their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven't failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).
 
 
 ```{r}
 fit1<-survfit(Surv(timedth, death) ~ 1, data = fhs_first)
 summary(fit1)
-plot(fit1, xlab="Time to death",ylab=expression(hat(S)*"(t)"))
+plot(fit1, xlab="Time to death (days)",ylab=expression(hat(S)*"(t)"))
 ```
+We can see that as follow-up time increases survival decreases or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
+
+We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the `Surv` function, substituting time of death with respect to follow-up time with age at death.
+
+```{r}
+fit2<-survfit(Surv(agedth, death) ~ 1, data = fhs_first)
+summary(fit2)
+plot(fit2, xlab="Age (years)",ylab=expression(hat(S)*"(t)"))
+```
+We see that the shape of this survival curve is different, with virtually noone dying until they reach their 40s, and then a sharper drop in survival as age increases. 
+
+
+
 
 The Cox proportional hazards model in a simple form has this form
 
