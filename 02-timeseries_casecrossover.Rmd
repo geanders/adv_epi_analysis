@@ -21,35 +21,55 @@ first part of this course.
 
 The required readings for this chapter are: 
 
+- @bhaskaran2013time. *This paper provides an overview of time series regression
+in environmental epidemiology.*
 - @vicedo2019hands. *This paper provides a tutorial of all the steps for a 
 projecting of health impacts of temperature extremes under climate change. 
-One of the steps is to fit the exposure-response association using present-day data. 
-In this chapter, we will go into details on that step. Later in the class, we'll
+One of the steps is to fit the exposure-response association using present-day data
+(the section on "Estimation of Exposure-Response Associations" in the paper). 
+In this chapter, we will go into details on that step, and that section of the paper
+is the only required reading for this chapter. Later in the class, we'll
 look at other steps covered in this paper. Supplemental material for this paper is 
 available to download by 
 clicking http://links.lww.com/EDE/B504. You will need the data in this supplement
 for the exercises for class.*
-- @armstrong2014conditional. * Supplemental material for this paper is available at
-https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13.*
 
 The following are supplemental readings (i.e., not required, but may be of
 interest) associated with the material in this chapter: 
 
-- Supplemental paper 1. *Description.*
-
+- @armstrong2012commentary. *Commentary that provides context on how epidemiological
+research on temperature and health can help inform climate change policy.*
+- @armstrong2014conditional. *This paper describes different data structures for
+case-crossover data, as well as how conditional Poisson regression can be used 
+in some cases to fit a statistical model to these data.
+Supplemental material for this paper is available at
+https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13.*
+- @imai2015time. *Typically, the time series study design covered in this 
+chapter is used to study non-communicable health outcomes. This paper discusses
+opportunities and limitations in applying a similar framework for infectious
+disease.*
+- @lu2007equivalence. *Heavier on statistics. This paper shows how, under
+conditions often common for environmental epidemiology studies, case-crossover
+and time series methods are equivalent.*
+- @gasparrini2014modeling. *Heavier on statistics. This provides the statistical 
+framework for the distributed lag model for environmental epidemiology time 
+series studies.*
 
 ## Time series data 
 
+Let's start by exploring the type of dataset that can be used for these 
+time series--style studies in environmental epidemiology. In the examples
+in this chapter, we'll be using data that comes as part of the Supplemental
+Material in on of this chapter's required readings, @vicedo2019hands.
+Follow the link for the supplement for this article and then look for the
+file "lndn_obs.csv". This is the file we'll use as the example data in this
+chapter.
 
-
-Example datasets are available as part of the supplemental material for 
-both of the articles in this chapter's readings. For @vicedo2019hands, 
-the example data are available as the file "lndn_obs.csv". These data are
-saved in a csv format, and so they can be read into R using the 
-`read_csv` function from the `readr` package (part of the tidyverse). 
-For example, you can use the following code to read in these data, 
-assuming you have saved them in a "data" subdirectory of your current
-working directory: 
+These data are saved in a csv format (that is, a plain text file, with commas
+used as the delimiter), and so they can be read into R using the `read_csv`
+function from the `readr` package (part of the tidyverse). For example, you can
+use the following code to read in these data, assuming you have saved them in a
+"data" subdirectory of your current working directory:
 
 ```{r message = FALSE}
 library(tidyverse) # Loads all the tidyverse packages, including readr
@@ -59,13 +79,13 @@ obs
 
 This example dataset shows many characteristics that are common for datasets for
 time series studies in environmental epidemiology. Time series data are essentially 
-a sequence of data points repeatedly taken over a certain time interval (e.g. day,
+a sequence of data points repeatedly taken over a certain time interval (e.g., day,
 week, month etc). General characteristics of time series data for environmental epidemiology studies are:
 
 - Observations are given at an aggregated level. For example, instead of 
 individual observations for each person in London, the `obs` data give 
 counts of deaths throughout London. The level of aggregation is often determined 
-by geopolitical boundaries, for example counties of ZIP codes  in the US.
+by geopolitical boundaries, for example, counties or ZIP codes in the US.
 - Observations are given at regularly spaced time steps over a period. In the
 `obs` dataset, the time interval is day. Typically, values will be provided 
 continuously over that time period, with observations for each time interval. 
@@ -73,8 +93,8 @@ Occasionally, however, the time series data may only be available for
 particular seasons (e.g., only warm season dates for an ozone study), or
 there may be some missing data on either the exposure or health outcome over
 the course of the study period.
-- Daily observations are given for the health outcome, for the environmental
-exposure of interest, and for potential time-varying confounders. In the `obs`
+- Observations are available at the same time step (e.g., daily) for (1) the health outcome, (2) the environmental
+exposure of interest, and (3) potential time-varying confounders. In the `obs`
 dataset, the health outcome is mortality (from all causes; sometimes, the health
 outcome will focus on a specific cause of mortality or other health outcomes such 
 as hospitalizations or emergency room visits). Counts are given for everyone in 
@@ -92,13 +112,46 @@ between air pollution and mortality risk).
 may be included for each time step. In the `obs` example, three metrics of 
 temperature are included (minimum daily temperature, maximum daily temperature, 
 and mean daily temperature). Several counts of mortality are included, providing
-information for specific age categories in the population.
+information for specific age categories in the population. The different metrics 
+of exposure will typically be fit in separate models, either as a sensitivity 
+analysis or to explore how exposure measurement affects epidemiological results.
+If different health outcome counts are available, these can be modeled in separate
+statistical models to determine an exposure-response function for each outcome.
+
+## Exploratory data analysis
 
 When working with time series data, it is helpful to start with some exploratory
-data analysis. The following applied exercise will take you through some of the
-questions you might want to answer through this type of exploratory analysis. In
-general, the `lubridate` package is an excellent tool for working with date data
-in R (although, in the example code above, we mostly used tools from base R).
+data analysis. This type of time series data will often be secondary data---it is 
+data that was previously collected, as you are re-using it. Exploratory data analysis
+is particularly important with secondary data like this. For primary data that you 
+collected yourself, following protocols that you designed yourself, you will often
+be very familiar with the structure of the data and any quirks in it by the time
+you are ready to fit a statistical model. With secondary data, however, you will 
+typically start with much less familiarity about the data, how it was collected, and
+any potential issues with it, like missing data and outliers. 
+
+Exploratory data analysis can help you become familiar with your data. You can use
+summaries and plots to explore the parameters of the data, and also to identify 
+trends and patterns that may be useful in designing an appropriate statistical 
+model. For example, you can explore how values of the health outcome are distributed, 
+which can help you determine what type of regression model would be appropriate, and
+to see if there are potential confounders that have regular relationships with 
+both the health outcome and the exposure of interest. You can see how many 
+observations have missing data for the outcome, the exposure, or confounders of 
+interest, and you can see if there are any measurements that look unusual. 
+This can help in identifying quirks in how the data were recorded---for example, 
+in some cases ground-based weather monitors use -99 or -999 to represent missing
+values, definitely something you want to catch and clean-up in your data 
+(replacing with R's `NA` for missing values) before fitting a statistical model!
+
+The following applied exercise will take you through some of the
+questions you might want to answer through this type of exploratory analysis. 
+In
+general, the `tidyverse` suite of R packages has loads of tools for exploring and
+visualizing data in R.
+The `lubridate` package from the `tidyverse`, for example, is an excellent tool for working with date-time data
+in R, and time series data will typically have at least one column with the 
+timestamp of the observation (e.g., the date for daily data).
 You may find it worthwhile to explore this package some more. There is a helpful
 chapter in @wickham2016r, https://r4ds.had.co.nz/dates-and-times.html, as well
 as a cheatsheet at
@@ -110,12 +163,14 @@ you may find useful are
 
 *Applied: Exploring time series data*
 
-Read the example time series data in R and explore it to answer the following
+Read the example time series data into R and explore it to answer the following
 questions: 
 
 1. What is the study period for the example `obs` dataset? (i.e., what 
 dates / years are covered by the time series data?)
-2. Are there any missing dates within this time period?
+2. Are there any missing dates (i.e., dates with nothing recorded) within this time
+period? Are there any recorded dates where health outcome measurements are missing?
+Any where exposure measurements are missing?
 3. Are there seasonal trends in the exposure? In the outcome?
 4. Are there long-term trends in the exposure? In the outcome?
 5. Is the outcome associated with day of week? Is the exposure associated
@@ -156,27 +211,58 @@ with a single call:
 range(obs$date)
 ```
 
+This provides the range of the study period for these data. One interesting point
+is that it's not a round set of years---instead, the data ends during the summer
+of the last study year. This doesn't present a big problem, but is certainly 
+something to keep in mind if you're trying to calculate yearly averages of 
+any values for the dataset. If you're getting the average of something that varies
+by season (e.g., temperature), it could be slightly weighted by the months that
+are included versus excluded in the partial final year of the dataset. Similarly, 
+if you group by year and then count totals by year, the number will be smaller
+for the last year, since only part of the year's included. For example, if you 
+wanted to count the total deaths in each year of the study period, it will look 
+like they go down a lot the last year, when really it's only because only about half
+of the last year is included in the study period: 
 
-2. **Are there any missing dates within this time period?**
+```{r}
+obs %>% 
+  group_by(year) %>% 
+  summarize(deaths_in_year = sum(all)) %>% 
+  ggplot(aes(x = year, y = deaths_in_year)) +
+  geom_line() +
+  geom_point() 
+```
+
+
+2. **Are there any missing dates within this time period? Are there any recorded 
+dates where health outcome measurements are missing?
+Any where exposure measurements are missing?**
 
 There are a few things you should check to answer this question. First
 (and easiest), you can check to see if there are any `NA` values within
-any of the observations in the dataset. The `summary` function will provide
+any of the observations in the dataset. This helps answer the second and third 
+parts of the question. The `summary` function will provide
 a summary of the values in each column of the dataset, including the count 
-of missing values (NAs) if there are any: 
+of missing values (`NA`s) if there are any: 
 
 ```{r}
 summary(obs)
 ```
+
 Based on this analysis, all observations are complete for all dates included
-in the dataset. 
+in the dataset. There are no listings for `NA`s for any of the columns, and 
+this indicates no missing values in the dates for which there's a row in the data.
 
 However, this does not guarantee that every date between the start date and 
 end date of the study period are included in the recorded data. Sometimes, 
 some dates might not get recorded at all in the dataset, and the `summary` 
-function won't help you determine when this is the case.
+function won't help you determine when this is the case. One common example in 
+environmental epidemiology is with ozone pollution data. These are sometimes
+only measured in the warm season, and so may be shared in a dataset with all
+dates outside of the warm season excluded.
 
-There are a few alternative explorations you can do. First, you can check 
+There are a few alternative explorations you can do to check this. Perhaps the
+easiest is to check 
 the number of days between the start and end date of the study period, and 
 then see if the number of observations in the dataset is the same: 
 
@@ -192,6 +278,10 @@ obs %>%
   nrow()
 ```
 
+This indicates that there is an observation for every date over the study period, 
+since the number of observations should be one more than the time difference.
+In the next question, we'll be plotting observations by time, and typically this 
+will also help you see if there are large chunks of missing dates in the data.
 
 3. **Are there seasonal trends in the exposure? In the outcome?**
 
@@ -205,7 +295,8 @@ there are so many observations.
 ggplot(obs, aes(x = date, y = tmean)) + 
   geom_point(alpha = 0.5, size = 0.5)
 ```
-There is clear evidence here of a strong seasonal trend in mean temperature, 
+
+There is (unsurprisingly) clear evidence here of a strong seasonal trend in mean temperature, 
 with values typically lowest in the winter and highest in the summer. 
 
 You can plot the outcome variable in the same way: 
@@ -223,10 +314,11 @@ higher winter peak, probably in conjunction with severe influenza seasons.
 Another way to look for seasonal trends is with a heatmap-style visualization, 
 with day of year along the x-axis and year along the y-axis. This allows you 
 to see patterns that repeat around the same time of the year each year (and 
-also unusual deviations from normal seaonsal patterns). 
+also unusual deviations from normal seasonal patterns). 
 
 For example, here's a plot showing temperature in each year, where the
-observations are aligned on the x-axis by time in year. We've reversed
+observations are aligned on the x-axis by time in year. We're using the `doy`---which stands for "day of year" (i.e., Jan 1 = 1; Jan 2 = 2; ... Dec 31 = 365 as long
+as it's not a leap year) as the measure of time in the year. We've reversed
 the y-axis so that the earliest years in the study period start at the top
 of the visual, then later study years come later---this is a personal style, 
 and it would be no problem to leave the y-axis as-is. We've used the 
@@ -235,7 +327,7 @@ that make it preferable to the default R color scale, including that it
 is perceptible for most types of color blindness and be printed out in grayscale
 and still be correctly interpreted.
 
-```{r message = FALSE}
+```{r message = FALSE, warning = FALSE}
 library(viridis)
 ggplot(obs, aes(x = doy, y = year, fill = tmean)) + 
   geom_tile() +
@@ -265,7 +357,8 @@ ggplot(obs, aes(x = doy, y = year, fill = all_85plus)) +
 For mortality, there tends to be an increase in the winter compared to the summer.
 Some winters have stretches with particularly high mortality---these are likely
 a result of seasons with strong influenza outbreaks. You can also see on this 
-plot the impact of the 2003 heat wave on mortality among this oldest age group.
+plot the impact of the 2003 heat wave on mortality among this oldest age group---an
+unusual spot of light green in the summer.
 
 4. **Are there long-term trends in the exposure? In the outcome?**
 
@@ -292,7 +385,7 @@ study period, although you should take out any years without a full year's
 worth of data before you do this, since there are seasonal trends in the
 outcome: 
 
-```{r}
+```{r warning = FALSE}
 obs %>% 
   group_by(year) %>% 
   filter(year != 2012) %>% # Take out the last year
@@ -301,6 +394,12 @@ obs %>%
   geom_line()
 ```
 
+Again, we see a clear pattern of decreasing mortality rates in this city over time. 
+This means we need to think carefully about long-term time patterns as a potential 
+confounder. It will be particularly important to think about this if the exposure
+also has a strong pattern over time. For example, air pollution regulations have
+meant that, in many cities, there may be long-term decreases in pollution 
+concentrations over a study period. 
 
 5. **Is the outcome associated with day of week? Is the exposure associated
 with day of week?**
@@ -320,7 +419,7 @@ We used the `wday` function from the `lubridate` package to do this---it extract
 weekday as a factor, with the order of weekdays encoded (using a special 
 "ordered" factor type):
 
-```{r}
+```{r warning = FALSE, message = FALSE}
 library(lubridate)
 obs <- obs %>% 
   mutate(dow = wday(date, label = TRUE))
@@ -332,7 +431,7 @@ levels(obs$dow)
 We looked at the mean, median, and 25th and 75th quantiles of the mortality 
 counts by day of week: 
 
-```{r}
+```{r warning = FALSE, message = FALSE}
 obs %>% 
   group_by(dow) %>% 
   summarize(mean(all), 
@@ -346,7 +445,7 @@ a dramatic difference.
 
 We did the same check for temperature:
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 obs %>% 
   group_by(dow) %>% 
   summarize(mean(tmean), 
@@ -371,6 +470,14 @@ boxplots, which only show quantiles.
 ggplot(obs, aes(x = dow, y = all)) + 
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
 ```
+
+All these reinforce that there are some small differences in weekend versus weekday
+patterns for mortality. There isn't much pattern by weekday with temperature, so 
+in this case weekday is unlikely to be a confounder (the same is not true with 
+air pollution, which often varies based on commuting patterns and so can have 
+stronger weekend/weekday differences). However, since it does help some in explaining
+variation in the health outcome, it might be worth including in our models anyway, 
+to help reduce random noise.
 
 ## Fitting models
 
