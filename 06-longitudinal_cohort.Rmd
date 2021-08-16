@@ -266,6 +266,9 @@ Survival or time-to-event outcomes in longitudinal cohort data will often be tim
 
 
 ## Coding a survival analysis
+
+[R package `survival`]
+
 In the context of survival analysis what is modelled is time to an event. This is
 a bit different than the models in the `glm` family that model an outcome that follows
 a particular distribution. The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional 
