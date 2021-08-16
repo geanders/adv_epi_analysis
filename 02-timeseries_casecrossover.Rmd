@@ -1,15 +1,46 @@
 # Time series / case-crossover study designs 
 
-## Reading
+We'll start by exploring common characteristics in time series data for 
+environmental epidemiology. In the first have of the class, we're 
+focusing on a very specific type of study---one that leverages large-scale
+vital statistics data, collected at a regular time scale (e.g., daily), 
+combined with large-scale measurements of a climate-related exposure, with 
+the goal of estimating the typical relationship between the level of the 
+exposure and risk of a health outcome. For example, we may have daily 
+measurements of particulate matter pollution for a city, measured daily at a set
+of Environmental Protection Agency (EPA) monitors. We want to investigate
+how risk of cardiovascular mortality changes in the city from day to day 
+in association with these pollution levels. If we have daily counts of the
+number of cardiovascular deaths in the city, we can create a statistical 
+model that fits the exposure-response association between particulate matter
+concentration and daily risk of cardiovascular mortality. These statistical 
+models---and the type of data used to fit them---will be the focus of the 
+first part of this course.
 
-The readings for this chapter are: 
+## Readings
 
-- @vicedo2019hands, with supplemental material available to download by 
-clicking http://links.lww.com/EDE/B504
-- @armstrong2014conditional, with supplemental material available at
-https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13
+The required readings for this chapter are: 
+
+- @vicedo2019hands. *This paper provides a tutorial of all the steps for a 
+projecting of health impacts of temperature extremes under climate change. 
+One of the steps is to fit the exposure-response association using present-day data. 
+In this chapter, we will go into details on that step. Later in the class, we'll
+look at other steps covered in this paper. Supplemental material for this paper is 
+available to download by 
+clicking http://links.lww.com/EDE/B504. You will need the data in this supplement
+for the exercises for class.*
+- @armstrong2014conditional. * Supplemental material for this paper is available at
+https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13.*
+
+The following are supplemental readings (i.e., not required, but may be of
+interest) associated with the material in this chapter: 
+
+- Supplemental paper 1. *Description.*
+
 
 ## Time series data 
+
+
 
 Example datasets are available as part of the supplemental material for 
 both of the articles in this chapter's readings. For @vicedo2019hands, 
