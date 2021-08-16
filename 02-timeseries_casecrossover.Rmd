@@ -21,9 +21,9 @@ first part of this course.
 
 The required readings for this chapter are: 
 
-- @bhaskaran2013time. *This paper provides an overview of time series regression
-in environmental epidemiology.*
-- @vicedo2019hands. *This paper provides a tutorial of all the steps for a 
+- @bhaskaran2013time This paper provides an overview of time series regression
+in environmental epidemiology.
+- @vicedo2019hands This paper provides a tutorial of all the steps for a 
 projecting of health impacts of temperature extremes under climate change. 
 One of the steps is to fit the exposure-response association using present-day data
 (the section on "Estimation of Exposure-Response Associations" in the paper). 
@@ -32,35 +32,35 @@ is the only required reading for this chapter. Later in the class, we'll
 look at other steps covered in this paper. Supplemental material for this paper is 
 available to download by 
 clicking http://links.lww.com/EDE/B504. You will need the data in this supplement
-for the exercises for class.*
+for the exercises for class.
 
 The following are supplemental readings (i.e., not required, but may be of
 interest) associated with the material in this chapter: 
 
-- @armstrong2012commentary. *Commentary that provides context on how epidemiological
-research on temperature and health can help inform climate change policy.*
-- @armstrong2014conditional. *This paper describes different data structures for
+- @armstrong2012commentary Commentary that provides context on how epidemiological
+research on temperature and health can help inform climate change policy.
+- @armstrong2014conditional This paper describes different data structures for
 case-crossover data, as well as how conditional Poisson regression can be used 
 in some cases to fit a statistical model to these data.
 Supplemental material for this paper is available at
-https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13.*
-- @imai2015time. *Typically, the time series study design covered in this 
+https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13.
+- @imai2015time Typically, the time series study design covered in this 
 chapter is used to study non-communicable health outcomes. This paper discusses
 opportunities and limitations in applying a similar framework for infectious
-disease.*
-- @lu2007equivalence. *Heavier on statistics. This paper shows how, under
+disease.
+- @lu2007equivalence Heavier on statistics. This paper shows how, under
 conditions often common for environmental epidemiology studies, case-crossover
-and time series methods are equivalent.*
-- @gasparrini2014modeling. *Heavier on statistics. This provides the statistical 
+and time series methods are equivalent.
+- @gasparrini2014modeling Heavier on statistics. This provides the statistical 
 framework for the distributed lag model for environmental epidemiology time 
-series studies.*
+series studies.
 
 ## Time series data 
 
 Let's start by exploring the type of dataset that can be used for these 
 time series--style studies in environmental epidemiology. In the examples
 in this chapter, we'll be using data that comes as part of the Supplemental
-Material in on of this chapter's required readings, @vicedo2019hands.
+Material in one of this chapter's required readings, [@vicedo2019hands].
 Follow the link for the supplement for this article and then look for the
 file "lndn_obs.csv". This is the file we'll use as the example data in this
 chapter.

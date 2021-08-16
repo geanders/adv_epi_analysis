@@ -18,6 +18,8 @@ implement theoretical expertise through designing and conducting advanced
 epidemiologic research analyses and to gain in-depth experience analyzing
 datasets from the environmental epidemiology literature. 
 
+This book is in development over the Fall 2021 semester.
+
 ## License
 
 This book is licensed under the [Creative Commons

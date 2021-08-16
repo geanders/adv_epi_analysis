@@ -417,10 +417,6 @@ ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity
 ```
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases. 
 
-
-
->>>>>>> 94eea611f0b44bb26fb2757465ed792f315c08f4
-
 The Cox proportional hazards model in a simple form has this form
 
 $log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$

@@ -7,8 +7,9 @@ class-structure-and-expectations
 course-grading
 textbooks-and-course-materials
 time-series-case-crossover-study-designs
-reading
+readings
 time-series-data
+exploratory-data-analysis
 fitting-models
 chapter-vocabulary
 generalized-linear-models
