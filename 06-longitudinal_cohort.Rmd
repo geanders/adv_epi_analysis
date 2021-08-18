@@ -175,7 +175,7 @@ gg_miss_var(fhs, facet = death)
 There are also functions in these packages that allow you to look at how 
 missingness is related across variables. For example, both `glucose` and 
 `totchol` are continuous variables, and both are occasionally missing. You
-can use the geom function `geom_miss_point` from the `nanair` package
+can use the geom function `geom_miss_point` from the `naniar` package
 with a ggplot object to explore patterns of missingness among these two 
 variables: 
 
@@ -392,16 +392,15 @@ In R we would estimate Survival $S(t)$ with all-cause mortality representing fai
 ```{r}
 library(survival)
  S1=Surv(fhs_first$timedth,fhs_first$death)
- S1
+ head(S1)
 ```
 
-The numbers assigned to each individual is their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven't failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).
+The numbers assigned to each individual represent their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven't failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).
 
 
 ```{r}
 library(survminer) ##for plotting survival plots with ggplot2
 fit1<-survfit(Surv(timedth, death) ~ 1, data = fhs_first)
-summary(fit1)
 fit1 %>%
 ggsurvplot(xlab="Time to death (days)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
@@ -411,7 +410,6 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 
 ```{r}
 fit2<-survfit(Surv(agedth, death) ~ 1, data = fhs_first)
-summary(fit2)
 fit2 %>%
 ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
