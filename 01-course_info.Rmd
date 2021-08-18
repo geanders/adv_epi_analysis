@@ -17,11 +17,7 @@ and studies will be discussed and explored as a supplement.
 
 This class will utilize a variety of instructional formats, including short lectures, readings, topic specific examples from the substantive literature, discussion and directed group work on in-course coding exercises putting lecture and discussion content into practice. A variety of teaching modalities will be used, including group discussions, student directed discussions, and in-class group exercises. It is expected that before coming to class, students will read the required papers for the week, as well as any associated code included in the papers’ supplemental materials. Students should come to class prepared to do statistical programming (i.e., bring a laptop with statistical software, download any datasets needed for the week etc). Participation is based on in-class coding exercises based on each week’s topic. If a student misses a class, they will be expected to complete the in-course exercise outside of class to receive credit for participation in that exercise. Students will be required to do mid-term and final projects which will be presented in class and submitted as a written write-up describing the project.
 
-Prerequisites for this course are: 
 
-- ERHS 534 or ERHS 535 and 
-- ERHS 640 and 
-- STAR 511 or STAT 511A or STAT 511B
 
 ## Course learning objectives
 
@@ -63,27 +59,28 @@ campus in MRB 312.
 
 ## Class Structure and Expectations
 
-- **Homework/preparation:** Every two weeks we will focus on a different topic.
+- **Homework/preparation:** 
 It is expected that *before* coming to class, students will read the required
-papers for the week, as well as any associated code included in the papers'
-supplemental materials. Students should come to class prepared to prepared to do
+papers for the week, as well as the online book sections assigned for the week.
+Reading assignments will be announced the week before each class session.
+Students should come to class prepared to prepared to do
 statistical programming (i.e., bring in a laptop with statistical software,
 download any datasets needed for the week).
 - **In-class schedule:**
-    + Topic overview: Each class will start with a vocabulary quiz on a select
-    number of the words from the chapter's vocabulary list.
+    + Topic overview: Each class will start with a brief overview of the week's
+    topic. This will focus on the material covered in that week's assigned 
+    reading in the online book and papers.
     + Discussion of analysis and coding points: Students and faculty will be
-    divided into small groups to discuss the chapter and think more deeply about
+    divided into small groups to discuss the assigned reading and think more deeply about
     the content.  This is a time to bring up questions and relate the chapter
     concepts to other datasets and/or analysis methods you are familiar with.
     + Group work: In small groups, students will work on designing an
     epidemiological analysis for the week's topic and developing code to 
-    implement that analysis. Students will use the GitHub platform to 
-    work collaboratively during and between class meetings.
+    implement that analysis. This will follow the prompts given in the assigned
+    reading from the online book for the week.
     + Wrap-up: We will reconvene as one group at the end to discuss topics that
     came up in small group work and to outline expectations for students before
     the next meeting.
-
 
 ## Course grading
 
@@ -102,13 +99,76 @@ tribble(
   kable()
 ```
 
+- **Midterm report (written and presentation):** Students will work in groups to  prepare an oral presentation and accompanying written report presenting an epidemiologic
+analysis using a time series dataset similar to the London dataset used
+for the first half of the course. The group may pick a research question
+based on the topics covered in the first half of the course. The presentation
+should be 15 minutes and should be structured like a conference presentation
+(Introduction, Methods, Results, and Discussion). The written report
+should be approximately six pages (single spaced) and should cover the
+same topics. It should include at least two (up to four) well-designed figures and / or
+tables. The written report should be created following reproducible
+research principles and using a bibliography referencing system (e.g., 
+BibTex if the student uses RMarkdown to write the report). The report
+should be written to the standard expected for a peer-reviewed 
+publication in terms of clarity, grammar, spelling, and referencing.
+These Midterm reports will be due (and presented) the eighth week of class
+(seventh class session, since there will be no class for Labor Day).
+- **Final report (written and presentation):** Each student will  prepare an oral presentation and accompanying written report presenting an epidemiologic
+analysis using either a dataset similar to the Framingham dataset used
+for the second half of the course or their own dataset from their research. The student may pick a research question
+based on the topics covered in the second half of the course. The presentation
+should be 10 minutes and should be structured like a conference presentation
+(Introduction, Methods, Results, and Discussion). The written report
+should be approximately six pages (single spaced) and should cover the
+same topics. It should include at least two well-designed figures and / or
+tables. The written report should be created following reproducible
+research principles and using a bibliography referencing system (e.g., 
+BibTex if the student uses RMarkdown to write the report). The report
+should be written to the standard expected for a peer-reviewed 
+publication in terms of clarity, grammar, spelling, and referencing.
+The final presentations will be given during the assigned time period
+for finals for our course.
+- **Participation:**  Attendance is an essential part of participating
+in the class.  We understand things come up, however it is expected you
+attend every class and come prepared. Further, it is expected that you will
+actively participate in discussions and group work during the class period.
+
 ## Textbooks and Course Materials
 
 Readings for this course will focus on peer-reviewed literature that will be
-posted for the students in the class. Additional references that will be useful
+posted for the students in the class, as well as assigned reading from this 
+online book. 
+
+Additional general references that will be useful
 to students throughout the semester include:
 
 - Garrett Grolemund and Hadley Wickham, *R for Data Science*, O’Reilly, 2017. (Available for free online at https://r4ds.had.co.nz/ and in print through
 most large book sellers.)
 - Miguel A. Hernán and James M. Robins, *Causal Inference: What If*, Boca Raton: Chapman & Hall/CRC, 2020. (Available for free online at https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/2021/01/ciwhatif_hernanrobins_31jan21.pdf with a print version anticipated in 2021.)
 - Francesca Dominici and Roger D. Peng, *Statistical Methods for Environmental Epidemiology with R*, Springer, 2008. (Available online through the CSU library or in print through Springer.)
+
+## Prerequisites and Preparation
+
+This course assumes experience in epidemiology and some experience
+programming in statistical programming (e.g., R, SAS) and statistics.
+Students should have taken (1) Epidemiologic Methods (ERHS 532/PBHL 570), 
+(2) Advanced Epidemiology (ERHS 640), 
+(3) R Programming for Research (ERHS 535) or  
+SAS and Epidemiologic Data Management (ERHS 534), 
+and (4) Design and Data Analysis for Researchers I (STAT 511), 
+or equivalent courses or experience, prior
+to taking this course. While previous SAS experience is acceptable for the
+course, example code will be in R, so you will find it helpful to review the basics of R
+prior to class.
+
+If you would like to prepare for this course, the best way is by reviewing 
+R programming, epidemiology, and regression modeling. In each chapter of the book, 
+we provide the required and supplemental reading for the week. If you need a review
+in any of these topics, we recommend starting with the papers and book chapters
+listed as general reviews of these topics in the chapters' supplemental reading
+sections.
+
+## Academic Honesty
+
+ Lack of knowledge of the academic honesty policy is not a reasonable explanation for a violation. For more on Colorado State University's policies on [Academic Integrity / Misconduct](https://catalog.colostate.edu/general-catalog/policies/students-responsibilities/#academic-integrity).
