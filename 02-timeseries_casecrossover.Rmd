@@ -789,14 +789,14 @@ In the model formula, the dependent variable is specified first (`all`, the
 column for daily mortality counts for all ages, in this example), followed
 by a tilde (`~`), followed by all independent variables (only `tmean` in this
 example). If multiple independent variables are included, they are joined using
-`+`---we'll see an example when we start adding control for confounders later.
+`+`. We'll see an example when we start adding control for confounders later.
 
 ```{r}
 mod_linear_reg <- glm(all ~ tmean, data = obs)
 ```
 
 Once you have fit a model and assigned it to an R object, you can explore it
-and use resulting values. First, the print method for a regression model
+and use resulting values. First, the `print` method for a regression model
 gives some summary information. This method is automatically called if you 
 enter the model object's name at the console: 
 
@@ -820,7 +820,8 @@ focusing on some of the more advanced elements of how regression models are
 commonly fit to data from time series and case-crossover study designs in
 environmental epidemiology. For a refresher on the basics of fitting 
 statistical models in R, you may want to check out Chapters 22 through 24 of
-@wickham2016r, a book that is available online.
+@wickham2016r, a book that is available online, as well as @dunn2018generalized1 and
+@james2013introduction3 .
 
 Finally, there are some newer tools for extracting information from model fit 
 objects. The `broom` package extracts different elements from these objects
@@ -864,7 +865,7 @@ mod_linear_reg %>%
   ggplot(aes(x = tmean)) + 
   geom_point(aes(y = all), alpha = 0.4, size = 0.5) + 
   geom_line(aes(y = .fitted), color = "red") + 
-  labs(x = "Mean daily temperature", y = "Log(Expected mortality count)")
+  labs(x = "Mean daily temperature", y = "Expected mortality count")
 ```
 
 For more on the `broom` package, including some excellent examples of how it
@@ -875,8 +876,9 @@ There is also a nice example of how it can be used in one of the chapters of
 2. **Change your function call to fit a regression model in the Poisson family.**
 
 A linear regression is often not appropriate when fitting a model where the 
-outcome variable provides counts, as with the example data. A Poisson regression
-is often preferred. 
+outcome variable provides counts, as with the example data, since such data
+often don't follow a normal distribution. A Poisson regression
+is typically preferred. 
 
 For a count distribution were $Y \sim {\sf Poisson(\mu)}$ we typically fit a model
 such as 
@@ -911,8 +913,9 @@ temperature for each observation and the expected mortality count fit by the
 model. First, if you look at the fitted values without transforming, they 
 will still be in a state where mortality count is log-transformed. You can 
 see by looking at the range of the y-scale that these values are for the log
-of expected mortality, rather than expected mortality, and that the fitted
-association is linear: 
+of expected mortality, rather than expected mortality (compare, for example, to
+the similar plot shown from the first model, which was linear), and that the fitted
+association for that *transformation*, not for untransformed mortality counts, is linear: 
 
 ```{r}
 mod_pois_reg %>% 
@@ -937,6 +940,28 @@ mod_pois_reg %>%
   geom_line(aes(y = exp(.fitted)), color = "red") + 
   labs(x = "Mean daily temperature", y = "Expected mortality count")
 ```
+
+For this model, we can interpret the coefficient for the temperature covariate
+as the expected log relative risk in the health outcome associated with a 
+one-unit increase in temperature. We can exponentiate this value to get an 
+estimate of the relative risk: 
+
+```{r}
+# Extract the temperature coefficient from the model
+tmean_coef <- mod_pois_reg %>% 
+  tidy() %>% 
+  filter(term == "tmean") %>% # Extract the row with the tmean estimates
+  pull(estimate) # Extract just the point estimate
+
+# Estimate of the log relative risk for a one-unit increase in temperature
+tmean_coef 
+
+# Estimate of the relative risk for a one-unit increase in temperature
+exp(tmean_coef)
+```
+
+If you want to estimate the confidence interval for this estimate, you should 
+calculate that *before* exponentiating.
 
 3. **Change your function call to allow for overdispersion in the outcome data 
 (daily mortality count). How does the estimated coefficient for temperature
