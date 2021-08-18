@@ -39,6 +39,16 @@ interest) associated with the material in this chapter:
 
 - @armstrong2012commentary Commentary that provides context on how epidemiological
 research on temperature and health can help inform climate change policy.
+- @dominici2008statistical1 Overview of study designs for studying climate-related
+exposures (air pollution in this case) and human health. Chapter in a book that is
+available online through the CSU library.
+- @armstrong2006models Covers similar material as @bhaskaran2013time, but with 
+more focus on the statistical modeling framework
+- @gasparrini2010time Describes some of the advances made to time series study
+designs and statistical analysis, specifically in the context of temperature
+- @basu2005temperature Compares time series and case-crossover study designs in 
+the context of exploring temperature and health. Includes a nice illustration 
+of different referent periods, including time-stratified.
 - @armstrong2014conditional This paper describes different data structures for
 case-crossover data, as well as how conditional Poisson regression can be used 
 in some cases to fit a statistical model to these data.
@@ -48,6 +58,9 @@ https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Se
 chapter is used to study non-communicable health outcomes. This paper discusses
 opportunities and limitations in applying a similar framework for infectious
 disease.
+- @dominici2008statistical4 Heavier on statistics. Describes some of the 
+statistical challenges of working with time series data for air pollution 
+epidemiology. Chapter in a book that is available online through the CSU library.
 - @lu2007equivalence Heavier on statistics. This paper shows how, under
 conditions often common for environmental epidemiology studies, case-crossover
 and time series methods are equivalent.
@@ -55,9 +68,137 @@ and time series methods are equivalent.
 framework for the distributed lag model for environmental epidemiology time 
 series studies.
 
+## Time series and case-crossover study designs
+
+In the first half of this course, we'll take a deep look at how researchers
+can study how environmental exposures and health risk are linked using 
+*time series studies*. Let's start by exploring the study design for this type
+of study, as well as a closely linked study design, that of *case-crossover
+studies*.
+
+It's important to clarify the vocabulary we're using here. We'll use the terms
+*time series study* and *case-crossover study* to refer specifically to a type
+of study common for studying air pollution and other climate-related exposures.
+However, both terms have broader definitions, particularly in fields outside 
+environmental epidemiology. For example, a *time series study* more generally 
+refers to a study where data is available for the same unit (e.g., a city)
+for multiple time points, typically at regularly-spaced times (e.g., daily). 
+A variety of statistical methods have been developed to apply to gain insight
+from this type of data, some of which are currently rarely used in the specific
+fields of air pollution and climate epidemiology that we'll explore here. For 
+example, there are methods to address autocorrelation over time in 
+measurements---that is, that measurements taken at closer time points are likely
+somewhat correlated---that we won't cover here and that you won't see applied 
+often in environmental epidemiology studies, but that might be the focus of 
+a "Time Series" course in a statistics or economics department.
+
+In air pollution and climate epidemiology, time series studies typically begin
+with study data collected for an aggregated area (e.g., city, county, ZIP code)
+and with a daily resolution. These data are usually secondary data, originally 
+collected by the government or other organizations through vital statistics 
+or other medical records (for the health data) and networks of monitors for 
+the exposure data. In the next section of this chapter, we'll explore common 
+characteristics of these data. These data are used in a time series study to 
+investigate how changes in the daily level of the exposure is associated with 
+risk of a health outcome, focusing on the short-term period. For example, a 
+study might investigate how risk of respiratory hospitalization in a city 
+changes in relationship with the concentration of particulate matter during the
+week or two following exposure. The study period for these studies is often 
+very long (often a decade or longer), and while single-community time series 
+studies can be conducted, many time series studies for environmental epidemiology 
+now include a large set of communities of national or international scope.
+
+The study design essentially compares a community with itself at different time 
+points---asking if health risk tends to be higher on days when exposure is higher.
+By comparing the community to itself, the design removes many challenges that would
+come up when comparing one community to another (e.g., is respiratory hospitalization
+risk higher in city A than city B because particulate matter concentrations are 
+typically higher in city A?). Communities differ in demographics and other factors 
+that influence health risk, and it can be hard to properly control for these when 
+exploring the role of environmental exposures. By comparison, demographics tend to 
+change slowly over time (at least, compared to a daily scale) within a community. 
+
+One limitation, however, is that the study design is often best-suited to study 
+acute effects, but more limited in studying chronic health effects. This is tied 
+to the design and traditional ways of statistically modeling the resulting 
+data. Since a community is compared with itself, the design removes challenges in 
+comparing across communities, but it introduces new ones in comparing across time. 
+Both environmental exposures and rates of health outcomes can have strong
+patterns over time, both across the year (e.g., mortality rates tend to follow 
+a strong seasonal pattern, with higher rates in winter) and across longer periods 
+(e.g., over the decade or longer of a study period). These patterns must be 
+addressed through the statistical model fit to the time series data, and they 
+make it hard to disentangle chronic effects of the exposure from unrelated
+temporal patterns in the exposure and outcome, and so most time series studies
+will focus on the short-term (or acute) association between exposure and outcome,
+typically looking at a period of at most about a month following exposure. 
+
+The term *case-crossover study* is a bit more specific than *time series study*,
+although there has been a strong movement in environmental epidemiology towards
+applying a specific version of the design, and so in this field the term often
+now implies this more specific version of the design. Broadly, a case-crossover
+study is one in which the conditions at the time of a health outcome are compared
+to conditions at other times that should otherwise (i.e., outside of the exposure
+of interest) be comparable. A case-crossover study could, for example, investigate
+the association between weather and car accidents by taking a set of car accidents
+and investigating how weather during the car accident compared to weather in the 
+same location the week before. 
+
+One choice in a case-crossover study design is how to select the control time 
+periods. Early studies tended to use a simple method for this---for example, taking
+the day before, or a day the week before, or some similar period somewhat 
+close to the day of the outcome. As researchers applied the study design to large
+sets of data (e.g., all deaths in a community over multiple years), they noticed
+that some choices could create bias in estimates. As a result, most environmental
+epidemiology case-crossover studies now use a *time-stratified* approach to selecting
+control days. This selects a set of control days that typically include days both 
+before and after the day of the health outcome, and are a defined set of days
+within a "stratum" that should be comparable in terms of temporal trends. For 
+daily-resolved data, this stratum typically will include all the days within 
+a month, year, and day of week. For example, one stratum of comparable days might
+be all the Mondays in January of 2010. These stratums are created throughout the 
+study period, and then days are only compared to other days within their stratum
+(although, fortunately, there are ways you can apply a single statistical model
+to fit all the data for this approach rather than having to fit code 
+stratum-by-stratum over many years).
+
+When this is applied to data at an aggregated level (e.g., city, county, or ZIP
+code), it is in spirit very similar to a time series study design, in that you
+are comparing a community to itself at different time points. The main
+difference is that a time series study uses statistical modeling to control from
+potential confounding from temporal patterns, while a case-crossover study of
+this type instead controls for this potential confounding by only comparing days
+that should be "comparable" in terms of temporal trends, for example, comparing
+a day only to other days in the same month, year, and day of week. You will
+often hear that case-crossover studies therefore address potential confounding
+for temporal patterns "by design" rather than "statistically" (as in time series
+studies). However, in practice (and as we'll explore in this class), in
+environmental epidemiology, case-crossover studies often are applied to 
+aggregated community-level data, rather than individual-level data, with exposure
+assumed to be the same for everyone in the community on a given day. Under these
+assumptions, time series and case-crossover studies have been determined to 
+be essentially equivalent (and, in fact, can use the same study data), only with 
+slightly different terms used to control for temporal patterns in the statistical 
+model fit to the data. Several interesting papers have been written to explore
+differences and similarities in these two study designs as applied in environmental
+epidemiology [@basu2005temperature; @armstrong2014conditional; @lu2007equivalence]. 
+
+These types of study designs in practice use similar datasets. In earlier 
+presentations of the case-crossover design, these data would be set up a bit 
+differently for statistical modeling. More recent work, however, has clarified
+how they can be modeled similarly to when using a time series study design, 
+allowing the data to be set up in a similar way [@armstrong2014conditional].
+
+Several excellent commentaries or reviews are available that provide more 
+details on these two study designs and how they have been used specifically 
+investigate the relationship between climate-related exposures and health [@bhaskaran2013time; @armstrong2006models; @gasparrini2010time].
+Further, these designs are just two tools in a wider collection of study designs
+that can be used to explore the health effects of climate-related exposures.
+@dominici2008statistical1 provides a nice overview of this broader set of designs.
+
 ## Time series data 
 
-Let's start by exploring the type of dataset that can be used for these 
+Let's explore the type of dataset that can be used for these 
 time series--style studies in environmental epidemiology. In the examples
 in this chapter, we'll be using data that comes as part of the Supplemental
 Material in one of this chapter's required readings, [@vicedo2019hands].
