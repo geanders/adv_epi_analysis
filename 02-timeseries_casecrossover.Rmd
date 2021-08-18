@@ -1,4 +1,4 @@
-# Time series / case-crossover study designs 
+# Time series / case-crossover studies 
 
 We'll start by exploring common characteristics in time series data for 
 environmental epidemiology. In the first have of the class, we're 
@@ -21,9 +21,9 @@ first part of this course.
 
 The required readings for this chapter are: 
 
-- @bhaskaran2013time This paper provides an overview of time series regression
+- @bhaskaran2013time Provides an overview of time series regression
 in environmental epidemiology.
-- @vicedo2019hands This paper provides a tutorial of all the steps for a 
+- @vicedo2019hands Provides a tutorial of all the steps for a 
 projecting of health impacts of temperature extremes under climate change. 
 One of the steps is to fit the exposure-response association using present-day data
 (the section on "Estimation of Exposure-Response Associations" in the paper). 
@@ -67,6 +67,12 @@ and time series methods are equivalent.
 - @gasparrini2014modeling Heavier on statistics. This provides the statistical 
 framework for the distributed lag model for environmental epidemiology time 
 series studies.
+- @dunn2018generalized1 Introduction to statistical models, moving into regression models and 
+generalized linear models. Chapter in a book that is available online through the CSU library.
+- @james2013introduction3 General overview of linear regression, with an R coding 
+"lab" at the end to provide coding examples. Covers model fit, continuous, binary,
+and categorical covariates, and interaction terms. Chapter in a book that is
+available online through the CSU library.
 
 ## Time series and case-crossover study designs
 
@@ -620,14 +626,37 @@ stronger weekend/weekday differences). However, since it does help some in expla
 variation in the health outcome, it might be worth including in our models anyway, 
 to help reduce random noise.
 
-## Fitting models
+Exploratory data analysis is an excellent tool for exploring your data before 
+you begin fitting a statistical model, and you should get in the habit of using
+it regularly in your research. @dominici2008statistical5 provides another walk-through of exploring this type of data, including some more advanced tools
+for exploring autocorrelation and time patterns. 
+
+## Statistical modeling for a time series study
+
+Now that we've explored the data typical of a time series study in climate
+epidemiology, we'll look at how we can fit a statistical model to those
+data to gain insight into the relationship between the exposure and 
+acute health effects. Very broadly, we'll be using a statistical model to answer
+the question: How does the relative risk of a health outcome change as 
+the level of the exposure changes, after controlling for potential confounders?
+
+In the rest of this chapter and the next chapter, we'll
+move step-by-step to build up to the statistical models that are now typically
+used in these studies. 
+Along the way, we'll discuss key components and choices in this modeling process.
+The statistical modeling is based heavily on regression modeling, and specifically
+generalized linear regression. To help you get the most of this section, you 
+may find it helpful to review regression modeling and generalized linear models. 
+Some resources for that include @dunn2018generalized1 and @james2013introduction3 . 
 
 One of the readings for this week, @vicedo2019hands, includes a section 
 on fitting exposure-response functions to describe the association between 
 daily mean temperature and mortality risk. This article includes example
 code in its supplemental material, with code for fitting the model to 
 these time series data in the file named "01EstimationERassociation.r".
-The model may at first seem complex, but it is made up of a number of 
+Please download that file and take a look at the code.
+
+The model in the code may at first seem complex, but it is made up of a number of 
 fairly straightforward pieces (although some may initially seem complex): 
 
 - The model framework is a *generalized linear model (GLM)*
@@ -640,7 +669,7 @@ variable*
 - The model includes control for long-term and seasonal trends by including
 a *spline* (in this case, a *natural cubic spline*) for the day in the study
 - The model fits a flexible, non-linear association between temperature 
-and mortality risk also using a spline
+and mortality risk, also using a spline
 - The model fits a flexible non-linear association between temperature on 
 a series of preceeding days and current day and mortality risk on the 
 current day using a *distributed lag approach*
@@ -648,23 +677,22 @@ current day using a *distributed lag approach*
 by fitting these two elements through one construct in the GLM, a 
 *cross-basis term*
 
-In this section, we will work through the elements, building up the code to 
-get to the full model that is fit in @vicedo2019hands.
+In this section and the next chapter, we will work through the elements,
+building up the code to get to the full model that is fit in @vicedo2019hands.
 
 *Fitting a GLM to time series data*
 
-The GLM framework unites a number of types of regression models you may have
-previously worked with. One basic regression model that can be fit within this
-framework is a linear regression model. However, the framework also allows you
-to also fit, among others, logistic regression models (useful when the outcome
-variable can only take one of two values, e.g., success / failure or alive /
-dead), Poisson regression models (useful when the outcome variable is a count or 
-rate).
-
-This generalized framework brings some unity to these different types of 
-regression models. From a practical standpoint, it has allowed software 
-developers to easily provide a common interface to fit these types of models. 
-In R, the common function call to fit GLMs is `glm`. 
+The generalized linear model (GLM) framework unites a number of types of
+regression models you may have previously worked with. One basic regression
+model that can be fit within this framework is a linear regression model.
+However, the framework also allows you to also fit, among others, logistic
+regression models (useful when the outcome variable can only take one of two
+values, e.g., success / failure or alive / dead) and Poisson regression models
+(useful when the outcome variable is a count or rate). This generalized
+framework brings some unity to these different types of regression models. From
+a practical standpoint, it has allowed software developers to easily provide a
+common interface to fit these types of models. In R, the common function call to
+fit GLMs is `glm`.
 
 Within the GLM framework, the elements that separate different regression models
 include the link function and the error distribution. The error distribution
@@ -719,7 +747,8 @@ approach, and a cross-basis term.
 In R, the function call used to fit GLMs is `glm`. Most of you have likely 
 covered GLMs, and ideally this function call, in previous courses. If you are
 unfamiliar with its basic use, you will want to refresh yourself on this 
-topic. [Add some online resources that go over basics of GLMs in R.]
+topic---you can use some of the resources noted earlier in this section and in 
+the chapter's "Supplemental Readings" to do so.
 
 1. Fit a GLM to estimate the association between mean daily temperature (as the
 independent variable) and daily mortality count (as the dependent variable),
@@ -1035,25 +1064,3 @@ tends to decrease as temperature increases. Do you think this is reasonable?
 What else might be important to build into the model based on your analysis
 up to this point?
 
-## Chapter vocabulary
-
-Each class will start with a vocabulary quiz on a select number of the words
-from the chapter's vocabulary list. The vocabulary words for this chapter are: 
-
-- time-series study design
-- case-crossover study design
-- exposure
-- health outcome
-- confounder
-- study period
-- seasonal trends
-- long-term trends
-- error distribution
-- generalized linear model (GLM)
-- link function
-- overdispersed
-- categorical variable
-- spline
-- natural cubic spline
-- distributed lag
-- cross-basis term
