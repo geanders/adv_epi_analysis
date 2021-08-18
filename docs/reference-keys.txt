@@ -6,8 +6,9 @@ meeting-time-and-place
 class-structure-and-expectations
 course-grading
 textbooks-and-course-materials
-time-series-case-crossover-study-designs
+time-series-case-crossover-studies
 readings
+time-series-and-case-crossover-study-designs
 time-series-data
 exploratory-data-analysis
 fitting-models
