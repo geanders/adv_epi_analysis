@@ -6,6 +6,8 @@ meeting-time-and-place
 class-structure-and-expectations
 course-grading
 textbooks-and-course-materials
+prerequisites-and-preparation
+academic-honesty
 time-series-case-crossover-studies
 readings
 time-series-and-case-crossover-study-designs
