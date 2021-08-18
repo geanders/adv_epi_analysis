@@ -11,12 +11,11 @@ readings
 time-series-and-case-crossover-study-designs
 time-series-data
 exploratory-data-analysis
-fitting-models
-chapter-vocabulary
+statistical-modeling-for-a-time-series-study
 generalized-linear-models
 splines-in-glms
 cross-basis-functions-in-glms
-chapter-vocabulary-1
+chapter-vocabulary
 natural-experiments
 interrupted-time-series
 difference-in-differences

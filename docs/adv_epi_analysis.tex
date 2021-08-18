@@ -338,10 +338,10 @@ The required readings for this chapter are:
 \begin{itemize}
 \tightlist
 \item
-  \citet{bhaskaran2013time} This paper provides an overview of time series regression
+  \citet{bhaskaran2013time} Provides an overview of time series regression
   in environmental epidemiology.
 \item
-  \citet{vicedo2019hands} This paper provides a tutorial of all the steps for a
+  \citet{vicedo2019hands} Provides a tutorial of all the steps for a
   projecting of health impacts of temperature extremes under climate change.
   One of the steps is to fit the exposure-response association using present-day data
   (the section on ``Estimation of Exposure-Response Associations'' in the paper).
@@ -398,6 +398,14 @@ interest) associated with the material in this chapter:
   \citet{gasparrini2014modeling} Heavier on statistics. This provides the statistical
   framework for the distributed lag model for environmental epidemiology time
   series studies.
+\item
+  \citet{dunn2018generalized1} Introduction to statistical models, moving into regression models and
+  generalized linear models. Chapter in a book that is available online through the CSU library.
+\item
+  \citet{james2013introduction3} General overview of linear regression, with an R coding
+  ``lab'' at the end to provide coding examples. Covers model fit, continuous, binary,
+  and categorical covariates, and interaction terms. Chapter in a book that is
+  available online through the CSU library.
 \end{itemize}
 
 \hypertarget{time-series-and-case-crossover-study-designs}{%
@@ -1184,15 +1192,38 @@ stronger weekend/weekday differences). However, since it does help some in expla
 variation in the health outcome, it might be worth including in our models anyway,
 to help reduce random noise.
 
-\hypertarget{fitting-models}{%
-\section{Fitting models}\label{fitting-models}}
+Exploratory data analysis is an excellent tool for exploring your data before
+you begin fitting a statistical model, and you should get in the habit of using
+it regularly in your research. \citet{dominici2008statistical5} provides another walk-through of exploring this type of data, including some more advanced tools
+for exploring autocorrelation and time patterns.
+
+\hypertarget{statistical-modeling-for-a-time-series-study}{%
+\section{Statistical modeling for a time series study}\label{statistical-modeling-for-a-time-series-study}}
+
+Now that we've explored the data typical of a time series study in climate
+epidemiology, we'll look at how we can fit a statistical model to those
+data to gain insight into the relationship between the exposure and
+acute health effects. Very broadly, we'll be using a statistical model to answer
+the question: How does the relative risk of a health outcome change as
+the level of the exposure changes, after controlling for potential confounders?
+
+In the rest of this chapter and the next chapter, we'll
+move step-by-step to build up to the statistical models that are now typically
+used in these studies.
+Along the way, we'll discuss key components and choices in this modeling process.
+The statistical modeling is based heavily on regression modeling, and specifically
+generalized linear regression. To help you get the most of this section, you
+may find it helpful to review regression modeling and generalized linear models.
+Some resources for that include \citet{dunn2018generalized1} and \citet{james2013introduction3} .
 
 One of the readings for this week, \citet{vicedo2019hands}, includes a section
 on fitting exposure-response functions to describe the association between
 daily mean temperature and mortality risk. This article includes example
 code in its supplemental material, with code for fitting the model to
 these time series data in the file named ``01EstimationERassociation.r''.
-The model may at first seem complex, but it is made up of a number of
+Please download that file and take a look at the code.
+
+The model in the code may at first seem complex, but it is made up of a number of
 fairly straightforward pieces (although some may initially seem complex):
 
 \begin{itemize}
@@ -1213,7 +1244,7 @@ fairly straightforward pieces (although some may initially seem complex):
   a \emph{spline} (in this case, a \emph{natural cubic spline}) for the day in the study
 \item
   The model fits a flexible, non-linear association between temperature
-  and mortality risk also using a spline
+  and mortality risk, also using a spline
 \item
   The model fits a flexible non-linear association between temperature on
   a series of preceeding days and current day and mortality risk on the
@@ -1224,23 +1255,22 @@ fairly straightforward pieces (although some may initially seem complex):
   \emph{cross-basis term}
 \end{itemize}
 
-In this section, we will work through the elements, building up the code to
-get to the full model that is fit in \citet{vicedo2019hands}.
+In this section and the next chapter, we will work through the elements,
+building up the code to get to the full model that is fit in \citet{vicedo2019hands}.
 
 \emph{Fitting a GLM to time series data}
 
-The GLM framework unites a number of types of regression models you may have
-previously worked with. One basic regression model that can be fit within this
-framework is a linear regression model. However, the framework also allows you
-to also fit, among others, logistic regression models (useful when the outcome
-variable can only take one of two values, e.g., success / failure or alive /
-dead), Poisson regression models (useful when the outcome variable is a count or
-rate).
-
-This generalized framework brings some unity to these different types of
-regression models. From a practical standpoint, it has allowed software
-developers to easily provide a common interface to fit these types of models.
-In R, the common function call to fit GLMs is \texttt{glm}.
+The generalized linear model (GLM) framework unites a number of types of
+regression models you may have previously worked with. One basic regression
+model that can be fit within this framework is a linear regression model.
+However, the framework also allows you to also fit, among others, logistic
+regression models (useful when the outcome variable can only take one of two
+values, e.g., success / failure or alive / dead) and Poisson regression models
+(useful when the outcome variable is a count or rate). This generalized
+framework brings some unity to these different types of regression models. From
+a practical standpoint, it has allowed software developers to easily provide a
+common interface to fit these types of models. In R, the common function call to
+fit GLMs is \texttt{glm}.
 
 Within the GLM framework, the elements that separate different regression models
 include the link function and the error distribution. The error distribution
@@ -1295,7 +1325,8 @@ approach, and a cross-basis term.
 In R, the function call used to fit GLMs is \texttt{glm}. Most of you have likely
 covered GLMs, and ideally this function call, in previous courses. If you are
 unfamiliar with its basic use, you will want to refresh yourself on this
-topic. {[}Add some online resources that go over basics of GLMs in R.{]}
+topic---you can use some of the resources noted earlier in this section and in
+the chapter's ``Supplemental Readings'' to do so.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1349,7 +1380,7 @@ In the model formula, the dependent variable is specified first (\texttt{all}, t
 column for daily mortality counts for all ages, in this example), followed
 by a tilde (\texttt{\textasciitilde{}}), followed by all independent variables (only \texttt{tmean} in this
 example). If multiple independent variables are included, they are joined using
-\texttt{+}---we'll see an example when we start adding control for confounders later.
+\texttt{+}. We'll see an example when we start adding control for confounders later.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1358,7 +1389,7 @@ example). If multiple independent variables are included, they are joined using
 \end{Shaded}
 
 Once you have fit a model and assigned it to an R object, you can explore it
-and use resulting values. First, the print method for a regression model
+and use resulting values. First, the \texttt{print} method for a regression model
 gives some summary information. This method is automatically called if you
 enter the model object's name at the console:
 
@@ -1424,7 +1455,8 @@ focusing on some of the more advanced elements of how regression models are
 commonly fit to data from time series and case-crossover study designs in
 environmental epidemiology. For a refresher on the basics of fitting
 statistical models in R, you may want to check out Chapters 22 through 24 of
-\citet{wickham2016r}, a book that is available online.
+\citet{wickham2016r}, a book that is available online, as well as \citet{dunn2018generalized1} and
+\citet{james2013introduction3} .
 
 Finally, there are some newer tools for extracting information from model fit
 objects. The \texttt{broom} package extracts different elements from these objects
@@ -1507,7 +1539,7 @@ after fitting the model:
   \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmean)) }\SpecialCharTok{+} 
   \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ all), }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
   \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ .fitted), }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+} 
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Log(Expected mortality count)"}\NormalTok{)}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Mean daily temperature"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Expected mortality count"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1527,8 +1559,9 @@ There is also a nice example of how it can be used in one of the chapters of
 \end{enumerate}
 
 A linear regression is often not appropriate when fitting a model where the
-outcome variable provides counts, as with the example data. A Poisson regression
-is often preferred.
+outcome variable provides counts, as with the example data, since such data
+often don't follow a normal distribution. A Poisson regression
+is typically preferred.
 
 For a count distribution were \(Y \sim {\sf Poisson(\mu)}\) we typically fit a model
 such as
@@ -1592,8 +1625,9 @@ temperature for each observation and the expected mortality count fit by the
 model. First, if you look at the fitted values without transforming, they
 will still be in a state where mortality count is log-transformed. You can
 see by looking at the range of the y-scale that these values are for the log
-of expected mortality, rather than expected mortality, and that the fitted
-association is linear:
+of expected mortality, rather than expected mortality (compare, for example, to
+the similar plot shown from the first model, which was linear), and that the fitted
+association for that \emph{transformation}, not for untransformed mortality counts, is linear:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1626,6 +1660,42 @@ untransformed expected mortality count.
 \end{Shaded}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-32-1.pdf}
+
+For this model, we can interpret the coefficient for the temperature covariate
+as the expected log relative risk in the health outcome associated with a
+one-unit increase in temperature. We can exponentiate this value to get an
+estimate of the relative risk:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Extract the temperature coefficient from the model}
+\NormalTok{tmean\_coef }\OtherTok{\textless{}{-}}\NormalTok{ mod\_pois\_reg }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"tmean"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Extract the row with the tmean estimates}
+  \FunctionTok{pull}\NormalTok{(estimate) }\CommentTok{\# Extract just the point estimate}
+
+\CommentTok{\# Estimate of the log relative risk for a one{-}unit increase in temperature}
+\NormalTok{tmean\_coef }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -0.0147728
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Estimate of the relative risk for a one{-}unit increase in temperature}
+\FunctionTok{exp}\NormalTok{(tmean\_coef)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9853358
+\end{verbatim}
+
+If you want to estimate the confidence interval for this estimate, you should
+calculate that \emph{before} exponentiating.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1828,7 +1898,7 @@ fitted line:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-38-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-39-1.pdf}
 
 This is because each fitted value is also incorporating the expected influence
 of day of week on the mortality count, and that varies across the observations
@@ -1850,7 +1920,7 @@ the line is smooth across all observations from the same day of the week:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-39-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-40-1.pdf}
 
 \emph{Wrapping up}
 
@@ -1858,50 +1928,6 @@ At this point, the coefficient estimates suggests that risk of mortality
 tends to decrease as temperature increases. Do you think this is reasonable?
 What else might be important to build into the model based on your analysis
 up to this point?
-
-\hypertarget{chapter-vocabulary}{%
-\section{Chapter vocabulary}\label{chapter-vocabulary}}
-
-Each class will start with a vocabulary quiz on a select number of the words
-from the chapter's vocabulary list. The vocabulary words for this chapter are:
-
-\begin{itemize}
-\tightlist
-\item
-  time-series study design
-\item
-  case-crossover study design
-\item
-  exposure
-\item
-  health outcome
-\item
-  confounder
-\item
-  study period
-\item
-  seasonal trends
-\item
-  long-term trends
-\item
-  error distribution
-\item
-  generalized linear model (GLM)
-\item
-  link function
-\item
-  overdispersed
-\item
-  categorical variable
-\item
-  spline
-\item
-  natural cubic spline
-\item
-  distributed lag
-\item
-  cross-basis term
-\end{itemize}
 
 \hypertarget{generalized-linear-models}{%
 \chapter{Generalized linear models}\label{generalized-linear-models}}
@@ -2145,7 +2171,7 @@ and fitting the regression model.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-45-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-46-1.pdf}
 
 There are clear patterns between time and daily mortality counts in these data.
 First, there is a clear long-term pattern, with mortality rates declining on
@@ -2180,7 +2206,7 @@ with the observed data, to get an idea of what this model has captured:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-47-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-48-1.pdf}
 {[}Check for \texttt{termplot}{]}
 
 This linear trend captures the long-term trend in mortality rates fairly well in
@@ -2227,7 +2253,7 @@ pulling it from the original \texttt{obs} dataset, and then proceed as before.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-49-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-50-1.pdf}
 
 The non-linear term for time has allowed enough flexibility that the model now
 captures both long-term and seasonal trends in the data.
@@ -2260,7 +2286,7 @@ control for seasonal patterns.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-50-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-51-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2278,7 +2304,7 @@ control for seasonal patterns.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-51-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-52-1.pdf}
 
 In all cases, when you fit a non-linear function of an explanatory variable,
 it will make the model summary results look much more complicated, e.g.:
@@ -2443,7 +2469,7 @@ flexible function:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-58-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-59-1.pdf}
 
 \hypertarget{cross-basis-functions-in-glms}{%
 \section{Cross-basis functions in GLMs}\label{cross-basis-functions-in-glms}}
@@ -2451,8 +2477,8 @@ flexible function:
 {[}Using a cross-basis to model an exposure's association with the
 outcome in two dimensions (dimensions of time and exposure level){]}
 
-\hypertarget{chapter-vocabulary-1}{%
-\section{Chapter vocabulary}\label{chapter-vocabulary-1}}
+\hypertarget{chapter-vocabulary}{%
+\section{Chapter vocabulary}\label{chapter-vocabulary}}
 
 Each class will start with a vocabulary quiz on a select number of the words
 from the chapter's vocabulary list. The vocabulary words for this chapter are:
@@ -2512,7 +2538,7 @@ The readings for this chapter are:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-60-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-61-1.pdf}
 
 Example data from \citet{bernal2017interrupted}:
 
@@ -2563,7 +2589,7 @@ Recreate Figure 1 from \citet{bernal2017interrupted}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-63-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-64-1.pdf}
 
 \hypertarget{difference-in-differences}{%
 \section{Difference-in-differences}\label{difference-in-differences}}
@@ -2817,7 +2843,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-70-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-71-1.pdf}
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
 
@@ -2847,7 +2873,7 @@ get a top-level snapshot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-71-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-72-1.pdf}
 Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \begin{Shaded}
@@ -2857,7 +2883,7 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-72-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-73-1.pdf}
 
 Many of the variables are available for all observations, with no missingness,
 including records of the subject's ID, measures of death, stroke, CVD, and other
@@ -2876,7 +2902,7 @@ example, you could see if missingness varies by the period of the observation:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-73-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-74-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:
@@ -2887,7 +2913,7 @@ was associated with death of the study subject:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-74-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-75-1.pdf}
 
 There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both \texttt{glucose} and
@@ -2904,7 +2930,7 @@ variables:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-75-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-76-1.pdf}
 
 The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
@@ -2925,7 +2951,7 @@ You can also do things like facet by sex to explore patterns at a finer level:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-76-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-77-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -3159,7 +3185,7 @@ We can see that the mean age at incident MI hospitalization among males and fema
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-90-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-91-1.pdf}
 We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of \texttt{sex=1} and \texttt{sex=2} which are the values for males and females respectively. This is an indicator that the sex variable is of class \texttt{numeric} and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
 
 \begin{Shaded}
@@ -3192,7 +3218,7 @@ If we repeat the function for the boxplot now we get separate boxplots by sex
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-93-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-94-1.pdf}
 
 We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
 
@@ -3269,7 +3295,7 @@ The numbers assigned to each individual represent their censoring times, with ea
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-95-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-96-1.pdf}
 We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival \(\hat{S}(t)\) drops to about 0.65 at the end of follow-up, or in other words about 35\% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the \texttt{Surv} function, substituting time of death with respect to follow-up time with age at death.
@@ -3282,7 +3308,7 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-96-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-97-1.pdf}
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.
 
 The Cox proportional hazards model in a simple form has this form
