@@ -118,7 +118,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-08-18}
+\date{2021-08-24}
 
 \begin{document}
 \maketitle
@@ -1993,16 +1993,68 @@ up to this point?
 \hypertarget{generalized-linear-models}{%
 \chapter{Generalized linear models}\label{generalized-linear-models}}
 
-The readings for this chapter are the same as for the last chapter:
+The readings for this chapter are:
 
 \begin{itemize}
 \tightlist
 \item
-  \citet{vicedo2019hands}, with supplemental material available to download by
-  clicking \url{http://links.lww.com/EDE/B504}
+  \citet{bhaskaran2013time} Provides an overview of time series regression
+  in environmental epidemiology.
 \item
-  \citet{armstrong2014conditional}, with supplemental material available at
-  \url{https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122\#Sec13}
+  \citet{vicedo2019hands} Provides a tutorial of all the steps for a
+  projecting of health impacts of temperature extremes under climate change.
+  One of the steps is to fit the exposure-response association using present-day data
+  (the section on ``Estimation of Exposure-Response Associations'' in the paper).
+  In this chapter, we will go into details on that step, and that section of the paper
+  is the only required reading for this chapter. Later in the class, we'll
+  look at other steps covered in this paper. Supplemental material for this paper is
+  available to download by
+  clicking \url{http://links.lww.com/EDE/B504}. You will need the data in this supplement
+  for the exercises for class.
+\item
+  \citet{armstrong2014conditional} This paper describes different data structures for
+  case-crossover data, as well as how conditional Poisson regression can be used
+  in some cases to fit a statistical model to these data.
+  Supplemental material for this paper is available at
+  \url{https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122\#Sec13}.
+\end{itemize}
+
+The following are supplemental readings (i.e., not required, but may be of
+interest) associated with the material in this chapter:
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{armstrong2006models} Covers similar material as \citet{bhaskaran2013time}, but with
+  more focus on the statistical modeling framework
+\item
+  \citet{gasparrini2010time} Describes some of the advances made to time series study
+  designs and statistical analysis, specifically in the context of temperature
+\item
+  \citet{basu2005temperature} Compares time series and case-crossover study designs in
+  the context of exploring temperature and health. Includes a nice illustration
+  of different referent periods, including time-stratified.
+\item
+  \citet{imai2015time} Typically, the time series study design covered in this
+  chapter is used to study non-communicable health outcomes. This paper discusses
+  opportunities and limitations in applying a similar framework for infectious
+  disease.
+\item
+  \citet{lu2007equivalence} Heavier on statistics. This paper shows how, under
+  conditions often common for environmental epidemiology studies, case-crossover
+  and time series methods are equivalent.
+\item
+  \citet{gasparrini2014modeling} Heavier on statistics. This provides the statistical
+  framework for the distributed lag model for environmental epidemiology time
+  series studies.
+\item
+  \citet{dunn2018generalized1} Introduction to statistical models, moving into regression models and
+  generalized linear models. Chapter in a book that is available online through the CSU library.
+\item
+  \citet{james2013introduction3} General overview of linear regression, with an R coding
+  ``lab'' at the end to provide coding examples. Covers model fit, continuous, binary,
+  and categorical covariates, and interaction terms. Chapter in a book that is
+  available online through the CSU library.
 \end{itemize}
 
 \hypertarget{splines-in-glms}{%
@@ -2022,7 +2074,6 @@ whether those are extreme cold or extreme heat. A linear term would be
 inadequate to describe this kind of U-shaped association. Other effects might
 have a threshold---for example, heat stroke might have a very low risk at
 most temperatures, only increasing with temperature above a certain threshold.
-{[}Maybe add images of these kinds of associations?{]}
 
 We can
 capture non-linear patterns in effects, by using different functions of X.
@@ -2035,22 +2086,123 @@ when using a high-order polynomial, and particularly outside the range of
 data that are available to fit the model.
 
 An alternative that is generally preferred for environmental epidemiology
-studies is the regression spline.
-Regression splines are simple parametric smoothing function,
+studies is the regression spline. The word ``spline'' originally comes from
+drafting and engineering (ship building, in particular), where it described
+a flexible piece of wood or metal that you could use to draw a curved line---it created
+a curve that was flexible enough---but just flexible enough---to fit a space
+(see Wikipedia's very interesting article on \href{https://en.wikipedia.org/wiki/Flat_spline}{flat splines} for more).
+
+Splines follow a similar idea in mathematics, making them helpful tools when
+a line won't fit your data well. In general, a spline fits together a few
+simpler functions to create something with a curve or non-linearity. Each
+simpler function operates within an interval of the data, and then they join
+together at ``knots'' along the range of the data.
+Regression splines are therefore simple parametric smoothing function,
 which fit separate polynomial in each interval of the range of the predictor; these
-can be linear, quadratic, and cubic. An example of a (in this case cubic) spline
-function is \(X+X^{2}+X^{3}+I((X>X_{0})*(X-X_{0})^3)\).This particular function is
-a cubic spline with four degrees of freedom (\(df=4\)) and one not (\(X_{0}\)).
-A special type of spline called a natural cubic spline is particularly popular.
+can be linear, quadratic, and cubic.
+
+The simplest example is a linear spline (also called a piecewise linear function).
+This type of spline creates non-linearity by having
+a breakpoint at the knot, allowing the slope of the line to be different in
+the intervals of data on either side of the knot. The following plot shows an
+example. Say you want to explore how mean temperature varies by the day in the
+year (Jan 1 = 1, Jan 2 = 2, and so on) in the London example dataset from the
+last chapter. Temperature tends to increase with day of
+year for a while, but then it changes around the start of August, after that
+decreasing with day of year. This patterns means that a line will give a bad fit
+for how temperature changes with day of year, since it smooths right through that
+change. On the other hand, you can get a very reasonable fit using a linear spline
+with a knot around August 1 (day 213 in the year). These two examples are shown in
+the following plot, with the linear function fit on the left and the linear spline
+on the right:
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-41-1.pdf}
+
+If you were to write out these regression models in mathematical notation, the
+linear one is very simple:
+
+\[
+Y_t = \alpha + \beta X_t
+\]
+where \(Y_t\) is the temperature on day \(t\), \(\alpha\) is the model intercept,
+\(X_t\) is the day of the year on day \(t\), and \(\beta\) is the estimated coefficient
+for \(X_t\).
+
+The notation for the model with the linear spline is a bit more complex:
+
+\[
+Y_t = \alpha + \beta_1 X_t + \beta_2 (X_t - k)_+
+\]
+
+Here, \(Y_t\) is again the temperature on day \(t\), \(X_t\) is again the day of the year
+on day \(t\), and \(\alpha\) is again the intercept. The term \(k\) is the ``knot''---the
+value of \(X\) where we're letting the slope change. In this example, we're using
+\(k = 213\). The term \((X_t - k)_+\) has a special meaning---it takes the value
+0 if \(X_t\) is in the interval to the left of the knot, while if \(X_t\) is in the
+interval to the right of the knot, it takes the value of \(X_t\) minus the knot
+value:
+
+\[ 
+(X_t - k)_+ =
+\begin{cases}
+0, & \mbox{if } X_t < k \\
+X_t - k, & \mbox{if } X_t \ge k 
+\end{cases}
+\]
+In this model, the coefficient \(\beta_1\) estimates the slope of the line to the
+left of the knot, while \(\beta_1\) estimates how that slope will change to the
+right of the knot.
+
+Fortunately, we usually won't have to get this complex in the model notation,
+especially when we use more complex splines (where the notation would get even
+more complex). Instead, we'll often write out the
+regression equation in a simpler way, just indicating that we're using a function
+of the covariate, rather than the covariate directly:
+
+\[
+Y_t = \alpha + f(X_t | \beta)
+\]
+
+where we can knot that \(f(X_t)\) is a function of day of the year (\(X_t\)), fit in
+this case using a linear spline, and with estimated coefficients \(\beta\) for that
+function (see \citet{armstrong2006models} for an example of using this model notation).
+
+While a linear spline is the simplest conceptually (and mathematically), it often
+isn't very satisfying, because is fits a function with a sharp breakpoint, which
+often isn't realistic. For example, the linear spline fit above suggests that the
+relationship between day of the year and temperature changes abruptly and dramatically
+on August 1 of the year. In reality, we know that this change in the relationship
+between day of year and temperature is probably a lot smoother.
+
+To fit smoother shapes, we can move to higher level splines. Cubic splines
+(``cubic'' because they include terms of the covariate up to the third power) are
+very popular.
+An example of a cubic spline
+function is \(X+X^{2}+X^{3}+I((X>X_{0})*(X-X_{0})^3)\). This particular function is
+a cubic spline with four degrees of freedom (\(df=4\)) and one knot (\(X_{0}\)).
+A special type of cubic spline called a natural cubic spline is particularly popular.
 Unlike a polynomial function, a natural cubic spline ``behaves'' better outside
 the range of the data used to fit the model---they are constrained to continue
-on a {[}linear?{]} trajectory once they pass beyond the range of the data.
-{[}Maybe add more / clarify / add references on the point of why splines versus
-polynomials.{]}
+on a linear trajectory once they pass beyond the range of the data.
 
 Regression splines can be fit in a GLM via the package \texttt{splines}. Two commonly
 used examples of regression splines are b-splines and natural cubic
-splines. \citet{vicedo2019hands} uses natural cubic splines.
+splines. \citet{vicedo2019hands} uses natural cubic splines, which can be fit with the
+\texttt{ns} (for ``natural spline'') function from the \texttt{splines} package.
+
+While splines are great for fitting non-linear relationships, they do create some
+challenges in interpreting the results. When you fit a linear relationship for
+a covariate, you will get a single estimate that helps describe the fitted relationship
+between that covariate and the outcome variable. However, when you use a non-linear
+function, you'll end up with a mix of coefficients associated with that function.
+Sometimes, you will use splines to control for a potential confounder (as we
+will in the exercises for this first part of the chapter). In this case, you don't
+need to worry about interpreting the estimated coefficients---you're just trying to
+control for the variable, rather than inferring anything about how it's associated
+with the outcome.
+In later parts of this chapter, we'll talk about how to interpret these coefficients
+if you're using a spline for the exposure that you're interested in, when we talk
+more broadly about basis functions.
 
 \emph{Applied: Including a spline in a GLM}
 
@@ -2232,7 +2384,7 @@ and fitting the regression model.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-46-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-47-1.pdf}
 
 There are clear patterns between time and daily mortality counts in these data.
 First, there is a clear long-term pattern, with mortality rates declining on
@@ -2267,7 +2419,7 @@ with the observed data, to get an idea of what this model has captured:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-48-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-49-1.pdf}
 {[}Check for \texttt{termplot}{]}
 
 This linear trend captures the long-term trend in mortality rates fairly well in
@@ -2314,7 +2466,7 @@ pulling it from the original \texttt{obs} dataset, and then proceed as before.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-50-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-51-1.pdf}
 
 The non-linear term for time has allowed enough flexibility that the model now
 captures both long-term and seasonal trends in the data.
@@ -2347,7 +2499,7 @@ control for seasonal patterns.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-51-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-52-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2365,7 +2517,7 @@ control for seasonal patterns.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-52-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-53-1.pdf}
 
 In all cases, when you fit a non-linear function of an explanatory variable,
 it will make the model summary results look much more complicated, e.g.:
@@ -2530,7 +2682,7 @@ flexible function:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-59-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-60-1.pdf}
 
 \hypertarget{cross-basis-functions-in-glms}{%
 \section{Cross-basis functions in GLMs}\label{cross-basis-functions-in-glms}}
@@ -2599,7 +2751,7 @@ The readings for this chapter are:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-61-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-62-1.pdf}
 
 Example data from \citet{bernal2017interrupted}:
 
@@ -2650,7 +2802,7 @@ Recreate Figure 1 from \citet{bernal2017interrupted}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-64-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-65-1.pdf}
 
 \hypertarget{difference-in-differences}{%
 \section{Difference-in-differences}\label{difference-in-differences}}
@@ -2904,7 +3056,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-71-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-72-1.pdf}
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
 
@@ -2934,7 +3086,7 @@ get a top-level snapshot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-72-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-73-1.pdf}
 Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \begin{Shaded}
@@ -2944,7 +3096,7 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-73-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-74-1.pdf}
 
 Many of the variables are available for all observations, with no missingness,
 including records of the subject's ID, measures of death, stroke, CVD, and other
@@ -2963,7 +3115,7 @@ example, you could see if missingness varies by the period of the observation:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-74-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-75-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:
@@ -2974,7 +3126,7 @@ was associated with death of the study subject:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-75-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-76-1.pdf}
 
 There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both \texttt{glucose} and
@@ -2991,7 +3143,7 @@ variables:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-76-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-77-1.pdf}
 
 The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
@@ -3012,7 +3164,7 @@ You can also do things like facet by sex to explore patterns at a finer level:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-77-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-78-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -3246,7 +3398,7 @@ We can see that the mean age at incident MI hospitalization among males and fema
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-91-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-92-1.pdf}
 We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of \texttt{sex=1} and \texttt{sex=2} which are the values for males and females respectively. This is an indicator that the sex variable is of class \texttt{numeric} and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
 
 \begin{Shaded}
@@ -3279,7 +3431,7 @@ If we repeat the function for the boxplot now we get separate boxplots by sex
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-94-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-95-1.pdf}
 
 We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
 
@@ -3356,7 +3508,7 @@ The numbers assigned to each individual represent their censoring times, with ea
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-96-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-97-1.pdf}
 We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival \(\hat{S}(t)\) drops to about 0.65 at the end of follow-up, or in other words about 35\% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the \texttt{Surv} function, substituting time of death with respect to follow-up time with age at death.
@@ -3369,7 +3521,7 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-97-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-98-1.pdf}
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.
 
 The Cox proportional hazards model in a simple form has this form

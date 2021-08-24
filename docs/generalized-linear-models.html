@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-08-18" />
+<meta name="date" content="2021-08-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -235,12 +235,52 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="generalized-linear-models" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Generalized linear models</h1>
-<p>The readings for this chapter are the same as for the last chapter:</p>
+<p>The readings for this chapter are:</p>
 <ul>
-<li><span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>, with supplemental material available to download by
-clicking <a href="http://links.lww.com/EDE/B504" class="uri">http://links.lww.com/EDE/B504</a></li>
-<li><span class="citation"><a href="#ref-armstrong2014conditional" role="doc-biblioref">B. G. Armstrong, Gasparrini, and Tobias</a> (<a href="#ref-armstrong2014conditional" role="doc-biblioref">2014</a>)</span>, with supplemental material available at
-<a href="https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13" class="uri">https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13</a></li>
+<li><span class="citation"><a href="#ref-bhaskaran2013time" role="doc-biblioref">Bhaskaran et al.</a> (<a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>)</span> Provides an overview of time series regression
+in environmental epidemiology.</li>
+<li><span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> Provides a tutorial of all the steps for a
+projecting of health impacts of temperature extremes under climate change.
+One of the steps is to fit the exposure-response association using present-day data
+(the section on “Estimation of Exposure-Response Associations” in the paper).
+In this chapter, we will go into details on that step, and that section of the paper
+is the only required reading for this chapter. Later in the class, we’ll
+look at other steps covered in this paper. Supplemental material for this paper is
+available to download by
+clicking <a href="http://links.lww.com/EDE/B504" class="uri">http://links.lww.com/EDE/B504</a>. You will need the data in this supplement
+for the exercises for class.</li>
+<li><span class="citation"><a href="#ref-armstrong2014conditional" role="doc-biblioref">B. G. Armstrong, Gasparrini, and Tobias</a> (<a href="#ref-armstrong2014conditional" role="doc-biblioref">2014</a>)</span> This paper describes different data structures for
+case-crossover data, as well as how conditional Poisson regression can be used
+in some cases to fit a statistical model to these data.
+Supplemental material for this paper is available at
+<a href="https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13" class="uri">https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13</a>.</li>
+</ul>
+<p>The following are supplemental readings (i.e., not required, but may be of
+interest) associated with the material in this chapter:</p>
+<ul>
+<li><span class="citation"><a href="#ref-armstrong2006models" role="doc-biblioref">B. Armstrong</a> (<a href="#ref-armstrong2006models" role="doc-biblioref">2006</a>)</span> Covers similar material as <span class="citation"><a href="#ref-bhaskaran2013time" role="doc-biblioref">Bhaskaran et al.</a> (<a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>)</span>, but with
+more focus on the statistical modeling framework</li>
+<li><span class="citation"><a href="#ref-gasparrini2010time" role="doc-biblioref">Gasparrini and Armstrong</a> (<a href="#ref-gasparrini2010time" role="doc-biblioref">2010</a>)</span> Describes some of the advances made to time series study
+designs and statistical analysis, specifically in the context of temperature</li>
+<li><span class="citation"><a href="#ref-basu2005temperature" role="doc-biblioref">Basu, Dominici, and Samet</a> (<a href="#ref-basu2005temperature" role="doc-biblioref">2005</a>)</span> Compares time series and case-crossover study designs in
+the context of exploring temperature and health. Includes a nice illustration
+of different referent periods, including time-stratified.</li>
+<li><span class="citation"><a href="#ref-imai2015time" role="doc-biblioref">Imai et al.</a> (<a href="#ref-imai2015time" role="doc-biblioref">2015</a>)</span> Typically, the time series study design covered in this
+chapter is used to study non-communicable health outcomes. This paper discusses
+opportunities and limitations in applying a similar framework for infectious
+disease.</li>
+<li><span class="citation"><a href="#ref-lu2007equivalence" role="doc-biblioref">Lu and Zeger</a> (<a href="#ref-lu2007equivalence" role="doc-biblioref">2007</a>)</span> Heavier on statistics. This paper shows how, under
+conditions often common for environmental epidemiology studies, case-crossover
+and time series methods are equivalent.</li>
+<li><span class="citation"><a href="#ref-gasparrini2014modeling" role="doc-biblioref">Gasparrini</a> (<a href="#ref-gasparrini2014modeling" role="doc-biblioref">2014</a>)</span> Heavier on statistics. This provides the statistical
+framework for the distributed lag model for environmental epidemiology time
+series studies.</li>
+<li><span class="citation"><a href="#ref-dunn2018generalized1" role="doc-biblioref">Dunn and Smyth</a> (<a href="#ref-dunn2018generalized1" role="doc-biblioref">2018</a>)</span> Introduction to statistical models, moving into regression models and
+generalized linear models. Chapter in a book that is available online through the CSU library.</li>
+<li><span class="citation"><a href="#ref-james2013introduction3" role="doc-biblioref">James et al.</a> (<a href="#ref-james2013introduction3" role="doc-biblioref">2013</a>)</span> General overview of linear regression, with an R coding
+“lab” at the end to provide coding examples. Covers model fit, continuous, binary,
+and categorical covariates, and interaction terms. Chapter in a book that is
+available online through the CSU library.</li>
 </ul>
 <div id="splines-in-glms" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Splines in GLMs</h2>
@@ -256,8 +296,7 @@ we would expect many health risks to be elevated at temperature extremes,
 whether those are extreme cold or extreme heat. A linear term would be
 inadequate to describe this kind of U-shaped association. Other effects might
 have a threshold—for example, heat stroke might have a very low risk at
-most temperatures, only increasing with temperature above a certain threshold.
-[Maybe add images of these kinds of associations?]</p>
+most temperatures, only increasing with temperature above a certain threshold.</p>
 <p>We can
 capture non-linear patterns in effects, by using different functions of X.
 Examples are <span class="math inline">\(\sqrt{X}\)</span>, <span class="math inline">\(X^{2}\)</span>, or more complex smoothing functions, such as
@@ -268,21 +307,107 @@ properties. A key one is that they can have extreme behavior, particularly
 when using a high-order polynomial, and particularly outside the range of
 data that are available to fit the model.</p>
 <p>An alternative that is generally preferred for environmental epidemiology
-studies is the regression spline.
-Regression splines are simple parametric smoothing function,
+studies is the regression spline. The word “spline” originally comes from
+drafting and engineering (ship building, in particular), where it described
+a flexible piece of wood or metal that you could use to draw a curved line—it created
+a curve that was flexible enough—but just flexible enough—to fit a space
+(see Wikipedia’s very interesting article on <a href="https://en.wikipedia.org/wiki/Flat_spline">flat splines</a> for more).</p>
+<p>Splines follow a similar idea in mathematics, making them helpful tools when
+a line won’t fit your data well. In general, a spline fits together a few
+simpler functions to create something with a curve or non-linearity. Each
+simpler function operates within an interval of the data, and then they join
+together at “knots” along the range of the data.
+Regression splines are therefore simple parametric smoothing function,
 which fit separate polynomial in each interval of the range of the predictor; these
-can be linear, quadratic, and cubic. An example of a (in this case cubic) spline
-function is <span class="math inline">\(X+X^{2}+X^{3}+I((X&gt;X_{0})*(X-X_{0})^3)\)</span>.This particular function is
-a cubic spline with four degrees of freedom (<span class="math inline">\(df=4\)</span>) and one not (<span class="math inline">\(X_{0}\)</span>).
-A special type of spline called a natural cubic spline is particularly popular.
+can be linear, quadratic, and cubic.</p>
+<p>The simplest example is a linear spline (also called a piecewise linear function).
+This type of spline creates non-linearity by having
+a breakpoint at the knot, allowing the slope of the line to be different in
+the intervals of data on either side of the knot. The following plot shows an
+example. Say you want to explore how mean temperature varies by the day in the
+year (Jan 1 = 1, Jan 2 = 2, and so on) in the London example dataset from the
+last chapter. Temperature tends to increase with day of
+year for a while, but then it changes around the start of August, after that
+decreasing with day of year. This patterns means that a line will give a bad fit
+for how temperature changes with day of year, since it smooths right through that
+change. On the other hand, you can get a very reasonable fit using a linear spline
+with a knot around August 1 (day 213 in the year). These two examples are shown in
+the following plot, with the linear function fit on the left and the linear spline
+on the right:</p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
+<p>If you were to write out these regression models in mathematical notation, the
+linear one is very simple:</p>
+<p><span class="math display">\[
+Y_t = \alpha + \beta X_t
+\]</span>
+where <span class="math inline">\(Y_t\)</span> is the temperature on day <span class="math inline">\(t\)</span>, <span class="math inline">\(\alpha\)</span> is the model intercept,
+<span class="math inline">\(X_t\)</span> is the day of the year on day <span class="math inline">\(t\)</span>, and <span class="math inline">\(\beta\)</span> is the estimated coefficient
+for <span class="math inline">\(X_t\)</span>.</p>
+<p>The notation for the model with the linear spline is a bit more complex:</p>
+<p><span class="math display">\[
+Y_t = \alpha + \beta_1 X_t + \beta_2 (X_t - k)_+
+\]</span></p>
+<p>Here, <span class="math inline">\(Y_t\)</span> is again the temperature on day <span class="math inline">\(t\)</span>, <span class="math inline">\(X_t\)</span> is again the day of the year
+on day <span class="math inline">\(t\)</span>, and <span class="math inline">\(\alpha\)</span> is again the intercept. The term <span class="math inline">\(k\)</span> is the “knot”—the
+value of <span class="math inline">\(X\)</span> where we’re letting the slope change. In this example, we’re using
+<span class="math inline">\(k = 213\)</span>. The term <span class="math inline">\((X_t - k)_+\)</span> has a special meaning—it takes the value
+0 if <span class="math inline">\(X_t\)</span> is in the interval to the left of the knot, while if <span class="math inline">\(X_t\)</span> is in the
+interval to the right of the knot, it takes the value of <span class="math inline">\(X_t\)</span> minus the knot
+value:</p>
+<p><span class="math display">\[ 
+(X_t - k)_+ =
+\begin{cases}
+0, &amp; \mbox{if } X_t &lt; k \\
+X_t - k, &amp; \mbox{if } X_t \ge k 
+\end{cases}
+\]</span>
+In this model, the coefficient <span class="math inline">\(\beta_1\)</span> estimates the slope of the line to the
+left of the knot, while <span class="math inline">\(\beta_1\)</span> estimates how that slope will change to the
+right of the knot.</p>
+<p>Fortunately, we usually won’t have to get this complex in the model notation,
+especially when we use more complex splines (where the notation would get even
+more complex). Instead, we’ll often write out the
+regression equation in a simpler way, just indicating that we’re using a function
+of the covariate, rather than the covariate directly:</p>
+<p><span class="math display">\[
+Y_t = \alpha + f(X_t | \beta)
+\]</span></p>
+<p>where we can knot that <span class="math inline">\(f(X_t)\)</span> is a function of day of the year (<span class="math inline">\(X_t\)</span>), fit in
+this case using a linear spline, and with estimated coefficients <span class="math inline">\(\beta\)</span> for that
+function (see <span class="citation"><a href="#ref-armstrong2006models" role="doc-biblioref">B. Armstrong</a> (<a href="#ref-armstrong2006models" role="doc-biblioref">2006</a>)</span> for an example of using this model notation).</p>
+<p>While a linear spline is the simplest conceptually (and mathematically), it often
+isn’t very satisfying, because is fits a function with a sharp breakpoint, which
+often isn’t realistic. For example, the linear spline fit above suggests that the
+relationship between day of the year and temperature changes abruptly and dramatically
+on August 1 of the year. In reality, we know that this change in the relationship
+between day of year and temperature is probably a lot smoother.</p>
+<p>To fit smoother shapes, we can move to higher level splines. Cubic splines
+(“cubic” because they include terms of the covariate up to the third power) are
+very popular.
+An example of a cubic spline
+function is <span class="math inline">\(X+X^{2}+X^{3}+I((X&gt;X_{0})*(X-X_{0})^3)\)</span>. This particular function is
+a cubic spline with four degrees of freedom (<span class="math inline">\(df=4\)</span>) and one knot (<span class="math inline">\(X_{0}\)</span>).
+A special type of cubic spline called a natural cubic spline is particularly popular.
 Unlike a polynomial function, a natural cubic spline “behaves” better outside
 the range of the data used to fit the model—they are constrained to continue
-on a [linear?] trajectory once they pass beyond the range of the data.
-[Maybe add more / clarify / add references on the point of why splines versus
-polynomials.]</p>
+on a linear trajectory once they pass beyond the range of the data.</p>
 <p>Regression splines can be fit in a GLM via the package <code>splines</code>. Two commonly
 used examples of regression splines are b-splines and natural cubic
-splines. <span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> uses natural cubic splines.</p>
+splines. <span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> uses natural cubic splines, which can be fit with the
+<code>ns</code> (for “natural spline”) function from the <code>splines</code> package.</p>
+<p>While splines are great for fitting non-linear relationships, they do create some
+challenges in interpreting the results. When you fit a linear relationship for
+a covariate, you will get a single estimate that helps describe the fitted relationship
+between that covariate and the outcome variable. However, when you use a non-linear
+function, you’ll end up with a mix of coefficients associated with that function.
+Sometimes, you will use splines to control for a potential confounder (as we
+will in the exercises for this first part of the chapter). In this case, you don’t
+need to worry about interpreting the estimated coefficients—you’re just trying to
+control for the variable, rather than inferring anything about how it’s associated
+with the outcome.
+In later parts of this chapter, we’ll talk about how to interpret these coefficients
+if you’re using a spline for the exposure that you’re interested in, when we talk
+more broadly about basis functions.</p>
 <p><em>Applied: Including a spline in a GLM</em></p>
 <p>For this exercise, you will continue to build up the model that you began in
 the examples in the previous chapter. The example uses the data provided with
@@ -383,7 +508,7 @@ and fitting the regression model.</p>
 <div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="generalized-linear-models.html#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, </span>
 <span id="cb83-2"><a href="generalized-linear-models.html#cb83-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> all)) <span class="sc">+</span></span>
 <span id="cb83-3"><a href="generalized-linear-models.html#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
 <p>There are clear patterns between time and daily mortality counts in these data.
 First, there is a clear long-term pattern, with mortality rates declining on
 average over time. Second, there are clear seasonal patterns, with higher
@@ -404,7 +529,7 @@ with the observed data, to get an idea of what this model has captured:</p>
 <span id="cb85-4"><a href="generalized-linear-models.html#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
 <span id="cb85-5"><a href="generalized-linear-models.html#cb85-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb85-6"><a href="generalized-linear-models.html#cb85-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-48-1.png" width="672" />
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-49-1.png" width="672" />
 [Check for <code>termplot</code>]</p>
 <p>This linear trend captures the long-term trend in mortality rates fairly well in
 this case. This won’t always be the case, as there may be some health
@@ -437,7 +562,7 @@ pulling it from the original <code>obs</code> dataset, and then proceed as befor
 <span id="cb87-5"><a href="generalized-linear-models.html#cb87-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
 <span id="cb87-6"><a href="generalized-linear-models.html#cb87-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb87-7"><a href="generalized-linear-models.html#cb87-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
 <p>The non-linear term for time has allowed enough flexibility that the model now
 captures both long-term and seasonal trends in the data.</p>
 <p>[More on how to pick a good d.f. for an env. epi. model like this]. In practice,
@@ -462,7 +587,7 @@ control for seasonal patterns.</p>
 <span id="cb88-8"><a href="generalized-linear-models.html#cb88-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
 <span id="cb88-9"><a href="generalized-linear-models.html#cb88-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb88-10"><a href="generalized-linear-models.html#cb88-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
 <div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="generalized-linear-models.html#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A model with many more d.f. for the time spline</span></span>
 <span id="cb89-2"><a href="generalized-linear-models.html#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (Takes a little while to run)</span></span>
 <span id="cb89-3"><a href="generalized-linear-models.html#cb89-3" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin_highdf <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">400</span>), </span>
@@ -474,7 +599,7 @@ control for seasonal patterns.</p>
 <span id="cb89-9"><a href="generalized-linear-models.html#cb89-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
 <span id="cb89-10"><a href="generalized-linear-models.html#cb89-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb89-11"><a href="generalized-linear-models.html#cb89-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date in study&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
 <p>In all cases, when you fit a non-linear function of an explanatory variable,
 it will make the model summary results look much more complicated, e.g.:</p>
 <div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="generalized-linear-models.html#cb90-1" aria-hidden="true" tabindex="-1"></a>mod_time_nonlin_lowdf <span class="sc">%&gt;%</span> </span>
@@ -576,7 +701,7 @@ flexible function:</p>
 <span id="cb99-5"><a href="generalized-linear-models.html#cb99-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
 <span id="cb99-6"><a href="generalized-linear-models.html#cb99-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>,  <span class="at">size =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
 <span id="cb99-7"><a href="generalized-linear-models.html#cb99-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Daily mean temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) </span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
 </div>
 <div id="cross-basis-functions-in-glms" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Cross-basis functions in GLMs</h2>
@@ -592,8 +717,35 @@ from the chapter’s vocabulary list. The vocabulary words for this chapter are:
 </div>
 <h3>References</h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-armstrong2006models" class="csl-entry">
+Armstrong, Ben. 2006. <span>“Models for the Relationship Between Ambient Temperature and Daily Mortality.”</span> <em>Epidemiology</em>, 624–31.
+</div>
 <div id="ref-armstrong2014conditional" class="csl-entry">
 Armstrong, Ben G, Antonio Gasparrini, and Aurelio Tobias. 2014. <span>“Conditional <span>Poisson</span> Models: A Flexible Alternative to Conditional Logistic Case Cross-over Analysis.”</span> <em>BMC Medical Research Methodology</em> 14 (1): 122.
+</div>
+<div id="ref-basu2005temperature" class="csl-entry">
+Basu, Rupa, Francesca Dominici, and Jonathan M Samet. 2005. <span>“Temperature and Mortality Among the Elderly in the United States: A Comparison of Epidemiologic Methods.”</span> <em>Epidemiology</em>, 58–66.
+</div>
+<div id="ref-bhaskaran2013time" class="csl-entry">
+Bhaskaran, Krishnan, Antonio Gasparrini, Shakoor Hajat, Liam Smeeth, and Ben Armstrong. 2013. <span>“Time Series Regression Studies in Environmental Epidemiology.”</span> <em>International Journal of Epidemiology</em> 42 (4): 1187–95.
+</div>
+<div id="ref-dunn2018generalized1" class="csl-entry">
+Dunn, Peter K, and Gordon K Smyth. 2018. <span>“Statistical Models.”</span> In <em>Generalized Linear Models with Examples in r</em>, 1–30. Springer.
+</div>
+<div id="ref-gasparrini2014modeling" class="csl-entry">
+Gasparrini, Antonio. 2014. <span>“Modeling Exposure–Lag–Response Associations with Distributed Lag Non-Linear Models.”</span> <em>Statistics in Medicine</em> 33 (5): 881–99.
+</div>
+<div id="ref-gasparrini2010time" class="csl-entry">
+Gasparrini, Antonio, and Ben Armstrong. 2010. <span>“Time Series Analysis on the Health Effects of Temperature: Advancements and Limitations.”</span> <em>Environmental Research</em> 110 (6): 633–38.
+</div>
+<div id="ref-imai2015time" class="csl-entry">
+Imai, Chisato, Ben Armstrong, Zaid Chalabi, Punam Mangtani, and Masahiro Hashizume. 2015. <span>“Time Series Regression Model for Infectious Disease and Weather.”</span> <em>Environmental Research</em> 142: 319–27.
+</div>
+<div id="ref-james2013introduction3" class="csl-entry">
+James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2013. <span>“Linear Regression.”</span> In <em>An Introduction to Statistical Learning: With Applications in r</em>, 59–126. Springer.
+</div>
+<div id="ref-lu2007equivalence" class="csl-entry">
+Lu, Yun, and Scott L Zeger. 2007. <span>“On the Equivalence of Case-Crossover and Time Series Methods in Environmental Epidemiology.”</span> <em>Biostatistics</em> 8 (2): 337–44.
 </div>
 <div id="ref-vicedo2019hands" class="csl-entry">
 Vicedo-Cabrera, Ana M, Francesco Sera, and Antonio Gasparrini. 2019. <span>“Hands-on Tutorial on a Modeling Framework for Projections of Climate Change Impacts on Health.”</span> <em>Epidemiology</em> 30 (3): 321–29.
