@@ -1,11 +1,51 @@
 # Generalized linear models 
 
-The readings for this chapter are the same as for the last chapter: 
+The readings for this chapter are: 
 
-- @vicedo2019hands, with supplemental material available to download by 
-clicking http://links.lww.com/EDE/B504
-- @armstrong2014conditional, with supplemental material available at
-https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13
+- @bhaskaran2013time Provides an overview of time series regression
+in environmental epidemiology.
+- @vicedo2019hands Provides a tutorial of all the steps for a 
+projecting of health impacts of temperature extremes under climate change. 
+One of the steps is to fit the exposure-response association using present-day data
+(the section on "Estimation of Exposure-Response Associations" in the paper). 
+In this chapter, we will go into details on that step, and that section of the paper
+is the only required reading for this chapter. Later in the class, we'll
+look at other steps covered in this paper. Supplemental material for this paper is 
+available to download by 
+clicking http://links.lww.com/EDE/B504. You will need the data in this supplement
+for the exercises for class.
+- @armstrong2014conditional This paper describes different data structures for
+case-crossover data, as well as how conditional Poisson regression can be used 
+in some cases to fit a statistical model to these data.
+Supplemental material for this paper is available at
+https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13.
+
+The following are supplemental readings (i.e., not required, but may be of
+interest) associated with the material in this chapter: 
+
+- @armstrong2006models Covers similar material as @bhaskaran2013time, but with 
+more focus on the statistical modeling framework
+- @gasparrini2010time Describes some of the advances made to time series study
+designs and statistical analysis, specifically in the context of temperature
+- @basu2005temperature Compares time series and case-crossover study designs in 
+the context of exploring temperature and health. Includes a nice illustration 
+of different referent periods, including time-stratified.
+- @imai2015time Typically, the time series study design covered in this 
+chapter is used to study non-communicable health outcomes. This paper discusses
+opportunities and limitations in applying a similar framework for infectious
+disease.
+- @lu2007equivalence Heavier on statistics. This paper shows how, under
+conditions often common for environmental epidemiology studies, case-crossover
+and time series methods are equivalent.
+- @gasparrini2014modeling Heavier on statistics. This provides the statistical 
+framework for the distributed lag model for environmental epidemiology time 
+series studies.
+- @dunn2018generalized1 Introduction to statistical models, moving into regression models and 
+generalized linear models. Chapter in a book that is available online through the CSU library.
+- @james2013introduction3 General overview of linear regression, with an R coding 
+"lab" at the end to provide coding examples. Covers model fit, continuous, binary,
+and categorical covariates, and interaction terms. Chapter in a book that is
+available online through the CSU library.
 
 ## Splines in GLMs
 
@@ -23,7 +63,6 @@ whether those are extreme cold or extreme heat. A linear term would be
 inadequate to describe this kind of U-shaped association. Other effects might
 have a threshold---for example, heat stroke might have a very low risk at 
 most temperatures, only increasing with temperature above a certain threshold.
-[Maybe add images of these kinds of associations?]
 
 We can 
 capture non-linear patterns in effects, by using different functions of X. 
@@ -36,22 +75,157 @@ when using a high-order polynomial, and particularly outside the range of
 data that are available to fit the model.
 
 An alternative that is generally preferred for environmental epidemiology 
-studies is the regression spline.
-Regression splines are simple parametric smoothing function, 
+studies is the regression spline. The word "spline" originally comes from 
+drafting and engineering (ship building, in particular), where it described
+a flexible piece of wood or metal that you could use to draw a curved line---it created
+a curve that was flexible enough---but just flexible enough---to fit a space
+(see Wikipedia's very interesting article on [flat splines](https://en.wikipedia.org/wiki/Flat_spline) for more).
+
+Splines follow a similar idea in mathematics, making them helpful tools when 
+a line won't fit your data well. In general, a spline fits together a few 
+simpler functions to create something with a curve or non-linearity. Each 
+simpler function operates within an interval of the data, and then they join 
+together at "knots" along the range of the data. 
+Regression splines are therefore simple parametric smoothing function, 
 which fit separate polynomial in each interval of the range of the predictor; these 
-can be linear, quadratic, and cubic. An example of a (in this case cubic) spline 
-function is $X+X^{2}+X^{3}+I((X>X_{0})*(X-X_{0})^3)$.This particular function is 
-a cubic spline with four degrees of freedom ($df=4$) and one not ($X_{0}$). 
-A special type of spline called a natural cubic spline is particularly popular.
+can be linear, quadratic, and cubic. 
+
+The simplest example is a linear spline (also called a piecewise linear function). 
+This type of spline creates non-linearity by having 
+a breakpoint at the knot, allowing the slope of the line to be different in 
+the intervals of data on either side of the knot. The following plot shows an 
+example. Say you want to explore how mean temperature varies by the day in the
+year (Jan 1 = 1, Jan 2 = 2, and so on) in the London example dataset from the
+last chapter. Temperature tends to increase with day of 
+year for a while, but then it changes around the start of August, after that 
+decreasing with day of year. This patterns means that a line will give a bad fit
+for how temperature changes with day of year, since it smooths right through that 
+change. On the other hand, you can get a very reasonable fit using a linear spline
+with a knot around August 1 (day 213 in the year). These two examples are shown in 
+the following plot, with the linear function fit on the left and the linear spline
+on the right:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Load some packages that will likely be useful
+library(tidyverse)
+library(lubridate)
+library(broom)
+library(gridExtra)
+
+# Load and clean the data
+obs <- read_csv("data/lndn_obs.csv") %>% 
+  mutate(dow = wday(date, label = TRUE))
+
+mod_1 <- lm(tmean ~ doy, data = obs)
+
+mod_1_plot <- mod_1 %>% 
+  augment() %>% 
+  ggplot() + 
+  geom_point(aes(x = doy, y = tmean), 
+             size = 0.5, alpha = 0.3) + 
+  geom_line(aes(x = doy, y = .fitted), 
+            color = "red", size = 1.5) + 
+  ggtitle("Line")
+
+mod_2 <- lm(tmean ~ doy + I((doy - 213) * (doy >= 213)), data = obs)
+mod_2_plot <- mod_2 %>% 
+  augment() %>% 
+  ggplot() + 
+  geom_vline(xintercept = 213, linetype = 2, color = "blue") + 
+  geom_point(aes(x = doy, y = tmean), 
+             size = 0.5, alpha = 0.3) + 
+  geom_line(aes(x = doy, y = .fitted), 
+            color = "red", size = 1.5) + 
+  ggtitle("Linear spline")
+
+grid.arrange(mod_1_plot, mod_2_plot, nrow = 1)
+```
+
+If you were to write out these regression models in mathematical notation, the 
+linear one is very simple: 
+
+$$
+Y_t = \alpha + \beta X_t
+$$
+where $Y_t$ is the temperature on day $t$, $\alpha$ is the model intercept, 
+$X_t$ is the day of the year on day $t$, and $\beta$ is the estimated coefficient
+for $X_t$. 
+
+The notation for the model with the linear spline is a bit more complex: 
+
+$$
+Y_t = \alpha + \beta_1 X_t + \beta_2 (X_t - k)_+
+$$
+
+Here, $Y_t$ is again the temperature on day $t$, $X_t$ is again the day of the year 
+on day $t$, and $\alpha$ is again the intercept. The term $k$ is the "knot"---the 
+value of $X$ where we're letting the slope change. In this example, we're using
+$k = 213$. The term $(X_t - k)_+$ has a special meaning---it takes the value 
+0 if $X_t$ is in the interval to the left of the knot, while if $X_t$ is in the 
+interval to the right of the knot, it takes the value of $X_t$ minus the knot
+value: 
+
+$$ 
+(X_t - k)_+ =
+\begin{cases}
+0, & \mbox{if } X_t < k \\
+X_t - k, & \mbox{if } X_t \ge k 
+\end{cases}
+$$
+In this model, the coefficient $\beta_1$ estimates the slope of the line to the
+left of the knot, while $\beta_1$ estimates how that slope will change to the 
+right of the knot.
+
+Fortunately, we usually won't have to get this complex in the model notation, 
+especially when we use more complex splines (where the notation would get even
+more complex). Instead, we'll often write out the
+regression equation in a simpler way, just indicating that we're using a function
+of the covariate, rather than the covariate directly: 
+
+$$
+Y_t = \alpha + f(X_t | \beta)
+$$
+
+where we can knot that $f(X_t)$ is a function of day of the year ($X_t$), fit in 
+this case using a linear spline, and with estimated coefficients $\beta$ for that
+function (see @armstrong2006models for an example of using this model notation).
+
+While a linear spline is the simplest conceptually (and mathematically), it often 
+isn't very satisfying, because is fits a function with a sharp breakpoint, which 
+often isn't realistic. For example, the linear spline fit above suggests that the
+relationship between day of the year and temperature changes abruptly and dramatically
+on August 1 of the year. In reality, we know that this change in the relationship 
+between day of year and temperature is probably a lot smoother. 
+
+To fit smoother shapes, we can move to higher level splines. Cubic splines
+("cubic" because they include terms of the covariate up to the third power) are
+very popular.
+An example of a cubic spline 
+function is $X+X^{2}+X^{3}+I((X>X_{0})*(X-X_{0})^3)$. This particular function is 
+a cubic spline with four degrees of freedom ($df=4$) and one knot ($X_{0}$). 
+A special type of cubic spline called a natural cubic spline is particularly popular.
 Unlike a polynomial function, a natural cubic spline "behaves" better outside
 the range of the data used to fit the model---they are constrained to continue
-on a [linear?] trajectory once they pass beyond the range of the data. 
-[Maybe add more / clarify / add references on the point of why splines versus
-polynomials.]
+on a linear trajectory once they pass beyond the range of the data. 
 
 Regression splines can be fit in a GLM via the package `splines`. Two commonly 
 used examples of regression splines are b-splines and natural cubic 
-splines. @vicedo2019hands uses natural cubic splines.
+splines. @vicedo2019hands uses natural cubic splines, which can be fit with the
+`ns` (for "natural spline") function from the `splines` package.
+
+While splines are great for fitting non-linear relationships, they do create some
+challenges in interpreting the results. When you fit a linear relationship for 
+a covariate, you will get a single estimate that helps describe the fitted relationship
+between that covariate and the outcome variable. However, when you use a non-linear
+function, you'll end up with a mix of coefficients associated with that function.
+Sometimes, you will use splines to control for a potential confounder (as we 
+will in the exercises for this first part of the chapter). In this case, you don't 
+need to worry about interpreting the estimated coefficients---you're just trying to 
+control for the variable, rather than inferring anything about how it's associated
+with the outcome.
+In later parts of this chapter, we'll talk about how to interpret these coefficients
+if you're using a spline for the exposure that you're interested in, when we talk 
+more broadly about basis functions.
 
 *Applied: Including a spline in a GLM*
 
