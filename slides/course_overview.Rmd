@@ -28,7 +28,7 @@ Although basic theoretical frameworks behind analysis and statistical modeling a
 ## Topics
 
 1. Time series studies in environmental epidemiology
-2. Observational cohort studies in environmental epidemiology
+2. Observational cohort studies in epidemiology
 
 ## Topics
 
