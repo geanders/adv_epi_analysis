@@ -1,5 +1,7 @@
 # Generalized linear models 
 
+## Readings
+
 The readings for this chapter are: 
 
 - @bhaskaran2013time Provides an overview of time series regression

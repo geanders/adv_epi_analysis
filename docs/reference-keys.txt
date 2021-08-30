@@ -5,6 +5,7 @@ course-learning-objectives
 meeting-time-and-place
 class-structure-and-expectations
 course-grading
+course-schedule
 textbooks-and-course-materials
 prerequisites-and-preparation
 academic-honesty
@@ -15,6 +16,7 @@ time-series-data
 exploratory-data-analysis
 statistical-modeling-for-a-time-series-study
 generalized-linear-models
+readings-1
 splines-in-glms
 cross-basis-functions-in-glms
 chapter-vocabulary

@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-08-24" />
+<meta name="date" content="2021-08-29" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -168,9 +168,10 @@ div.csl-indent {
 <li class="chapter" data-level="2.2" data-path="courseinfo.html"><a href="courseinfo.html#meeting-time-and-place"><i class="fa fa-check"></i><b>2.2</b> Meeting time and place</a></li>
 <li class="chapter" data-level="2.3" data-path="courseinfo.html"><a href="courseinfo.html#class-structure-and-expectations"><i class="fa fa-check"></i><b>2.3</b> Class Structure and Expectations</a></li>
 <li class="chapter" data-level="2.4" data-path="courseinfo.html"><a href="courseinfo.html#course-grading"><i class="fa fa-check"></i><b>2.4</b> Course grading</a></li>
-<li class="chapter" data-level="2.5" data-path="courseinfo.html"><a href="courseinfo.html#textbooks-and-course-materials"><i class="fa fa-check"></i><b>2.5</b> Textbooks and Course Materials</a></li>
-<li class="chapter" data-level="2.6" data-path="courseinfo.html"><a href="courseinfo.html#prerequisites-and-preparation"><i class="fa fa-check"></i><b>2.6</b> Prerequisites and Preparation</a></li>
-<li class="chapter" data-level="2.7" data-path="courseinfo.html"><a href="courseinfo.html#academic-honesty"><i class="fa fa-check"></i><b>2.7</b> Academic Honesty</a></li>
+<li class="chapter" data-level="2.5" data-path="courseinfo.html"><a href="courseinfo.html#course-schedule"><i class="fa fa-check"></i><b>2.5</b> Course Schedule</a></li>
+<li class="chapter" data-level="2.6" data-path="courseinfo.html"><a href="courseinfo.html#textbooks-and-course-materials"><i class="fa fa-check"></i><b>2.6</b> Textbooks and Course Materials</a></li>
+<li class="chapter" data-level="2.7" data-path="courseinfo.html"><a href="courseinfo.html#prerequisites-and-preparation"><i class="fa fa-check"></i><b>2.7</b> Prerequisites and Preparation</a></li>
+<li class="chapter" data-level="2.8" data-path="courseinfo.html"><a href="courseinfo.html#academic-honesty"><i class="fa fa-check"></i><b>2.8</b> Academic Honesty</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover studies</a>
 <ul>
@@ -182,9 +183,10 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.1</b> Splines in GLMs</a></li>
-<li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.2</b> Cross-basis functions in GLMs</a></li>
-<li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#chapter-vocabulary"><i class="fa fa-check"></i><b>4.3</b> Chapter vocabulary</a></li>
+<li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#readings-1"><i class="fa fa-check"></i><b>4.1</b> Readings</a></li>
+<li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.2</b> Splines in GLMs</a></li>
+<li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.3</b> Cross-basis functions in GLMs</a></li>
+<li class="chapter" data-level="4.4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#chapter-vocabulary"><i class="fa fa-check"></i><b>4.4</b> Chapter vocabulary</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
 <ul>
@@ -380,7 +382,7 @@ You could do that in this dataset with the following code:</p>
 <span id="cb118-4"><a href="longitudinal-cohort-study-designs.html#cb118-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb118-5"><a href="longitudinal-cohort-study-designs.html#cb118-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> n)) <span class="sc">+</span> </span>
 <span id="cb118-6"><a href="longitudinal-cohort-study-designs.html#cb118-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-72-1.png" width="672" />
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-73-1.png" width="672" />
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.</p>
 <ol start="2" style="list-style-type: decimal">
@@ -397,11 +399,11 @@ that is a nice starting point for working with both packages.</p>
 get a top-level snapshot:</p>
 <div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="longitudinal-cohort-study-designs.html#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
 <span id="cb119-2"><a href="longitudinal-cohort-study-designs.html#cb119-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vis_miss</span>(fhs)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-73-1.png" width="672" />
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-74-1.png" width="672" />
 Another was to visualize this is with <code>gg_miss_var</code>:</p>
 <div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="longitudinal-cohort-study-designs.html#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
 <span id="cb120-2"><a href="longitudinal-cohort-study-designs.html#cb120-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
 <p>Many of the variables are available for all observations, with no missingness,
 including records of the subject’s ID, measures of death, stroke, CVD, and other
 events, age, sex, and BMI. Some of the measured values from visits are missing
@@ -412,11 +414,11 @@ they are available.</p>
 <p>You can also do faceting with the <code>gg_miss_var</code> function. For
 example, you could see if missingness varies by the period of the observation:</p>
 <div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="longitudinal-cohort-study-designs.html#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> period)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
 <p>You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:</p>
 <div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="longitudinal-cohort-study-designs.html#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> death)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-77-1.png" width="672" /></p>
 <p>There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both <code>glucose</code> and
 <code>totchol</code> are continuous variables, and both are occasionally missing. You
@@ -426,7 +428,7 @@ variables:</p>
 <div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="longitudinal-cohort-study-designs.html#cb123-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
 <span id="cb123-2"><a href="longitudinal-cohort-study-designs.html#cb123-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
 <span id="cb123-3"><a href="longitudinal-cohort-study-designs.html#cb123-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-77-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
 <p>The lower left corner shows the observations where both values are missing—it
 looks like there aren’t too many. For observations with one missing but not the
 other (the points in red along the x- and y-axes), it looks like the distribution
@@ -439,7 +441,7 @@ where <code>glucose</code> is missing.</p>
 <span id="cb124-2"><a href="longitudinal-cohort-study-designs.html#cb124-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
 <span id="cb124-3"><a href="longitudinal-cohort-study-designs.html#cb124-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>() <span class="sc">+</span> </span>
 <span id="cb124-4"><a href="longitudinal-cohort-study-designs.html#cb124-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sex)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-79-1.png" width="672" /></p>
 <ol start="3" style="list-style-type: decimal">
 <li><em>How many participants die? What is the distribution of age at time of death?</em></li>
 </ol>
@@ -553,7 +555,7 @@ the deaths.</p>
 <span id="cb145-2"><a href="longitudinal-cohort-study-designs.html#cb145-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># define the axes for the boxplot</span></span>
 <span id="cb145-3"><a href="longitudinal-cohort-study-designs.html#cb145-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y=</span>agemi)) <span class="sc">+</span> </span>
 <span id="cb145-4"><a href="longitudinal-cohort-study-designs.html#cb145-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-92-1.png" width="672" />
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-93-1.png" width="672" />
 We see that R didn’t return two separate boxplots by sex, but rather one centered between the two values of <code>sex=1</code> and <code>sex=2</code> which are the values for males and females respectively. This is an indicator that the sex variable is of class <code>numeric</code> and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:</p>
 <div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="longitudinal-cohort-study-designs.html#cb146-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(fhs_first<span class="sc">$</span>sex)</span></code></pre></div>
 <pre><code>## [1] &quot;numeric&quot;</code></pre>
@@ -565,7 +567,7 @@ We see that R didn’t return two separate boxplots by sex, but rather one cente
 <span id="cb149-2"><a href="longitudinal-cohort-study-designs.html#cb149-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># define the axes for the boxplot</span></span>
 <span id="cb149-3"><a href="longitudinal-cohort-study-designs.html#cb149-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y=</span>agemi)) <span class="sc">+</span> </span>
 <span id="cb149-4"><a href="longitudinal-cohort-study-designs.html#cb149-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-96-1.png" width="672" /></p>
 <p>We can once again see from the the boxplots that females tend to be a little older at incidence of MI.</p>
 <ol start="5" style="list-style-type: decimal">
 <li><em>What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers</em></li>
@@ -596,13 +598,13 @@ If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math i
 <div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="longitudinal-cohort-study-designs.html#cb154-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> fhs_first)</span>
 <span id="cb154-2"><a href="longitudinal-cohort-study-designs.html#cb154-2" aria-hidden="true" tabindex="-1"></a>fit1 <span class="sc">%&gt;%</span></span>
 <span id="cb154-3"><a href="longitudinal-cohort-study-designs.html#cb154-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Time to death (days)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-97-1.png" width="672" />
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-98-1.png" width="672" />
 We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival <span class="math inline">\(\hat{S}(t)\)</span> drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.</p>
 <p>We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the <code>Surv</code> function, substituting time of death with respect to follow-up time with age at death.</p>
 <div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="longitudinal-cohort-study-designs.html#cb155-1" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> fhs_first)</span>
 <span id="cb155-2"><a href="longitudinal-cohort-study-designs.html#cb155-2" aria-hidden="true" tabindex="-1"></a>fit2 <span class="sc">%&gt;%</span></span>
 <span id="cb155-3"><a href="longitudinal-cohort-study-designs.html#cb155-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-98-1.png" width="672" />
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-99-1.png" width="672" />
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.</p>
 <p>The Cox proportional hazards model in a simple form has this form</p>
 <p><span class="math inline">\(log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X\)</span></p>

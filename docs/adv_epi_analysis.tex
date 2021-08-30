@@ -118,7 +118,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-08-24}
+\date{2021-08-29}
 
 \begin{document}
 \maketitle
@@ -322,6 +322,45 @@ Participation in in-course exercises & 10\\
   attend every class and come prepared. Further, it is expected that you will
   actively participate in discussions and group work during the class period.
 \end{itemize}
+
+\hypertarget{course-schedule}{%
+\section{Course Schedule}\label{course-schedule}}
+
+\begin{tabular}{r|l|l|l|l}
+\hline
+Class & Date & Study type & Topic & Book sections\\
+\hline
+1 & August 30 & Time series & Time series / case-crossover study designs & 3.1--3.4\\
+\hline
+2 & September 3 & Time series & Time series / case-crossover study designs & 3.5\\
+\hline
+3 & September 13 & Time series & Generalized linear models & 4.1\\
+\hline
+4 & September 20 & Time series & Generalized linear models & TBD\\
+\hline
+5 & September 27 & Time series & Natural experiments & TBD\\
+\hline
+6 & October 4 & Time series & Risk assessment & TBD\\
+\hline
+7 & October 11 & Time series & Group midterm reports & None\\
+\hline
+8 & October 18 & Cohort & Longitudinal cohort study designs & TBD\\
+\hline
+9 & October 25 & Cohort & Longitudinal cohort study designs & TBD\\
+\hline
+10 & November 1 & Cohort & Inverse probability weighting, Propensity scores & TBD\\
+\hline
+11 & November 8 & Cohort & Mixed models & TBD\\
+\hline
+12 & November 15 & Cohort & Instrumental variables & TBD\\
+\hline
+13 & November 29 & Cohort & Counterfactuals / Causal inference & TBD\\
+\hline
+14 & December 6 & Cohort & Finals preperation & None\\
+\hline
+15 & December 13 & Cohort & Finals presentation & None\\
+\hline
+\end{tabular}
 
 \hypertarget{textbooks-and-course-materials}{%
 \section{Textbooks and Course Materials}\label{textbooks-and-course-materials}}
@@ -848,7 +887,7 @@ of the last year is included in the study period:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-7-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -973,7 +1012,7 @@ there are so many observations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-9-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-10-1.pdf}
 
 There is (unsurprisingly) clear evidence here of a strong seasonal trend in mean temperature,
 with values typically lowest in the winter and highest in the summer.
@@ -987,7 +1026,7 @@ You can plot the outcome variable in the same way:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-10-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-11-1.pdf}
 
 Again, there are seasonal trends, although in this case they are inversed.
 Mortality tends to be highest in the winter and lowest in the summer. Further, the
@@ -1020,7 +1059,7 @@ and still be correctly interpreted.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-11-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-12-1.pdf}
 
 From this visualization, you can see that temperatures tend to be higher in the
 summer months and lower in the winter months. ``Spells'' of extreme heat or cold
@@ -1043,7 +1082,7 @@ evident.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-12-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-13-1.pdf}
 
 For mortality, there tends to be an increase in the winter compared to the summer.
 Some winters have stretches with particularly high mortality---these are likely
@@ -1070,7 +1109,7 @@ daily mortality counts, on average, over the course of the study period:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-13-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-14-1.pdf}
 
 It can be helpful to add a smooth line to help detect these longer-term
 patterns, which you can do with \texttt{geom\_smooth}:
@@ -1083,7 +1122,7 @@ patterns, which you can do with \texttt{geom\_smooth}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-14-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-15-1.pdf}
 
 You could also take the median mortality count across each year in the
 study period, although you should take out any years without a full year's
@@ -1101,7 +1140,7 @@ outcome:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-15-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-16-1.pdf}
 
 Again, we see a clear pattern of decreasing mortality rates in this city over time.
 This means we need to think carefully about long-term time patterns as a potential
@@ -1231,7 +1270,7 @@ You can also visualize the association using boxplots:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-20-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-21-1.pdf}
 
 You can also try violin plots---these show the full distribution better than
 boxplots, which only show quantiles.
@@ -1243,7 +1282,7 @@ boxplots, which only show quantiles.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-21-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-22-1.pdf}
 
 All these reinforce that there are some small differences in weekend versus weekday
 patterns for mortality. There isn't much pattern by weekday with temperature, so
@@ -1604,7 +1643,7 @@ after fitting the model:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-28-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-29-1.pdf}
 
 For more on the \texttt{broom} package, including some excellent examples of how it
 can be used to streamline complex regression analyses, see \citet{robinson2014broom}.
@@ -1701,7 +1740,7 @@ association for that \emph{transformation}, not for untransformed mortality coun
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-31-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-32-1.pdf}
 
 You can use exponentiation to transform the fitted values back to just be the
 expected mortality count based on the model fit. Once you make this
@@ -1720,7 +1759,7 @@ untransformed expected mortality count.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-32-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-33-1.pdf}
 
 For this model, we can interpret the coefficient for the temperature covariate
 as the expected log relative risk in the health outcome associated with a
@@ -1959,7 +1998,7 @@ fitted line:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-39-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-40-1.pdf}
 
 This is because each fitted value is also incorporating the expected influence
 of day of week on the mortality count, and that varies across the observations
@@ -1981,7 +2020,7 @@ the line is smooth across all observations from the same day of the week:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-40-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-41-1.pdf}
 
 \emph{Wrapping up}
 
@@ -1992,6 +2031,9 @@ up to this point?
 
 \hypertarget{generalized-linear-models}{%
 \chapter{Generalized linear models}\label{generalized-linear-models}}
+
+\hypertarget{readings-1}{%
+\section{Readings}\label{readings-1}}
 
 The readings for this chapter are:
 
@@ -2116,7 +2158,7 @@ with a knot around August 1 (day 213 in the year). These two examples are shown 
 the following plot, with the linear function fit on the left and the linear spline
 on the right:
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-41-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-42-1.pdf}
 
 If you were to write out these regression models in mathematical notation, the
 linear one is very simple:
@@ -2384,7 +2426,7 @@ and fitting the regression model.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-47-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-48-1.pdf}
 
 There are clear patterns between time and daily mortality counts in these data.
 First, there is a clear long-term pattern, with mortality rates declining on
@@ -2419,7 +2461,7 @@ with the observed data, to get an idea of what this model has captured:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-49-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-50-1.pdf}
 {[}Check for \texttt{termplot}{]}
 
 This linear trend captures the long-term trend in mortality rates fairly well in
@@ -2466,7 +2508,7 @@ pulling it from the original \texttt{obs} dataset, and then proceed as before.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-51-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-52-1.pdf}
 
 The non-linear term for time has allowed enough flexibility that the model now
 captures both long-term and seasonal trends in the data.
@@ -2499,7 +2541,7 @@ control for seasonal patterns.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-52-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-53-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2517,7 +2559,7 @@ control for seasonal patterns.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-53-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-54-1.pdf}
 
 In all cases, when you fit a non-linear function of an explanatory variable,
 it will make the model summary results look much more complicated, e.g.:
@@ -2682,7 +2724,7 @@ flexible function:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-60-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-61-1.pdf}
 
 \hypertarget{cross-basis-functions-in-glms}{%
 \section{Cross-basis functions in GLMs}\label{cross-basis-functions-in-glms}}
@@ -2751,7 +2793,7 @@ The readings for this chapter are:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-62-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-63-1.pdf}
 
 Example data from \citet{bernal2017interrupted}:
 
@@ -2802,7 +2844,7 @@ Recreate Figure 1 from \citet{bernal2017interrupted}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-65-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-66-1.pdf}
 
 \hypertarget{difference-in-differences}{%
 \section{Difference-in-differences}\label{difference-in-differences}}
@@ -3056,7 +3098,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-72-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-73-1.pdf}
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
 
@@ -3086,7 +3128,7 @@ get a top-level snapshot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-73-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-74-1.pdf}
 Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \begin{Shaded}
@@ -3096,7 +3138,7 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-74-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-75-1.pdf}
 
 Many of the variables are available for all observations, with no missingness,
 including records of the subject's ID, measures of death, stroke, CVD, and other
@@ -3115,7 +3157,7 @@ example, you could see if missingness varies by the period of the observation:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-75-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-76-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:
@@ -3126,7 +3168,7 @@ was associated with death of the study subject:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-76-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-77-1.pdf}
 
 There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both \texttt{glucose} and
@@ -3143,7 +3185,7 @@ variables:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-77-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-78-1.pdf}
 
 The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
@@ -3164,7 +3206,7 @@ You can also do things like facet by sex to explore patterns at a finer level:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-78-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-79-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -3398,7 +3440,7 @@ We can see that the mean age at incident MI hospitalization among males and fema
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-92-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-93-1.pdf}
 We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of \texttt{sex=1} and \texttt{sex=2} which are the values for males and females respectively. This is an indicator that the sex variable is of class \texttt{numeric} and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
 
 \begin{Shaded}
@@ -3431,7 +3473,7 @@ If we repeat the function for the boxplot now we get separate boxplots by sex
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-95-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-96-1.pdf}
 
 We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
 
@@ -3508,7 +3550,7 @@ The numbers assigned to each individual represent their censoring times, with ea
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-97-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-98-1.pdf}
 We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival \(\hat{S}(t)\) drops to about 0.65 at the end of follow-up, or in other words about 35\% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the \texttt{Surv} function, substituting time of death with respect to follow-up time with age at death.
@@ -3521,7 +3563,7 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-98-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-99-1.pdf}
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.
 
 The Cox proportional hazards model in a simple form has this form
