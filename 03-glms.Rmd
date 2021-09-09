@@ -26,7 +26,7 @@ The following are supplemental readings (i.e., not required, but may be of
 interest) associated with the material in this chapter: 
 
 - @armstrong2006models Covers similar material as @bhaskaran2013time, but with 
-more focus on the statistical modeling framework
+more focus on the statistical modeling framework (highly recommended!)
 - @gasparrini2010time Describes some of the advances made to time series study
 designs and statistical analysis, specifically in the context of temperature
 - @basu2005temperature Compares time series and case-crossover study designs in 
@@ -51,9 +51,9 @@ available online through the CSU library.
 
 ## Splines in GLMs
 
-We saw from the latest model with a linear for mean daily temperature that the 
+We saw from the last model, with a linear term for mean daily temperature, that the 
 suggested effect on mortality is a decrease in daily mortality counts with 
-increasing temperature. However, as you've probably guessed that's probably not 
+increasing temperature. However, as you've probably guessed that's likely not 
 entirely accurate. A linear term for the effect of exposure restricts us to an 
 effect that can be fitted with a straight line (either a null effect or a 
 monotonically increasing or decreasing effect with increasing exposure). 
@@ -175,7 +175,7 @@ X_t - k, & \mbox{if } X_t \ge k
 \end{cases}
 $$
 In this model, the coefficient $\beta_1$ estimates the slope of the line to the
-left of the knot, while $\beta_1$ estimates how that slope will change to the 
+left of the knot, while $\beta_2$ estimates how that slope will change to the 
 right of the knot.
 
 Fortunately, we usually won't have to get this complex in the model notation, 
@@ -185,15 +185,15 @@ regression equation in a simpler way, just indicating that we're using a functio
 of the covariate, rather than the covariate directly: 
 
 $$
-Y_t = \alpha + f(X_t | \beta)
+Y_t = \alpha + f(X_t | \mathbf{\beta})
 $$
 
-where we can knot that $f(X_t)$ is a function of day of the year ($X_t$), fit in 
-this case using a linear spline, and with estimated coefficients $\beta$ for that
+where we can note that $f(X_t)$ is a function of day of the year ($X_t$), fit in 
+this case using a linear spline, and with a set of estimated coefficients $\mathbf{\beta}$ for that
 function (see @armstrong2006models for an example of using this model notation).
 
 While a linear spline is the simplest conceptually (and mathematically), it often 
-isn't very satisfying, because is fits a function with a sharp breakpoint, which 
+isn't very satisfying, because it fits a function with a sharp breakpoint, which 
 often isn't realistic. For example, the linear spline fit above suggests that the
 relationship between day of the year and temperature changes abruptly and dramatically
 on August 1 of the year. In reality, we know that this change in the relationship 
@@ -366,7 +366,7 @@ mod_time %>%
   geom_line(aes(y = exp(.fitted)), color = "red") + 
   labs(x = "Date in study", y = "Expected mortality count") 
 ```
-[Check for `termplot`]
+
 
 This linear trend captures the long-term trend in mortality rates fairly well in
 this case. This won't always be the case, as there may be some health
@@ -411,7 +411,7 @@ mod_time_nonlin %>%
 The non-linear term for time has allowed enough flexibility that the model now
 captures both long-term and seasonal trends in the data. 
 
-[More on how to pick a good d.f. for an env. epi. model like this]. In practice,
+You might wonder how many degrees of freedom you should use for this time spline. In practice,
 researchers often using about 6--8 degrees of freedom per year of the study, in
 the case of year-round data. You can explore how changing the degrees of freedom
 changes the way the model fits to the observed data. As you use more degrees of
@@ -546,8 +546,12 @@ mod_ctrl_nl_temp <- glm(all ~ ns(tmean, 4) + factor(dow, ordered = FALSE) +
                         data = obs, family = "quasipoisson")
 ```
 
+We can plot the predicted values from this fitted model (red points in the plot below) 
+compared to the observed data (black dots) using our usual method of using `augment` to 
+extract the predicted values: 
+
 ```{r}
-mod_time_nonlin_highdf %>% 
+mod_ctrl_nl_temp %>% 
   augment() %>% 
   mutate(tmean = obs$tmean) %>% 
   ggplot(aes(x = tmean)) + 
@@ -556,14 +560,412 @@ mod_time_nonlin_highdf %>%
   labs(x = "Daily mean temperature", y = "Expected mortality count") 
 ```
 
+However, these predictions are very variable at any given temperature. This reflects how 
+other independent variables, like long-term and seasonal trends, explain variability in 
+mortality. This makes sense, but it makes it a bit hard to investigate the role of temperature
+specifically. Let's look, then, at some other options for viewing the results that will 
+help us focus on the association of the exposure we care about (temperature) with the outcome.
 
+The next part has a lot of steps, so it might at first seem confusing. However, fortunately
+we won't always have to do all the steps ourselves---there is a nice R package that 
+will help us. We'll look at the process first, though, and then the easier way to use a 
+package to help with some of the steps. Also, this process gives us a first look at how
+the idea of basis functions work. We'll later expand on these to look at non-linear 
+relationships with the exposure at different lag times, using cross-basis functions, so this
+forms a starting point for moving into the idea of a cross-basis.
+
+First, we need to think about how temperature gets included in the regression
+model---specifically, as a function of *basis variables* rather than as a single variable. 
+In other words, to include temperature as a nonlinear function, we're going to create 
+a structure in the regression equation that includes the variable of temperature in 
+several different terms, in different transformations in each term. I simple example of this
+is a second-degree polynomial. If we wanted to include a second-order polynomial function
+of temperature in the regression, then we'd use the following basis: 
+
+$$
+\beta_1 T + \beta_2 T^2
+$$
+
+Notice that here we're using the same independent variable ($T$, which stands for daily 
+temperature), but we're including both untransformed $T$ and also $T$ squared. This function
+of $T$ might go into the regression equation as something like: 
+
+$$
+E(Y) = \alpha + \beta_1 T + \beta_2 T^2 + ns(time) + \mathbf{\gamma}W
+$$
+where $\alpha$ is the intercept, $ns(time)$ is a natural cubic spline that controls for 
+time (long-term and seasonal trends) and $W$ is day of week, with $\mathbf{\gamma}$ as 
+the set of coefficients associated with day of week. (Here, I've included the outcome, 
+$Y$, untransformed, as you would for a linear regression, but of course the same idea
+works with Poisson regression, when you'd instead have $log(E(Y))$ on the left of the 
+equation.) 
+
+When you fit a regression model in a program like R, it sets up the observed data into 
+something called a *model matrix*, where it has the values for each observation for each of
+the independent variables you want to include, plus a column of "1"s for the intercept, if you
+model structure includes one. The regression model will fit a coefficient
+for each of these columns in the model matrix. In a simple case, this model matrix will just
+repeat each of your independent variables. For example, the model matrix for the model
+`mod_overdisp_reg`, which we fit in the last chapter and which included only an intercept
+and a linear term for `tmean`, looks like this (the `model.matrix` function will give you 
+the model matrix of any `glm` object that you get by running the `glm` function in R):  
+
+```{r echo = FALSE}
+mod_ovdisp_reg <- glm(all ~ tmean, data = obs, family = "quasipoisson")
+mod_ctrl_dow <- glm(all ~ tmean + factor(dow, ordered = FALSE), 
+                    data = obs, family = "quasipoisson")
+```
+
+```{r}
+mod_ovdisp_reg %>% 
+  model.matrix() %>% 
+  head()
+```
+
+We already start using the idea of basis variables when we include categorical variables, like
+day of week. Here is the model matrix for the `mod_ctrl_dow` model that we fit in the last
+chapter:
+
+```{r}
+mod_ctrl_dow %>% 
+  model.matrix() %>% 
+  head()
+```
+
+You can see that the regression call broke the day-of-week variable up into a set of indicator variables, which 
+equal either 1 or 0. There will be one less of these than the number of categories for the
+variable; in otherwords, if the categorical variable took two values (Weekend / Weekday), then
+this would be covered by a single column; since there are seven days in the week, the 
+day-of-week variable breaks into six (7 - 1) columns. The first level of the categories 
+(Sunday in this case) serves as a baseline and doesn't get a value. The others levels
+(Monday, Tuesday, etc.) each get their own indicator variable---so, their own column in 
+the model matrix---which equals "1" on that day (i.e., "1" for the Monday column if the date
+of the observation is a Monday) and "0" on all other days. 
+
+Now let's go back and look at the example of including temperature in the model as a nonlinear
+function, starting with the simple example of using a second-degree polynomial. What would 
+the basis for that look like? We can find out by fitting the model and then looking at the
+model matrix (the `I()` function lets us specify a transformation of a column from the 
+data when we set up the regression equation structure in `glm`): 
+
+```{r}
+mod_polynomial_temp <- glm(all ~ tmean + I(tmean ^ 2), 
+                           data = obs, family = "quasipoisson")
+mod_polynomial_temp %>% 
+  model.matrix() %>% 
+  head()
+```
+
+You can see that this has created two columns based on the temperature variable, one with 
+it untransformed and one with it squared. The regression will estimate coefficients for each 
+of these basis variables of temperature, and then that allows you to fit a model with a 
+function of temperature, rather than solely temperature. Here are the coefficients from 
+this model: 
+
+```{r}
+mod_polynomial_temp %>% 
+  tidy()
+```
+
+Therefore, it's fit the following model to describe the association between temperature and
+mortality: 
+
+$$
+log(E(Y)) = 5.3092 - 0.0298T + 0.0007T^2
+$$
+If you want to estimate the relative risk of mortality at 15 degrees Celsius versus 10 
+degrees Celsius with this model (which is confounded by long-term and seasonal trends, so 
+has some issues we'll want to fix), you can take the following process. Take the two 
+equations for the expected mortality when $T$ is 15 and 10, respectively: 
+
+$$
+log(E(Y|T=15)) = 5.3092 - 0.0298(15) + 0.0007(15^2) \\
+log(E(Y|T=10)) = 5.3092 - 0.0298(10) + 0.0007(10^2)  
+$$
+If you subtract the second from the first, you get: 
+
+$$
+log(E(Y|T=15)) - log(E(Y|T=10)) = (5.3092 - 5.3092) - 0.0298(15 - 10) + 0.0007(15^2 - 10^2)
+$$
+which simplifies to (if the left part isn't clear, review the rules for how you can manipulate
+logarithms): 
+
+$$
+log(\frac{E(Y|T=15)}{E(Y|T=10)}) = - 0.0298(5) + 0.0007(125) = -0.0615
+$$
+Exponentiate both sides, to get to the relative risk at 15 degrees versus 10 degrees (in 
+other words, the ratio of expected mortality at 15 degrees to that at 10 degrees): 
+
+$$
+\frac{E(Y|T=15)}{E(Y|T=10)} = e^{-0.0615} =  0.94
+$$
+You can see that the basis variables are great in helping us explore how an independent 
+variable might be related to the outcome in a non-linear way, but there's a bit of a cost 
+in terms of us needing to take some extra steps to interpret the results from that model. 
+Also, note that there's not a single coefficient that we can extract from the model as 
+a summary of the relationship. Instead, we needed to pick a reference temperature (10 degrees
+in this example) and compare to that to get an estimated relative risk. We'll see the 
+same pattern as we move to using natural cubic splines to create the basis variables for
+temperature.
+
+Now let's move to a spline. The function the spline runs to transform the temperature 
+variable into the different basis variables is more complex than for the polynomial example,
+but the result is similar: you get several columns to fit in the model for a variable, compared
+to the single column you would include if you were only fitting a linear term. If you 
+take a look at the output of running the `ns` function on temperature in the data, you can 
+see that it creates several new columns (one for each degree of freedom), which will be the
+basis variables in the regression:
+
+```{r}
+ns(obs$tmean, df = 4) %>% 
+  head()
+```
+
+The output from `ns` also has some metadata, included in the attributes of the object, that
+have some other information about the spline function, including where the knots were
+placed and where the boundary knots (which are at the outer ranges of the data) are placed.
+You can the `str` function to explore both the data and metadata stored in this object:
+
+```{r}
+ns(obs$tmean, df = 4) %>% 
+  str()
+```
+
+This is saying, for example, that the internal knots for this spline were put at the 
+25th, 50th, and 75th quantiles of the temperature data, where were 7.47 degrees, 11.47 degrees, 
+and 15.93 degrees. (The defaults for `ns` is to place knots evenly at percentiles, based
+on the number of degrees of freedom you specify. You can change this by placing the knots
+"by hand", using the `knots` argument in the `ns` function.)
+
+This spline object can be used not just for its basis values, but also to "predict" new
+basis values for a new set of temperature values. For example, you could figure out 
+what the basis values from this spline would be for every degree of temperature between 
+-6 and 29 using the following code:
+
+```{r}
+temp_spline <- ns(obs$tmean, df = 4)
+temp_spline_preds <- predict(temp_spline, newx = -6:29)
+temp_spline_preds %>% 
+  head()
+```
+
+This is handy, because it will help us visualize the relationship we fit in a regression 
+model---we can start with these basis values for each degree in our temperature range, and 
+then use the regression coefficients for each basis variable to estimate relative risk 
+at that temperature compared to a reference temperature, exactly as we did in the equations
+for the polynomial function of temperature earlier, comparing 15 degrees C to the reference
+of 10 degrees. 
+
+All we need now are the regression coefficients for each of these temperature basis 
+variables. We can extract those from the model we fit earlier, where we included 
+`ns(tmean, 4)` as one of the model terms. Here, I'm using `tidy` to get the model 
+coefficients and then, because there are *lots* of them (from fitting a spline for 
+time with lots of degrees of freedom), I'm using the `str_detect` function from the 
+`stringr` package to pick out just those with "tmean" in the `term` column:
+
+```{r}
+mod_ctrl_nl_temp %>% 
+  tidy() %>% 
+  filter(str_detect(term, "tmean"))
+```
+
+You can add on `pull` to pull out just the `estimate` column as a vector, which will be 
+helpful when we want to multiple these coefficients by the basis values for each degree
+of temperature across our temperature range:
+
+```{r}
+temp_spline_ests <- mod_ctrl_nl_temp %>% 
+  tidy() %>% 
+  filter(str_detect(term, "tmean")) %>% 
+  pull(estimate)
+temp_spline_ests
+```
+
+Now, let's put this together to see how relative risk of mortality changes as you move
+across the temperature range! First, we can set up a dataframe that has a column with 
+each unit of temperature across our range---these are the temperatures where we want to 
+estimate relative risk---and then the estimated relative risk at that temperature. By 
+default, we'll be comparing to the lowest temperature in the original data, but we'll talk
+in a minute about how to adjust to a different reference temperature. You can use 
+matrix multiplication (`%*%`) as a shorthand way to multiple each column of the spline
+basis variables from `temp_spline_preds` by its estimated coefficient from the regression 
+model, saved in `temp_spline_ests`, and then add all of those values together (this is
+the same idea as what we did in the equations earlier, for the polynomial basis). Then, 
+to get from log relative risk to relative risk, we'll exponentiate that with `exp`. You 
+can see the first rows of the results below: 
+
+```{r}
+pred_temp_function <- tibble(
+  temp = -5:30, 
+  temp_func = temp_spline_preds %*% temp_spline_ests,
+  rr = exp(temp_func)
+)
+
+pred_temp_function %>% 
+  head()
+```
+
+This is now very easy to plot, with a reference line added at a relative risk of 1.0: 
+
+```{r}
+ggplot(pred_temp_function, aes(x = temp, y = rr)) + 
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Temperature", 
+       y = "Relative Risk") + 
+  geom_hline(yintercept = 1.0, color = "red", linetype = 2)
+```
+
+We might want to shift this, so we're comparing the temperature at which mortality risk 
+is lowest (sometimes called the *minimum mortality temperature*). This tends to be at 
+milder temperatures, in the middle of our range, rather than at the minimum temperature in
+the range. To start, let's see what temperature aligns with the lowest relative risk of 
+mortality: 
+
+```{r}
+pred_temp_function %>% 
+  filter(rr == min(rr))
+```
+We can therefore realign so that the relative risk equals 1.0 when the temperature is 7 degrees
+C, and all other relative risks are relative to a reference temperature of 7 degrees C:
+
+```{r}
+pred_temp_function <- pred_temp_function %>% 
+  mutate(temp_func_reset = temp_func - temp_func[temp == 7],
+         rr_reset = exp(temp_func_reset)
+)
+
+ggplot(pred_temp_function, aes(x = temp, y = rr_reset)) + 
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Temperature", 
+       y = "Relative Risk") + 
+  geom_hline(yintercept = 1.0, color = "red", linetype = 2)
+```
+
+This is a fairly cumbersome process, as you've seen with this example, and it would be a 
+pain if we had to do it every time we wanted to visualize and explore results from fitting 
+regressions that include basis variables from splines. Fortunately, there's a nice R package
+called `dlnm` (for "distributed lag nonlinear models") that will help take care of a lot of 
+these "under the hood" steps for us. Even better, this package will let us move on to more
+complex crossbasis functions, where we fit non-linear functions in two dimensions, and help 
+us visualize and interpret results from those models.
+
+To start, make sure you have the `dlnm` package installed on your computer, and then load
+it in your R session. This package has a function called `crossbasis` that lets you build
+a crossbasis function to use in a regression model. We'll talk more about these types
+of functions later in this chapter; for right now, we'll be a bit simpler and just use it
+to create our spline function of temperature. 
+
+In the `crossbasis` function, you start by putting in the vector of the variable that you 
+want to expand into basis variables. In our case, this is temperature, which we have saved
+as the `tmean` column in the `obs` dataset. You use the `argvar` to give some information 
+about the basis you want to use for that variable. This will both include the type of 
+basis function (`"ns"` for a natural cubic spline), and then also arguments you want to 
+pass to that basis function, like degrees of freedom (`df`) or knot locations (`knots`) 
+if you're fitting a spline. The other arguments allow you to specify a function of lagged
+time; we won't use that yet, so you can just include `lag = 0` and `arglag = list(fun = "integer")` to create a crossbasis where we only consider same-day effects in a simple way.
+If you look at the output, you'll see it's very similar to the basis created by the 
+`ns` call earlier (in fact, the values in each column should be identical):
+
+```{r message = FALSE, warning = FALSE}
+library(dlnm)
+temp_basis <- crossbasis(obs$tmean, lag = 0, 
+                         argvar = list(fun = "ns", df = 4), 
+                         arglag = list(fun = "integer"))
+temp_basis %>% 
+  head()
+```
+
+To estimate the regression coefficients, we'll put this whole crossbasis in as one of 
+our terms in the `glm` regression equation:
+
+```{r}
+dlnm_mod_1 <- glm(all ~ temp_basis + factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+```
+
+As when we fit the spline earlier, you can see that this gives us a set of coefficients, 
+one for each column in the matrix of crossbasis variables:
+
+```{r}
+dlnm_mod_1 %>% 
+  tidy() %>% 
+  filter(str_detect(term, "temp_basis"))
+```
+
+However, there's an advantage with using `crossbasis`, even though it's looked pretty similar
+to using `ns` up to now. That's that there are some special functions that let us predict
+and visualize the model results without having to do all the work we did before. 
+
+For example, there's a function called `crosspred` that will give us a number of values, 
+including the estimated relative risk compared to a reference value. To use this, we 
+need to input the object name of our crossbasis object (`temp_basis`) and the name of our
+regression model object (`dlnm_mod_1`). We also want to tell it which temperature we want
+to use as our reference (`cen = 7` to compare everything to 7 degrees C) and what interval
+we want for predictions (`by = 1` will give us an estimate for every degree temperature 
+along our range). The output is a list with a lot of elements, which you can get a view of 
+with `str`:
+
+```{r}
+crosspred(basis = temp_basis, model = dlnm_mod_1, cen = 7, by = 1) %>% 
+  str()
+```
+
+The one we'll look at right now is `allRRfit`. You can extract it with (here I'm showing
+how you can do it with piping and the `pluck` function to pull out an element of a list, 
+but you could do other approaches, too): 
+
+```{r}
+est_rr <- dlnm_mod_1 %>% 
+  crosspred(basis = temp_basis, model = ., cen = 7, by = 1) %>% 
+  pluck("allRRfit")
+est_rr
+```
+
+To make it easier to work with, let's put this in a dataframe. Note that the temperatures
+are included as the names in the vector, so we can extract those with `names`:
+
+```{r}
+dlnm_temp_function <- tibble(tmean = as.numeric(names(est_rr)), 
+                             rr = est_rr)
+
+dlnm_temp_function %>% 
+  head()
+```
+This has gotten us (much more quickly!) to estimates of the relative risk of mortality at
+each temperature compared to a reference of 7 degrees C. We can plot this the same way we
+did earlier, and you'll notice that this plot is identical to the one we created based on the
+regression with `ns` earlier:
+
+```{r}
+ggplot(dlnm_temp_function, aes(x = tmean, y = rr)) + 
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Temperature", y = "Relative risk") + 
+  geom_hline(yintercept = 1.0, color = "red", linetype = 2)
+```
+
+The `dlnm` package also includes some functions specifically for plotting. One downside 
+is that they're in base R, rather than based on `ggplot2`, which makes them a bit 
+harder to customize. However, they're a great way to get a first look at your results:
+
+```{r}
+dlnm_mod_1 %>% 
+  crosspred(basis = temp_basis, model = ., cen = 6, by = 1) %>% 
+  plot()
+```
+
+Don't worry if all of this about basis functions is a lot! If this is the first time you've
+seen this, it will likely take a few passes to get comfortable with it---and while the idea
+of basis variables is fairly straightforward, it's certainly not straightforward to figure
+out how to interpret the results of the model that you fit. It is worth the effort, though, 
+as this is a very powerful tool when working with regression modeling in environmental 
+epidemiology. 
 
 ## Cross-basis functions in GLMs
 
 [Using a cross-basis to model an exposure's association with the
 outcome in two dimensions (dimensions of time and exposure level)]
 
-## Chapter vocabulary
-
-Each class will start with a vocabulary quiz on a select number of the words
-from the chapter's vocabulary list. The vocabulary words for this chapter are: 
