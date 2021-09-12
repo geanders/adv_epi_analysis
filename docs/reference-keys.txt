@@ -18,8 +18,7 @@ statistical-modeling-for-a-time-series-study
 generalized-linear-models
 readings-1
 splines-in-glms
-cross-basis-functions-in-glms
-chapter-vocabulary
+distributed-lags-and-cross-basis-functions-in-glms
 natural-experiments
 interrupted-time-series
 difference-in-differences

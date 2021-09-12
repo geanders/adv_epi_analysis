@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-09-08" />
+<meta name="date" content="2021-09-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -185,8 +185,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#readings-1"><i class="fa fa-check"></i><b>4.1</b> Readings</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.2</b> Splines in GLMs</a></li>
-<li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.3</b> Cross-basis functions in GLMs</a></li>
-<li class="chapter" data-level="4.4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#chapter-vocabulary"><i class="fa fa-check"></i><b>4.4</b> Chapter vocabulary</a></li>
+<li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#distributed-lags-and-cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.3</b> Distributed lags and cross-basis functions in GLMs</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
 <ul>
@@ -263,7 +262,7 @@ Supplemental material for this paper is available at
 interest) associated with the material in this chapter:</p>
 <ul>
 <li><span class="citation"><a href="#ref-armstrong2006models" role="doc-biblioref">B. Armstrong</a> (<a href="#ref-armstrong2006models" role="doc-biblioref">2006</a>)</span> Covers similar material as <span class="citation"><a href="#ref-bhaskaran2013time" role="doc-biblioref">Bhaskaran et al.</a> (<a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>)</span>, but with
-more focus on the statistical modeling framework</li>
+more focus on the statistical modeling framework (highly recommended!)</li>
 <li><span class="citation"><a href="#ref-gasparrini2010time" role="doc-biblioref">Gasparrini and Armstrong</a> (<a href="#ref-gasparrini2010time" role="doc-biblioref">2010</a>)</span> Describes some of the advances made to time series study
 designs and statistical analysis, specifically in the context of temperature</li>
 <li><span class="citation"><a href="#ref-basu2005temperature" role="doc-biblioref">Basu, Dominici, and Samet</a> (<a href="#ref-basu2005temperature" role="doc-biblioref">2005</a>)</span> Compares time series and case-crossover study designs in
@@ -735,10 +734,10 @@ of temperature in the regression, then we’d use the following basis:</p>
 temperature), but we’re including both untransformed <span class="math inline">\(T\)</span> and also <span class="math inline">\(T\)</span> squared. This function
 of <span class="math inline">\(T\)</span> might go into the regression equation as something like:</p>
 <p><span class="math display">\[
-E(Y) = \alpha + \beta_1 T + \beta_2 T^2 + ns(time) + \mathbf{\gamma}W
+E(Y) = \alpha + \beta_1 T + \beta_2 T^2 + ns(time) + \mathbf{\gamma^{&#39;}D}
 \]</span>
 where <span class="math inline">\(\alpha\)</span> is the intercept, <span class="math inline">\(ns(time)\)</span> is a natural cubic spline that controls for
-time (long-term and seasonal trends) and <span class="math inline">\(W\)</span> is day of week, with <span class="math inline">\(\mathbf{\gamma}\)</span> as
+time (long-term and seasonal trends) and <span class="math inline">\(\mathbf{D}\)</span> is day of week, with <span class="math inline">\(\mathbf{\gamma}\)</span> as
 the set of coefficients associated with day of week. (Here, I’ve included the outcome,
 <span class="math inline">\(Y\)</span>, untransformed, as you would for a linear regression, but of course the same idea
 works with Poisson regression, when you’d instead have <span class="math inline">\(log(E(Y))\)</span> on the left of the
@@ -1171,7 +1170,7 @@ regression with <code>ns</code> earlier:</p>
 is that they’re in base R, rather than based on <code>ggplot2</code>, which makes them a bit
 harder to customize. However, they’re a great way to get a first look at your results:</p>
 <div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="generalized-linear-models.html#cb136-1" aria-hidden="true" tabindex="-1"></a>dlnm_mod_1 <span class="sc">%&gt;%</span> </span>
-<span id="cb136-2"><a href="generalized-linear-models.html#cb136-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> ., <span class="at">cen =</span> <span class="dv">6</span>, <span class="at">by =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb136-2"><a href="generalized-linear-models.html#cb136-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> ., <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">by =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb136-3"><a href="generalized-linear-models.html#cb136-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-83-1.png" width="672" /></p>
 <p>Don’t worry if all of this about basis functions is a lot! If this is the first time you’ve
@@ -1181,15 +1180,868 @@ out how to interpret the results of the model that you fit. It is worth the effo
 as this is a very powerful tool when working with regression modeling in environmental
 epidemiology.</p>
 </div>
-<div id="cross-basis-functions-in-glms" class="section level2" number="4.3">
-<h2><span class="header-section-number">4.3</span> Cross-basis functions in GLMs</h2>
-<p>[Using a cross-basis to model an exposure’s association with the
-outcome in two dimensions (dimensions of time and exposure level)]</p>
-</div>
-<div id="chapter-vocabulary" class="section level2" number="4.4">
-<h2><span class="header-section-number">4.4</span> Chapter vocabulary</h2>
-<p>Each class will start with a vocabulary quiz on a select number of the words
-from the chapter’s vocabulary list. The vocabulary words for this chapter are:</p>
+<div id="distributed-lags-and-cross-basis-functions-in-glms" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Distributed lags and cross-basis functions in GLMs</h2>
+<p>Next, let’s explore how we can add into our model something that lets us look at
+delayed effects and the potential for mortality displacement. So far, we have only
+considered how temperature affects mortality risk on the day of exposure—in other
+words, if it is very hot today, does risk of mortality go up substantially today?
+For many exposures, however, risk can persist after the day of exposure.</p>
+<p>In some cases, this may be caused by a delay in detection of the outcome in the
+data we have. For example, extreme heat today could precipitate a respiratory or
+cardiac event that the person may not seek treatment for until tomorrow, and so
+in the data the outcome would be recorded at a one-day delay from the exposure.</p>
+<p>In other cases, the path from the exposure to the outcome may take several days.
+For example, cold temperatures are often found to be associated with respiratory
+outcomes a week or more after exposures (something you can look for in the
+example data!), and one potential pathway is that cold temperatures might
+promote the spread of respiratory infectious disease, like influenza and colds,
+both through making people stay inside in more crowded, less ventilated
+conditions and also through effects on humidity and other conditions that might
+influence the behavior of respiratory droplets, which are key players in
+spreading some respiratory diseases. Since there is an incubation time up to
+several days for these infectious diseases, we might expect a lagged association
+between temperature and respiratory outcomes under this scenario.</p>
+<p>There is another lagged pattern that can be important to check for, as well—one
+that indicates mortality displacement. For many ambient environmental exposures,
+there are clear indications that associations with health outcomes are strongest
+among older adults or other populations with a disproportionately high percent
+of people who are frail before exposure. One questions that comes up, then, is
+if, when an exposure is associated with excess deaths, these are deaths that are
+displaced in time by only a few days or weeks, rather than deaths that represent
+a larger time of life lost. This question—of whether deaths observed to be
+associated with an environmental exposure were displaced by only a small amount of
+time—can be explored by investigating whether an observed increase in mortality
+across a community during an exposure is then offset by a lower-than-expected
+rate of mortality in the following days and weeks.</p>
+<p>All of these questions can be explored through a type of model called a
+<em>distributed lag model</em>. Conceptually, these models investigate how an exposure
+today is associated with risk of a health outcome not only today, but also in
+the following days. Because we are concerned about potential confounding by
+seasonal trends—and have incorporated control for these trends in our models—we
+often restrict these models to only look up to about a month following exposure.
+However, this can help in identifying delayed effects of an exposure days to weeks
+following the initial exposure, and can also help in determining the role of
+mortality displacement in accounting for some or all of the excess deaths that are
+associated with an exposure. While some environmental exposures of interest
+have mostly immediate effects (e.g., hot temperature), others, including many air
+pollutants, tend to have effects that are stretched over a longer period of one or
+more days from exposure. As a result, distributed lag models are used widely in
+environmental epidemiology studies of time series data, to ensure that important
+associations aren’t missed by limiting the model to focus on risk that are
+detectable on the same day as the exposure.</p>
+<p>To fit a distributed lag model, you can start with a fairly straightforward
+extension of the regression models we’ve been fitting, especially if you are
+investigating an exposure that can be plausibly fit with a linear term (rather than
+a more complex non-linear basis function) in the regression model. Say you are starting,
+for example, from the following regression model:</p>
+<p><span class="math display">\[
+log(E(Y)) = \alpha + \beta X + \mathbf{\gamma^{&#39;}W} + ns(time)
+\]</span></p>
+<p>In this model, you are using a Poisson regression to investigate how risk of the
+health outcome (<span class="math inline">\(Y\)</span>) changes for every unit increase in the exposure (<span class="math inline">\(X\)</span>), assuming
+a linear relationship between the exposure and the log of the health outcome. The model
+can include control for confounders like day of week (<span class="math inline">\(\mathbf{W}\)</span>) and long-term and
+seasonal time trends (<span class="math inline">\(ns(time)\)</span>). This model should look familiar from some of the
+models we’ve fit earlier to the example temperature data.</p>
+<p>To expand this model to explore associations of temperature at different lags, the
+simplest approach is to add a term for each lag—in other words, instead of only having
+a term for temperature on the same day as the outcome measurement, we’ll also include a
+term for temperature the previous day, and the day before that, and so on. For example,
+here’s what the model would look like if we included terms up to lag 2:</p>
+<p><span class="math display">\[
+log(E(Y)) = \alpha + \beta_{0} X_{0} + \beta_{1} X_{1} + \beta_{2} X_{2} + \mathbf{\gamma^{&#39;}W} + ns(time)
+\]</span>
+where <span class="math inline">\(X_0\)</span> is temperature on the same day as the measured outcome <span class="math inline">\(Y\)</span> (with an
+associated coefficient <span class="math inline">\(\beta_0\)</span>), <span class="math inline">\(X_1\)</span> is the temperature the day before (with an
+associated coefficient <span class="math inline">\(\beta_1\)</span>), and <span class="math inline">\(X_2\)</span> is the temperature two days before (with an
+associated coefficient <span class="math inline">\(\beta_2\)</span>). The interpretation of each of these coefficients
+is similar—<span class="math inline">\(exp(\beta_2)\)</span>, for example, gives our estimate of the change in the relative
+risk of the outcome <span class="math inline">\(Y\)</span> for every one-unit increase in the exposure two days prior.</p>
+<p>It can become cumbersome to write out the separate terms for each lag day, so you’ll often
+see equations for distributed lag models written using a shorter approach with the
+<span class="math inline">\(\sum\)</span> symbol. The <span class="math inline">\(\sum\)</span> symbol expresses several terms that are added together and so
+is well-suited for shortening the expression of a distributed lag model. For example, the
+previous model equation could be rewritten as:</p>
+<p><span class="math display">\[
+log(E(Y)) = \alpha + \sum_{l=0}^2{\beta_lX_l} + \mathbf{\gamma^{&#39;}W} + ns(time)
+\]</span></p>
+<p>This version of a distributed lag model is nice because it is fairly simple—we’re taking the
+idea of fitting a linear term for an exposure, and then expanding it to look include the
+exposure on earlier days by adding the same type of term for exposure measured at each lag.
+However, it does have some downsides. The main downside is that exposure tends to be very
+strongly correlated from one day to the next. Any time you put different terms in a regression
+model that are correlated, you create the risk of <em>collinearity</em>, and associated problems
+with fitting the model. The term <em>collinearity</em> refers to the idea that you have two of more
+columns in your model matrix that give identical (or, if you loosen the definition a bit,
+very similar) information. To fit coefficients for each term, the modeling algorithm is trying
+to identify weights to place on each column in the model matrix that result in a model that
+gives the best likelihood of the data you see. If two or more columns have (almost) identical
+information, then the algorithm struggles to determine how to define weight across these
+two columns. The implications are that you can end up with a lot of instability in model
+coefficients for the columns that are collinear, as well as very inflated estimates of the
+standard error. Long story short, it can cause problems in your regression model if you include
+independent variables that are very strongly correlated with each other, and so we usually
+try to avoid doing that.</p>
+<p>There are alternative distributed lag models that can help avoid this instability that can
+come from fitting a distributed lag by using a separate term for each lag. All of them share
+a common feature—they somehow fit a function of the lags instead of each separate lag, so
+that we end up adding fewer terms to the regression model (and, in term, are somewhat
+constraining that pattern that the distributed lag effects follow). The most extreme
+is to use a term that reduces all the lag terms to a single term, which you can do by
+averaging the exposure across all lags. In other words, you could take the same-day
+temperature, yesterday’s temperature, and the temperature the day before that, and average
+those three temperatures to create the term you put in the model. The model equation
+in this case would look like:</p>
+<p><span class="math display">\[
+log(E(Y)) = \alpha + \beta_{\overline{0-2}} X_{\overline{0-2}} + \mathbf{\gamma^{&#39;}W} + ns(time)
+\]</span>
+where <span class="math inline">\(\overline{0-2}\)</span> represents an average over lags 0 to 2, and so <span class="math inline">\(X_{\overline{0-2}}\)</span>
+is the average of the exposure on lags 0, 1, and 2 compared to the day that <span class="math inline">\(Y\)</span> is
+measured.</p>
+<p>This approach avoids any issues with collinearity across exposure terms from different
+lags, because you’re only including a single term for exposure in the model. However,
+there is a downside—this model will provide you with a single estimate for the
+lagged effects, without allowing you to explore patterns across lags (for example,
+is the association mostly on the day of exposure, or are there some delayed effects on
+following days?).</p>
+<p>Another approach is more complex, but it allows you to explore patterns across lags.
+Instead of reducing the lagged exposure to a single term in the model, you can reduce
+it to a few terms that represent the basis for a smooth function. Often, a polynomial
+or natural cubic spline function will be used for this. The details of setting up the
+model become more complex, but fortunately there are software packages (like the <code>dlnm</code>
+package in R) that help in managing this set-up, as we’ll explore in the exercise.</p>
+<p>Packages like <code>dlnm</code> can help in extending the complexity of the distributed lag model
+in other ways, too. So far, we have explored using a distributed lag model where we
+are happy to model the exposure using a linear term. As we’ve seen in earlier exercises,
+this isn’t ideal for temperature. Instead, temperature has a non-linear association
+with mortality risk, with the lowest risk at mild temperatures and then increased risk
+at both lower (colder) and higher (hotter) temperatures.</p>
+<p>We can fit a GLM that incorporates the exposure using a non-linear shape while, at the
+same time, including a non-linear function to describe how the association evolves
+across lagged time following the exposure. The approach is to extend the idea of
+using a basis function—instead of using a basis function in a single dimension, we’ll
+use cross of basis functions in two dimensions. One dimension is the level of exposure
+(e.g., cold to hot temperatures), and the other is the timing between the exposure and
+the outcome (e.g., same-day to lagged by many days). In terms of the mechanics of
+building a model matrix to use to fit the regression model, everything follows directly
+from the idea we explored early of using a function like a spline to create basis
+variables in that model matrix for a term with a non-linear association with the
+outcome variable. However, the mechanics do get quite cumbersome as so many terms are
+included, and so again we will use the <code>dlnm</code> package to handle these mechanics as we
+start to incorporate these cross-basis functions within a GLM.</p>
+<p><em>Applied: Including a spline in a GLM</em></p>
+<p>For this exercise, you will continue to build up the model that you began in
+the examples in the previous chapter. The example uses the data provided with
+one of this chapter’s readings, <span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>.</p>
+<ol style="list-style-type: decimal">
+<li>Start with the simple model describing how are daily mortality counts are
+associated with a linear function of temperature. Include control for day of
+week and long-term / seasonal trends. Add to this model a term that describes
+the lagged effects of temperature up to a week following exposure, using a
+separate model term for each lag. What patterns do you detect in the lagged
+effects of temperature?</li>
+<li>Start with the model from the first question, but change it to use a smooth
+function of lag to detect lagged effects, rather than fitting a seperate term
+for each lag. Extend the model to look at lagged effects up to a month following
+exposure. What patterns do you see in these lagged effects?</li>
+<li>Refine your model to fit for a non-linear, rather than linear, function
+of temperature, while also incorporating a function to describe lagged effects up
+to a month following exposure. Based on this model, what does the association
+between temperature and mortality look like at lag 0 days? How about at lag 21 days?
+What does the pattern of lagged effects look like when comparing the relative risk of
+mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
+(7 degrees C)? What about when comparing mortality at a cold temperature
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the
+cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
+milder temperature (7 degrees C), once you incorporated all lagged effects
+up to a month after exposure?</li>
+</ol>
+<p><em>Applied exercise: Example code</em></p>
+<ol style="list-style-type: decimal">
+<li><strong>Start with the simple model describing how are daily mortality counts are
+associated with a linear function of temperature. Include control for day of
+week and long-term / seasonal trends. Add to this model a term that describes
+the lagged effects of temperature up to a week following exposure, using a
+separate model term for each lag. What patterns do you detect in the lagged
+effects of temperature?</strong></li>
+</ol>
+<p>We’ll start by looking at distributed lag associations by fitting a model with
+separate terms for each of the lags we want to fit. Here, we want to fit up to
+a week, so we’ll want eight terms in total: ones for the same day (<span class="math inline">\(X_0\)</span>), the
+previous day (<span class="math inline">\(X_1\)</span>), two days before (<span class="math inline">\(X_2\)</span>), three days before (<span class="math inline">\(X_3\)</span>),
+four days before (<span class="math inline">\(X_4\)</span>), five days before (<span class="math inline">\(X_5\)</span>), six days before (<span class="math inline">\(X_6\)</span>),
+and seven days before (<span class="math inline">\(X_7\)</span>).</p>
+<p>Right now, our data have temperature lined up with the date of the recorded deaths:</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="generalized-linear-models.html#cb137-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb137-2"><a href="generalized-linear-models.html#cb137-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, all, tmean) <span class="sc">%&gt;%</span> </span>
+<span id="cb137-3"><a href="generalized-linear-models.html#cb137-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 3
+##   date         all tmean
+##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;
+## 1 1990-01-01   220  3.91
+## 2 1990-01-02   257  5.55
+## 3 1990-01-03   245  4.39
+## 4 1990-01-04   226  5.43
+## 5 1990-01-05   236  6.87
+## 6 1990-01-06   235  9.23</code></pre>
+<p>To add lagged temperature to the model, then, we’ll need to add some columns to our
+data, so that the row for an observation includes not only the temperature on that
+day, but also on each of the seven previous days. The <code>lag</code> function from the <code>tidyverse</code>
+suite of packages can be used to create these columns:</p>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="generalized-linear-models.html#cb139-1" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
+<span id="cb139-2"><a href="generalized-linear-models.html#cb139-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tmean_1 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">1</span>), </span>
+<span id="cb139-3"><a href="generalized-linear-models.html#cb139-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_2 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">2</span>), </span>
+<span id="cb139-4"><a href="generalized-linear-models.html#cb139-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_3 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">3</span>), </span>
+<span id="cb139-5"><a href="generalized-linear-models.html#cb139-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_4 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">4</span>), </span>
+<span id="cb139-6"><a href="generalized-linear-models.html#cb139-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_5 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">5</span>), </span>
+<span id="cb139-7"><a href="generalized-linear-models.html#cb139-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_6 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">6</span>), </span>
+<span id="cb139-8"><a href="generalized-linear-models.html#cb139-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_7 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">7</span>))</span></code></pre></div>
+<p>You can see that each of these have taken <code>tmean</code> and then offset it by moving it down
+by one or more rows (down one row for lag 1, two for lag 2, etc.). As a result, we now have
+columns that give us today’s temperature, yesterday’s, and so on, all lined up with the
+row with the observation for daily mortality:</p>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="generalized-linear-models.html#cb140-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb140-2"><a href="generalized-linear-models.html#cb140-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, all, tmean, tmean_1<span class="sc">:</span>tmean_7) <span class="sc">%&gt;%</span> </span>
+<span id="cb140-3"><a href="generalized-linear-models.html#cb140-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 10
+##   date         all tmean tmean_1 tmean_2 tmean_3 tmean_4 tmean_5 tmean_6 tmean_7
+##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 1990-01-01   220  3.91   NA      NA      NA      NA      NA         NA      NA
+## 2 1990-01-02   257  5.55    3.91   NA      NA      NA      NA         NA      NA
+## 3 1990-01-03   245  4.39    5.55    3.91   NA      NA      NA         NA      NA
+## 4 1990-01-04   226  5.43    4.39    5.55    3.91   NA      NA         NA      NA
+## 5 1990-01-05   236  6.87    5.43    4.39    5.55    3.91   NA         NA      NA
+## 6 1990-01-06   235  9.23    6.87    5.43    4.39    5.55    3.91      NA      NA</code></pre>
+<p>You’ll notice that this process has created some missing data right at the beginning of the
+dataset—we don’t know what the temperature was the day before Jan. 1, 1990, for example,
+since the study data starts on Jan. 1, 1990. With most time series, we’ll have plenty of
+days in the study period, so we’ll usually just allow these early dates to drop when the
+model is fit.</p>
+<p>Now we’ll add all these terms to our regression model:</p>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="generalized-linear-models.html#cb142-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean <span class="sc">+</span> tmean_1 <span class="sc">+</span> tmean_2 <span class="sc">+</span> tmean_3 <span class="sc">+</span> tmean_4 <span class="sc">+</span> </span>
+<span id="cb142-2"><a href="generalized-linear-models.html#cb142-2" aria-hidden="true" tabindex="-1"></a>                        tmean_5 <span class="sc">+</span> tmean_6 <span class="sc">+</span> tmean_7 <span class="sc">+</span> </span>
+<span id="cb142-3"><a href="generalized-linear-models.html#cb142-3" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb142-4"><a href="generalized-linear-models.html#cb142-4" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb142-5"><a href="generalized-linear-models.html#cb142-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>If you look at the output from the model, you can see that a regression coefficient has been
+fit for each of these distributed lag terms:</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="generalized-linear-models.html#cb143-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_1 <span class="sc">%&gt;%</span> </span>
+<span id="cb143-2"><a href="generalized-linear-models.html#cb143-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb143-3"><a href="generalized-linear-models.html#cb143-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(term, <span class="st">&quot;tmean&quot;</span>))</span></code></pre></div>
+<pre><code>## # A tibble: 8 x 5
+##   term     estimate std.error statistic  p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 tmean    0.00749   0.000592    12.6   2.67e-36
+## 2 tmean_1 -0.00255   0.000788    -3.23  1.25e- 3
+## 3 tmean_2 -0.00152   0.000797    -1.91  5.68e- 2
+## 4 tmean_3 -0.00243   0.000798    -3.05  2.31e- 3
+## 5 tmean_4 -0.00106   0.000798    -1.32  1.86e- 1
+## 6 tmean_5 -0.000515  0.000797    -0.645 5.19e- 1
+## 7 tmean_6 -0.00107   0.000789    -1.36  1.73e- 1
+## 8 tmean_7 -0.00209   0.000593    -3.52  4.30e- 4</code></pre>
+<p>We can pull out all those estimates, calculate the 95% confidence intervals (do this before
+you take the exponential to get to the relative risk estimate!), and then exponentiate all
+the terms to get estimates of relative risk of mortality per unit increase in temperature.</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="generalized-linear-models.html#cb145-1" aria-hidden="true" tabindex="-1"></a>dist_lag_terms <span class="ot">&lt;-</span> dist_lag_mod_1 <span class="sc">%&gt;%</span> </span>
+<span id="cb145-2"><a href="generalized-linear-models.html#cb145-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb145-3"><a href="generalized-linear-models.html#cb145-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(term, <span class="st">&quot;tmean&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-4"><a href="generalized-linear-models.html#cb145-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">7</span>, </span>
+<span id="cb145-5"><a href="generalized-linear-models.html#cb145-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb145-6"><a href="generalized-linear-models.html#cb145-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb145-7"><a href="generalized-linear-models.html#cb145-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb145-8"><a href="generalized-linear-models.html#cb145-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb145-9"><a href="generalized-linear-models.html#cb145-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-10"><a href="generalized-linear-models.html#cb145-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, lag, rr, low_rr, high_rr)</span>
+<span id="cb145-11"><a href="generalized-linear-models.html#cb145-11" aria-hidden="true" tabindex="-1"></a>dist_lag_terms</span></code></pre></div>
+<pre><code>## # A tibble: 8 x 5
+##   term      lag    rr low_rr high_rr
+##   &lt;chr&gt;   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 tmean       0 1.01   1.01    1.01 
+## 2 tmean_1     1 0.997  0.996   0.999
+## 3 tmean_2     2 0.998  0.997   1.00 
+## 4 tmean_3     3 0.998  0.996   0.999
+## 5 tmean_4     4 0.999  0.997   1.00 
+## 6 tmean_5     5 0.999  0.998   1.00 
+## 7 tmean_6     6 0.999  0.997   1.00 
+## 8 tmean_7     7 0.998  0.997   0.999</code></pre>
+<p>You can plot these estimates to explore how the association changes by lag (notice how the
+geom <code>geom_pointrange</code> is very helpful here!):</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="generalized-linear-models.html#cb147-1" aria-hidden="true" tabindex="-1"></a>dist_lag_terms <span class="sc">%&gt;%</span> </span>
+<span id="cb147-2"><a href="generalized-linear-models.html#cb147-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> lag, <span class="at">y =</span> rr)) <span class="sc">+</span> </span>
+<span id="cb147-3"><a href="generalized-linear-models.html#cb147-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb147-4"><a href="generalized-linear-models.html#cb147-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> low_rr, <span class="at">ymax =</span> high_rr)) <span class="sc">+</span> </span>
+<span id="cb147-5"><a href="generalized-linear-models.html#cb147-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Lag days since exposure&quot;</span>, </span>
+<span id="cb147-6"><a href="generalized-linear-models.html#cb147-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Relative risk of mortality</span><span class="sc">\n</span><span class="st">per degree increase in temperature&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb147-7"><a href="generalized-linear-models.html#cb147-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-90-1.png" width="672" /></p>
+<p>You can also use the <code>dlnm</code> package to fit this model, using the <code>crossbasis</code> function
+to set up the distributed lag basis to include in the regression, and then the <code>crosspred</code>
+function to extract results after fitting the regression model and to plot results.</p>
+<p>First, you’ll again use <code>crossbasis</code> to create the basis, as you did earlier when using this
+package to fit a non-linear function of temperature. You will use the <code>lag</code> argument to say
+the maximum lag you want to include—in this case, seven days (<code>lag = 7</code>). You can use
+the <code>argvar</code> and <code>arglag</code> functions to specify the basis function for the exposure variable
+and the distributed lag component. For right now, we’ll use a very basic linear function for
+the exposure (temperature), using <code>fun = "lin"</code> within the <code>argvar</code> list of arguments.
+To fit a separate coefficient for each lag, we can specify <code>fun = "integer"</code> in the
+<code>arglag</code> list of arguments (later we’ll explore some other functions for the lag component).</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="generalized-linear-models.html#cb148-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dlnm)</span>
+<span id="cb148-2"><a href="generalized-linear-models.html#cb148-2" aria-hidden="true" tabindex="-1"></a>dl_basis <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">7</span>,</span>
+<span id="cb148-3"><a href="generalized-linear-models.html#cb148-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;lin&quot;</span>), </span>
+<span id="cb148-4"><a href="generalized-linear-models.html#cb148-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;integer&quot;</span>))</span></code></pre></div>
+<p>If you take a peak at this crossbasis, you’ll notice that it’s doing something similar to
+what we did when we added columns for lagged temperatures. The first column gives temperature
+on the same day, the second on the previous day (and so is offset one down from the first
+column), and so on. The crossbasis function deals with the missing early dates by setting
+<em>all</em> column values to be missing on those days; in practice, this difference in set up
+won’t create any difference in how the model is fit, as the <code>glm</code> function will by default
+exclude any observations with <em>any</em> columns of missing data.</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="generalized-linear-models.html#cb149-1" aria-hidden="true" tabindex="-1"></a>dl_basis <span class="sc">%&gt;%</span> </span>
+<span id="cb149-2"><a href="generalized-linear-models.html#cb149-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">12</span>)</span></code></pre></div>
+<pre><code>##           v1.l1     v1.l2    v1.l3    v1.l4    v1.l5    v1.l6    v1.l7    v1.l8
+##  [1,]        NA        NA       NA       NA       NA       NA       NA       NA
+##  [2,]        NA        NA       NA       NA       NA       NA       NA       NA
+##  [3,]        NA        NA       NA       NA       NA       NA       NA       NA
+##  [4,]        NA        NA       NA       NA       NA       NA       NA       NA
+##  [5,]        NA        NA       NA       NA       NA       NA       NA       NA
+##  [6,]        NA        NA       NA       NA       NA       NA       NA       NA
+##  [7,]        NA        NA       NA       NA       NA       NA       NA       NA
+##  [8,]  7.958644  6.686216 9.232628 6.867855 5.431046 4.385564 5.547919 3.913589
+##  [9,]  7.268950  7.958644 6.686216 9.232628 6.867855 5.431046 4.385564 5.547919
+## [10,]  9.510644  7.268950 7.958644 6.686216 9.232628 6.867855 5.431046 4.385564
+## [11,] 10.424808  9.510644 7.268950 7.958644 6.686216 9.232628 6.867855 5.431046
+## [12,]  7.368595 10.424808 9.510644 7.268950 7.958644 6.686216 9.232628 6.867855</code></pre>
+<p>We can use this matrix of crossbasis variables now in our regression call:</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="generalized-linear-models.html#cb151-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis <span class="sc">+</span> </span>
+<span id="cb151-2"><a href="generalized-linear-models.html#cb151-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb151-3"><a href="generalized-linear-models.html#cb151-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb151-4"><a href="generalized-linear-models.html#cb151-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>Again, you can pull the regression coefficients directly out of the regression model object
+(and you can see how they’re identical to those from our first distributed lag model):</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="generalized-linear-models.html#cb152-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_2 <span class="sc">%&gt;%</span> </span>
+<span id="cb152-2"><a href="generalized-linear-models.html#cb152-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb152-3"><a href="generalized-linear-models.html#cb152-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(term, <span class="st">&quot;dl_basis&quot;</span>))</span></code></pre></div>
+<pre><code>## # A tibble: 8 x 5
+##   term           estimate std.error statistic  p.value
+##   &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 dl_basisv1.l1  0.00749   0.000592    12.6   2.67e-36
+## 2 dl_basisv1.l2 -0.00255   0.000788    -3.23  1.25e- 3
+## 3 dl_basisv1.l3 -0.00152   0.000797    -1.91  5.68e- 2
+## 4 dl_basisv1.l4 -0.00243   0.000798    -3.05  2.31e- 3
+## 5 dl_basisv1.l5 -0.00106   0.000798    -1.32  1.86e- 1
+## 6 dl_basisv1.l6 -0.000515  0.000797    -0.645 5.19e- 1
+## 7 dl_basisv1.l7 -0.00107   0.000789    -1.36  1.73e- 1
+## 8 dl_basisv1.l8 -0.00209   0.000593    -3.52  4.30e- 4</code></pre>
+<p>You can proceed from here to plot estimates by lag using ggplot, but you can also use
+some of the special functions for plotting in <code>dlnm</code>. We can plot the “slice” of comparing
+the relative risk at 1 degree C (<code>var = 1</code>) (this will give us the one-unit increase,
+because by default the crossbasis set-up with 0 degrees as the baseline, so this is
+one degree above that value).</p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="generalized-linear-models.html#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis, dist_lag_mod_2) <span class="sc">%&gt;%</span> </span>
+<span id="cb154-2"><a href="generalized-linear-models.html#cb154-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">1</span>, <span class="at">ci =</span> <span class="st">&quot;bars&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
+<p>If you look at the correlations between temperature, however, you’ll see they are very
+strongly correlated, which means that we could have some issues with collinearity if we
+use this simpler distributed lag model, with a separate coefficient for each lag:</p>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="generalized-linear-models.html#cb155-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb155-2"><a href="generalized-linear-models.html#cb155-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tmean, tmean_1<span class="sc">:</span>tmean_7) <span class="sc">%&gt;%</span> </span>
+<span id="cb155-3"><a href="generalized-linear-models.html#cb155-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(<span class="at">use =</span> <span class="st">&quot;complete.obs&quot;</span>) </span></code></pre></div>
+<pre><code>##             tmean   tmean_1   tmean_2   tmean_3   tmean_4   tmean_5   tmean_6
+## tmean   1.0000000 0.9431416 0.8845767 0.8462589 0.8215974 0.8031790 0.7891306
+## tmean_1 0.9431416 1.0000000 0.9431447 0.8846236 0.8463419 0.8216464 0.8032469
+## tmean_2 0.8845767 0.9431447 1.0000000 0.9431403 0.8846198 0.8463094 0.8216348
+## tmean_3 0.8462589 0.8846236 0.9431403 1.0000000 0.9431414 0.8846132 0.8463072
+## tmean_4 0.8215974 0.8463419 0.8846198 0.9431414 1.0000000 0.9431482 0.8846132
+## tmean_5 0.8031790 0.8216464 0.8463094 0.8846132 0.9431482 1.0000000 0.9431506
+## tmean_6 0.7891306 0.8032469 0.8216348 0.8463072 0.8846132 0.9431506 1.0000000
+## tmean_7 0.7781337 0.7892093 0.8032205 0.8216271 0.8463046 0.8846283 0.9431482
+##           tmean_7
+## tmean   0.7781337
+## tmean_1 0.7892093
+## tmean_2 0.8032205
+## tmean_3 0.8216271
+## tmean_4 0.8463046
+## tmean_5 0.8846283
+## tmean_6 0.9431482
+## tmean_7 1.0000000</code></pre>
+<p>Next, we’ll explore a model that constrains the lagged effects to follow a smooth
+function, to help avoid this potential instability in the modeling.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Start with the model from the first question, but change it to use a smooth
+function of lag to detect lagged effects, rather than fitting a separate term
+for each lag. Extend the model to look at lagged effects up to a month following
+exposure. What patterns do you see in these lagged effects?</strong></li>
+</ol>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="generalized-linear-models.html#cb157-1" aria-hidden="true" tabindex="-1"></a>dl_basis_2 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">7</span>,</span>
+<span id="cb157-2"><a href="generalized-linear-models.html#cb157-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;lin&quot;</span>), </span>
+<span id="cb157-3"><a href="generalized-linear-models.html#cb157-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="generalized-linear-models.html#cb158-1" aria-hidden="true" tabindex="-1"></a>dl_basis_2 <span class="sc">%&gt;%</span> </span>
+<span id="cb158-2"><a href="generalized-linear-models.html#cb158-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">12</span>)</span></code></pre></div>
+<pre><code>##          v1.l1    v1.l2    v1.l3      v1.l4
+##  [1,]       NA       NA       NA         NA
+##  [2,]       NA       NA       NA         NA
+##  [3,]       NA       NA       NA         NA
+##  [4,]       NA       NA       NA         NA
+##  [5,]       NA       NA       NA         NA
+##  [6,]       NA       NA       NA         NA
+##  [7,]       NA       NA       NA         NA
+##  [8,] 10.53142 5.938107 17.26767 -2.9117904
+##  [9,] 11.46186 7.311815 17.99659 -2.0873124
+## [10,] 10.91751 8.769682 19.69413 -3.2804334
+## [11,] 10.94122 8.867758 22.33138 -2.7169313
+## [12,] 13.00391 8.984807 22.20899 -0.3726342</code></pre>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="generalized-linear-models.html#cb160-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_2 <span class="sc">+</span> </span>
+<span id="cb160-2"><a href="generalized-linear-models.html#cb160-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb160-3"><a href="generalized-linear-models.html#cb160-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb160-4"><a href="generalized-linear-models.html#cb160-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<p>Again, you can plot the results to see the pattern of associations by lag. The plot
+is just visualizing the results of predicting the model to certain values. By default,
+it will predict at each lag; this makes the plot a little “jumpy” if you’re just looking
+at lags for a week or so, so to make it smoother, you might want to ask <code>crosspred</code> to
+predict to a finer resolution along the lag dimension (here, we’re using <code>bylag = 0.2</code>).</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="generalized-linear-models.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis_2, dist_lag_mod_3, <span class="at">at =</span> <span class="dv">1</span>, <span class="at">bylag =</span> <span class="fl">0.2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb161-2"><a href="generalized-linear-models.html#cb161-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
+<p>Extend out to about month after exposure:</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="generalized-linear-models.html#cb162-1" aria-hidden="true" tabindex="-1"></a>dl_basis_3 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
+<span id="cb162-2"><a href="generalized-linear-models.html#cb162-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;lin&quot;</span>), </span>
+<span id="cb162-3"><a href="generalized-linear-models.html#cb162-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">5</span>))</span>
+<span id="cb162-4"><a href="generalized-linear-models.html#cb162-4" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_4 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_3 <span class="sc">+</span> </span>
+<span id="cb162-5"><a href="generalized-linear-models.html#cb162-5" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb162-6"><a href="generalized-linear-models.html#cb162-6" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb162-7"><a href="generalized-linear-models.html#cb162-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
+<span id="cb162-8"><a href="generalized-linear-models.html#cb162-8" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis_3, dist_lag_mod_4, <span class="at">at =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb162-9"><a href="generalized-linear-models.html#cb162-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-101-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Refine your model to fit for a non-linear, rather than linear, function
+of temperature, while also incorporating a function to describe lagged effects up
+to a month following exposure. Based on this model, what does the association
+between temperature and mortality look like at lag 0 days? How about at lag 21 days?
+What does the pattern of lagged effects look like when comparing the relative risk of
+mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
+(7 degrees C)? What about when comparing mortality at a cold temperature
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the
+cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
+milder temperature (7 degrees C), once you incorporated all lagged effects
+up to a month after exposure?</strong></li>
+</ol>
+<p>Extend to include non-linear function of temperature:</p>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="generalized-linear-models.html#cb163-1" aria-hidden="true" tabindex="-1"></a>dl_basis_4 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
+<span id="cb163-2"><a href="generalized-linear-models.html#cb163-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
+<span id="cb163-3"><a href="generalized-linear-models.html#cb163-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">5</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="generalized-linear-models.html#cb164-1" aria-hidden="true" tabindex="-1"></a>dl_basis_4 <span class="sc">%&gt;%</span> </span>
+<span id="cb164-2"><a href="generalized-linear-models.html#cb164-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb164-3"><a href="generalized-linear-models.html#cb164-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">28</span><span class="sc">:</span><span class="dv">38</span>)</span></code></pre></div>
+<pre><code>##       v1.l1    v1.l2    v1.l3    v1.l4       v1.l5      v2.l1      v2.l2
+## 1        NA       NA       NA       NA          NA         NA         NA
+## 2        NA       NA       NA       NA          NA         NA         NA
+## 3        NA       NA       NA       NA          NA         NA         NA
+## 4  2.761039 3.997877 2.270266 3.233986 -0.57618666 -0.6476740 -0.9204305
+## 5  2.668897 4.023218 2.331192 3.379841 -0.44045281 -0.6808901 -0.9105162
+## 6  2.597078 4.038829 2.390537 3.454790 -0.33703666 -0.7105258 -0.9052107
+## 7  2.564832 4.043947 2.422375 3.492696 -0.08551391 -0.7326065 -0.9045334
+## 8  2.491398 4.033905 2.404209 3.593013  0.08504674 -0.7635506 -0.9097586
+## 9  2.342457 4.003091 2.320497 3.862538  0.03369753 -0.8334343 -0.9226668
+## 10 2.282906 3.949254 2.322582 3.954232 -0.17572292 -0.8553998 -0.9441819
+## 11 2.259979 3.877105 2.258828 4.202319 -0.19706918 -0.8828778 -0.9729276
+##         v2.l3      v2.l4        v2.l5    v3.l1    v3.l2    v3.l3    v3.l4
+## 1          NA         NA           NA       NA       NA       NA       NA
+## 2          NA         NA           NA       NA       NA       NA       NA
+## 3          NA         NA           NA       NA       NA       NA       NA
+## 4  -0.5810436 -1.1792423 -0.103868127 1.675142 2.374818 1.442488 2.821684
+## 5  -0.5532776 -1.1558093 -0.079483003 1.733576 2.358711 1.396614 2.765277
+## 6  -0.5285540 -1.1403549 -0.049230096 1.781872 2.349637 1.356949 2.729928
+## 7  -0.5085435 -1.1357676  0.005314667 1.811710 2.347824 1.326218 2.722338
+## 8  -0.5025200 -1.1122547  0.050393725 1.862702 2.355930 1.325598 2.672637
+## 9  -0.5327496 -0.9920020  0.015000395 1.973101 2.377416 1.380339 2.479005
+## 10 -0.5286118 -0.9552027 -0.046539254 2.016020 2.413900 1.377029 2.414106
+## 11 -0.5615277 -0.8240561 -0.082721353 2.043549 2.462664 1.424478 2.227474
+##          v3.l5      v4.l1     v4.l2      v4.l3     v4.l4        v4.l5
+## 1           NA         NA        NA         NA        NA           NA
+## 2           NA         NA        NA         NA        NA           NA
+## 3           NA         NA        NA         NA        NA           NA
+## 4   0.21289849 -0.9586487 -1.359059 -0.8255059 -1.614791 -0.121837367
+## 5   0.16334484 -0.9920895 -1.349841 -0.7992530 -1.582510 -0.093478849
+## 6   0.10071654 -1.0197280 -1.344648 -0.7765534 -1.562281 -0.057637978
+## 7  -0.01746731 -1.0368037 -1.343611 -0.7589669 -1.557937  0.009996179
+## 8  -0.11182911 -1.0659854 -1.348250 -0.7586120 -1.529495  0.063997470
+## 9  -0.06963965 -1.1291648 -1.360546 -0.7899392 -1.418683  0.039853323
+## 10  0.06149683 -1.1537262 -1.381425 -0.7880451 -1.381542 -0.035193354
+## 11  0.08860827 -1.1694805 -1.409331 -0.8151992 -1.274737 -0.050708665</code></pre>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="generalized-linear-models.html#cb166-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_4 <span class="sc">+</span> </span>
+<span id="cb166-2"><a href="generalized-linear-models.html#cb166-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb166-3"><a href="generalized-linear-models.html#cb166-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb166-4"><a href="generalized-linear-models.html#cb166-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
+<span id="cb166-5"><a href="generalized-linear-models.html#cb166-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-6"><a href="generalized-linear-models.html#cb166-6" aria-hidden="true" tabindex="-1"></a>cp_dl <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(dl_basis_4, dist_lag_mod_5, <span class="at">cen =</span> <span class="dv">7</span>)</span>
+<span id="cb166-7"><a href="generalized-linear-models.html#cb166-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-8"><a href="generalized-linear-models.html#cb166-8" aria-hidden="true" tabindex="-1"></a>cp_dl <span class="sc">%&gt;%</span> </span>
+<span id="cb166-9"><a href="generalized-linear-models.html#cb166-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;matRRfit&quot;</span>)</span></code></pre></div>
+<pre><code>##           lag0      lag1      lag2      lag3      lag4      lag5      lag6
+## -5.5 1.0562560 1.0529660 1.0497248 1.0465704 1.0435402 1.0406715 1.0380011
+## -5   1.0528499 1.0498015 1.0467970 1.0438712 1.0410584 1.0383925 1.0359071
+## -4.5 1.0494653 1.0466560 1.0438860 1.0411867 1.0385892 1.0361243 1.0338226
+## -4   1.0461126 1.0435390 1.0410002 1.0385244 1.0361395 1.0338731 1.0317527
+## -3.5 1.0428019 1.0404597 1.0381479 1.0358916 1.0337156 1.0316445 1.0297027
+## -3   1.0395434 1.0374272 1.0353373 1.0332958 1.0313243 1.0294444 1.0276776
+## -2.5 1.0363469 1.0344505 1.0325767 1.0307443 1.0289720 1.0272786 1.0256825
+## -2   1.0332223 1.0315387 1.0298741 1.0282442 1.0266652 1.0251527 1.0237225
+## -1.5 1.0301792 1.0287006 1.0272374 1.0258028 1.0244101 1.0230723 1.0218025
+## -1   1.0272274 1.0259449 1.0246746 1.0234272 1.0222132 1.0210431 1.0199274
+## -0.5 1.0243763 1.0232803 1.0221936 1.0211243 1.0200807 1.0190707 1.0181023
+## 0    1.0216353 1.0207153 1.0198021 1.0189013 1.0180188 1.0171605 1.0163320
+## 0.5  1.0190138 1.0182586 1.0175078 1.0167650 1.0160338 1.0153181 1.0146214
+## 1    1.0165210 1.0159187 1.0153185 1.0147223 1.0141318 1.0135489 1.0129753
+## 1.5  1.0141662 1.0137038 1.0132418 1.0127801 1.0123189 1.0118584 1.0113986
+## 2    1.0119587 1.0116226 1.0112852 1.0109452 1.0106013 1.0102520 1.0098960
+## 2.5  1.0099074 1.0096832 1.0094564 1.0092245 1.0089849 1.0087351 1.0084724
+## 3    1.0080217 1.0078941 1.0077629 1.0076248 1.0074760 1.0073131 1.0071325
+## 3.5  1.0063106 1.0062636 1.0062124 1.0061528 1.0060805 1.0059913 1.0058810
+## 4    1.0047833 1.0048001 1.0048123 1.0048153 1.0048045 1.0047752 1.0047228
+## 4.5  1.0034490 1.0035120 1.0035703 1.0036192 1.0036541 1.0036701 1.0036627
+## 5    1.0023170 1.0024077 1.0024940 1.0025714 1.0026353 1.0026815 1.0027054
+## 5.5  1.0013966 1.0014958 1.0015910 1.0016785 1.0017544 1.0018147 1.0018556
+## 6    1.0006973 1.0007847 1.0008692 1.0009477 1.0010174 1.0010752 1.0011182
+## 6.5  1.0002285 1.0002832 1.0003362 1.0003859 1.0004305 1.0004685 1.0004981
+## 7    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000
+## 7.5  1.0000216 0.9999440 0.9998686 0.9997972 0.9997321 0.9996753 0.9996289
+## 8    1.0002841 1.0001072 0.9999349 0.9997716 0.9996220 0.9994905 0.9993816
+## 8.5  1.0007143 1.0004243 1.0001416 0.9998735 0.9996272 0.9994098 0.9992287
+## 9    1.0012257 1.0008183 1.0004211 1.0000441 0.9996974 0.9993910 0.9991348
+## 9.5  1.0017315 1.0012119 1.0007054 1.0002247 0.9997825 0.9993917 0.9990649
+## 10   1.0021451 1.0015280 1.0009267 1.0003563 0.9998323 0.9993697 0.9989839
+## 10.5 1.0023792 1.0016891 1.0010170 1.0003803 0.9997964 0.9992828 0.9988567
+## 11   1.0023470 1.0016179 1.0009084 1.0002376 0.9996247 0.9990886 0.9986482
+## 11.5 1.0019617 1.0012371 1.0005331 0.9998697 0.9992670 0.9987450 0.9983234
+## 12   1.0011781 1.0005056 0.9998538 0.9992431 0.9986937 0.9982257 0.9978594
+## 12.5 1.0000856 0.9994987 0.9989323 0.9984064 0.9979410 0.9975562 0.9972719
+## 13   0.9988008 0.9983154 0.9978501 0.9974246 0.9970588 0.9967723 0.9965850
+## 13.5 0.9974399 0.9970542 0.9966886 0.9963627 0.9960965 0.9959098 0.9958223
+## 14   0.9961184 0.9958133 0.9955288 0.9952855 0.9951038 0.9950043 0.9950075
+## 14.5 0.9949512 0.9946901 0.9944514 0.9942572 0.9941299 0.9940915 0.9941645
+## 15   0.9940528 0.9937820 0.9935367 0.9933422 0.9932238 0.9932068 0.9933167
+## 15.5 0.9935374 0.9931859 0.9928648 0.9926043 0.9924344 0.9923855 0.9924877
+## 16   0.9935193 0.9929988 0.9925157 0.9921073 0.9918106 0.9916628 0.9917009
+## 16.5 0.9940799 0.9932894 0.9925462 0.9918967 0.9913872 0.9910640 0.9909734
+## 17   0.9952121 0.9940521 0.9929517 0.9919691 0.9911620 0.9905882 0.9903055
+## 17.5 0.9968953 0.9952691 0.9937179 0.9923134 0.9911272 0.9902306 0.9896947
+## 18   0.9991095 0.9969234 0.9948306 0.9929187 0.9912749 0.9899860 0.9891385
+## 18.5 1.0018357 0.9989985 0.9962761 0.9937742 0.9915974 0.9898496 0.9886346
+## 19   1.0050550 1.0014781 0.9980411 0.9948694 0.9920868 0.9898164 0.9881806
+## 19.5 1.0087493 1.0043464 1.0001122 0.9961937 0.9927358 0.9898817 0.9877739
+## 20   1.0129007 1.0075877 1.0024764 0.9977369 0.9935366 0.9900405 0.9874124
+## 20.5 1.0174917 1.0111866 1.0051206 0.9994887 0.9944819 0.9902880 0.9870935
+## 21   1.0225048 1.0151279 1.0080321 1.0014389 0.9955641 0.9906196 0.9868149
+## 21.5 1.0279228 1.0193962 1.0111980 1.0035773 0.9967758 0.9910303 0.9865743
+## 22   1.0337282 1.0239763 1.0146055 1.0058937 0.9981096 0.9915154 0.9863693
+## 22.5 1.0399038 1.0288530 1.0182418 1.0083780 0.9995581 0.9920703 0.9861976
+## 23   1.0464319 1.0340108 1.0220939 1.0110199 1.0011139 0.9926900 0.9860567
+## 23.5 1.0532949 1.0394343 1.0261489 1.0138094 1.0027694 0.9933700 0.9859445
+## 24   1.0604747 1.0451076 1.0303936 1.0167359 1.0045174 0.9941054 0.9858584
+## 24.5 1.0679528 1.0510149 1.0348150 1.0197893 1.0063502 0.9948915 0.9857963
+## 25   1.0757105 1.0571400 1.0393994 1.0229590 1.0082604 0.9957235 0.9857558
+## 25.5 1.0837285 1.0634661 1.0441334 1.0262345 1.0102404 0.9965967 0.9857345
+## 26   1.0919869 1.0699765 1.0490031 1.0296051 1.0122825 0.9975063 0.9857302
+## 26.5 1.1004653 1.0766538 1.0539944 1.0330601 1.0143793 0.9984474 0.9857404
+## 27   1.1091426 1.0834803 1.0590932 1.0365884 1.0165228 0.9994153 0.9857630
+## 27.5 1.1179972 1.0904378 1.0642847 1.0401791 1.0187054 1.0004052 0.9857955
+## 28   1.1270065 1.0975077 1.0695541 1.0438210 1.0209192 1.0014121 0.9858356
+## 28.5 1.1361475 1.1046709 1.0748864 1.0475026 1.0231563 1.0024313 0.9858810
+## 29   1.1453959 1.1119076 1.0802659 1.0512124 1.0254087 1.0034579 0.9859295
+##           lag7      lag8      lag9     lag10     lag11     lag12     lag13
+## -5.5 1.0355654 1.0333990 1.0314958 1.0298094 1.0282922 1.0268971 1.0255771
+## -5   1.0336357 1.0316099 1.0298243 1.0282365 1.0268031 1.0254809 1.0242272
+## -4.5 1.0317142 1.0298281 1.0281593 1.0266695 1.0253194 1.0240699 1.0228821
+## -4   1.0298056 1.0280577 1.0265045 1.0251118 1.0238444 1.0226670 1.0215448
+## -3.5 1.0279144 1.0263027 1.0248637 1.0235670 1.0223813 1.0212755 1.0202184
+## -3   1.0260451 1.0245672 1.0232405 1.0220385 1.0209335 1.0198983 1.0189056
+## -2.5 1.0242022 1.0228552 1.0216387 1.0205295 1.0195041 1.0185386 1.0176096
+## -2   1.0223902 1.0211708 1.0200618 1.0190436 1.0180962 1.0171994 1.0163332
+## -1.5 1.0206135 1.0195179 1.0185134 1.0175841 1.0167131 1.0158837 1.0150794
+## -1   1.0188766 1.0179004 1.0169973 1.0161543 1.0153579 1.0145946 1.0138511
+## -0.5 1.0171837 1.0163223 1.0155169 1.0147576 1.0140337 1.0133350 1.0126512
+## 0    1.0155392 1.0147875 1.0140759 1.0133972 1.0127437 1.0121080 1.0114825
+## 0.5  1.0139475 1.0132999 1.0126778 1.0120765 1.0114911 1.0109165 1.0103480
+## 1    1.0124129 1.0118633 1.0113261 1.0107987 1.0102788 1.0097635 1.0092504
+## 1.5  1.0109396 1.0104816 1.0100243 1.0095672 1.0091099 1.0086519 1.0081927
+## 2    1.0095320 1.0091587 1.0087760 1.0083852 1.0079877 1.0075848 1.0071778
+## 2.5  1.0081943 1.0078983 1.0075846 1.0072559 1.0069151 1.0065649 1.0062083
+## 3    1.0069307 1.0067043 1.0064537 1.0061826 1.0058952 1.0055954 1.0052873
+## 3.5  1.0057454 1.0055805 1.0053867 1.0051685 1.0049310 1.0046790 1.0044174
+## 4    1.0046428 1.0045308 1.0043871 1.0042169 1.0040256 1.0038188 1.0036016
+## 4.5  1.0036271 1.0035588 1.0034583 1.0033310 1.0031822 1.0030176 1.0028427
+## 5    1.0027024 1.0026685 1.0026040 1.0025139 1.0024036 1.0022784 1.0021434
+## 5.5  1.0018731 1.0018637 1.0018275 1.0017691 1.0016931 1.0016041 1.0015067
+## 6    1.0011434 1.0011481 1.0011323 1.0010997 1.0010536 1.0009976 1.0009353
+## 6.5  1.0005176 1.0005256 1.0005220 1.0005089 1.0004882 1.0004620 1.0004321
+## 7    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000
+## 7.5  0.9995949 0.9995753 0.9995699 0.9995763 0.9995921 0.9996147 0.9996418
+## 8    0.9993000 0.9992497 0.9992305 0.9992371 0.9992641 0.9993060 0.9993574
+## 8.5  0.9990909 0.9990034 0.9989655 0.9989686 0.9990042 0.9990633 0.9991374
+## 9    0.9989388 0.9988126 0.9987550 0.9987542 0.9987980 0.9988741 0.9989703
+## 9.5  0.9988148 0.9986535 0.9985795 0.9985774 0.9986315 0.9987258 0.9988446
+## 10   0.9986899 0.9985024 0.9984192 0.9984217 0.9984903 0.9986058 0.9987487
+## 10.5 0.9985355 0.9983357 0.9982547 0.9982704 0.9983603 0.9985015 0.9986714
+## 11   0.9983225 0.9981297 0.9980662 0.9981073 0.9982272 0.9984003 0.9986009
+## 11.5 0.9980223 0.9978606 0.9978341 0.9979156 0.9980769 0.9982898 0.9985261
+## 12   0.9976148 0.9975111 0.9975434 0.9976823 0.9978978 0.9981596 0.9984374
+## 12.5 0.9971082 0.9970839 0.9971930 0.9974045 0.9976864 0.9980066 0.9983330
+## 13   0.9965165 0.9965856 0.9967849 0.9970816 0.9974411 0.9978295 0.9982122
+## 13.5 0.9958538 0.9960230 0.9963213 0.9967128 0.9971602 0.9976265 0.9980743
+## 14   0.9951339 0.9954029 0.9958040 0.9962975 0.9968420 0.9973963 0.9979188
+## 14.5 0.9943710 0.9947320 0.9952351 0.9958351 0.9964848 0.9971372 0.9977450
+## 15   0.9935788 0.9940170 0.9946167 0.9953249 0.9960869 0.9968478 0.9975523
+## 15.5 0.9927713 0.9932647 0.9939507 0.9947664 0.9956467 0.9965265 0.9973401
+## 16   0.9919622 0.9924817 0.9932391 0.9941588 0.9951626 0.9961719 0.9971079
+## 16.5 0.9911620 0.9916734 0.9924840 0.9935023 0.9946336 0.9957831 0.9968552
+## 17   0.9903717 0.9908414 0.9916871 0.9927984 0.9940613 0.9953611 0.9965828
+## 17.5 0.9895909 0.9899868 0.9908502 0.9920493 0.9934474 0.9949075 0.9962915
+## 18   0.9888192 0.9891104 0.9899751 0.9912569 0.9927938 0.9944234 0.9959821
+## 18.5 0.9880564 0.9882134 0.9890636 0.9904231 0.9921022 0.9939103 0.9956553
+## 19   0.9873018 0.9872968 0.9881173 0.9895500 0.9913745 0.9933695 0.9953120
+## 19.5 0.9865553 0.9863616 0.9871382 0.9886396 0.9906124 0.9928024 0.9949530
+## 20   0.9858164 0.9854088 0.9861279 0.9876937 0.9898178 0.9922103 0.9945791
+## 20.5 0.9850847 0.9844394 0.9850882 0.9867145 0.9889924 0.9915946 0.9941910
+## 21   0.9843599 0.9834545 0.9840209 0.9857039 0.9881380 0.9909566 0.9937896
+## 21.5 0.9836415 0.9824549 0.9829278 0.9846639 0.9872565 0.9902977 0.9933756
+## 22   0.9829292 0.9814418 0.9818105 0.9835963 0.9863496 0.9896193 0.9929499
+## 22.5 0.9822227 0.9804161 0.9806708 0.9825032 0.9854191 0.9889226 0.9925133
+## 23   0.9815214 0.9793789 0.9795104 0.9813866 0.9844667 0.9882091 0.9920664
+## 23.5 0.9808252 0.9783310 0.9783312 0.9802484 0.9834943 0.9874801 0.9916103
+## 24   0.9801335 0.9772735 0.9771347 0.9790904 0.9825036 0.9867369 0.9911455
+## 24.5 0.9794461 0.9762075 0.9759228 0.9779147 0.9814964 0.9859809 0.9906730
+## 25   0.9787625 0.9751337 0.9746970 0.9767232 0.9804744 0.9852133 0.9901934
+## 25.5 0.9780823 0.9740533 0.9734592 0.9755178 0.9794393 0.9844356 0.9897077
+## 26   0.9774053 0.9729672 0.9722110 0.9743004 0.9783930 0.9836490 0.9892165
+## 26.5 0.9767310 0.9718764 0.9709541 0.9730728 0.9773372 0.9828548 0.9887207
+## 27   0.9760592 0.9707818 0.9696902 0.9718371 0.9762735 0.9820545 0.9882211
+## 27.5 0.9753893 0.9696844 0.9684209 0.9705950 0.9752038 0.9812492 0.9877184
+## 28   0.9747210 0.9685852 0.9671479 0.9693485 0.9741296 0.9804403 0.9872134
+## 28.5 0.9740541 0.9674850 0.9658728 0.9680993 0.9730528 0.9796292 0.9867068
+## 29   0.9733880 0.9663849 0.9645974 0.9668494 0.9719750 0.9788170 0.9861996
+##          lag14     lag15     lag16     lag17     lag18     lag19     lag20
+## -5.5 1.0242855 1.0229759 1.0216148 1.0202197 1.0188205 1.0174469 1.0161287
+## -5   1.0229992 1.0217545 1.0204626 1.0191401 1.0178151 1.0165156 1.0152694
+## -4.5 1.0217174 1.0205374 1.0193144 1.0180642 1.0168131 1.0155873 1.0144129
+## -4   1.0204431 1.0193274 1.0181729 1.0169945 1.0158168 1.0146642 1.0135611
+## -3.5 1.0191792 1.0181272 1.0170406 1.0159335 1.0148286 1.0137486 1.0127160
+## -3   1.0179284 1.0169396 1.0159203 1.0148837 1.0138507 1.0128424 1.0118797
+## -2.5 1.0166937 1.0157673 1.0148145 1.0138475 1.0128856 1.0119480 1.0110541
+## -2   1.0154778 1.0146132 1.0137259 1.0128275 1.0119354 1.0110675 1.0102412
+## -1.5 1.0142837 1.0134799 1.0126571 1.0118260 1.0110026 1.0102029 1.0094429
+## -1   1.0131141 1.0123701 1.0116107 1.0108457 1.0100895 1.0093565 1.0086612
+## -0.5 1.0119718 1.0112866 1.0105893 1.0098888 1.0091982 1.0085303 1.0078981
+## 0    1.0108597 1.0102321 1.0095953 1.0089579 1.0083311 1.0077265 1.0071556
+## 0.5  1.0097805 1.0092091 1.0086315 1.0080553 1.0074905 1.0069472 1.0064355
+## 1    1.0087369 1.0082205 1.0077004 1.0071835 1.0066786 1.0061945 1.0057398
+## 1.5  1.0077318 1.0072688 1.0068044 1.0063449 1.0058978 1.0054705 1.0050705
+## 2    1.0067680 1.0063568 1.0059463 1.0055420 1.0051502 1.0047773 1.0044295
+## 2.5  1.0058481 1.0054870 1.0051284 1.0047770 1.0044381 1.0041169 1.0038187
+## 3    1.0049749 1.0046622 1.0043534 1.0040525 1.0037639 1.0034916 1.0032400
+## 3.5  1.0041511 1.0038850 1.0036238 1.0033708 1.0031296 1.0029034 1.0026954
+## 4    1.0033796 1.0031581 1.0029420 1.0027344 1.0025377 1.0023543 1.0021869
+## 4.5  1.0026630 1.0024841 1.0023108 1.0021456 1.0019902 1.0018465 1.0017163
+## 5    1.0020041 1.0018655 1.0017325 1.0016068 1.0014896 1.0013821 1.0012856
+## 5.5  1.0014055 1.0013052 1.0012097 1.0011204 1.0010380 1.0009632 1.0008966
+## 6    1.0008702 1.0008058 1.0007450 1.0006889 1.0006377 1.0005917 1.0005514
+## 6.5  1.0004008 1.0003698 1.0003409 1.0003146 1.0002909 1.0002700 1.0002519
+## 7    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000
+## 7.5  0.9996707 0.9996990 0.9997248 0.9997475 0.9997672 0.9997839 0.9997976
+## 8    0.9994129 0.9994670 0.9995153 0.9995570 0.9995923 0.9996215 0.9996446
+## 8.5  0.9992177 0.9992954 0.9993634 0.9994206 0.9994677 0.9995052 0.9995337
+## 9    0.9990743 0.9991738 0.9992589 0.9993284 0.9993837 0.9994259 0.9994562
+## 9.5  0.9989719 0.9990920 0.9991919 0.9992708 0.9993309 0.9993743 0.9994032
+## 10   0.9988998 0.9990395 0.9991524 0.9992380 0.9992998 0.9993414 0.9993661
+## 10.5 0.9988472 0.9990062 0.9991304 0.9992202 0.9992810 0.9993179 0.9993362
+## 11   0.9988033 0.9989817 0.9991159 0.9992078 0.9992650 0.9992947 0.9993046
+## 11.5 0.9987574 0.9989557 0.9990990 0.9991911 0.9992422 0.9992627 0.9992627
+## 12   0.9987011 0.9989204 0.9990721 0.9991627 0.9992057 0.9992148 0.9992035
+## 12.5 0.9986334 0.9988757 0.9990359 0.9991234 0.9991558 0.9991509 0.9991264
+## 13   0.9985550 0.9988234 0.9989926 0.9990754 0.9990945 0.9990724 0.9990317
+## 13.5 0.9984664 0.9987652 0.9989444 0.9990212 0.9990239 0.9989806 0.9989198
+## 14   0.9983681 0.9987027 0.9988936 0.9989630 0.9989458 0.9988769 0.9987911
+## 14.5 0.9982609 0.9986376 0.9988425 0.9989032 0.9988623 0.9987624 0.9986462
+## 15   0.9981454 0.9985716 0.9987933 0.9988441 0.9987754 0.9986387 0.9984854
+## 15.5 0.9980220 0.9985063 0.9987482 0.9987880 0.9986871 0.9985069 0.9983091
+## 16   0.9978915 0.9984434 0.9987095 0.9987372 0.9985993 0.9983685 0.9981178
+## 16.5 0.9977543 0.9983841 0.9986788 0.9986935 0.9985135 0.9982244 0.9979119
+## 17   0.9976107 0.9983285 0.9986561 0.9986567 0.9984298 0.9980751 0.9976920
+## 17.5 0.9974609 0.9982765 0.9986411 0.9986267 0.9983483 0.9979206 0.9974586
+## 18   0.9973053 0.9982278 0.9986333 0.9986032 0.9982687 0.9977613 0.9972124
+## 18.5 0.9971441 0.9981824 0.9986326 0.9985858 0.9981910 0.9975973 0.9969538
+## 19   0.9969776 0.9981401 0.9986386 0.9985744 0.9981151 0.9974289 0.9966835
+## 19.5 0.9968059 0.9981007 0.9986510 0.9985686 0.9980410 0.9972563 0.9964020
+## 20   0.9966294 0.9980642 0.9986694 0.9985681 0.9979685 0.9970796 0.9961099
+## 20.5 0.9964483 0.9980303 0.9986937 0.9985727 0.9978976 0.9968991 0.9958077
+## 21   0.9962629 0.9979989 0.9987233 0.9985821 0.9978281 0.9967150 0.9954960
+## 21.5 0.9960734 0.9979699 0.9987581 0.9985960 0.9977600 0.9965276 0.9951754
+## 22   0.9958800 0.9979431 0.9987977 0.9986142 0.9976933 0.9963369 0.9948464
+## 22.5 0.9956831 0.9979184 0.9988418 0.9986363 0.9976277 0.9961433 0.9945096
+## 23   0.9954829 0.9978956 0.9988901 0.9986621 0.9975633 0.9959470 0.9941656
+## 23.5 0.9952796 0.9978746 0.9989423 0.9986913 0.9974999 0.9957481 0.9938149
+## 24   0.9950735 0.9978552 0.9989981 0.9987237 0.9974375 0.9955469 0.9934580
+## 24.5 0.9948649 0.9978374 0.9990570 0.9987589 0.9973759 0.9953436 0.9930956
+## 25   0.9946539 0.9978209 0.9991189 0.9987967 0.9973152 0.9951383 0.9927282
+## 25.5 0.9944409 0.9978056 0.9991835 0.9988367 0.9972552 0.9949314 0.9923563
+## 26   0.9942261 0.9977913 0.9992503 0.9988788 0.9971957 0.9947230 0.9919806
+## 26.5 0.9940098 0.9977780 0.9993191 0.9989227 0.9971369 0.9945133 0.9916015
+## 27   0.9937922 0.9977654 0.9993896 0.9989680 0.9970784 0.9943026 0.9912196
+## 27.5 0.9935736 0.9977535 0.9994614 0.9990145 0.9970204 0.9940910 0.9908356
+## 28   0.9933542 0.9977420 0.9995343 0.9990620 0.9969626 0.9938787 0.9904498
+## 28.5 0.9931342 0.9977309 0.9996079 0.9991100 0.9969050 0.9936661 0.9900630
+## 29   0.9929140 0.9977199 0.9996819 0.9991585 0.9968475 0.9934532 0.9896756
+##          lag21     lag22     lag23     lag24     lag25     lag26     lag27
+## -5.5 1.0148952 1.0137760 1.0127991 1.0119686 1.0112642 1.0106648 1.0101492
+## -5   1.0141043 1.0130479 1.0121267 1.0113444 1.0106818 1.0101188 1.0096354
+## -4.5 1.0133158 1.0123220 1.0114563 1.0107220 1.0101010 1.0095742 1.0091229
+## -4   1.0125316 1.0115999 1.0107893 1.0101027 1.0095230 1.0090322 1.0086126
+## -3.5 1.0117535 1.0108834 1.0101273 1.0094879 1.0089490 1.0084939 1.0081057
+## -3   1.0109833 1.0101740 1.0094718 1.0088789 1.0083804 1.0079603 1.0076031
+## -2.5 1.0102229 1.0094735 1.0088242 1.0082772 1.0078182 1.0074327 1.0071058
+## -2   1.0094740 1.0087834 1.0081861 1.0076840 1.0072639 1.0069121 1.0066149
+## -1.5 1.0087384 1.0081053 1.0075589 1.0071007 1.0067185 1.0063996 1.0061313
+## -1   1.0080180 1.0074410 1.0069442 1.0065287 1.0061833 1.0058963 1.0056560
+## -0.5 1.0073145 1.0067921 1.0063434 1.0059693 1.0056596 1.0054034 1.0051901
+## 0    1.0066296 1.0061601 1.0057579 1.0054238 1.0051485 1.0049220 1.0047346
+## 0.5  1.0059653 1.0055467 1.0051894 1.0048937 1.0046512 1.0044531 1.0042904
+## 1    1.0053233 1.0049536 1.0046391 1.0043802 1.0041691 1.0039978 1.0038585
+## 1.5  1.0047053 1.0043823 1.0041087 1.0038846 1.0037032 1.0035573 1.0034399
+## 2    1.0041131 1.0038344 1.0035995 1.0034083 1.0032548 1.0031327 1.0030357
+## 2.5  1.0035485 1.0033116 1.0031131 1.0029527 1.0028252 1.0027251 1.0026469
+## 3    1.0030132 1.0028155 1.0026509 1.0025190 1.0024155 1.0023355 1.0022743
+## 3.5  1.0025091 1.0023477 1.0022143 1.0021087 1.0020269 1.0019650 1.0019190
+## 4    1.0020379 1.0019097 1.0018049 1.0017229 1.0016606 1.0016148 1.0015821
+## 4.5  1.0016013 1.0015033 1.0014241 1.0013631 1.0013179 1.0012859 1.0012644
+## 5    1.0012011 1.0011300 1.0010733 1.0010306 1.0010000 1.0009795 1.0009670
+## 5.5  1.0008391 1.0007914 1.0007540 1.0007267 1.0007080 1.0006966 1.0006909
+## 6    1.0005171 1.0004891 1.0004677 1.0004527 1.0004432 1.0004383 1.0004370
+## 6.5  1.0002368 1.0002248 1.0002159 1.0002101 1.0002068 1.0002057 1.0002064
+## 7    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000
+## 7.5  0.9998085 0.9998164 0.9998215 0.9998239 0.9998240 0.9998222 0.9998189
+## 8    0.9996620 0.9996738 0.9996803 0.9996818 0.9996791 0.9996729 0.9996639
+## 8.5  0.9995539 0.9995662 0.9995712 0.9995698 0.9995627 0.9995511 0.9995357
+## 9    0.9994758 0.9994860 0.9994880 0.9994829 0.9994716 0.9994553 0.9994349
+## 9.5  0.9994198 0.9994262 0.9994245 0.9994163 0.9994026 0.9993842 0.9993622
+## 10   0.9993776 0.9993792 0.9993744 0.9993652 0.9993523 0.9993364 0.9993180
+## 10.5 0.9993410 0.9993377 0.9993314 0.9993247 0.9993177 0.9993105 0.9993031
+## 11   0.9993020 0.9992945 0.9992894 0.9992899 0.9992954 0.9993051 0.9993181
+## 11.5 0.9992524 0.9992422 0.9992420 0.9992560 0.9992822 0.9993188 0.9993635
+## 12   0.9991856 0.9991746 0.9991839 0.9992183 0.9992747 0.9993493 0.9994385
+## 12.5 0.9991000 0.9990893 0.9991116 0.9991729 0.9992680 0.9993914 0.9995374
+## 13   0.9989948 0.9989844 0.9990223 0.9991158 0.9992575 0.9994394 0.9996535
+## 13.5 0.9988695 0.9988582 0.9989131 0.9990431 0.9992382 0.9994875 0.9997802
+## 14   0.9987236 0.9987090 0.9987814 0.9989511 0.9992053 0.9995298 0.9999107
+## 14.5 0.9985562 0.9985351 0.9986241 0.9988359 0.9991539 0.9995606 1.0000385
+## 15   0.9983669 0.9983347 0.9984386 0.9986935 0.9990792 0.9995742 1.0001567
+## 15.5 0.9981550 0.9981060 0.9982219 0.9985201 0.9989764 0.9995646 1.0002587
+## 16   0.9979199 0.9978475 0.9979712 0.9983119 0.9988406 0.9995262 1.0003378
+## 16.5 0.9976613 0.9975580 0.9976849 0.9980663 0.9986685 0.9994549 1.0003892
+## 17   0.9973800 0.9972385 0.9973637 0.9977843 0.9984608 0.9993512 1.0004133
+## 17.5 0.9970770 0.9968901 0.9970092 0.9974672 0.9982191 0.9992164 1.0004109
+## 18   0.9967531 0.9965142 0.9966228 0.9971167 0.9979446 0.9990518 1.0003834
+## 18.5 0.9964092 0.9961119 0.9962058 0.9967340 0.9976389 0.9988587 1.0003316
+## 19   0.9960464 0.9956845 0.9957597 0.9963209 0.9973034 0.9986384 1.0002568
+## 19.5 0.9956655 0.9952331 0.9952859 0.9958786 0.9969396 0.9983922 1.0001599
+## 20   0.9952673 0.9947590 0.9947859 0.9954088 0.9965488 0.9981214 1.0000422
+## 20.5 0.9948529 0.9942634 0.9942609 0.9949128 0.9961324 0.9978272 0.9999046
+## 21   0.9944232 0.9937476 0.9937125 0.9943922 0.9956920 0.9975111 0.9997484
+## 21.5 0.9939791 0.9932127 0.9931421 0.9938484 0.9952290 0.9971742 0.9995745
+## 22   0.9935214 0.9926600 0.9925510 0.9932829 0.9947448 0.9968179 0.9993840
+## 22.5 0.9930512 0.9920906 0.9919406 0.9926972 0.9942408 0.9964435 0.9991782
+## 23   0.9925692 0.9915059 0.9913125 0.9920928 0.9937184 0.9960523 0.9989580
+## 23.5 0.9920765 0.9909070 0.9906679 0.9914711 0.9931791 0.9956456 0.9987245
+## 24   0.9915740 0.9902950 0.9900083 0.9908336 0.9926244 0.9952246 0.9984788
+## 24.5 0.9910625 0.9896713 0.9893351 0.9901817 0.9920555 0.9947907 0.9982221
+## 25   0.9905430 0.9890370 0.9886497 0.9895170 0.9914741 0.9943452 0.9979554
+## 25.5 0.9900163 0.9883934 0.9879534 0.9888409 0.9908814 0.9938893 0.9976799
+## 26   0.9894834 0.9877415 0.9872477 0.9881548 0.9902789 0.9934243 0.9973965
+## 26.5 0.9889452 0.9870827 0.9865339 0.9874602 0.9896680 0.9929516 0.9971064
+## 27   0.9884026 0.9864181 0.9858134 0.9867585 0.9890501 0.9924723 0.9968106
+## 27.5 0.9878564 0.9857489 0.9850876 0.9860512 0.9884266 0.9919878 0.9965104
+## 28   0.9873076 0.9850763 0.9843579 0.9853398 0.9877990 0.9914994 0.9962066
+## 28.5 0.9867571 0.9844015 0.9836256 0.9846256 0.9871686 0.9910084 0.9959005
+## 29   0.9862058 0.9837256 0.9828921 0.9839100 0.9865368 0.9905159 0.9955931
+##          lag28     lag29     lag30
+## -5.5 1.0096966 1.0092858 1.0088961
+## -5   1.0092117 1.0088278 1.0084638
+## -4.5 1.0087280 1.0083708 1.0080325
+## -4   1.0082464 1.0079156 1.0076027
+## -3.5 1.0077677 1.0074631 1.0071754
+## -3   1.0072929 1.0070141 1.0067510
+## -2.5 1.0068229 1.0065694 1.0063305
+## -2   1.0063586 1.0061297 1.0059144
+## -1.5 1.0059010 1.0056959 1.0055035
+## -1   1.0054508 1.0052688 1.0050986
+## -0.5 1.0050090 1.0048492 1.0047002
+## 0    1.0045765 1.0044380 1.0043092
+## 0.5  1.0041542 1.0040358 1.0039263
+## 1    1.0037431 1.0036436 1.0035520
+## 1.5  1.0033439 1.0032620 1.0031873
+## 2    1.0029576 1.0028920 1.0028326
+## 2.5  1.0025851 1.0025342 1.0024889
+## 3    1.0022272 1.0021896 1.0021567
+## 3.5  1.0018850 1.0018589 1.0018368
+## 4    1.0015592 1.0015429 1.0015299
+## 4.5  1.0012507 1.0012423 1.0012366
+## 5    1.0009605 1.0009581 1.0009577
+## 5.5  1.0006895 1.0006910 1.0006939
+## 6    1.0004384 1.0004417 1.0004459
+## 6.5  1.0002083 1.0002111 1.0002143
+## 7    1.0000000 1.0000000 1.0000000
+## 7.5  0.9998144 0.9998092 0.9998035
+## 8    0.9996527 0.9996402 0.9996270
+## 8.5  0.9995175 0.9994975 0.9994766
+## 9    0.9994115 0.9993860 0.9993595
+## 9.5  0.9993373 0.9993107 0.9992831
+## 10   0.9992978 0.9992764 0.9992543
+## 10.5 0.9992957 0.9992881 0.9992805
+## 11   0.9993336 0.9993508 0.9993688
+## 11.5 0.9994144 0.9994694 0.9995265
+## 12   0.9995387 0.9996462 0.9997574
+## 12.5 0.9997004 0.9998746 1.0000546
+## 13   0.9998918 1.0001463 1.0004088
+## 13.5 1.0001056 1.0004527 1.0008109
+## 14   1.0003340 1.0007857 1.0012516
+## 14.5 1.0005697 1.0011367 1.0017218
+## 15   1.0008050 1.0014974 1.0022122
+## 15.5 1.0010324 1.0018594 1.0027136
+## 16   1.0012442 1.0022143 1.0032167
+## 16.5 1.0014350 1.0025557 1.0037146
+## 17   1.0016048 1.0028834 1.0042065
+## 17.5 1.0017542 1.0031977 1.0046926
+## 18   1.0018843 1.0034994 1.0051731
+## 18.5 1.0019957 1.0037888 1.0056484
+## 19   1.0020893 1.0040666 1.0061186
+## 19.5 1.0021660 1.0043333 1.0065840
+## 20   1.0022266 1.0045894 1.0070448
+## 20.5 1.0022719 1.0048355 1.0075013
+## 21   1.0023027 1.0050721 1.0079538
+## 21.5 1.0023199 1.0052998 1.0084023
+## 22   1.0023243 1.0055191 1.0088473
+## 22.5 1.0023168 1.0057305 1.0092889
+## 23   1.0022982 1.0059346 1.0097274
+## 23.5 1.0022693 1.0061321 1.0101631
+## 24   1.0022309 1.0063233 1.0105961
+## 24.5 1.0021840 1.0065088 1.0110267
+## 25   1.0021293 1.0066893 1.0114552
+## 25.5 1.0020677 1.0068652 1.0118819
+## 26   1.0020000 1.0070371 1.0123069
+## 26.5 1.0019270 1.0072056 1.0127305
+## 27   1.0018496 1.0073711 1.0131529
+## 27.5 1.0017687 1.0075344 1.0135745
+## 28   1.0016850 1.0076958 1.0139954
+## 28.5 1.0015994 1.0078560 1.0144159
+## 29   1.0015128 1.0080155 1.0148363</code></pre>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="generalized-linear-models.html#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">lag =</span> <span class="dv">0</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-104-1.png" width="672" /></p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="generalized-linear-models.html#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">lag =</span> <span class="dv">21</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-104-2.png" width="672" /></p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="generalized-linear-models.html#cb170-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">28</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-104-3.png" width="672" /></p>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="generalized-linear-models.html#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="sc">-</span><span class="dv">4</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-104-4.png" width="672" /></p>
 
 </div>
 </div>

@@ -591,10 +591,10 @@ temperature), but we're including both untransformed $T$ and also $T$ squared. T
 of $T$ might go into the regression equation as something like: 
 
 $$
-E(Y) = \alpha + \beta_1 T + \beta_2 T^2 + ns(time) + \mathbf{\gamma}W
+E(Y) = \alpha + \beta_1 T + \beta_2 T^2 + ns(time) + \mathbf{\gamma^{'}D}
 $$
 where $\alpha$ is the intercept, $ns(time)$ is a natural cubic spline that controls for 
-time (long-term and seasonal trends) and $W$ is day of week, with $\mathbf{\gamma}$ as 
+time (long-term and seasonal trends) and $\mathbf{D}$ is day of week, with $\mathbf{\gamma}$ as 
 the set of coefficients associated with day of week. (Here, I've included the outcome, 
 $Y$, untransformed, as you would for a linear regression, but of course the same idea
 works with Poisson regression, when you'd instead have $log(E(Y))$ on the left of the 
@@ -953,7 +953,7 @@ harder to customize. However, they're a great way to get a first look at your re
 
 ```{r}
 dlnm_mod_1 %>% 
-  crosspred(basis = temp_basis, model = ., cen = 6, by = 1) %>% 
+  crosspred(basis = temp_basis, model = ., cen = 7, by = 1) %>% 
   plot()
 ```
 
@@ -964,8 +964,475 @@ out how to interpret the results of the model that you fit. It is worth the effo
 as this is a very powerful tool when working with regression modeling in environmental 
 epidemiology. 
 
-## Cross-basis functions in GLMs
+## Distributed lags and cross-basis functions in GLMs
 
-[Using a cross-basis to model an exposure's association with the
-outcome in two dimensions (dimensions of time and exposure level)]
+Next, let's explore how we can add into our model something that lets us look at 
+delayed effects and the potential for mortality displacement. So far, we have only 
+considered how temperature affects mortality risk on the day of exposure---in other 
+words, if it is very hot today, does risk of mortality go up substantially today?
+For many exposures, however, risk can persist after the day of exposure. 
 
+In some cases, this may be caused by a delay in detection of the outcome in the
+data we have. For example, extreme heat today could precipitate a respiratory or
+cardiac event that the person may not seek treatment for until tomorrow, and so
+in the data the outcome would be recorded at a one-day delay from the exposure.
+
+In other cases, the path from the exposure to the outcome may take several days.
+For example, cold temperatures are often found to be associated with respiratory
+outcomes a week or more after exposures (something you can look for in the
+example data!), and one potential pathway is that cold temperatures might
+promote the spread of respiratory infectious disease, like influenza and colds,
+both through making people stay inside in more crowded, less ventilated
+conditions and also through effects on humidity and other conditions that might
+influence the behavior of respiratory droplets, which are key players in
+spreading some respiratory diseases. Since there is an incubation time up to
+several days for these infectious diseases, we might expect a lagged association
+between temperature and respiratory outcomes under this scenario.
+
+There is another lagged pattern that can be important to check for, as well---one 
+that indicates mortality displacement. For many ambient environmental exposures, 
+there are clear indications that associations with health outcomes are strongest
+among older adults or other populations with a disproportionately high percent
+of people who are frail before exposure. One questions that comes up, then, is 
+if, when an exposure is associated with excess deaths, these are deaths that are 
+displaced in time by only a few days or weeks, rather than deaths that represent
+a larger time of life lost. This question---of whether deaths observed to be 
+associated with an environmental exposure were displaced by only a small amount of
+time---can be explored by investigating whether an observed increase in mortality 
+across a community during an exposure is then offset by a lower-than-expected
+rate of mortality in the following days and weeks.
+
+All of these questions can be explored through a type of model called a 
+*distributed lag model*. Conceptually, these models investigate how an exposure
+today is associated with risk of a health outcome not only today, but also in 
+the following days. Because we are concerned about potential confounding by 
+seasonal trends---and have incorporated control for these trends in our models---we
+often restrict these models to only look up to about a month following exposure.
+However, this can help in identifying delayed effects of an exposure days to weeks
+following the initial exposure, and can also help in determining the role of 
+mortality displacement in accounting for some or all of the excess deaths that are 
+associated with an exposure. While some environmental exposures of interest
+have mostly immediate effects (e.g., hot temperature), others, including many air 
+pollutants, tend to have effects that are stretched over a longer period of one or 
+more days from exposure. As a result, distributed lag models are used widely in 
+environmental epidemiology studies of time series data, to ensure that important
+associations aren't missed by limiting the model to focus on risk that are 
+detectable on the same day as the exposure.
+
+To fit a distributed lag model, you can start with a fairly straightforward 
+extension of the regression models we've been fitting, especially if you are 
+investigating an exposure that can be plausibly fit with a linear term (rather than
+a more complex non-linear basis function) in the regression model. Say you are starting, 
+for example, from the following regression model: 
+
+$$
+log(E(Y)) = \alpha + \beta X + \mathbf{\gamma^{'}W} + ns(time)
+$$
+
+In this model, you are using a Poisson regression to investigate how risk of the 
+health outcome ($Y$) changes for every unit increase in the exposure ($X$), assuming 
+a linear relationship between the exposure and the log of the health outcome. The model
+can include control for confounders like day of week ($\mathbf{W}$) and long-term and
+seasonal time trends ($ns(time)$). This model should look familiar from some of the 
+models we've fit earlier to the example temperature data.
+
+To expand this model to explore associations of temperature at different lags, the 
+simplest approach is to add a term for each lag---in other words, instead of only having
+a term for temperature on the same day as the outcome measurement, we'll also include a 
+term for temperature the previous day, and the day before that, and so on. For example, 
+here's what the model would look like if we included terms up to lag 2:
+
+$$
+log(E(Y)) = \alpha + \beta_{0} X_{0} + \beta_{1} X_{1} + \beta_{2} X_{2} + \mathbf{\gamma^{'}W} + ns(time)
+$$
+where $X_0$ is temperature on the same day as the measured outcome $Y$ (with an 
+associated coefficient $\beta_0$), $X_1$ is the temperature the day before (with an 
+associated coefficient $\beta_1$), and $X_2$ is the temperature two days before (with an 
+associated coefficient $\beta_2$). The interpretation of each of these coefficients
+is similar---$exp(\beta_2)$, for example, gives our estimate of the change in the relative
+risk of the outcome $Y$ for every one-unit increase in the exposure two days prior.
+
+It can become cumbersome to write out the separate terms for each lag day, so you'll often
+see equations for distributed lag models written using a shorter approach with the 
+$\sum$ symbol. The $\sum$ symbol expresses several terms that are added together and so
+is well-suited for shortening the expression of a distributed lag model. For example, the
+previous model equation could be rewritten as:
+
+$$
+log(E(Y)) = \alpha + \sum_{l=0}^2{\beta_lX_l} + \mathbf{\gamma^{'}W} + ns(time)
+$$
+
+This version of a distributed lag model is nice because it is fairly simple---we're taking the
+idea of fitting a linear term for an exposure, and then expanding it to look include the 
+exposure on earlier days by adding the same type of term for exposure measured at each lag.
+However, it does have some downsides. The main downside is that exposure tends to be very 
+strongly correlated from one day to the next. Any time you put different terms in a regression
+model that are correlated, you create the risk of *collinearity*, and associated problems
+with fitting the model. The term *collinearity* refers to the idea that you have two of more
+columns in your model matrix that give identical (or, if you loosen the definition a bit, 
+very similar) information. To fit coefficients for each term, the modeling algorithm is trying
+to identify weights to place on each column in the model matrix that result in a model that
+gives the best likelihood of the data you see. If two or more columns have (almost) identical
+information, then the algorithm struggles to determine how to define weight across these 
+two columns. The implications are that you can end up with a lot of instability in model 
+coefficients for the columns that are collinear, as well as very inflated estimates of the
+standard error. Long story short, it can cause problems in your regression model if you include
+independent variables that are very strongly correlated with each other, and so we usually 
+try to avoid doing that. 
+
+There are alternative distributed lag models that can help avoid this instability that can 
+come from fitting a distributed lag by using a separate term for each lag. All of them share
+a common feature---they somehow fit a function of the lags instead of each separate lag, so 
+that we end up adding fewer terms to the regression model (and, in term, are somewhat 
+constraining that pattern that the distributed lag effects follow). The most extreme
+is to use a term that reduces all the lag terms to a single term, which you can do by 
+averaging the exposure across all lags. In other words, you could take the same-day 
+temperature, yesterday's temperature, and the temperature the day before that, and average
+those three temperatures to create the term you put in the model. The model equation 
+in this case would look like: 
+
+$$
+log(E(Y)) = \alpha + \beta_{\overline{0-2}} X_{\overline{0-2}} + \mathbf{\gamma^{'}W} + ns(time)
+$$
+where $\overline{0-2}$ represents an average over lags 0 to 2, and so $X_{\overline{0-2}}$
+is the average of the exposure on lags 0, 1, and 2 compared to the day that $Y$ is 
+measured.
+
+This approach avoids any issues with collinearity across exposure terms from different
+lags, because you're only including a single term for exposure in the model. However, 
+there is a downside---this model will provide you with a single estimate for the 
+lagged effects, without allowing you to explore patterns across lags (for example, 
+is the association mostly on the day of exposure, or are there some delayed effects on 
+following days?).
+
+Another approach is more complex, but it allows you to explore patterns across lags. 
+Instead of reducing the lagged exposure to a single term in the model, you can reduce
+it to a few terms that represent the basis for a smooth function. Often, a polynomial
+or natural cubic spline function will be used for this. The details of setting up the 
+model become more complex, but fortunately there are software packages (like the `dlnm` 
+package in R) that help in managing this set-up, as we'll explore in the exercise. 
+
+Packages like `dlnm` can help in extending the complexity of the distributed lag model
+in other ways, too. So far, we have explored using a distributed lag model where we
+are happy to model the exposure using a linear term. As we've seen in earlier exercises, 
+this isn't ideal for temperature. Instead, temperature has a non-linear association 
+with mortality risk, with the lowest risk at mild temperatures and then increased risk
+at both lower (colder) and higher (hotter) temperatures.
+
+We can fit a GLM that incorporates the exposure using a non-linear shape while, at the
+same time, including a non-linear function to describe how the association evolves 
+across lagged time following the exposure. The approach is to extend the idea of 
+using a basis function---instead of using a basis function in a single dimension, we'll
+use cross of basis functions in two dimensions. One dimension is the level of exposure
+(e.g., cold to hot temperatures), and the other is the timing between the exposure and
+the outcome (e.g., same-day to lagged by many days). In terms of the mechanics of 
+building a model matrix to use to fit the regression model, everything follows directly 
+from the idea we explored early of using a function like a spline to create basis 
+variables in that model matrix for a term with a non-linear association with the
+outcome variable. However, the mechanics do get quite cumbersome as so many terms are
+included, and so again we will use the `dlnm` package to handle these mechanics as we
+start to incorporate these cross-basis functions within a GLM.
+
+*Applied: Including a spline in a GLM*
+
+For this exercise, you will continue to build up the model that you began in 
+the examples in the previous chapter. The example uses the data provided with 
+one of this chapter's readings, @vicedo2019hands.
+
+1. Start with the simple model describing how are daily mortality counts are
+associated with a linear function of temperature. Include control for day of 
+week and long-term / seasonal trends. Add to this model a term that describes
+the lagged effects of temperature up to a week following exposure, using a 
+separate model term for each lag. What patterns do you detect in the lagged
+effects of temperature?
+2. Start with the model from the first question, but change it to use a smooth
+function of lag to detect lagged effects, rather than fitting a seperate term
+for each lag. Extend the model to look at lagged effects up to a month following
+exposure. What patterns do you see in these lagged effects?
+3. Refine your model to fit for a non-linear, rather than linear, function 
+of temperature, while also incorporating a function to describe lagged effects up 
+to a month following exposure. Based on this model, what does the association 
+between temperature and mortality look like at lag 0 days? How about at lag 21 days?
+What does the pattern of lagged effects look like when comparing the relative risk of
+mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature 
+(7 degrees C)? What about when comparing mortality at a cold temperature 
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the 
+cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a 
+milder temperature (7 degrees C), once you incorporated all lagged effects
+up to a month after exposure?
+
+*Applied exercise: Example code*
+
+1. **Start with the simple model describing how are daily mortality counts are
+associated with a linear function of temperature. Include control for day of 
+week and long-term / seasonal trends. Add to this model a term that describes
+the lagged effects of temperature up to a week following exposure, using a 
+separate model term for each lag. What patterns do you detect in the lagged
+effects of temperature?**
+
+We'll start by looking at distributed lag associations by fitting a model with 
+separate terms for each of the lags we want to fit. Here, we want to fit up to 
+a week, so we'll want eight terms in total: ones for the same day ($X_0$), the
+previous day ($X_1$), two days before ($X_2$), three days before ($X_3$), 
+four days before ($X_4$), five days before ($X_5$), six days before ($X_6$), 
+and seven days before ($X_7$).
+
+Right now, our data have temperature lined up with the date of the recorded deaths:
+
+```{r}
+obs %>% 
+  select(date, all, tmean) %>% 
+  head()
+```
+
+To add lagged temperature to the model, then, we'll need to add some columns to our 
+data, so that the row for an observation includes not only the temperature on that 
+day, but also on each of the seven previous days. The `lag` function from the `tidyverse` 
+suite of packages can be used to create these columns: 
+
+```{r}
+obs <- obs %>% 
+  mutate(tmean_1 = lag(tmean, n = 1), 
+         tmean_2 = lag(tmean, n = 2), 
+         tmean_3 = lag(tmean, n = 3), 
+         tmean_4 = lag(tmean, n = 4), 
+         tmean_5 = lag(tmean, n = 5), 
+         tmean_6 = lag(tmean, n = 6), 
+         tmean_7 = lag(tmean, n = 7))
+```
+
+You can see that each of these have taken `tmean` and then offset it by moving it down 
+by one or more rows (down one row for lag 1, two for lag 2, etc.). As a result, we now have
+columns that give us today's temperature, yesterday's, and so on, all lined up with the 
+row with the observation for daily mortality: 
+
+```{r}
+obs %>% 
+  select(date, all, tmean, tmean_1:tmean_7) %>% 
+  head()
+```
+
+You'll notice that this process has created some missing data right at the beginning of the 
+dataset---we don't know what the temperature was the day before Jan. 1, 1990, for example, 
+since the study data starts on Jan. 1, 1990. With most time series, we'll have plenty of 
+days in the study period, so we'll usually just allow these early dates to drop when the
+model is fit.
+
+Now we'll add all these terms to our regression model:
+
+```{r}
+dist_lag_mod_1 <- glm(all ~ tmean + tmean_1 + tmean_2 + tmean_3 + tmean_4 + 
+                        tmean_5 + tmean_6 + tmean_7 + 
+                        factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+```
+
+If you look at the output from the model, you can see that a regression coefficient has been
+fit for each of these distributed lag terms:
+
+```{r}
+dist_lag_mod_1 %>% 
+  tidy() %>% 
+  filter(str_detect(term, "tmean"))
+```
+
+We can pull out all those estimates, calculate the 95% confidence intervals (do this before
+you take the exponential to get to the relative risk estimate!), and then exponentiate all
+the terms to get estimates of relative risk of mortality per unit increase in temperature.
+
+```{r}
+dist_lag_terms <- dist_lag_mod_1 %>% 
+  tidy() %>% 
+  filter(str_detect(term, "tmean")) %>% 
+  mutate(lag = 0:7, 
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         rr = exp(estimate), 
+         low_rr = exp(low_ci), 
+         high_rr = exp(high_ci)) %>% 
+  select(term, lag, rr, low_rr, high_rr)
+dist_lag_terms
+```
+
+You can plot these estimates to explore how the association changes by lag (notice how the
+geom `geom_pointrange` is very helpful here!):
+
+```{r}
+dist_lag_terms %>% 
+  ggplot(aes(x = lag, y = rr)) + 
+  geom_point() + 
+  geom_pointrange(aes(ymin = low_rr, ymax = high_rr)) + 
+  labs(x = "Lag days since exposure", 
+       y = "Relative risk of mortality\nper degree increase in temperature") + 
+  geom_hline(yintercept = 1, color = "red", linetype = 3)
+```
+
+You can also use the `dlnm` package to fit this model, using the `crossbasis` function
+to set up the distributed lag basis to include in the regression, and then the `crosspred`
+function to extract results after fitting the regression model and to plot results.
+
+First, you'll again use `crossbasis` to create the basis, as you did earlier when using this
+package to fit a non-linear function of temperature. You will use the `lag` argument to say 
+the maximum lag you want to include---in this case, seven days (`lag = 7`). You can use 
+the `argvar` and `arglag` functions to specify the basis function for the exposure variable
+and the distributed lag component. For right now, we'll use a very basic linear function for
+the exposure (temperature), using `fun = "lin"` within the `argvar` list of arguments.
+To fit a separate coefficient for each lag, we can specify `fun = "integer"` in the 
+`arglag` list of arguments (later we'll explore some other functions for the lag component).
+
+```{r}
+library(dlnm)
+dl_basis <- crossbasis(obs$tmean, lag = 7,
+                       argvar = list(fun = "lin"), 
+                       arglag = list(fun = "integer"))
+```
+
+If you take a peak at this crossbasis, you'll notice that it's doing something similar to
+what we did when we added columns for lagged temperatures. The first column gives temperature
+on the same day, the second on the previous day (and so is offset one down from the first 
+column), and so on. The crossbasis function deals with the missing early dates by setting
+*all* column values to be missing on those days; in practice, this difference in set up 
+won't create any difference in how the model is fit, as the `glm` function will by default
+exclude any observations with *any* columns of missing data. 
+
+```{r}
+dl_basis %>% 
+  head(n = 12)
+```
+
+We can use this matrix of crossbasis variables now in our regression call:
+
+```{r}
+dist_lag_mod_2 <- glm(all ~ dl_basis + 
+                        factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+```
+
+Again, you can pull the regression coefficients directly out of the regression model object
+(and you can see how they're identical to those from our first distributed lag model):
+
+```{r}
+dist_lag_mod_2 %>% 
+  tidy() %>% 
+  filter(str_detect(term, "dl_basis"))
+```
+
+You can proceed from here to plot estimates by lag using ggplot, but you can also use 
+some of the special functions for plotting in `dlnm`. We can plot the "slice" of comparing
+the relative risk at 1 degree C (`var = 1`) (this will give us the one-unit increase, 
+because by default the crossbasis set-up with 0 degrees as the baseline, so this is 
+one degree above that value). 
+
+```{r}
+crosspred(dl_basis, dist_lag_mod_2) %>% 
+  plot(ptype = "slices", var = 1, ci = "bars")
+```
+
+If you look at the correlations between temperature, however, you'll see they are very 
+strongly correlated, which means that we could have some issues with collinearity if we
+use this simpler distributed lag model, with a separate coefficient for each lag:
+
+```{r}
+obs %>% 
+  select(tmean, tmean_1:tmean_7) %>% 
+  cor(use = "complete.obs") 
+```
+
+Next, we'll explore a model that constrains the lagged effects to follow a smooth
+function, to help avoid this potential instability in the modeling.
+
+2. **Start with the model from the first question, but change it to use a smooth
+function of lag to detect lagged effects, rather than fitting a separate term
+for each lag. Extend the model to look at lagged effects up to a month following
+exposure. What patterns do you see in these lagged effects?**
+
+```{r message = FALSE, warning = FALSE}
+dl_basis_2 <- crossbasis(obs$tmean, lag = 7,
+                       argvar = list(fun = "lin"), 
+                       arglag = list(fun = "ns", df = 4))
+```
+
+```{r}
+dl_basis_2 %>% 
+  head(n = 12)
+```
+
+```{r}
+dist_lag_mod_3 <- glm(all ~ dl_basis_2 + 
+                        factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+```
+
+Again, you can plot the results to see the pattern of associations by lag. The plot
+is just visualizing the results of predicting the model to certain values. By default, 
+it will predict at each lag; this makes the plot a little "jumpy" if you're just looking 
+at lags for a week or so, so to make it smoother, you might want to ask `crosspred` to 
+predict to a finer resolution along the lag dimension (here, we're using `bylag = 0.2`).
+
+```{r}
+crosspred(dl_basis_2, dist_lag_mod_3, at = 1, bylag = 0.2) %>% 
+  plot(ptype = "slices", var = 1)
+```
+
+Extend out to about month after exposure:
+
+```{r message = FALSE, warning = FALSE}
+dl_basis_3 <- crossbasis(obs$tmean, lag = 30,
+                       argvar = list(fun = "lin"), 
+                       arglag = list(fun = "ns", df = 5))
+dist_lag_mod_4 <- glm(all ~ dl_basis_3 + 
+                        factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+crosspred(dl_basis_3, dist_lag_mod_4, at = 1) %>% 
+  plot(ptype = "slices", var = 1)
+```
+
+
+3. **Refine your model to fit for a non-linear, rather than linear, function 
+of temperature, while also incorporating a function to describe lagged effects up 
+to a month following exposure. Based on this model, what does the association 
+between temperature and mortality look like at lag 0 days? How about at lag 21 days?
+What does the pattern of lagged effects look like when comparing the relative risk of
+mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature 
+(7 degrees C)? What about when comparing mortality at a cold temperature 
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the 
+cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a 
+milder temperature (7 degrees C), once you incorporated all lagged effects
+up to a month after exposure?**
+
+Extend to include non-linear function of temperature:
+
+```{r message = FALSE, warning = FALSE}
+dl_basis_4 <- crossbasis(obs$tmean, lag = 30,
+                       argvar = list(fun = "ns", df = 4), 
+                       arglag = list(fun = "ns", df = 5))
+```
+
+```{r}
+dl_basis_4 %>% 
+  as.data.frame() %>% 
+  slice(28:38)
+```
+
+
+```{r}
+dist_lag_mod_5 <- glm(all ~ dl_basis_4 + 
+                        factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+
+cp_dl <- crosspred(dl_basis_4, dist_lag_mod_5, cen = 7)
+
+cp_dl %>% 
+  pluck("matRRfit")
+
+plot(cp_dl, ptype = "slices", lag = 0)
+plot(cp_dl, ptype = "slices", lag = 21)
+
+plot(cp_dl, ptype = "slices", var = 28)
+plot(cp_dl, ptype = "slices", var = -4)
+```
