@@ -80,7 +80,8 @@ tribble(
   ~ `Class Date`, ~ `Coursebook reading`, 
   "August 30", "3.1--3.4", 
   "September 3", "3.5", 
-  "September 13", "4.1"
+  "September 13", "4.1--4.2",
+  "September 20", "4.3"
 ) %>% 
   kable()
 ```
