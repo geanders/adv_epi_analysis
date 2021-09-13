@@ -1530,6 +1530,10 @@ function that we started with. However, the underlying principles and mechanics 
 same, they're just scaling up to allow some more complex "shapes" in our exposure-response
 association.
 
+We can add this new crossbasis function to the regression model, and then predict from 
+the crossbasis and function to get a view of how temperature is (non-linearly) associated
+with mortality risk at different lags, comparing to a baseline temperature of 7 degrees C:
+
 ```{r}
 dist_lag_mod_5 <- glm(all ~ dl_basis_4 + 
                         factor(dow, ordered = FALSE) +
@@ -1537,16 +1541,53 @@ dist_lag_mod_5 <- glm(all ~ dl_basis_4 +
                         data = obs, family = "quasipoisson")
 
 cp_dl <- crosspred(dl_basis_4, dist_lag_mod_5, cen = 7, bylag = 1)
+```
 
-cp_dl %>% 
-  pluck("matRRfit")
+The object created by `crosspred` includes a *lot* of output (you can check out the 
+whole thing by running `cp_dl` to print it out). We can extract elements from this object
+(for example, if we want to get effect estimates or estimates of confidence intervals). 
+We can also create a variety of plots from this object. The following plots all use the
+`plot` method for `crosspred` objects, so you can access the helpfile with `?plot.crosspred`.
 
+First, we can look at "slices", where we focus on just one lag value and look at the
+non-linear relationship between temperature and mortality risk at that lag only. For example,
+here are plots showing the relationship between temperature and mortality risk on the 
+same day of exposure (lag 0) and 21 days after exposure (lag 21):
+
+```{r}
 plot(cp_dl, ptype = "slices", lag = 0)
 plot(cp_dl, ptype = "slices", lag = 21)
+```
 
+You can see that heat has a stronger relationship with mortality risk than cold at lag 0, 
+while at a longer lag, there continues to be a positive association between cold temperature
+and mortality risk, but now the relationship with heat has shifted to be negative.
+
+You can do the same idea of looking at a "slice" for a specific temperature, in this case
+seeing how effects vary across lags when comparing that temperature to the baseline temperature
+(7 degrees C, which we set when we ran `crosspred`). For example, here are "slices" for 
+28 degrees C and -4 degrees C: 
+
+```{r}
 plot(cp_dl, ptype = "slices", var = 28)
 plot(cp_dl, ptype = "slices", var = -4)
 ```
+These plots again reinforce that heat's association with mortality risk is more immediate, 
+while cold has an association that plays out over a much longer lag following exposure.
+
+There are also some plots you can make from the `crosspred` object that help show the full, 
+three-dimensional association between the exposure, lag time, and risk of the outcome. 
+For example, the default plot created from the `crosspred` object is a three-dimensional 
+plot (the `theta`, `phi`, and `lphi` parameters shift the angle we view it from), while
+the "contour" plot type shows us a contour plot of these results (in other words, showing
+the exposure and lag varables in two dimensions of a two-dimensional plot then showing
+relative risk using color for each combination). Here is the code to create those plots:
+
+```{r}
+plot(cp_dl, theta = 200, phi = 40, lphi = 30)
+plot(cp_dl, ptype = "contour")
+```
+
 
 To see how a 'constant' lag-response model compares to the smooth function from this model we have to go back to the `crossbasis` and use the appropriate argument in the `arglag` parameter:
 
