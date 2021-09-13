@@ -1425,7 +1425,7 @@ dist_lag_mod_5 <- glm(all ~ dl_basis_4 +
                           ns(time, df = 158), 
                         data = obs, family = "quasipoisson")
 
-cp_dl <- crosspred(dl_basis_4, dist_lag_mod_5, cen = 7)
+cp_dl <- crosspred(dl_basis_4, dist_lag_mod_5, cen = 7, bylag = 1)
 
 cp_dl %>% 
   pluck("matRRfit")
