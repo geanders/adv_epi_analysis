@@ -1168,8 +1168,14 @@ mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
 cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a 
 milder temperature (7 degrees C), once you incorporated all lagged effects
 up to a month after exposure? If you use a constant term for the effect of exposure 
-over a month as opposed to the smooth function you just used, how does the overall 
+over a month as opposed to the smooth function you just used, how does the overall
 cumulative RR compare?
+4. Assume that we are interested in the potential effect of a 5-day 
+heatwave occurring on lags x to x? You can assess this as the effect of hot temperature 
+(e.g., 28 degrees C) during these lags, while the temperature remains warm but more 
+mild (e.g., 20 degrees C) the rest of them month, against constant 20 degrees C for 
+the whole month. What is the effect under the 'constant' model? How about the smooth 
+function lag model? 
 
 *Applied exercise: Example code*
 
