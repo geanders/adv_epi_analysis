@@ -1490,7 +1490,9 @@ mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
 (e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the 
 cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a 
 milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure?**
+up to a month after exposure? If you use a constant term for the effect of exposure 
+over a month as opposed to the smooth function you just used, how does the overall
+cumulative RR compare?**
 
 To extend the model to include temperature using a non-linear function, we'll go back 
 to the `crossbasis` call, but this time we'll make some changes to the exposure variable
@@ -1544,3 +1546,28 @@ plot(cp_dl, ptype = "slices", lag = 21)
 plot(cp_dl, ptype = "slices", var = 28)
 plot(cp_dl, ptype = "slices", var = -4)
 ```
+
+To see how a 'constant' lag-response model compares to the smooth function from this model we have to go back to the `crossbasis` and use the appropriate argument in the `arglag` parameter:
+
+```{r message = FALSE, warning = FALSE}
+dl_basis_5 <- crossbasis(obs$tmean, lag = 30,
+                       argvar = list(fun = "ns", df = 4), 
+                       arglag = list(fun = "strata", df = 1))
+```
+
+If we look at the `crossbasis` from this function you'll see that we have far fewer columns. 
+
+```{r}
+dl_basis_5 %>% 
+  as.data.frame() %>% 
+  slice(28:38)
+```
+
+4. **Assume that we are interested in the potential effect of a 5-day 
+heatwave occurring on lags 1 to 5? You can assess this as the effect of hot temperature 
+(e.g., 28 degrees C) during these lags, while the temperature remains warm but more 
+mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for 
+the whole month. What is the effect under the 'constant' model? How about the smooth 
+function lag model?** 
+
+
