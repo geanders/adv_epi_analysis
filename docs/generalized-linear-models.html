@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-09-12" />
+<meta name="date" content="2021-09-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1189,8 +1189,9 @@ words, if it is very hot today, does risk of mortality go up substantially today
 For many exposures, however, risk can persist after the day of exposure.</p>
 <p>In some cases, this may be caused by a delay in detection of the outcome in the
 data we have. For example, extreme heat today could precipitate a respiratory or
-cardiac event that the person may not seek treatment for until tomorrow, and so
-in the data the outcome would be recorded at a one-day delay from the exposure.</p>
+cardiac event that the person may not seek treatment for or result in an outcome
+like mortality until tomorrow, and so in the data the outcome would be recorded
+at a one-day delay from the exposure.</p>
 <p>In other cases, the path from the exposure to the outcome may take several days.
 For example, cold temperatures are often found to be associated with respiratory
 outcomes a week or more after exposures (something you can look for in the
@@ -1206,21 +1207,23 @@ between temperature and respiratory outcomes under this scenario.</p>
 that indicates mortality displacement. For many ambient environmental exposures,
 there are clear indications that associations with health outcomes are strongest
 among older adults or other populations with a disproportionately high percent
-of people who are frail before exposure. One questions that comes up, then, is
+of people who are frail before exposure. One question that comes up, then, is
 if, when an exposure is associated with excess deaths, these are deaths that are
 displaced in time by only a few days or weeks, rather than deaths that represent
 a larger time of life lost. This question—of whether deaths observed to be
 associated with an environmental exposure were displaced by only a small amount of
 time—can be explored by investigating whether an observed increase in mortality
 across a community during an exposure is then offset by a lower-than-expected
-rate of mortality in the following days and weeks.</p>
+rate of mortality in the following days and weeks.This phenomenon is sometimes<br />
+also referred to as ‘harvesting’ or a ‘harvesting effect.’</p>
 <p>All of these questions can be explored through a type of model called a
 <em>distributed lag model</em>. Conceptually, these models investigate how an exposure
 today is associated with risk of a health outcome not only today, but also in
-the following days. Because we are concerned about potential confounding by
-seasonal trends—and have incorporated control for these trends in our models—we
-often restrict these models to only look up to about a month following exposure.
-However, this can help in identifying delayed effects of an exposure days to weeks
+the following days. In time-series studies where we typically want to estimate
+potential short-term and/or acute effects, and because we are concerned about potential
+confounding by seasonal trends—and have incorporated control for these trends in
+our models—we often restrict these models to only look up to about a month following
+exposure. However, this can help in identifying delayed effects of an exposure days to weeks
 following the initial exposure, and can also help in determining the role of
 mortality displacement in accounting for some or all of the excess deaths that are
 associated with an exposure. While some environmental exposures of interest
@@ -1229,7 +1232,12 @@ pollutants, tend to have effects that are stretched over a longer period of one 
 more days from exposure. As a result, distributed lag models are used widely in
 environmental epidemiology studies of time series data, to ensure that important
 associations aren’t missed by limiting the model to focus on risk that are
-detectable on the same day as the exposure.</p>
+detectable on the same day as the exposure. They can also help us identify influential
+windows of exposure as well as help eliminate potential confoundign by exposures
+occurring at proximal times to the window of interest. For example, today’s exposure
+may appear to have an effect on a helath outcome even if in reality yesterday’s
+exposure is the influential one and we don’t control for it, because today’s and
+yesterday’s exposure to temperature or air pollution are likely to be very similar.</p>
 <p>To fit a distributed lag model, you can start with a fairly straightforward
 extension of the regression models we’ve been fitting, especially if you are
 investigating an exposure that can be plausibly fit with a linear term (rather than
@@ -1269,10 +1277,9 @@ log(E(Y)) = \alpha + \sum_{l=0}^2{\beta_lX_l} + \mathbf{\gamma^{&#39;}W} + ns(ti
 <p>This version of a distributed lag model is nice because it is fairly simple—we’re taking the
 idea of fitting a linear term for an exposure, and then expanding it to look include the
 exposure on earlier days by adding the same type of term for exposure measured at each lag.
-However, it does have some downsides. The main downside is that exposure tends to be very
-strongly correlated from one day to the next. Any time you put different terms in a regression
-model that are correlated, you create the risk of <em>collinearity</em>, and associated problems
-with fitting the model. The term <em>collinearity</em> refers to the idea that you have two of more
+However, it does have some downsides. The main downside is that as we alluded to above, exposure
+tends to be very strongly correlated from one day to the next. Any time you put different terms in a regression model that are correlated, you create the risk of <em>collinearity</em>, and associated
+problemswith fitting the model. The term <em>collinearity</em> refers to the idea that you have two or more
 columns in your model matrix that give identical (or, if you loosen the definition a bit,
 very similar) information. To fit coefficients for each term, the modeling algorithm is trying
 to identify weights to place on each column in the model matrix that result in a model that
@@ -1284,7 +1291,7 @@ standard error. Long story short, it can cause problems in your regression model
 independent variables that are very strongly correlated with each other, and so we usually
 try to avoid doing that.</p>
 <p>There are alternative distributed lag models that can help avoid this instability that can
-come from fitting a distributed lag by using a separate term for each lag. All of them share
+arise from fitting a distributed lag by using a separate term for each lag. All of them share
 a common feature—they somehow fit a function of the lags instead of each separate lag, so
 that we end up adding fewer terms to the regression model (and, in term, are somewhat
 constraining that pattern that the distributed lag effects follow). The most extreme
@@ -1304,7 +1311,8 @@ lags, because you’re only including a single term for exposure in the model. H
 there is a downside—this model will provide you with a single estimate for the
 lagged effects, without allowing you to explore patterns across lags (for example,
 is the association mostly on the day of exposure, or are there some delayed effects on
-following days?).</p>
+following days? the main assumption is that the effect is constant across all days in the
+window of interest).</p>
 <p>Another approach is more complex, but it allows you to explore patterns across lags.
 Instead of reducing the lagged exposure to a single term in the model, you can reduce
 it to a few terms that represent the basis for a smooth function. Often, a polynomial
@@ -1330,7 +1338,7 @@ variables in that model matrix for a term with a non-linear association with the
 outcome variable. However, the mechanics do get quite cumbersome as so many terms are
 included, and so again we will use the <code>dlnm</code> package to handle these mechanics as we
 start to incorporate these cross-basis functions within a GLM.</p>
-<p><em>Applied: Including a spline in a GLM</em></p>
+<p><em>Applied: Including a cross-basis function for exposure-lag-response in a GLM</em></p>
 <p>For this exercise, you will continue to build up the model that you began in
 the examples in the previous chapter. The example uses the data provided with
 one of this chapter’s readings, <span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>.</p>
@@ -1355,7 +1363,15 @@ mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
 (e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the
 cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
 milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure?</li>
+up to a month after exposure? If you use a constant term for the effect of exposure
+over a month as opposed to the smooth function you just used, how does the overall
+cumulative RR compare?</li>
+<li>Assume that we are interested in the potential effect of a 5-day
+heatwave occurring on lags x to x? You can assess this as the effect of hot temperature
+(e.g., 28 degrees C) during these lags, while the temperature remains warm but more
+mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for
+the whole month. What is the effect under the ‘constant’ model? How about the smooth
+function lag model?</li>
 </ol>
 <p><em>Applied exercise: Example code</em></p>
 <ol style="list-style-type: decimal">
@@ -1537,7 +1553,10 @@ exclude any observations with <em>any</em> columns of missing data.</p>
 some of the special functions for plotting in <code>dlnm</code>. We can plot the “slice” of comparing
 the relative risk at 1 degree C (<code>var = 1</code>) (this will give us the one-unit increase,
 because by default the crossbasis set-up with 0 degrees as the baseline, so this is
-one degree above that value).</p>
+one degree above that value). The <code>crosspred</code> function predicts based on a crossbasis
+and a regression model object that uses that crossbasis, then the <code>plot</code> function has a
+special method for plotting the resulting crosspred object (to see the helpfile for this
+plot method, type <code>?plot.crosspred</code> in your R console).</p>
 <div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="generalized-linear-models.html#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis, dist_lag_mod_2) <span class="sc">%&gt;%</span> </span>
 <span id="cb154-2"><a href="generalized-linear-models.html#cb154-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">1</span>, <span class="at">ci =</span> <span class="st">&quot;bars&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
@@ -1573,9 +1592,59 @@ function of lag to detect lagged effects, rather than fitting a separate term
 for each lag. Extend the model to look at lagged effects up to a month following
 exposure. What patterns do you see in these lagged effects?</strong></li>
 </ol>
+<p>As a reminder, we can stabilize our model of lagged effects a bit by fitting the
+lagged effects to be constrained to follow a smooth function, instead of fitting a separate
+term for each lag. The <code>dlnm</code> package makes this very easy to do.</p>
+<p>When you use <code>crossbasis</code> to set up a crossbasis function, you can make a lot of choices
+to customize that crossbasis. The crossbasis combines a basis function for incorporating
+the exposure in the regression model (temperature in this case), as well as a basis function
+for incorporating lagged effects of that exposure. The <code>crossbasis</code> functions gives you
+several choices for each of these basis functions for the two dimensions of the
+crossbasis. Here, we’ll look at using that flexibility for the lag dimension; in the next
+part of the exercise, we’ll add some more complexity in the basis function for the
+exposure, as well.</p>
+<p>To customize the basis function for lagged effects, you can use the <code>arglag</code> parameter
+in the <code>crossbasis</code> function. You send this parameter a list of other parameters, which
+get sent to a general <code>onebasis</code> function that builds that basis function (this will
+be convenient when we start working with the exposure basis, too—you’ll see that you
+can use the same parameters in setting up each basis function).</p>
+<p>To see the range of functions you can use for this crossbasis function, check the help
+function for <code>onebasis</code>. When we fit a separate coefficient for each lag, we used the
+“integer” function, which creates a set of basis variables with indicators for each
+separate lag (this is really similar to the idea of basis variables for a categorical
+variable, like day of the week).</p>
+<p>Here, we want to instead use a smooth function, with fewer degrees of freedom (i.e., fewer
+columns created in the matrix of basis values). Two popular options for that function are
+the “poly” function, which will fit a polynomial, or the “ns” function, which will fit
+a natural cubic spline (just like we did earlier to create a non-linear function of
+temperature). We’ll use “ns” in this example (<code>fun = ns</code> in the list of parameters for
+<code>arglag</code>).</p>
+<p>For some of these functions, you’ll need to specify additional parameters to clarify
+how they should be built. For example, if you’re using a spline, you need to specify
+how many degrees of freedom it should have with <code>df</code>. We’ll use 4 degrees of freedom,
+but you can experiment with different values for this and see how it affects the shape
+of the resulting function (i.e., the plot we create later). If you were fitting a
+polynomial function,
+you’d need to specify the degree of the polynomial; if you were fitting strata (i.e.,
+constant values within sets of lags), you’d need to specify the breaks for dividing
+those strata; if you were using a threshold function, you’d need to specify the threshold,
+and so on. You can find more details on these options in the helpfile for <code>onebasis</code>;
+in general, the <code>onebasis</code> function is using other underlying functions like <code>ns</code> and
+<code>poly</code> to build these functions, so the choice of parameters will depend on the parameters
+for those underlying functions.</p>
+<p>Here is the final call for building this new crossbasis (note that we’re continuing to
+use a linear function of temperature, and at this point still only looking at lags up to
+a week; later in this question we’ll expand to look at longer lags):</p>
 <div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="generalized-linear-models.html#cb157-1" aria-hidden="true" tabindex="-1"></a>dl_basis_2 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">7</span>,</span>
 <span id="cb157-2"><a href="generalized-linear-models.html#cb157-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;lin&quot;</span>), </span>
 <span id="cb157-3"><a href="generalized-linear-models.html#cb157-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>))</span></code></pre></div>
+<p>If you look at this crossbasis object, you’ll see that it’s created a matrix of basis
+variables, similar to the last part of the exercise. However, instead of having the same
+number of columns as the number of lags (8), we now have fewer columns. We have 4, reflecting
+the degrees of freedom we specified for the spline function of lag. Therefore, we’ve
+constrained the lag function a bit compared to the previous part of the exercise. Again,
+the values are all missing for the first seven days, since the data isn’t able to capture
+the lagged temperature for these days.</p>
 <div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="generalized-linear-models.html#cb158-1" aria-hidden="true" tabindex="-1"></a>dl_basis_2 <span class="sc">%&gt;%</span> </span>
 <span id="cb158-2"><a href="generalized-linear-models.html#cb158-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">12</span>)</span></code></pre></div>
 <pre><code>##          v1.l1    v1.l2    v1.l3      v1.l4
@@ -1591,6 +1660,8 @@ exposure. What patterns do you see in these lagged effects?</strong></li>
 ## [10,] 10.91751 8.769682 19.69413 -3.2804334
 ## [11,] 10.94122 8.867758 22.33138 -2.7169313
 ## [12,] 13.00391 8.984807 22.20899 -0.3726342</code></pre>
+<p>Again, once we build the crossbasis function, we can put it in the regression equation and
+fit a regression model using <code>glm</code>:</p>
 <div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="generalized-linear-models.html#cb160-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_2 <span class="sc">+</span> </span>
 <span id="cb160-2"><a href="generalized-linear-models.html#cb160-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb160-3"><a href="generalized-linear-models.html#cb160-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
@@ -1603,10 +1674,18 @@ predict to a finer resolution along the lag dimension (here, we’re using <code
 <div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="generalized-linear-models.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis_2, dist_lag_mod_3, <span class="at">at =</span> <span class="dv">1</span>, <span class="at">bylag =</span> <span class="fl">0.2</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb161-2"><a href="generalized-linear-models.html#cb161-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
-<p>Extend out to about month after exposure:</p>
+<p>You can go back to the <code>crossbasis</code> call and try playing around with the degrees of freedom
+for the spline, to see how that affects the shape of this function. Be sure, though, that
+you don’t use more degrees of freedom than there are lags (i.e., more than 8).</p>
+<p>Now let’s try to extend the model out to look at up to a month after exposure. To do this,
+all you need to do is change the <code>lag</code> argument in <code>crossbasis</code> to the longest lag you
+want to include. Since we’re adding more lags, you’ll likely also want to increase the
+degrees of freedom you use for the basis function of lag; here, I’m using 6, but you can
+explore other values as well (again, don’t use more than the number of lags, though).
+From there, the process of fitting the model and plotting the results is identical.</p>
 <div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="generalized-linear-models.html#cb162-1" aria-hidden="true" tabindex="-1"></a>dl_basis_3 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
 <span id="cb162-2"><a href="generalized-linear-models.html#cb162-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;lin&quot;</span>), </span>
-<span id="cb162-3"><a href="generalized-linear-models.html#cb162-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">5</span>))</span>
+<span id="cb162-3"><a href="generalized-linear-models.html#cb162-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">6</span>))</span>
 <span id="cb162-4"><a href="generalized-linear-models.html#cb162-4" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_4 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_3 <span class="sc">+</span> </span>
 <span id="cb162-5"><a href="generalized-linear-models.html#cb162-5" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb162-6"><a href="generalized-linear-models.html#cb162-6" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
@@ -1627,10 +1706,22 @@ cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
 milder temperature (7 degrees C), once you incorporated all lagged effects
 up to a month after exposure?</strong></li>
 </ol>
-<p>Extend to include non-linear function of temperature:</p>
+<p>To extend the model to include temperature using a non-linear function, we’ll go back
+to the <code>crossbasis</code> call, but this time we’ll make some changes to the exposure variable
+dimension. The basis function for the exposure is set using the <code>argvar</code> (“var” is
+for “variable”) parameter. Again, this allows us to include a list of parameters that
+will be passed to <code>onebasis</code> to build a basis function and set up basis variables for
+this dimension of the crossbasis. We can use a spline for temperature by specifying
+<code>fun = "ns"</code>, as well as specify the degrees of freedom for that spline (here, I’ve used
+4, but again, feel free to experiment):</p>
 <div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="generalized-linear-models.html#cb163-1" aria-hidden="true" tabindex="-1"></a>dl_basis_4 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
 <span id="cb163-2"><a href="generalized-linear-models.html#cb163-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
 <span id="cb163-3"><a href="generalized-linear-models.html#cb163-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">5</span>))</span></code></pre></div>
+<p>Try looking at the crossbasis from this function (you’ll need to look past the 30th row
+or so, since the earliest rows will all be missing since they’re in that range where
+they don’t have lag data available for the exposure). You can see that we now have a
+<em>lot</em> of columns: specifically, we have 4 (degrees of freedom for the temperature spline)
+times 5 (degrees of freedom for the lag spline) = 20 columns.</p>
 <div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="generalized-linear-models.html#cb164-1" aria-hidden="true" tabindex="-1"></a>dl_basis_4 <span class="sc">%&gt;%</span> </span>
 <span id="cb164-2"><a href="generalized-linear-models.html#cb164-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb164-3"><a href="generalized-linear-models.html#cb164-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">28</span><span class="sc">:</span><span class="dv">38</span>)</span></code></pre></div>
@@ -1670,12 +1761,19 @@ up to a month after exposure?</strong></li>
 ## 9  -0.06963965 -1.1291648 -1.360546 -0.7899392 -1.418683  0.039853323
 ## 10  0.06149683 -1.1537262 -1.381425 -0.7880451 -1.381542 -0.035193354
 ## 11  0.08860827 -1.1694805 -1.409331 -0.8151992 -1.274737 -0.050708665</code></pre>
+<p>The <code>dlnm</code> package has done
+the work of setting up this crossbasis function, as well as creating this matrix of
+basis variables from our original simple column of temperature measurements. This
+is getting to be a much more complex function than the simple linear/unconstrained lag
+function that we started with. However, the underlying principles and mechanics are the
+same, they’re just scaling up to allow some more complex “shapes” in our exposure-response
+association.</p>
 <div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="generalized-linear-models.html#cb166-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_4 <span class="sc">+</span> </span>
 <span id="cb166-2"><a href="generalized-linear-models.html#cb166-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb166-3"><a href="generalized-linear-models.html#cb166-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
 <span id="cb166-4"><a href="generalized-linear-models.html#cb166-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
 <span id="cb166-5"><a href="generalized-linear-models.html#cb166-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb166-6"><a href="generalized-linear-models.html#cb166-6" aria-hidden="true" tabindex="-1"></a>cp_dl <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(dl_basis_4, dist_lag_mod_5, <span class="at">cen =</span> <span class="dv">7</span>)</span>
+<span id="cb166-6"><a href="generalized-linear-models.html#cb166-6" aria-hidden="true" tabindex="-1"></a>cp_dl <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(dl_basis_4, dist_lag_mod_5, <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">bylag =</span> <span class="dv">1</span>)</span>
 <span id="cb166-7"><a href="generalized-linear-models.html#cb166-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb166-8"><a href="generalized-linear-models.html#cb166-8" aria-hidden="true" tabindex="-1"></a>cp_dl <span class="sc">%&gt;%</span> </span>
 <span id="cb166-9"><a href="generalized-linear-models.html#cb166-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;matRRfit&quot;</span>)</span></code></pre></div>

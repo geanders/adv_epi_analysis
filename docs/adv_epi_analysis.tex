@@ -118,7 +118,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-09-12}
+\date{2021-09-13}
 
 \begin{document}
 \maketitle
@@ -3408,8 +3408,9 @@ For many exposures, however, risk can persist after the day of exposure.
 
 In some cases, this may be caused by a delay in detection of the outcome in the
 data we have. For example, extreme heat today could precipitate a respiratory or
-cardiac event that the person may not seek treatment for until tomorrow, and so
-in the data the outcome would be recorded at a one-day delay from the exposure.
+cardiac event that the person may not seek treatment for or result in an outcome
+like mortality until tomorrow, and so in the data the outcome would be recorded
+at a one-day delay from the exposure.
 
 In other cases, the path from the exposure to the outcome may take several days.
 For example, cold temperatures are often found to be associated with respiratory
@@ -3427,22 +3428,24 @@ There is another lagged pattern that can be important to check for, as well---on
 that indicates mortality displacement. For many ambient environmental exposures,
 there are clear indications that associations with health outcomes are strongest
 among older adults or other populations with a disproportionately high percent
-of people who are frail before exposure. One questions that comes up, then, is
+of people who are frail before exposure. One question that comes up, then, is
 if, when an exposure is associated with excess deaths, these are deaths that are
 displaced in time by only a few days or weeks, rather than deaths that represent
 a larger time of life lost. This question---of whether deaths observed to be
 associated with an environmental exposure were displaced by only a small amount of
 time---can be explored by investigating whether an observed increase in mortality
 across a community during an exposure is then offset by a lower-than-expected
-rate of mortality in the following days and weeks.
+rate of mortality in the following days and weeks.This phenomenon is sometimes\\
+also referred to as `harvesting' or a `harvesting effect'.
 
 All of these questions can be explored through a type of model called a
 \emph{distributed lag model}. Conceptually, these models investigate how an exposure
 today is associated with risk of a health outcome not only today, but also in
-the following days. Because we are concerned about potential confounding by
-seasonal trends---and have incorporated control for these trends in our models---we
-often restrict these models to only look up to about a month following exposure.
-However, this can help in identifying delayed effects of an exposure days to weeks
+the following days. In time-series studies where we typically want to estimate
+potential short-term and/or acute effects, and because we are concerned about potential
+confounding by seasonal trends---and have incorporated control for these trends in
+our models---we often restrict these models to only look up to about a month following
+exposure. However, this can help in identifying delayed effects of an exposure days to weeks
 following the initial exposure, and can also help in determining the role of
 mortality displacement in accounting for some or all of the excess deaths that are
 associated with an exposure. While some environmental exposures of interest
@@ -3451,7 +3454,12 @@ pollutants, tend to have effects that are stretched over a longer period of one 
 more days from exposure. As a result, distributed lag models are used widely in
 environmental epidemiology studies of time series data, to ensure that important
 associations aren't missed by limiting the model to focus on risk that are
-detectable on the same day as the exposure.
+detectable on the same day as the exposure. They can also help us identify influential
+windows of exposure as well as help eliminate potential confoundign by exposures
+occurring at proximal times to the window of interest. For example, today's exposure
+may appear to have an effect on a helath outcome even if in reality yesterday's
+exposure is the influential one and we don't control for it, because today's and
+yesterday's exposure to temperature or air pollution are likely to be very similar.
 
 To fit a distributed lag model, you can start with a fairly straightforward
 extension of the regression models we've been fitting, especially if you are
@@ -3499,10 +3507,9 @@ log(E(Y)) = \alpha + \sum_{l=0}^2{\beta_lX_l} + \mathbf{\gamma^{'}W} + ns(time)
 This version of a distributed lag model is nice because it is fairly simple---we're taking the
 idea of fitting a linear term for an exposure, and then expanding it to look include the
 exposure on earlier days by adding the same type of term for exposure measured at each lag.
-However, it does have some downsides. The main downside is that exposure tends to be very
-strongly correlated from one day to the next. Any time you put different terms in a regression
-model that are correlated, you create the risk of \emph{collinearity}, and associated problems
-with fitting the model. The term \emph{collinearity} refers to the idea that you have two of more
+However, it does have some downsides. The main downside is that as we alluded to above, exposure
+tends to be very strongly correlated from one day to the next. Any time you put different terms in a regression model that are correlated, you create the risk of \emph{collinearity}, and associated
+problemswith fitting the model. The term \emph{collinearity} refers to the idea that you have two or more
 columns in your model matrix that give identical (or, if you loosen the definition a bit,
 very similar) information. To fit coefficients for each term, the modeling algorithm is trying
 to identify weights to place on each column in the model matrix that result in a model that
@@ -3515,7 +3522,7 @@ independent variables that are very strongly correlated with each other, and so 
 try to avoid doing that.
 
 There are alternative distributed lag models that can help avoid this instability that can
-come from fitting a distributed lag by using a separate term for each lag. All of them share
+arise from fitting a distributed lag by using a separate term for each lag. All of them share
 a common feature---they somehow fit a function of the lags instead of each separate lag, so
 that we end up adding fewer terms to the regression model (and, in term, are somewhat
 constraining that pattern that the distributed lag effects follow). The most extreme
@@ -3537,7 +3544,8 @@ lags, because you're only including a single term for exposure in the model. How
 there is a downside---this model will provide you with a single estimate for the
 lagged effects, without allowing you to explore patterns across lags (for example,
 is the association mostly on the day of exposure, or are there some delayed effects on
-following days?).
+following days? the main assumption is that the effect is constant across all days in the
+window of interest).
 
 Another approach is more complex, but it allows you to explore patterns across lags.
 Instead of reducing the lagged exposure to a single term in the model, you can reduce
@@ -3567,7 +3575,7 @@ outcome variable. However, the mechanics do get quite cumbersome as so many term
 included, and so again we will use the \texttt{dlnm} package to handle these mechanics as we
 start to incorporate these cross-basis functions within a GLM.
 
-\emph{Applied: Including a spline in a GLM}
+\emph{Applied: Including a cross-basis function for exposure-lag-response in a GLM}
 
 For this exercise, you will continue to build up the model that you began in
 the examples in the previous chapter. The example uses the data provided with
@@ -3599,7 +3607,16 @@ one of this chapter's readings, \citet{vicedo2019hands}.
   (e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the
   cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
   milder temperature (7 degrees C), once you incorporated all lagged effects
-  up to a month after exposure?
+  up to a month after exposure? If you use a constant term for the effect of exposure
+  over a month as opposed to the smooth function you just used, how does the overall
+  cumulative RR compare?
+\item
+  Assume that we are interested in the potential effect of a 5-day
+  heatwave occurring on lags x to x? You can assess this as the effect of hot temperature
+  (e.g., 28 degrees C) during these lags, while the temperature remains warm but more
+  mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for
+  the whole month. What is the effect under the `constant' model? How about the smooth
+  function lag model?
 \end{enumerate}
 
 \emph{Applied exercise: Example code}
@@ -3875,7 +3892,10 @@ You can proceed from here to plot estimates by lag using ggplot, but you can als
 some of the special functions for plotting in \texttt{dlnm}. We can plot the ``slice'' of comparing
 the relative risk at 1 degree C (\texttt{var\ =\ 1}) (this will give us the one-unit increase,
 because by default the crossbasis set-up with 0 degrees as the baseline, so this is
-one degree above that value).
+one degree above that value). The \texttt{crosspred} function predicts based on a crossbasis
+and a regression model object that uses that crossbasis, then the \texttt{plot} function has a
+special method for plotting the resulting crosspred object (to see the helpfile for this
+plot method, type \texttt{?plot.crosspred} in your R console).
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3933,6 +3953,56 @@ function, to help avoid this potential instability in the modeling.
   exposure. What patterns do you see in these lagged effects?}
 \end{enumerate}
 
+As a reminder, we can stabilize our model of lagged effects a bit by fitting the
+lagged effects to be constrained to follow a smooth function, instead of fitting a separate
+term for each lag. The \texttt{dlnm} package makes this very easy to do.
+
+When you use \texttt{crossbasis} to set up a crossbasis function, you can make a lot of choices
+to customize that crossbasis. The crossbasis combines a basis function for incorporating
+the exposure in the regression model (temperature in this case), as well as a basis function
+for incorporating lagged effects of that exposure. The \texttt{crossbasis} functions gives you
+several choices for each of these basis functions for the two dimensions of the
+crossbasis. Here, we'll look at using that flexibility for the lag dimension; in the next
+part of the exercise, we'll add some more complexity in the basis function for the
+exposure, as well.
+
+To customize the basis function for lagged effects, you can use the \texttt{arglag} parameter
+in the \texttt{crossbasis} function. You send this parameter a list of other parameters, which
+get sent to a general \texttt{onebasis} function that builds that basis function (this will
+be convenient when we start working with the exposure basis, too---you'll see that you
+can use the same parameters in setting up each basis function).
+
+To see the range of functions you can use for this crossbasis function, check the help
+function for \texttt{onebasis}. When we fit a separate coefficient for each lag, we used the
+``integer'' function, which creates a set of basis variables with indicators for each
+separate lag (this is really similar to the idea of basis variables for a categorical
+variable, like day of the week).
+
+Here, we want to instead use a smooth function, with fewer degrees of freedom (i.e., fewer
+columns created in the matrix of basis values). Two popular options for that function are
+the ``poly'' function, which will fit a polynomial, or the ``ns'' function, which will fit
+a natural cubic spline (just like we did earlier to create a non-linear function of
+temperature). We'll use ``ns'' in this example (\texttt{fun\ =\ ns} in the list of parameters for
+\texttt{arglag}).
+
+For some of these functions, you'll need to specify additional parameters to clarify
+how they should be built. For example, if you're using a spline, you need to specify
+how many degrees of freedom it should have with \texttt{df}. We'll use 4 degrees of freedom,
+but you can experiment with different values for this and see how it affects the shape
+of the resulting function (i.e., the plot we create later). If you were fitting a
+polynomial function,
+you'd need to specify the degree of the polynomial; if you were fitting strata (i.e.,
+constant values within sets of lags), you'd need to specify the breaks for dividing
+those strata; if you were using a threshold function, you'd need to specify the threshold,
+and so on. You can find more details on these options in the helpfile for \texttt{onebasis};
+in general, the \texttt{onebasis} function is using other underlying functions like \texttt{ns} and
+\texttt{poly} to build these functions, so the choice of parameters will depend on the parameters
+for those underlying functions.
+
+Here is the final call for building this new crossbasis (note that we're continuing to
+use a linear function of temperature, and at this point still only looking at lags up to
+a week; later in this question we'll expand to look at longer lags):
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{dl\_basis\_2 }\OtherTok{\textless{}{-}} \FunctionTok{crossbasis}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{tmean, }\AttributeTok{lag =} \DecValTok{7}\NormalTok{,}
@@ -3940,6 +4010,14 @@ function, to help avoid this potential instability in the modeling.
                        \AttributeTok{arglag =} \FunctionTok{list}\NormalTok{(}\AttributeTok{fun =} \StringTok{"ns"}\NormalTok{, }\AttributeTok{df =} \DecValTok{4}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
+
+If you look at this crossbasis object, you'll see that it's created a matrix of basis
+variables, similar to the last part of the exercise. However, instead of having the same
+number of columns as the number of lags (8), we now have fewer columns. We have 4, reflecting
+the degrees of freedom we specified for the spline function of lag. Therefore, we've
+constrained the lag function a bit compared to the previous part of the exercise. Again,
+the values are all missing for the first seven days, since the data isn't able to capture
+the lagged temperature for these days.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3963,6 +4041,9 @@ function, to help avoid this potential instability in the modeling.
 ## [11,] 10.94122 8.867758 22.33138 -2.7169313
 ## [12,] 13.00391 8.984807 22.20899 -0.3726342
 \end{verbatim}
+
+Again, once we build the crossbasis function, we can put it in the regression equation and
+fit a regression model using \texttt{glm}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3988,13 +4069,22 @@ predict to a finer resolution along the lag dimension (here, we're using \texttt
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-100-1.pdf}
 
-Extend out to about month after exposure:
+You can go back to the \texttt{crossbasis} call and try playing around with the degrees of freedom
+for the spline, to see how that affects the shape of this function. Be sure, though, that
+you don't use more degrees of freedom than there are lags (i.e., more than 8).
+
+Now let's try to extend the model out to look at up to a month after exposure. To do this,
+all you need to do is change the \texttt{lag} argument in \texttt{crossbasis} to the longest lag you
+want to include. Since we're adding more lags, you'll likely also want to increase the
+degrees of freedom you use for the basis function of lag; here, I'm using 6, but you can
+explore other values as well (again, don't use more than the number of lags, though).
+From there, the process of fitting the model and plotting the results is identical.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{dl\_basis\_3 }\OtherTok{\textless{}{-}} \FunctionTok{crossbasis}\NormalTok{(obs}\SpecialCharTok{$}\NormalTok{tmean, }\AttributeTok{lag =} \DecValTok{30}\NormalTok{,}
                        \AttributeTok{argvar =} \FunctionTok{list}\NormalTok{(}\AttributeTok{fun =} \StringTok{"lin"}\NormalTok{), }
-                       \AttributeTok{arglag =} \FunctionTok{list}\NormalTok{(}\AttributeTok{fun =} \StringTok{"ns"}\NormalTok{, }\AttributeTok{df =} \DecValTok{5}\NormalTok{))}
+                       \AttributeTok{arglag =} \FunctionTok{list}\NormalTok{(}\AttributeTok{fun =} \StringTok{"ns"}\NormalTok{, }\AttributeTok{df =} \DecValTok{6}\NormalTok{))}
 \NormalTok{dist\_lag\_mod\_4 }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ dl\_basis\_3 }\SpecialCharTok{+} 
                         \FunctionTok{factor}\NormalTok{(dow, }\AttributeTok{ordered =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
                           \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{158}\NormalTok{), }
@@ -4024,7 +4114,14 @@ Extend out to about month after exposure:
   up to a month after exposure?}
 \end{enumerate}
 
-Extend to include non-linear function of temperature:
+To extend the model to include temperature using a non-linear function, we'll go back
+to the \texttt{crossbasis} call, but this time we'll make some changes to the exposure variable
+dimension. The basis function for the exposure is set using the \texttt{argvar} (``var'' is
+for ``variable'') parameter. Again, this allows us to include a list of parameters that
+will be passed to \texttt{onebasis} to build a basis function and set up basis variables for
+this dimension of the crossbasis. We can use a spline for temperature by specifying
+\texttt{fun\ =\ "ns"}, as well as specify the degrees of freedom for that spline (here, I've used
+4, but again, feel free to experiment):
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4033,6 +4130,12 @@ Extend to include non-linear function of temperature:
                        \AttributeTok{arglag =} \FunctionTok{list}\NormalTok{(}\AttributeTok{fun =} \StringTok{"ns"}\NormalTok{, }\AttributeTok{df =} \DecValTok{5}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
+
+Try looking at the crossbasis from this function (you'll need to look past the 30th row
+or so, since the earliest rows will all be missing since they're in that range where
+they don't have lag data available for the exposure). You can see that we now have a
+\emph{lot} of columns: specifically, we have 4 (degrees of freedom for the temperature spline)
+times 5 (degrees of freedom for the lag spline) = 20 columns.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4081,6 +4184,14 @@ Extend to include non-linear function of temperature:
 ## 11  0.08860827 -1.1694805 -1.409331 -0.8151992 -1.274737 -0.050708665
 \end{verbatim}
 
+The \texttt{dlnm} package has done
+the work of setting up this crossbasis function, as well as creating this matrix of
+basis variables from our original simple column of temperature measurements. This
+is getting to be a much more complex function than the simple linear/unconstrained lag
+function that we started with. However, the underlying principles and mechanics are the
+same, they're just scaling up to allow some more complex ``shapes'' in our exposure-response
+association.
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{dist\_lag\_mod\_5 }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(all }\SpecialCharTok{\textasciitilde{}}\NormalTok{ dl\_basis\_4 }\SpecialCharTok{+} 
@@ -4088,7 +4199,7 @@ Extend to include non-linear function of temperature:
                           \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{158}\NormalTok{), }
                         \AttributeTok{data =}\NormalTok{ obs, }\AttributeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
 
-\NormalTok{cp\_dl }\OtherTok{\textless{}{-}} \FunctionTok{crosspred}\NormalTok{(dl\_basis\_4, dist\_lag\_mod\_5, }\AttributeTok{cen =} \DecValTok{7}\NormalTok{)}
+\NormalTok{cp\_dl }\OtherTok{\textless{}{-}} \FunctionTok{crosspred}\NormalTok{(dl\_basis\_4, dist\_lag\_mod\_5, }\AttributeTok{cen =} \DecValTok{7}\NormalTok{, }\AttributeTok{bylag =} \DecValTok{1}\NormalTok{)}
 
 \NormalTok{cp\_dl }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{pluck}\NormalTok{(}\StringTok{"matRRfit"}\NormalTok{)}

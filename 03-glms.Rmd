@@ -1173,7 +1173,7 @@ cumulative RR compare?
 4. Assume that we are interested in the potential effect of a 5-day 
 heatwave occurring on lags x to x? You can assess this as the effect of hot temperature 
 (e.g., 28 degrees C) during these lags, while the temperature remains warm but more 
-mild (e.g., 20 degrees C) the rest of them month, against constant 20 degrees C for 
+mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for 
 the whole month. What is the effect under the 'constant' model? How about the smooth 
 function lag model? 
 
@@ -1339,7 +1339,10 @@ You can proceed from here to plot estimates by lag using ggplot, but you can als
 some of the special functions for plotting in `dlnm`. We can plot the "slice" of comparing
 the relative risk at 1 degree C (`var = 1`) (this will give us the one-unit increase, 
 because by default the crossbasis set-up with 0 degrees as the baseline, so this is 
-one degree above that value). 
+one degree above that value). The `crosspred` function predicts based on a crossbasis
+and a regression model object that uses that crossbasis, then the `plot` function has a
+special method for plotting the resulting crosspred object (to see the helpfile for this
+plot method, type `?plot.crosspred` in your R console). 
 
 ```{r}
 crosspred(dl_basis, dist_lag_mod_2) %>% 
@@ -1364,16 +1367,77 @@ function of lag to detect lagged effects, rather than fitting a separate term
 for each lag. Extend the model to look at lagged effects up to a month following
 exposure. What patterns do you see in these lagged effects?**
 
+As a reminder, we can stabilize our model of lagged effects a bit by fitting the 
+lagged effects to be constrained to follow a smooth function, instead of fitting a separate 
+term for each lag. The `dlnm` package makes this very easy to do. 
+
+When you use `crossbasis` to set up a crossbasis function, you can make a lot of choices
+to customize that crossbasis. The crossbasis combines a basis function for incorporating
+the exposure in the regression model (temperature in this case), as well as a basis function
+for incorporating lagged effects of that exposure. The `crossbasis` functions gives you 
+several choices for each of these basis functions for the two dimensions of the 
+crossbasis. Here, we'll look at using that flexibility for the lag dimension; in the next 
+part of the exercise, we'll add some more complexity in the basis function for the 
+exposure, as well.
+
+To customize the basis function for lagged effects, you can use the `arglag` parameter
+in the `crossbasis` function. You send this parameter a list of other parameters, which 
+get sent to a general `onebasis` function that builds that basis function (this will 
+be convenient when we start working with the exposure basis, too---you'll see that you 
+can use the same parameters in setting up each basis function). 
+
+To see the range of functions you can use for this crossbasis function, check the help 
+function for `onebasis`. When we fit a separate coefficient for each lag, we used the
+"integer" function, which creates a set of basis variables with indicators for each 
+separate lag (this is really similar to the idea of basis variables for a categorical
+variable, like day of the week). 
+
+Here, we want to instead use a smooth function, with fewer degrees of freedom (i.e., fewer
+columns created in the matrix of basis values). Two popular options for that function are 
+the "poly" function, which will fit a polynomial, or the "ns" function, which will fit
+a natural cubic spline (just like we did earlier to create a non-linear function of 
+temperature). We'll use "ns" in this example (`fun = ns` in the list of parameters for
+`arglag`). 
+
+For some of these functions, you'll need to specify additional parameters to clarify 
+how they should be built. For example, if you're using a spline, you need to specify 
+how many degrees of freedom it should have with `df`. We'll use 4 degrees of freedom, 
+but you can experiment with different values for this and see how it affects the shape
+of the resulting function (i.e., the plot we create later). If you were fitting a 
+polynomial function, 
+you'd need to specify the degree of the polynomial; if you were fitting strata (i.e., 
+constant values within sets of lags), you'd need to specify the breaks for dividing 
+those strata; if you were using a threshold function, you'd need to specify the threshold, 
+and so on. You can find more details on these options in the helpfile for `onebasis`; 
+in general, the `onebasis` function is using other underlying functions like `ns` and
+`poly` to build these functions, so the choice of parameters will depend on the parameters
+for those underlying functions.
+
+Here is the final call for building this new crossbasis (note that we're continuing to 
+use a linear function of temperature, and at this point still only looking at lags up to 
+a week; later in this question we'll expand to look at longer lags):
+
 ```{r message = FALSE, warning = FALSE}
 dl_basis_2 <- crossbasis(obs$tmean, lag = 7,
                        argvar = list(fun = "lin"), 
                        arglag = list(fun = "ns", df = 4))
 ```
 
+If you look at this crossbasis object, you'll see that it's created a matrix of basis
+variables, similar to the last part of the exercise. However, instead of having the same
+number of columns as the number of lags (8), we now have fewer columns. We have 4, reflecting
+the degrees of freedom we specified for the spline function of lag. Therefore, we've 
+constrained the lag function a bit compared to the previous part of the exercise. Again, 
+the values are all missing for the first seven days, since the data isn't able to capture
+the lagged temperature for these days.
+
 ```{r}
 dl_basis_2 %>% 
   head(n = 12)
 ```
+
+Again, once we build the crossbasis function, we can put it in the regression equation and
+fit a regression model using `glm`:
 
 ```{r}
 dist_lag_mod_3 <- glm(all ~ dl_basis_2 + 
@@ -1393,12 +1457,21 @@ crosspred(dl_basis_2, dist_lag_mod_3, at = 1, bylag = 0.2) %>%
   plot(ptype = "slices", var = 1)
 ```
 
-Extend out to about month after exposure:
+You can go back to the `crossbasis` call and try playing around with the degrees of freedom
+for the spline, to see how that affects the shape of this function. Be sure, though, that
+you don't use more degrees of freedom than there are lags (i.e., more than 8).
+
+Now let's try to extend the model out to look at up to a month after exposure. To do this, 
+all you need to do is change the `lag` argument in `crossbasis` to the longest lag you 
+want to include. Since we're adding more lags, you'll likely also want to increase the 
+degrees of freedom you use for the basis function of lag; here, I'm using 6, but you can 
+explore other values as well (again, don't use more than the number of lags, though). 
+From there, the process of fitting the model and plotting the results is identical.
 
 ```{r message = FALSE, warning = FALSE}
 dl_basis_3 <- crossbasis(obs$tmean, lag = 30,
                        argvar = list(fun = "lin"), 
-                       arglag = list(fun = "ns", df = 5))
+                       arglag = list(fun = "ns", df = 6))
 dist_lag_mod_4 <- glm(all ~ dl_basis_3 + 
                         factor(dow, ordered = FALSE) +
                           ns(time, df = 158), 
@@ -1406,7 +1479,6 @@ dist_lag_mod_4 <- glm(all ~ dl_basis_3 +
 crosspred(dl_basis_3, dist_lag_mod_4, at = 1) %>% 
   plot(ptype = "slices", var = 1)
 ```
-
 
 3. **Refine your model to fit for a non-linear, rather than linear, function 
 of temperature, while also incorporating a function to describe lagged effects up 
@@ -1420,7 +1492,14 @@ cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
 milder temperature (7 degrees C), once you incorporated all lagged effects
 up to a month after exposure?**
 
-Extend to include non-linear function of temperature:
+To extend the model to include temperature using a non-linear function, we'll go back 
+to the `crossbasis` call, but this time we'll make some changes to the exposure variable
+dimension. The basis function for the exposure is set using the `argvar` ("var" is 
+for "variable") parameter. Again, this allows us to include a list of parameters that 
+will be passed to `onebasis` to build a basis function and set up basis variables for 
+this dimension of the crossbasis. We can use a spline for temperature by specifying 
+`fun = "ns"`, as well as specify the degrees of freedom for that spline (here, I've used
+4, but again, feel free to experiment):
 
 ```{r message = FALSE, warning = FALSE}
 dl_basis_4 <- crossbasis(obs$tmean, lag = 30,
@@ -1428,12 +1507,25 @@ dl_basis_4 <- crossbasis(obs$tmean, lag = 30,
                        arglag = list(fun = "ns", df = 5))
 ```
 
+Try looking at the crossbasis from this function (you'll need to look past the 30th row 
+or so, since the earliest rows will all be missing since they're in that range where 
+they don't have lag data available for the exposure). You can see that we now have a 
+*lot* of columns: specifically, we have 4 (degrees of freedom for the temperature spline)
+times 5 (degrees of freedom for the lag spline) = 20 columns. 
+
 ```{r}
 dl_basis_4 %>% 
   as.data.frame() %>% 
   slice(28:38)
 ```
 
+The `dlnm` package has done
+the work of setting up this crossbasis function, as well as creating this matrix of 
+basis variables from our original simple column of temperature measurements. This 
+is getting to be a much more complex function than the simple linear/unconstrained lag 
+function that we started with. However, the underlying principles and mechanics are the 
+same, they're just scaling up to allow some more complex "shapes" in our exposure-response
+association.
 
 ```{r}
 dist_lag_mod_5 <- glm(all ~ dl_basis_4 + 
