@@ -1141,7 +1141,7 @@ outcome variable. However, the mechanics do get quite cumbersome as so many term
 included, and so again we will use the `dlnm` package to handle these mechanics as we
 start to incorporate these cross-basis functions within a GLM.
 
-*Applied: Including a spline in a GLM*
+*Applied: Including a cross-basis function for exposure-lag-response in a GLM*
 
 For this exercise, you will continue to build up the model that you began in 
 the examples in the previous chapter. The example uses the data provided with 
