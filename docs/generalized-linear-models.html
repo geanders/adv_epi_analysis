@@ -1704,7 +1704,9 @@ mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
 (e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the
 cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
 milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure?</strong></li>
+up to a month after exposure? If you use a constant term for the effect of exposure
+over a month as opposed to the smooth function you just used, how does the overall
+cumulative RR compare?</strong></li>
 </ol>
 <p>To extend the model to include temperature using a non-linear function, we’ll go back
 to the <code>crossbasis</code> call, but this time we’ll make some changes to the exposure variable
@@ -2140,6 +2142,34 @@ association.</p>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-104-3.png" width="672" /></p>
 <div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="generalized-linear-models.html#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="sc">-</span><span class="dv">4</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-104-4.png" width="672" /></p>
+<p>To see how a ‘constant’ lag-response model compares to the smooth function from this model we have to go back to the <code>crossbasis</code> and use the appropriate argument in the <code>arglag</code> parameter:</p>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="generalized-linear-models.html#cb172-1" aria-hidden="true" tabindex="-1"></a>dl_basis_5 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
+<span id="cb172-2"><a href="generalized-linear-models.html#cb172-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
+<span id="cb172-3"><a href="generalized-linear-models.html#cb172-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;strata&quot;</span>, <span class="at">df =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p>If we look at the <code>crossbasis</code> from this function you’ll see that we have far fewer columns.</p>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="generalized-linear-models.html#cb173-1" aria-hidden="true" tabindex="-1"></a>dl_basis_5 <span class="sc">%&gt;%</span> </span>
+<span id="cb173-2"><a href="generalized-linear-models.html#cb173-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb173-3"><a href="generalized-linear-models.html#cb173-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">28</span><span class="sc">:</span><span class="dv">38</span>)</span></code></pre></div>
+<pre><code>##       v1.l1     v2.l1     v3.l1     v4.l1
+## 1        NA        NA        NA        NA
+## 2        NA        NA        NA        NA
+## 3        NA        NA        NA        NA
+## 4  14.69900 -4.438015 10.919532 -6.249020
+## 5  15.03355 -4.382485 10.789984 -6.174883
+## 6  15.21075 -4.347038 10.707109 -6.127455
+## 7  15.33913 -4.332385 10.672850 -6.107850
+## 8  15.51220 -4.298983 10.594759 -6.063160
+## 9  15.89771 -4.127076 10.317738 -5.904626
+## 10 15.96057 -4.094014 10.267995 -5.876159
+## 11 16.37863 -3.880472  9.958228 -5.698886</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Assume that we are interested in the potential effect of a 5-day
+heatwave occurring on lags 1 to 5? You can assess this as the effect of hot temperature
+(e.g., 28 degrees C) during these lags, while the temperature remains warm but more
+mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for
+the whole month. What is the effect under the ‘constant’ model? How about the smooth
+function lag model?</strong></li>
+</ol>
 
 </div>
 </div>
