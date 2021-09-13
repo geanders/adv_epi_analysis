@@ -974,8 +974,9 @@ For many exposures, however, risk can persist after the day of exposure.
 
 In some cases, this may be caused by a delay in detection of the outcome in the
 data we have. For example, extreme heat today could precipitate a respiratory or
-cardiac event that the person may not seek treatment for until tomorrow, and so
-in the data the outcome would be recorded at a one-day delay from the exposure.
+cardiac event that the person may not seek treatment for or result in an outcome 
+like mortality until tomorrow, and so in the data the outcome would be recorded 
+at a one-day delay from the exposure.
 
 In other cases, the path from the exposure to the outcome may take several days.
 For example, cold temperatures are often found to be associated with respiratory
@@ -993,22 +994,24 @@ There is another lagged pattern that can be important to check for, as well---on
 that indicates mortality displacement. For many ambient environmental exposures, 
 there are clear indications that associations with health outcomes are strongest
 among older adults or other populations with a disproportionately high percent
-of people who are frail before exposure. One questions that comes up, then, is 
+of people who are frail before exposure. One question that comes up, then, is 
 if, when an exposure is associated with excess deaths, these are deaths that are 
 displaced in time by only a few days or weeks, rather than deaths that represent
 a larger time of life lost. This question---of whether deaths observed to be 
 associated with an environmental exposure were displaced by only a small amount of
 time---can be explored by investigating whether an observed increase in mortality 
 across a community during an exposure is then offset by a lower-than-expected
-rate of mortality in the following days and weeks.
+rate of mortality in the following days and weeks.This phenomenon is sometimes  
+also referred to as 'harvesting' or a 'harvesting effect'.
 
 All of these questions can be explored through a type of model called a 
 *distributed lag model*. Conceptually, these models investigate how an exposure
 today is associated with risk of a health outcome not only today, but also in 
-the following days. Because we are concerned about potential confounding by 
-seasonal trends---and have incorporated control for these trends in our models---we
-often restrict these models to only look up to about a month following exposure.
-However, this can help in identifying delayed effects of an exposure days to weeks
+the following days. In time-series studies where we typically want to estimate 
+potential short-term and/or acute effects, and because we are concerned about potential 
+confounding by seasonal trends---and have incorporated control for these trends in 
+our models---we often restrict these models to only look up to about a month following 
+exposure. However, this can help in identifying delayed effects of an exposure days to weeks
 following the initial exposure, and can also help in determining the role of 
 mortality displacement in accounting for some or all of the excess deaths that are 
 associated with an exposure. While some environmental exposures of interest
@@ -1017,7 +1020,12 @@ pollutants, tend to have effects that are stretched over a longer period of one 
 more days from exposure. As a result, distributed lag models are used widely in 
 environmental epidemiology studies of time series data, to ensure that important
 associations aren't missed by limiting the model to focus on risk that are 
-detectable on the same day as the exposure.
+detectable on the same day as the exposure. They can also help us identify influential
+windows of exposure as well as help eliminate potential confoundign by exposures 
+occurring at proximal times to the window of interest. For example, today's exposure 
+may appear to have an effect on a helath outcome even if in reality yesterday's 
+exposure is the influential one and we don't control for it, because today's and 
+yesterday's exposure to temperature or air pollution are likely to be very similar. 
 
 To fit a distributed lag model, you can start with a fairly straightforward 
 extension of the regression models we've been fitting, especially if you are 
@@ -1065,10 +1073,9 @@ $$
 This version of a distributed lag model is nice because it is fairly simple---we're taking the
 idea of fitting a linear term for an exposure, and then expanding it to look include the 
 exposure on earlier days by adding the same type of term for exposure measured at each lag.
-However, it does have some downsides. The main downside is that exposure tends to be very 
-strongly correlated from one day to the next. Any time you put different terms in a regression
-model that are correlated, you create the risk of *collinearity*, and associated problems
-with fitting the model. The term *collinearity* refers to the idea that you have two of more
+However, it does have some downsides. The main downside is that as we alluded to above, exposure 
+tends to be very strongly correlated from one day to the next. Any time you put different terms in a regression model that are correlated, you create the risk of *collinearity*, and associated 
+problemswith fitting the model. The term *collinearity* refers to the idea that you have two or more
 columns in your model matrix that give identical (or, if you loosen the definition a bit, 
 very similar) information. To fit coefficients for each term, the modeling algorithm is trying
 to identify weights to place on each column in the model matrix that result in a model that
@@ -1081,7 +1088,7 @@ independent variables that are very strongly correlated with each other, and so 
 try to avoid doing that. 
 
 There are alternative distributed lag models that can help avoid this instability that can 
-come from fitting a distributed lag by using a separate term for each lag. All of them share
+arise from fitting a distributed lag by using a separate term for each lag. All of them share
 a common feature---they somehow fit a function of the lags instead of each separate lag, so 
 that we end up adding fewer terms to the regression model (and, in term, are somewhat 
 constraining that pattern that the distributed lag effects follow). The most extreme
@@ -1103,7 +1110,8 @@ lags, because you're only including a single term for exposure in the model. How
 there is a downside---this model will provide you with a single estimate for the 
 lagged effects, without allowing you to explore patterns across lags (for example, 
 is the association mostly on the day of exposure, or are there some delayed effects on 
-following days?).
+following days? the main assumption is that the effect is constant across all days in the 
+window of interest).
 
 Another approach is more complex, but it allows you to explore patterns across lags. 
 Instead of reducing the lagged exposure to a single term in the model, you can reduce
@@ -1159,7 +1167,9 @@ mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
 (e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the 
 cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a 
 milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure?
+up to a month after exposure? If you use a constant term for the effect of exposure 
+over a month as opposed to the smooth function you just used, how does the overall 
+cumulative RR compare?
 
 *Applied exercise: Example code*
 
