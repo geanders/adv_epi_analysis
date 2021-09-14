@@ -1549,10 +1549,8 @@ whole thing by running `cp_dl` to print it out). We can extract elements from th
 We can also create a variety of plots from this object. The following plots all use the
 `plot` method for `crosspred` objects, so you can access the helpfile with `?plot.crosspred`.
 
-First, we can look at "slices", where we focus on just one lag value and look at the
-non-linear relationship between temperature and mortality risk at that lag only. For example,
-here are plots showing the relationship between temperature and mortality risk on the 
-same day of exposure (lag 0) and 21 days after exposure (lag 21):
+
+First, we can look at “slices,” where we focus on just one lag value and look at the non-linear relationship between temperature and mortality risk at that lag only. For example, here are plots showing the relationship between temperature and mortality risk on the same day of exposure (lag 0) and 21 days after exposure (lag 21):
 
 ```{r}
 plot(cp_dl, ptype = "slices", lag = 0)
@@ -1581,11 +1579,20 @@ For example, the default plot created from the `crosspred` object is a three-dim
 plot (the `theta`, `phi`, and `lphi` parameters shift the angle we view it from), while
 the "contour" plot type shows us a contour plot of these results (in other words, showing
 the exposure and lag varables in two dimensions of a two-dimensional plot then showing
-relative risk using color for each combination). Here is the code to create those plots:
+relative risk using color for each combination). You can think of the 'sliced' plots from above as two-dimensional slices of the three-dimensional graph if we slice right at the selectet `lag` or `var` value. Here is the code to create those plots:
 
 ```{r}
 plot(cp_dl, theta = 200, phi = 40, lphi = 30)
 plot(cp_dl, ptype = "contour")
+```
+
+
+Now let's calculate a cumulative relative risk for temperature at 28 degrees by essentially accumulating the RRs from each lad day. This information along with 95% confidence intervals is in `cd_dl` and we can extract it as such
+
+```{r}
+cp_dl$allRRfit[cp_dl$predvar==28]
+cp_dl$allRRlow[cp_dl$predvar==28]
+cp_dl$allRRhigh[cp_dl$predvar==28]
 ```
 
 
@@ -1597,7 +1604,7 @@ dl_basis_5 <- crossbasis(obs$tmean, lag = 30,
                        arglag = list(fun = "strata", df = 1))
 ```
 
-If we look at the `crossbasis` from this function you'll see that we have far fewer columns. 
+The function `strata` in `arglag` essentially breaks up the lag window in strata equalling the degrees of freedom specified, and the lag-response is assumed to be the constant for each day within each stratum. Here we specified `df=1` so the lag-response is assumed to be constant for the entire lag window. In other words he exposure in each day in the lag window is constrained to have the same effect. If we look at the `crossbasis` from this function you'll see that we have far fewer columns. Remember that the total number of columns is determined by the total number of degrees of freedom, which is the product of the df's in each of  `argvar` and `arglag` so in this case 4. 
 
 ```{r}
 dl_basis_5 %>% 
@@ -1605,11 +1612,83 @@ dl_basis_5 %>%
   slice(28:38)
 ```
 
+We can now run the same model as above replacing the crossbasis function with this one and 
+and repeat the prediction to see how the temperature effect comparing to a baseline temperature 
+of 7 degrees C changes when we constrain the lag-response to be constant. 
+
+```{r}
+dist_lag_mod_6 <- glm(all ~ dl_basis_5 + 
+                        factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+
+cp_dlconstant <- crosspred(dl_basis_5, dist_lag_mod_6, cen = 7, bylag = 1)
+```
+
+If we look at the same plots and sliced plots as above we can see that this is a much simple model. 
+
+
+```{r}
+plot(cp_dlconstant, ptype = "slices", lag = 0)
+plot(cp_dlconstant, ptype = "slices", lag = 21)
+```
+The two plots are identical (because we assume that the exposure-response is the same at all lags) with colder temperatures having annegative effect, while the warmer temperatures appear to be protective.
+
+```{r}
+plot(cp_dlconstant, ptype = "slices", var = 28)
+plot(cp_dlconstant, ptype = "slices", var = -4)
+```
+Here we see the constant lag-response more clearly, but at different effects depending on the set temperature. The hot temperature appears to be mildly protective, while the cold temperature is harmful.
+
+The reduced complexity is evident in the 3-d plot and the contour plot as well. 
+
+```{r}
+plot(cp_dlconstant, theta = 200, phi = 40, lphi = 30)
+plot(cp_dlconstant, ptype = "contour")
+```
+
+If we estimate the cumulative risk for a month of hot temperature (28 degrees C) compared to cooler temperature (7 degrees C), we now see the the RR is below the null
+
+```{r}
+cp_dlconstant$allRRfit[cp_dlconstant$predvar==28]
+cp_dlconstant$allRRlow[cp_dlconstant$predvar==28]
+cp_dlconstant$allRRhigh[cp_dlconstant$predvar==28]
+```
+
+Does this look accurate. Which of the two functions for the lag-response do you think is likely more appropriate in this case?
+
 4. **Assume that we are interested in the potential effect of a 5-day 
 heatwave occurring on lags 1 to 5? You can assess this as the effect of hot temperature 
 (e.g., 28 degrees C) during these lags, while the temperature remains warm but more 
 mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for 
 the whole month. What is the effect under the 'constant' model? How about the smooth 
 function lag model?** 
+
+Using the `crosspred` function we can compare any exposure history over a lag-window of interest to a references. Realistically a while month of extremely high exposures is unlikely. Extreme phenomena (such as 28 degree C mean daily temperature in London) are more likely to last a shorter period of time. Furthermore, the effect of an event like heat wave (likely occuring in the summer) is probably better assessed with a referent value more akin to what the heat wave is replacing i.e. a warm but more mild sumer temperature rather than temperatures more lilkely to occur in other seasons. We saw above that the effect of hot temperatures tends to be more short term, so let's assess the potential effect of a 5-day heatwave that happened during the previous 5 days from the point of view of our outcome assessment day. The rest of the days in the month are at 20 degrees C same as the referent value. Realistically there wil be variability in the temperatures during these days as well, but for the purposes of this exercise let's keep it constant at 20 for simplicity. Let's assess this effect using the constant lag-response model.
+
+```{r}
+hw_constant<-crosspred(dl_basis_5, dist_lag_mod_6, at=exphist(c(rep(20,25), rep(28, 5), 20), times=31, lag=30) , cen = 20, bylag = 1)
+```
+
+The `exphist` function allows us to designate distinct exposure values for the entire lag-window. The exposure values here appear in an oldest (lag30) to most recent (lag0) order. The `times` argument determines were the list of exposure begins in the lag window (here `time=31` or lag30 from 0-30). The effect estimate and corresponding CI can be extracted as above.
+```{r}
+hw_constant$allRRfit
+hw_constant$allRRlow
+hw_constant$allRRhigh
+```
+Now, lets repeat this with the smooth function lag-response model:
+
+```{r}
+hw_smooth<-crosspred(dl_basis_4, dist_lag_mod_5, at=exphist(c(rep(20,25), rep(28, 5), 20), times=31, lag=30) , cen = 20, bylag = 1)
+
+hw_smooth$allRRfit
+hw_smooth$allRRlow
+hw_smooth$allRRhigh
+```
+
+
+We see that the constant lag-response model underestimates the RR and does not capture any potential effect of a heatwave, while the smooth term lag-response model indicates that there is a 26% increase in mortality for the day following the 5-day heatwave. Note that this increase in mortality is not the only effect, as the heatwave likely started having an effect on the same day it started, i.e. we would expect all 5 days preceding the day we just assessed the effect on to have a temperature related increase in mortality compared to the days before the heat-wave.
+
+
 
 
