@@ -3625,7 +3625,7 @@ one of this chapter's readings, \citet{vicedo2019hands}.
   cumulative RR compare?
 \item
   Assume that we are interested in the potential effect of a 5-day
-  heatwave occurring on lags x to x? You can assess this as the effect of hot temperature
+  heatwave occurring on lags 0 to 4? You can assess this as the effect of hot temperature
   (e.g., 28 degrees C) during these lags, while the temperature remains warm but more
   mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for
   the whole month. What is the effect under the `constant' model? How about the smooth
@@ -4297,41 +4297,6 @@ relative risk using color for each combination). You can think of the `sliced' p
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-107-2.pdf}
 
-Now let's calculate a cumulative relative risk for temperature at 28 degrees by essentially accumulating the RRs from each lad day. This information along with 95\% confidence intervals is in \texttt{cd\_dl} and we can extract it as such
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{cp_dl}\OperatorTok{$}\NormalTok{allRRfit[cp_dl}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##       28 
-## 1.062765
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{cp_dl}\OperatorTok{$}\NormalTok{allRRlow[cp_dl}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##        28 
-## 0.9626445
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{cp_dl}\OperatorTok{$}\NormalTok{allRRhigh[cp_dl}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##       28 
-## 1.173298
-\end{verbatim}
-
 To see how a `constant' lag-response model compares to the smooth function from this model we have to go back to the \texttt{crossbasis} and use the appropriate argument in the \texttt{arglag} parameter:
 
 \begin{Shaded}
@@ -4342,7 +4307,7 @@ To see how a `constant' lag-response model compares to the smooth function from 
 \end{Highlighting}
 \end{Shaded}
 
-The function \texttt{strata} in \texttt{arglag} essentially breaks up the lag window in strata equalling the degrees of freedom specified, and the lag-response is assumed to be the constant for each day within each stratum. Here we specified \texttt{df=1} so the lag-response is assumed to be constant for the entire lag window. In other words he exposure in each day in the lag window is constrained to have the same effect. If we look at the \texttt{crossbasis} from this function you'll see that we have far fewer columns. Remember that the total number of columns is determined by the total number of degrees of freedom, which is the product of the df's in each of \texttt{argvar} and \texttt{arglag} so in this case 4.
+The function \texttt{strata} in \texttt{arglag} essentially breaks up the lag window in strata equaling the degrees of freedom specified, and the lag-response is assumed to be constant for each day within each stratum. Here we specified \texttt{df=1} so the lag-response is assumed to be constant for the entire lag window. In other words, the exposure in each day in the lag window is constrained to have the same effect. If we look at the \texttt{crossbasis} from this function you'll see that we have far fewer columns. Remember that the total number of columns is determined by the total number of degrees of freedom, which is the product of the df's in each of \texttt{argvar} and \texttt{arglag} so in this case 4.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4367,8 +4332,8 @@ The function \texttt{strata} in \texttt{arglag} essentially breaks up the lag wi
 ## 11 16.37863 -3.880472  9.958228 -5.698886
 \end{verbatim}
 
-We can now run the same model as above replacing the crossbasis function with this one and
-and repeat the prediction to see how the temperature effect comparing to a baseline temperature
+We can now run the same model as above replacing the \texttt{crossbasis} with the one we just created and
+repeat the prediction to see how the temperature effect comparing to a baseline temperature
 of 7 degrees C changes when we constrain the lag-response to be constant.
 
 \begin{Shaded}
@@ -4391,8 +4356,8 @@ If we look at the same plots and sliced plots as above we can see that this is a
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-112-1.pdf}
-The two plots are identical (because we assume that the exposure-response is the same at all lags) with colder temperatures having annegative effect, while the warmer temperatures appear to be protective.
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-111-1.pdf}
+The two plots are identical (because we assume that the exposure-response is the same at all lags) with colder temperatures having a negative effect, while the warmer temperatures appear to be protective.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4400,7 +4365,7 @@ The two plots are identical (because we assume that the exposure-response is the
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-113-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-112-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4408,7 +4373,7 @@ The two plots are identical (because we assume that the exposure-response is the
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-113-2.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-112-2.pdf}
 Here we see the constant lag-response more clearly, but at different effects depending on the set temperature. The hot temperature appears to be mildly protective, while the cold temperature is harmful.
 
 The reduced complexity is evident in the 3-d plot and the contour plot as well.
@@ -4419,7 +4384,7 @@ The reduced complexity is evident in the 3-d plot and the contour plot as well.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-114-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-113-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4427,9 +4392,60 @@ The reduced complexity is evident in the 3-d plot and the contour plot as well.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-114-2.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-113-2.pdf}
 
-If we estimate the cumulative risk for a month of hot temperature (28 degrees C) compared to cooler temperature (7 degrees C), we now see the the RR is below the null
+Now we estimate the cumulative risk for a month of hot temperature (28 degrees C) compared to cooler temperature (7 degrees C) by essentially accumulating the RRs from each lag-day as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{###parameter for each lag-day}
+\NormalTok{cp_dlconstant}\OperatorTok{$}\NormalTok{matfit[cp_dlconstant}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+##  [6] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [11] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [16] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [21] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [26] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [31] -0.004774825
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{### combined model parameter for the cumulative RR (this is the sum for all of the above parameters)}
+\NormalTok{cp_dlconstant}\OperatorTok{$}\NormalTok{allfit[cp_dlconstant}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         28 
+## -0.1480196
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{### corresponding standard error for the cumulative RR parameter}
+\NormalTok{cp_dlconstant}\OperatorTok{$}\NormalTok{allse[cp_dlconstant}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         28 
+## 0.05128501
+\end{verbatim}
+
+If we exponentiate the model parameter we will get the cumulative RR estimate and likewise using the model parameter and standard error we can derive 95\% Confidence Intervals (CIs) for the cumulative RR
+\[
+RR=exp(\beta)=exp(-0.148)=0.86
+\]
+\[
+95\% CIs: exp(\beta \pm 1.96*se) = exp(-0.148 \pm 1.96*0.05) = (0.78, 0.95)
+\]
+
+The \texttt{crosspred} object actually stores this information as well, so we can extract it directly without doing the math
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -4464,7 +4480,44 @@ If we estimate the cumulative risk for a month of hot temperature (28 degrees C)
 ## 0.9536078
 \end{verbatim}
 
-Does this look accurate. Which of the two functions for the lag-response do you think is likely more appropriate in this case?
+Does this look accurate? Do we expect a 14\% decrease in mortality comparing a very hot month to a cool month?
+
+Now let's calculate the cumulative RR for temperature at 28 degrees for the smooth lag-response function model from before:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cp_dl}\OperatorTok{$}\NormalTok{allRRfit[cp_dl}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       28 
+## 1.062765
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cp_dl}\OperatorTok{$}\NormalTok{allRRlow[cp_dl}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        28 
+## 0.9626445
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cp_dl}\OperatorTok{$}\NormalTok{allRRhigh[cp_dl}\OperatorTok{$}\NormalTok{predvar}\OperatorTok{==}\DecValTok{28}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       28 
+## 1.173298
+\end{verbatim}
+
+Does this look more accurate? Which of the two lag-response functions is more likely to be true?
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -4472,18 +4525,18 @@ Does this look accurate. Which of the two functions for the lag-response do you 
 \tightlist
 \item
   \textbf{Assume that we are interested in the potential effect of a 5-day
-  heatwave occurring on lags 1 to 5? You can assess this as the effect of hot temperature
+  heatwave occurring on lags 0 to 4? You can assess this as the effect of hot temperature
   (e.g., 28 degrees C) during these lags, while the temperature remains warm but more
   mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for
   the whole month. What is the effect under the `constant' model? How about the smooth
   function lag model?}
 \end{enumerate}
 
-Using the \texttt{crosspred} function we can compare any exposure history over a lag-window of interest to a references. Realistically a while month of extremely high exposures is unlikely. Extreme phenomena (such as 28 degree C mean daily temperature in London) are more likely to last a shorter period of time. Furthermore, the effect of an event like heat wave (likely occuring in the summer) is probably better assessed with a referent value more akin to what the heat wave is replacing i.e.~a warm but more mild sumer temperature rather than temperatures more lilkely to occur in other seasons. We saw above that the effect of hot temperatures tends to be more short term, so let's assess the potential effect of a 5-day heatwave that happened during the previous 5 days from the point of view of our outcome assessment day. The rest of the days in the month are at 20 degrees C same as the referent value. Realistically there wil be variability in the temperatures during these days as well, but for the purposes of this exercise let's keep it constant at 20 for simplicity. Let's assess this effect using the constant lag-response model.
+Using the \texttt{crosspred} function we can compare any exposure history over a lag-window of interest to a reference value (or values varying over time in the same window). Realistically, a whole month of extremely high exposures is unlikely. Extreme phenomena (such as 28 degree mean daily temperature in London) are more likely to last a shorter period of time. Furthermore, the effect of an event like a heat wave (likely occurring in the summer) is probably better assessed with a referent value more akin to what the heat wave is replacing i.e.~a warm but more mild summer temperature rather than temperatures more likely to occur in other seasons. We saw above that the effect of hot temperatures tends to be more short term, so let's assess the potential effect of a 5-day heatwave assessed on the last day of the heatwave. The rest of the days in the month are at 20 degrees C and we will use the same value as the referent value for the whole month. Realistically there will be variability in the temperatures during these days as well, but for the purposes of this exercise let's keep it constant at 20 for simplicity. Let's assess this effect using the constant lag-response model.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{hw_constant<-}\KeywordTok{crosspred}\NormalTok{(dl_basis_}\DecValTok{5}\NormalTok{, dist_lag_mod_}\DecValTok{6}\NormalTok{, }\DataTypeTok{at=}\KeywordTok{exphist}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{20}\NormalTok{,}\DecValTok{25}\NormalTok{), }\KeywordTok{rep}\NormalTok{(}\DecValTok{28}\NormalTok{, }\DecValTok{5}\NormalTok{), }\DecValTok{20}\NormalTok{), }\DataTypeTok{times=}\DecValTok{31}\NormalTok{, }\DataTypeTok{lag=}\DecValTok{30}\NormalTok{) , }\DataTypeTok{cen =} \DecValTok{20}\NormalTok{, }\DataTypeTok{bylag =} \DecValTok{1}\NormalTok{)}
+\NormalTok{hw_constant<-}\KeywordTok{crosspred}\NormalTok{(dl_basis_}\DecValTok{5}\NormalTok{, dist_lag_mod_}\DecValTok{6}\NormalTok{, }\DataTypeTok{at=}\KeywordTok{exphist}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{20}\NormalTok{,}\DecValTok{26}\NormalTok{), }\KeywordTok{rep}\NormalTok{(}\DecValTok{28}\NormalTok{, }\DecValTok{5}\NormalTok{)), }\DataTypeTok{times=}\DecValTok{31}\NormalTok{, }\DataTypeTok{lag=}\DecValTok{30}\NormalTok{) , }\DataTypeTok{cen =} \DecValTok{20}\NormalTok{, }\DataTypeTok{bylag =} \DecValTok{1}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -4526,15 +4579,15 @@ Now, lets repeat this with the smooth function lag-response model:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{hw_smooth<-}\KeywordTok{crosspred}\NormalTok{(dl_basis_}\DecValTok{4}\NormalTok{, dist_lag_mod_}\DecValTok{5}\NormalTok{, }\DataTypeTok{at=}\KeywordTok{exphist}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{20}\NormalTok{,}\DecValTok{25}\NormalTok{), }\KeywordTok{rep}\NormalTok{(}\DecValTok{28}\NormalTok{, }\DecValTok{5}\NormalTok{), }\DecValTok{20}\NormalTok{), }\DataTypeTok{times=}\DecValTok{31}\NormalTok{, }\DataTypeTok{lag=}\DecValTok{30}\NormalTok{) , }\DataTypeTok{cen =} \DecValTok{20}\NormalTok{, }\DataTypeTok{bylag =} \DecValTok{1}\NormalTok{)}
+\NormalTok{hw_smooth<-}\KeywordTok{crosspred}\NormalTok{(dl_basis_}\DecValTok{4}\NormalTok{, dist_lag_mod_}\DecValTok{5}\NormalTok{, }\DataTypeTok{at=}\KeywordTok{exphist}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{20}\NormalTok{,}\DecValTok{26}\NormalTok{), }\KeywordTok{rep}\NormalTok{(}\DecValTok{28}\NormalTok{, }\DecValTok{5}\NormalTok{)), }\DataTypeTok{times=}\DecValTok{31}\NormalTok{, }\DataTypeTok{lag=}\DecValTok{30}\NormalTok{) , }\DataTypeTok{cen =} \DecValTok{20}\NormalTok{, }\DataTypeTok{bylag =} \DecValTok{1}\NormalTok{)}
 
 \NormalTok{hw_smooth}\OperatorTok{$}\NormalTok{allRRfit}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##       31 
-## 1.263661
+##      31 
+## 1.39005
 \end{verbatim}
 
 \begin{Shaded}
@@ -4545,7 +4598,7 @@ Now, lets repeat this with the smooth function lag-response model:
 
 \begin{verbatim}
 ##       31 
-## 1.231032
+## 1.344309
 \end{verbatim}
 
 \begin{Shaded}
@@ -4556,10 +4609,58 @@ Now, lets repeat this with the smooth function lag-response model:
 
 \begin{verbatim}
 ##       31 
-## 1.297156
+## 1.437347
 \end{verbatim}
 
-We see that the constant lag-response model underestimates the RR and does not capture any potential effect of a heatwave, while the smooth term lag-response model indicates that there is a 26\% increase in mortality for the day following the 5-day heatwave. Note that this increase in mortality is not the only effect, as the heatwave likely started having an effect on the same day it started, i.e.~we would expect all 5 days preceding the day we just assessed the effect on to have a temperature related increase in mortality compared to the days before the heat-wave.
+We see that the constant lag-response model underestimates the RR and does not capture any potential effect of a heatwave, while the smooth term lag-response model indicates that there is a 40\% increase in mortality for the last day of the heatwave. Note that this increase in mortality is not the only effect, as based on out model the heatwave started having an effect on the same day it started, i.e.~we would expect all 5 heatwave days to have a temperature related increase in mortality compared to the days before the heat-wave. We can look at the increase in mortality for each day if we look at the individual effect estimates
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{### individual lag-day parameters}
+\NormalTok{hw_smooth}\OperatorTok{$}\NormalTok{matfit}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         lag0       lag1       lag2       lag3       lag4 lag5 lag6 lag7 lag8
+## 31 0.1067468 0.08548286 0.06476856 0.04515363 0.02718775    0    0    0    0
+##    lag9 lag10 lag11 lag12 lag13 lag14 lag15 lag16 lag17 lag18 lag19 lag20 lag21
+## 31    0     0     0     0     0     0     0     0     0     0     0     0     0
+##    lag22 lag23 lag24 lag25 lag26 lag27 lag28 lag29 lag30
+## 31     0     0     0     0     0     0     0     0     0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#### individual lag-day RRs}
+\NormalTok{hw_smooth}\OperatorTok{$}\NormalTok{matRRfit}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        lag0     lag1     lag2     lag3     lag4 lag5 lag6 lag7 lag8 lag9 lag10
+## 31 1.112653 1.089243 1.066912 1.046189 1.027561    1    1    1    1    1     1
+##    lag11 lag12 lag13 lag14 lag15 lag16 lag17 lag18 lag19 lag20 lag21 lag22
+## 31     1     1     1     1     1     1     1     1     1     1     1     1
+##    lag23 lag24 lag25 lag26 lag27 lag28 lag29 lag30
+## 31     1     1     1     1     1     1     1     1
+\end{verbatim}
+
+The first day of the heatwave will have an effect corresponding to a lag0 effect
+\[
+RR=exp(0.107)=1.11
+\]
+The second day of the heatwave will have an effect corresponding to a lag0 and lag1 effect
+\[
+RR=exp(0.107 + 0.085)=1.21
+\]T
+
+(This quantity is also equal to the product of the lag-day specific RRs for lag0 and lag1)
+\[
+1.11 \times 1.09=1.21
+\]
+
+And so on, until we reach our last day of the heatwave with RR=1.39. There is a bidirectional relationship for this RR, as you can interpret this as the overall effect of the heatwave on mortality on the last day of the heatwave, or as the overall effect of temperature on the first day of the heatwave on mortality over the next 5 days.
 
 \hypertarget{natural-experiments}{%
 \chapter{Natural experiments}\label{natural-experiments}}
@@ -4616,7 +4717,7 @@ The readings for this chapter are:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-120-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-122-1.pdf}
 
 Example data from \citet{bernal2017interrupted}:
 
@@ -4667,7 +4768,7 @@ Recreate Figure 1 from \citet{bernal2017interrupted}:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-123-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-125-1.pdf}
 
 \hypertarget{difference-in-differences}{%
 \section{Difference-in-differences}\label{difference-in-differences}}
@@ -4921,7 +5022,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-130-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-132-1.pdf}
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
 
@@ -4960,7 +5061,7 @@ get a top-level snapshot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-131-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-133-1.pdf}
 Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \begin{Shaded}
@@ -4984,7 +5085,7 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 ## use `guide = "none"` instead.
 \end{verbatim}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-132-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-134-1.pdf}
 
 Many of the variables are available for all observations, with no missingness,
 including records of the subject's ID, measures of death, stroke, CVD, and other
@@ -5008,7 +5109,7 @@ example, you could see if missingness varies by the period of the observation:
 ## use `guide = "none"` instead.
 \end{verbatim}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-133-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-135-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:
@@ -5024,7 +5125,7 @@ was associated with death of the study subject:
 ## use `guide = "none"` instead.
 \end{verbatim}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-134-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-136-1.pdf}
 
 There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both \texttt{glucose} and
@@ -5041,7 +5142,7 @@ variables:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-135-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-137-1.pdf}
 
 The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
@@ -5062,7 +5163,7 @@ You can also do things like facet by sex to explore patterns at a finer level:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-136-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-138-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -5304,7 +5405,7 @@ We can see that the mean age at incident MI hospitalization among males and fema
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-150-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-152-1.pdf}
 We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of \texttt{sex=1} and \texttt{sex=2} which are the values for males and females respectively. This is an indicator that the sex variable is of class \texttt{numeric} and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
 
 \begin{Shaded}
@@ -5337,7 +5438,7 @@ If we repeat the function for the boxplot now we get separate boxplots by sex
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-153-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-155-1.pdf}
 
 We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
 
@@ -5422,7 +5523,7 @@ The numbers assigned to each individual represent their censoring times, with ea
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-155-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-157-1.pdf}
 We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival \(\hat{S}(t)\) drops to about 0.65 at the end of follow-up, or in other words about 35\% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the \texttt{Surv} function, substituting time of death with respect to follow-up time with age at death.
@@ -5435,7 +5536,7 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-156-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-158-1.pdf}
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.
 
 The Cox proportional hazards model in a simple form has this form
