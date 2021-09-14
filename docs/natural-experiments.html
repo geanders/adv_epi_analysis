@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 5 Natural experiments | Advanced Epidemiological Analysis</title>
   <meta name="description" content="This is the coursebook for the Colorado State University course ERHS 732, Advanced Epidemiological Analysis." />
-  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 5 Natural experiments | Advanced Epidemiological Analysis" />
   <meta property="og:type" content="book" />
@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-09-13" />
+<meta name="date" content="2021-09-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,8 +33,7 @@
   
 <link rel="prev" href="generalized-linear-models.html"/>
 <link rel="next" href="risk-assessment.html"/>
-<script src="libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -51,22 +50,24 @@
 
 
 
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -86,7 +87,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -119,29 +120,6 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<style type="text/css">
-/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}
-</style>
-
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 
@@ -158,12 +136,10 @@ div.csl-indent {
 <li><a href="./">Advanced Epidemiological Analysis</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
-<ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a><ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i><b>1.1</b> License</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a>
-<ul>
+<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a><ul>
 <li class="chapter" data-level="2.1" data-path="courseinfo.html"><a href="courseinfo.html#course-learning-objectives"><i class="fa fa-check"></i><b>2.1</b> Course learning objectives</a></li>
 <li class="chapter" data-level="2.2" data-path="courseinfo.html"><a href="courseinfo.html#meeting-time-and-place"><i class="fa fa-check"></i><b>2.2</b> Meeting time and place</a></li>
 <li class="chapter" data-level="2.3" data-path="courseinfo.html"><a href="courseinfo.html#class-structure-and-expectations"><i class="fa fa-check"></i><b>2.3</b> Class Structure and Expectations</a></li>
@@ -173,40 +149,34 @@ div.csl-indent {
 <li class="chapter" data-level="2.7" data-path="courseinfo.html"><a href="courseinfo.html#prerequisites-and-preparation"><i class="fa fa-check"></i><b>2.7</b> Prerequisites and Preparation</a></li>
 <li class="chapter" data-level="2.8" data-path="courseinfo.html"><a href="courseinfo.html#academic-honesty"><i class="fa fa-check"></i><b>2.8</b> Academic Honesty</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover studies</a>
-<ul>
+<li class="chapter" data-level="3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover studies</a><ul>
 <li class="chapter" data-level="3.1" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#readings"><i class="fa fa-check"></i><b>3.1</b> Readings</a></li>
 <li class="chapter" data-level="3.2" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#time-series-and-case-crossover-study-designs"><i class="fa fa-check"></i><b>3.2</b> Time series and case-crossover study designs</a></li>
 <li class="chapter" data-level="3.3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#time-series-data"><i class="fa fa-check"></i><b>3.3</b> Time series data</a></li>
 <li class="chapter" data-level="3.4" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#exploratory-data-analysis"><i class="fa fa-check"></i><b>3.4</b> Exploratory data analysis</a></li>
 <li class="chapter" data-level="3.5" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#statistical-modeling-for-a-time-series-study"><i class="fa fa-check"></i><b>3.5</b> Statistical modeling for a time series study</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a>
-<ul>
+<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a><ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#readings-1"><i class="fa fa-check"></i><b>4.1</b> Readings</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.2</b> Splines in GLMs</a></li>
 <li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#distributed-lags-and-cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.3</b> Distributed lags and cross-basis functions in GLMs</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
-<ul>
+<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a><ul>
 <li class="chapter" data-level="5.1" data-path="natural-experiments.html"><a href="natural-experiments.html#interrupted-time-series"><i class="fa fa-check"></i><b>5.1</b> Interrupted time series</a></li>
 <li class="chapter" data-level="5.2" data-path="natural-experiments.html"><a href="natural-experiments.html#difference-in-differences"><i class="fa fa-check"></i><b>5.2</b> Difference-in-differences</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="risk-assessment.html"><a href="risk-assessment.html"><i class="fa fa-check"></i><b>6</b> Risk assessment</a></li>
-<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a>
-<ul>
+<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a><ul>
 <li class="chapter" data-level="7.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#longitudinal-cohort-data"><i class="fa fa-check"></i><b>7.1</b> Longitudinal cohort data</a></li>
 <li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.2</b> Coding a survival analysis</a></li>
-<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a>
-<ul>
+<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a><ul>
 <li class="chapter" data-level="7.3.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.3.1</b> Multi-level exposure</a></li>
 <li class="chapter" data-level="7.3.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.3.2</b> Recurrent outcome</a></li>
 <li class="chapter" data-level="7.3.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.3.3</b> Time-varying coeffificents</a></li>
 <li class="chapter" data-level="7.3.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.3.4</b> Using survey results</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a>
-<ul>
+<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a><ul>
 <li class="chapter" data-level="8.1" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#inverse-probability-weighting"><i class="fa fa-check"></i><b>8.1</b> Inverse probability weighting</a></li>
 <li class="chapter" data-level="8.2" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#propensity-scores"><i class="fa fa-check"></i><b>8.2</b> Propensity scores</a></li>
 </ul></li>
@@ -234,49 +204,49 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="natural-experiments" class="section level1" number="5">
+<div id="natural-experiments" class="section level1">
 <h1><span class="header-section-number">Chapter 5</span> Natural experiments</h1>
 <p>The readings for this chapter are:</p>
 <ul>
-<li><span class="citation"><a href="#ref-bernal2017interrupted" role="doc-biblioref">Bernal, Cummins, and Gasparrini</a> (<a href="#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span> (on interrupted time series), with a correction to an equation in the paper at <a href="https://academic.oup.com/ije/article/49/4/1414/5900884" class="uri">https://academic.oup.com/ije/article/49/4/1414/5900884</a>. Example data and R code for the paper are available <a href="https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/ije/49/4/10.1093_ije_dyaa118/1/dyaa118_supplementary_data.zip?Expires=1623897009&amp;Signature=BzYQrBg60cMKHYeDU~OIZYIFuRgEIPwQsWMjzON0dB~fL8y-8x4xdGIJQBBPgDxBIoUIGnjmShVf1jlVqzloo3IldAdVC78TZ~~XseYdJ9c590QRAR6m7mH~VbPe-fCnQSnZF0z2Qw9PZcSGITZeNr4YXPVY-~gtpgBeZiN0MpgEVBLVT5fYhhQBGbp0vxl1bKdUfNtF71fdVJrglkhSG8-M24A07LmAr8jThx4MQmSAzKCxA4VZLRE6To8zC3-rJlxyWiqrSTFsVQM2SN4R6UuxYoRsILRcIAr2sUfqgmaSlxBiYAf71PdGSrnBcXX3l0l7yuAftX5PYTwMKTyxOA__&amp;Key-Pair-Id=APKAIE5G5CRDK6RD3PGA">to download</a> through a Supplemental Appendix.</li>
-<li><span class="citation"><a href="#ref-barone2011effects" role="doc-biblioref">Barone-Adesi et al.</a> (<a href="#ref-barone2011effects" role="doc-biblioref">2011</a>)</span>, the scientific paper highlighted as an example in the tutorial in the previous reading</li>
-<li><span class="citation"><a href="#ref-bor2014regression" role="doc-biblioref">Bor et al.</a> (<a href="#ref-bor2014regression" role="doc-biblioref">2014</a>)</span> (on interrupted time series)</li>
-<li><span class="citation"><a href="#ref-casey2018retirements" role="doc-biblioref">Casey et al.</a> (<a href="#ref-casey2018retirements" role="doc-biblioref">2018</a>)</span> (on difference-in-differences)</li>
-<li><span class="citation"><a href="#ref-mendola2018invited" role="doc-biblioref">Mendola</a> (<a href="#ref-mendola2018invited" role="doc-biblioref">2018</a>)</span>, an Invited Commentary on the previous reading</li>
+<li><span class="citation">Bernal, Cummins, and Gasparrini (<a href="#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span> (on interrupted time series), with a correction to an equation in the paper at <a href="https://academic.oup.com/ije/article/49/4/1414/5900884" class="uri">https://academic.oup.com/ije/article/49/4/1414/5900884</a>. Example data and R code for the paper are available <a href="https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/ije/49/4/10.1093_ije_dyaa118/1/dyaa118_supplementary_data.zip?Expires=1623897009&amp;Signature=BzYQrBg60cMKHYeDU~OIZYIFuRgEIPwQsWMjzON0dB~fL8y-8x4xdGIJQBBPgDxBIoUIGnjmShVf1jlVqzloo3IldAdVC78TZ~~XseYdJ9c590QRAR6m7mH~VbPe-fCnQSnZF0z2Qw9PZcSGITZeNr4YXPVY-~gtpgBeZiN0MpgEVBLVT5fYhhQBGbp0vxl1bKdUfNtF71fdVJrglkhSG8-M24A07LmAr8jThx4MQmSAzKCxA4VZLRE6To8zC3-rJlxyWiqrSTFsVQM2SN4R6UuxYoRsILRcIAr2sUfqgmaSlxBiYAf71PdGSrnBcXX3l0l7yuAftX5PYTwMKTyxOA__&amp;Key-Pair-Id=APKAIE5G5CRDK6RD3PGA">to download</a> through a Supplemental Appendix.</li>
+<li><span class="citation">Barone-Adesi et al. (<a href="#ref-barone2011effects" role="doc-biblioref">2011</a>)</span>, the scientific paper highlighted as an example in the tutorial in the previous reading</li>
+<li><span class="citation">Bor et al. (<a href="#ref-bor2014regression" role="doc-biblioref">2014</a>)</span> (on interrupted time series)</li>
+<li><span class="citation">Casey et al. (<a href="#ref-casey2018retirements" role="doc-biblioref">2018</a>)</span> (on difference-in-differences)</li>
+<li><span class="citation">Mendola (<a href="#ref-mendola2018invited" role="doc-biblioref">2018</a>)</span>, an Invited Commentary on the previous reading</li>
 </ul>
-<div id="interrupted-time-series" class="section level2" number="5.1">
+<div id="interrupted-time-series" class="section level2">
 <h2><span class="header-section-number">5.1</span> Interrupted time series</h2>
 <p>[Interrupted time series assessing effects of policy/intervention in specific point in time]</p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="natural-experiments.html#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
-<span id="cb176-2"><a href="natural-experiments.html#cb176-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb176-3"><a href="natural-experiments.html#cb176-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
-<span id="cb176-4"><a href="natural-experiments.html#cb176-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb176-5"><a href="natural-experiments.html#cb176-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb176-6"><a href="natural-experiments.html#cb176-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb176-7"><a href="natural-experiments.html#cb176-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load and clean the data</span></span>
-<span id="cb176-8"><a href="natural-experiments.html#cb176-8" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb176-9"><a href="natural-experiments.html#cb176-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dow =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb176-10"><a href="natural-experiments.html#cb176-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> <span class="fu">as.numeric</span>(date) <span class="sc">-</span> <span class="fu">first</span>(<span class="fu">as.numeric</span>(date)))</span></code></pre></div>
-<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="natural-experiments.html#cb177-1" aria-hidden="true" tabindex="-1"></a>london_summer_2012 <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb177-2"><a href="natural-experiments.html#cb177-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">ymd</span>(<span class="st">&quot;2012-06-01&quot;</span>) <span class="sc">&lt;=</span> date <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> <span class="fu">ymd</span>(<span class="st">&quot;2012-09-30&quot;</span>))</span>
-<span id="cb177-3"><a href="natural-experiments.html#cb177-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb177-4"><a href="natural-experiments.html#cb177-4" aria-hidden="true" tabindex="-1"></a>london_olympic_dates <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">date =</span> <span class="fu">ymd</span>(<span class="fu">c</span>(<span class="st">&quot;2012-07-27&quot;</span>, <span class="st">&quot;2012-08-12&quot;</span>)))</span>
-<span id="cb177-5"><a href="natural-experiments.html#cb177-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb177-6"><a href="natural-experiments.html#cb177-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb177-7"><a href="natural-experiments.html#cb177-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">ymd</span>(<span class="fu">c</span>(<span class="st">&quot;2012-07-27&quot;</span>, <span class="st">&quot;2012-08-12&quot;</span>, </span>
-<span id="cb177-8"><a href="natural-experiments.html#cb177-8" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;2012-08-12&quot;</span>, <span class="st">&quot;2012-07-27&quot;</span>)), </span>
-<span id="cb177-9"><a href="natural-experiments.html#cb177-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
-<span id="cb177-10"><a href="natural-experiments.html#cb177-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> london_summer_2012, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> tmean)) <span class="sc">+</span> </span>
-<span id="cb177-11"><a href="natural-experiments.html#cb177-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Mean daily temperature&quot;</span>)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-111-1.png" width="672" /></p>
-<p>Example data from <span class="citation"><a href="#ref-bernal2017interrupted" role="doc-biblioref">Bernal, Cummins, and Gasparrini</a> (<a href="#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span>:</p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="natural-experiments.html#cb178-1" aria-hidden="true" tabindex="-1"></a>sicily <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/sicily.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb178-2"><a href="natural-experiments.html#cb178-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">paste</span>(year, month, <span class="st">&quot;15&quot;</span>), <span class="co"># Use middle of the month for plotting</span></span>
-<span id="cb178-3"><a href="natural-experiments.html#cb178-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">date =</span> <span class="fu">ymd</span>(date))</span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="natural-experiments.html#cb211-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
+<span id="cb211-2"><a href="natural-experiments.html#cb211-2"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb211-3"><a href="natural-experiments.html#cb211-3"></a><span class="kw">library</span>(viridis)</span>
+<span id="cb211-4"><a href="natural-experiments.html#cb211-4"></a><span class="kw">library</span>(lubridate)</span>
+<span id="cb211-5"><a href="natural-experiments.html#cb211-5"></a><span class="kw">library</span>(broom)</span>
+<span id="cb211-6"><a href="natural-experiments.html#cb211-6"></a></span>
+<span id="cb211-7"><a href="natural-experiments.html#cb211-7"></a><span class="co"># Load and clean the data</span></span>
+<span id="cb211-8"><a href="natural-experiments.html#cb211-8"></a>obs &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb211-9"><a href="natural-experiments.html#cb211-9"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dow =</span> <span class="kw">wday</span>(date, <span class="dt">label =</span> <span class="ot">TRUE</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb211-10"><a href="natural-experiments.html#cb211-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">time =</span> <span class="kw">as.numeric</span>(date) <span class="op">-</span><span class="st"> </span><span class="kw">first</span>(<span class="kw">as.numeric</span>(date)))</span></code></pre></div>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="natural-experiments.html#cb212-1"></a>london_summer_<span class="dv">2012</span> &lt;-<span class="st"> </span>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb212-2"><a href="natural-experiments.html#cb212-2"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">ymd</span>(<span class="st">&quot;2012-06-01&quot;</span>) <span class="op">&lt;=</span><span class="st"> </span>date <span class="op">&amp;</span><span class="st"> </span>date <span class="op">&lt;=</span><span class="st"> </span><span class="kw">ymd</span>(<span class="st">&quot;2012-09-30&quot;</span>))</span>
+<span id="cb212-3"><a href="natural-experiments.html#cb212-3"></a></span>
+<span id="cb212-4"><a href="natural-experiments.html#cb212-4"></a>london_olympic_dates &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">date =</span> <span class="kw">ymd</span>(<span class="kw">c</span>(<span class="st">&quot;2012-07-27&quot;</span>, <span class="st">&quot;2012-08-12&quot;</span>)))</span>
+<span id="cb212-5"><a href="natural-experiments.html#cb212-5"></a></span>
+<span id="cb212-6"><a href="natural-experiments.html#cb212-6"></a><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb212-7"><a href="natural-experiments.html#cb212-7"></a><span class="st">  </span><span class="kw">geom_polygon</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">ymd</span>(<span class="kw">c</span>(<span class="st">&quot;2012-07-27&quot;</span>, <span class="st">&quot;2012-08-12&quot;</span>, </span>
+<span id="cb212-8"><a href="natural-experiments.html#cb212-8"></a>                             <span class="st">&quot;2012-08-12&quot;</span>, <span class="st">&quot;2012-07-27&quot;</span>)), </span>
+<span id="cb212-9"><a href="natural-experiments.html#cb212-9"></a>                   <span class="dt">y =</span> <span class="kw">c</span>(<span class="ot">Inf</span>, <span class="ot">Inf</span>, <span class="op">-</span><span class="ot">Inf</span>, <span class="op">-</span><span class="ot">Inf</span>)), <span class="dt">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb212-10"><a href="natural-experiments.html#cb212-10"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> london_summer_<span class="dv">2012</span>, <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb212-11"><a href="natural-experiments.html#cb212-11"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Date&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Mean daily temperature&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-120-1.png" width="672" /></p>
+<p>Example data from <span class="citation">Bernal, Cummins, and Gasparrini (<a href="#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span>:</p>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="natural-experiments.html#cb213-1"></a>sicily &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/sicily.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb213-2"><a href="natural-experiments.html#cb213-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">paste</span>(year, month, <span class="st">&quot;15&quot;</span>), <span class="co"># Use middle of the month for plotting</span></span>
+<span id="cb213-3"><a href="natural-experiments.html#cb213-3"></a>         <span class="dt">date =</span> <span class="kw">ymd</span>(date))</span></code></pre></div>
 <p>Identify dates of the smoking band:</p>
-<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="natural-experiments.html#cb179-1" aria-hidden="true" tabindex="-1"></a>sicily <span class="sc">%&gt;%</span> </span>
-<span id="cb179-2"><a href="natural-experiments.html#cb179-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(smokban) <span class="sc">%&gt;%</span> </span>
-<span id="cb179-3"><a href="natural-experiments.html#cb179-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">n</span>()))</span></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="natural-experiments.html#cb214-1"></a>sicily <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb214-2"><a href="natural-experiments.html#cb214-2"></a><span class="st">  </span><span class="kw">group_by</span>(smokban) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb214-3"><a href="natural-experiments.html#cb214-3"></a><span class="st">  </span><span class="kw">slice</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="kw">n</span>()))</span></code></pre></div>
 <pre><code>## # A tibble: 4 x 8
 ## # Groups:   smokban [2]
 ##    year month  aces  time smokban     pop  stdpop date      
@@ -285,42 +255,42 @@ div.csl-indent {
 ## 2  2004    12   886    36       0 364700. 383428. 2004-12-15
 ## 3  2005     1   831    37       1 364421. 388153. 2005-01-15
 ## 4  2006    11   912    59       1 363833. 390712. 2006-11-15</code></pre>
-<p>Recreate Figure 1 from <span class="citation"><a href="#ref-bernal2017interrupted" role="doc-biblioref">Bernal, Cummins, and Gasparrini</a> (<a href="#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span>:</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="natural-experiments.html#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb181-2"><a href="natural-experiments.html#cb181-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">ymd</span>(<span class="fu">c</span>(<span class="st">&quot;2005-01-01&quot;</span>, <span class="st">&quot;2006-11-30&quot;</span>, </span>
-<span id="cb181-3"><a href="natural-experiments.html#cb181-3" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;2006-11-30&quot;</span>, <span class="st">&quot;2005-01-01&quot;</span>)), </span>
-<span id="cb181-4"><a href="natural-experiments.html#cb181-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), <span class="at">fill =</span> <span class="st">&quot;lightgray&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb181-5"><a href="natural-experiments.html#cb181-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sicily, </span>
-<span id="cb181-6"><a href="natural-experiments.html#cb181-6" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> <span class="dv">10000</span> <span class="sc">*</span> <span class="dv">10</span> <span class="sc">*</span> aces <span class="sc">/</span> stdpop), <span class="at">shape =</span> <span class="dv">21</span>) <span class="sc">+</span> </span>
-<span id="cb181-7"><a href="natural-experiments.html#cb181-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data =</span> sicily, </span>
-<span id="cb181-8"><a href="natural-experiments.html#cb181-8" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> <span class="dv">10000</span> <span class="sc">*</span> <span class="dv">10</span> <span class="sc">*</span> aces <span class="sc">/</span> stdpop), <span class="co"># Need the extra 10 to line up with Figure in paper---figure out why</span></span>
-<span id="cb181-9"><a href="natural-experiments.html#cb181-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb181-10"><a href="natural-experiments.html#cb181-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Year&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Std rate x 10 000&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb181-11"><a href="natural-experiments.html#cb181-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-114-1.png" width="672" /></p>
+<p>Recreate Figure 1 from <span class="citation">Bernal, Cummins, and Gasparrini (<a href="#ref-bernal2017interrupted" role="doc-biblioref">2017</a>)</span>:</p>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="natural-experiments.html#cb216-1"></a><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb216-2"><a href="natural-experiments.html#cb216-2"></a><span class="st">  </span><span class="kw">geom_polygon</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">ymd</span>(<span class="kw">c</span>(<span class="st">&quot;2005-01-01&quot;</span>, <span class="st">&quot;2006-11-30&quot;</span>, </span>
+<span id="cb216-3"><a href="natural-experiments.html#cb216-3"></a>                         <span class="st">&quot;2006-11-30&quot;</span>, <span class="st">&quot;2005-01-01&quot;</span>)), </span>
+<span id="cb216-4"><a href="natural-experiments.html#cb216-4"></a>               <span class="dt">y =</span> <span class="kw">c</span>(<span class="ot">Inf</span>, <span class="ot">Inf</span>, <span class="op">-</span><span class="ot">Inf</span>, <span class="op">-</span><span class="ot">Inf</span>)), <span class="dt">fill =</span> <span class="st">&quot;lightgray&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb216-5"><a href="natural-experiments.html#cb216-5"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> sicily, </span>
+<span id="cb216-6"><a href="natural-experiments.html#cb216-6"></a>             <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> <span class="dv">10000</span> <span class="op">*</span><span class="st"> </span><span class="dv">10</span> <span class="op">*</span><span class="st"> </span>aces <span class="op">/</span><span class="st"> </span>stdpop), <span class="dt">shape =</span> <span class="dv">21</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb216-7"><a href="natural-experiments.html#cb216-7"></a><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> sicily, </span>
+<span id="cb216-8"><a href="natural-experiments.html#cb216-8"></a>              <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> <span class="dv">10000</span> <span class="op">*</span><span class="st"> </span><span class="dv">10</span> <span class="op">*</span><span class="st"> </span>aces <span class="op">/</span><span class="st"> </span>stdpop), <span class="co"># Need the extra 10 to line up with Figure in paper---figure out why</span></span>
+<span id="cb216-9"><a href="natural-experiments.html#cb216-9"></a>              <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">linetype =</span> <span class="dv">3</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb216-10"><a href="natural-experiments.html#cb216-10"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Year&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Std rate x 10 000&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb216-11"><a href="natural-experiments.html#cb216-11"></a><span class="st">  </span><span class="kw">theme_classic</span>()</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-123-1.png" width="672" /></p>
 </div>
-<div id="difference-in-differences" class="section level2" number="5.2">
+<div id="difference-in-differences" class="section level2">
 <h2><span class="header-section-number">5.2</span> Difference-in-differences</h2>
 <p>[Difference-in differences application for intervention introduced in one point in time]</p>
 
 </div>
 </div>
 <h3>References</h3>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-barone2011effects" class="csl-entry">
-Barone-Adesi, Francesco, Antonio Gasparrini, Loredana Vizzini, Franco Merletti, and Lorenzo Richiardi. 2011. <span>“Effects of Italian Smoking Regulation on Rates of Hospital Admission for Acute Coronary Events: A Country-Wide Study.”</span> <em>PloS One</em> 6 (3): e17419.
+<div id="refs" class="references">
+<div id="ref-barone2011effects">
+<p>Barone-Adesi, Francesco, Antonio Gasparrini, Loredana Vizzini, Franco Merletti, and Lorenzo Richiardi. 2011. “Effects of Italian Smoking Regulation on Rates of Hospital Admission for Acute Coronary Events: A Country-Wide Study.” <em>PloS One</em> 6 (3): e17419.</p>
 </div>
-<div id="ref-bernal2017interrupted" class="csl-entry">
-Bernal, James Lopez, Steven Cummins, and Antonio Gasparrini. 2017. <span>“Interrupted Time Series Regression for the Evaluation of Public Health Interventions: A Tutorial.”</span> <em>International Journal of Epidemiology</em> 46 (1): 348–55.
+<div id="ref-bernal2017interrupted">
+<p>Bernal, James Lopez, Steven Cummins, and Antonio Gasparrini. 2017. “Interrupted Time Series Regression for the Evaluation of Public Health Interventions: A Tutorial.” <em>International Journal of Epidemiology</em> 46 (1): 348–55.</p>
 </div>
-<div id="ref-bor2014regression" class="csl-entry">
-Bor, Jacob, Ellen Moscoe, Portia Mutevedzi, Marie-Louise Newell, and Till Bärnighausen. 2014. <span>“Regression Discontinuity Designs in Epidemiology: Causal Inference Without Randomized Trials.”</span> <em>Epidemiology</em> 25 (5): 729.
+<div id="ref-bor2014regression">
+<p>Bor, Jacob, Ellen Moscoe, Portia Mutevedzi, Marie-Louise Newell, and Till Bärnighausen. 2014. “Regression Discontinuity Designs in Epidemiology: Causal Inference Without Randomized Trials.” <em>Epidemiology</em> 25 (5): 729.</p>
 </div>
-<div id="ref-casey2018retirements" class="csl-entry">
-Casey, Joan A, Deborah Karasek, Elizabeth L Ogburn, Dana E Goin, Kristina Dang, Paula A Braveman, and Rachel Morello-Frosch. 2018. <span>“Retirements of Coal and Oil Power Plants in <span>California</span>: Association with Reduced Preterm Birth Among Populations Nearby.”</span> <em>American Journal of Epidemiology</em> 187 (8): 1586–94.
+<div id="ref-casey2018retirements">
+<p>Casey, Joan A, Deborah Karasek, Elizabeth L Ogburn, Dana E Goin, Kristina Dang, Paula A Braveman, and Rachel Morello-Frosch. 2018. “Retirements of Coal and Oil Power Plants in California: Association with Reduced Preterm Birth Among Populations Nearby.” <em>American Journal of Epidemiology</em> 187 (8): 1586–94.</p>
 </div>
-<div id="ref-mendola2018invited" class="csl-entry">
-Mendola, Pauline. 2018. <span>“Invited Commentary: The Power of Preterm Birth to Motivate a Cleaner Environment.”</span> <em>American Journal of Epidemiology</em> 187 (8): 1595–97.
+<div id="ref-mendola2018invited">
+<p>Mendola, Pauline. 2018. “Invited Commentary: The Power of Preterm Birth to Motivate a Cleaner Environment.” <em>American Journal of Epidemiology</em> 187 (8): 1595–7.</p>
 </div>
 </div>
             </section>
@@ -352,7 +322,6 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -373,10 +342,6 @@ gitbook.start({
 "text": null
 },
 "download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
-"search": {
-"engine": "lunr",
-"options": null
-},
 "toc": {
 "collapse": "subsection"
 }
