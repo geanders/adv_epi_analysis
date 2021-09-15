@@ -1170,7 +1170,7 @@ term for the effect of exposure
 over a month as opposed to the smooth function you just used, how does the overall
 cumulative RR compare?
 4. Assume that we are interested in the potential effect of a 5-day 
-heatwave occurring on lags x to x? You can assess this as the effect of hot temperature 
+heatwave occurring on lags 0 to 4? You can assess this as the effect of hot temperature 
 (e.g., 28 degrees C) during these lags, while the temperature remains warm but more 
 mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for 
 the whole month. What is the effect under the 'constant' model? How about the smooth 
@@ -1551,10 +1551,8 @@ whole thing by running `cp_dl` to print it out). We can extract elements from th
 We can also create a variety of plots from this object. The following plots all use the
 `plot` method for `crosspred` objects, so you can access the helpfile with `?plot.crosspred`.
 
-First, we can look at "slices", where we focus on just one lag value and look at the
-non-linear relationship between temperature and mortality risk at that lag only. For example,
-here are plots showing the relationship between temperature and mortality risk on the 
-same day of exposure (lag 0) and 21 days after exposure (lag 21):
+
+First, we can look at “slices,” where we focus on just one lag value and look at the non-linear relationship between temperature and mortality risk at that lag only. For example, here are plots showing the relationship between temperature and mortality risk on the same day of exposure (lag 0) and 21 days after exposure (lag 21):
 
 ```{r}
 plot(cp_dl, ptype = "slices", lag = 0)
@@ -1583,7 +1581,7 @@ For example, the default plot created from the `crosspred` object is a three-dim
 plot (the `theta`, `phi`, and `lphi` parameters shift the angle we view it from), while
 the "contour" plot type shows us a contour plot of these results (in other words, showing
 the exposure and lag variables in two dimensions of a two-dimensional plot then showing
-relative risk using color for each combination). Here is the code to create those plots:
+relative risk using color for each combination). You can think of the 'sliced' plots from above as two-dimensional slices of the three-dimensional graph if we slice right at the selected `lag` or `var` value. Here is the code to create those plots:
 
 ```{r}
 plot(cp_dl, theta = 200, phi = 40, lphi = 30)
@@ -1599,7 +1597,7 @@ dl_basis_5 <- crossbasis(obs$tmean, lag = 30,
                        arglag = list(fun = "strata", df = 1))
 ```
 
-If we look at the `crossbasis` from this function you'll see that we have far fewer columns. 
+The function `strata` in `arglag` essentially breaks up the lag window into strata equaling the degrees of freedom specified, and the lag-response is assumed to be constant for each day within each stratum. Here we specified `df=1` so the lag-response is assumed to be constant for the entire lag window. In other words, the exposure in each day in the lag window is constrained to have the same effect. If we look at the `crossbasis` from this function you'll see that we have far fewer columns. Remember that the total number of columns is determined by the total number of degrees of freedom, which is the product of the df's in each of  `argvar` and `arglag` so in this case 4. 
 
 ```{r}
 dl_basis_5 %>% 
@@ -1607,11 +1605,162 @@ dl_basis_5 %>%
   slice(28:38)
 ```
 
+We can now run the same model as above replacing the `crossbasis` with the one we just created and 
+ repeat the prediction to see how the temperature effect comparing to a baseline temperature 
+of 7 degrees C changes when we constrain the lag-response to be constant. 
+
+```{r}
+dist_lag_mod_6 <- glm(all ~ dl_basis_5 + 
+                        factor(dow, ordered = FALSE) +
+                          ns(time, df = 158), 
+                        data = obs, family = "quasipoisson")
+
+cp_dlconstant <- crosspred(dl_basis_5, dist_lag_mod_6, cen = 7, bylag = 1)
+```
+
+If we look at the same plots and sliced plots as above we can see that this is a much simple model. 
+
+
+```{r}
+plot(cp_dlconstant, ptype = "slices", lag = 0)
+plot(cp_dlconstant, ptype = "slices", lag = 21)
+```
+
+The two plots are identical (because we assume that the exposure-response is the same at all lags) with colder temperatures having a negative effect, while the warmer temperatures appear to be protective.
+
+```{r}
+plot(cp_dlconstant, ptype = "slices", var = 28)
+plot(cp_dlconstant, ptype = "slices", var = -4)
+```
+
+Here we see the constant lag-response more clearly, but at different effects depending on the set temperature. The hot temperature appears to be mildly protective (RR < 1.0), while the cold temperature is harmful (RR > 1.0).
+
+The reduced complexity is evident in the 3-d plot (which looks "flat" on one of the dimensions) and the contour plot (which has large rectangular areas) as well. 
+
+```{r}
+plot(cp_dlconstant, theta = 200, phi = 40, lphi = 30)
+plot(cp_dlconstant, ptype = "contour")
+```
+
+One other thing that we can do with the model output is we can estimate the cumulative risk
+across lags, for example for a month of hot temperature (28 degrees C) compared to cooler temperature (7 degrees C). We do this by essentially accumulating the RRs from each lag-day as follows. The crosspred object has estimates of the coefficients for each lag day (in the 
+`matfit` element), and you 
+could add these up yourself, or you can extract a difference element (`allfit`) that has 
+already added these up for you to get a cumulative effect estimate. If you'd like to 
+calculate confidence intervals, you can get an estimate of the standard error for this 
+cumulative estimate with the `allse` element of the crosspred object. We can get all these
+for a temperature of 28 degrees C; since we set the crosspred object to be centered at 
+7 degrees C, this will allow us to compare 28 to 7 degrees C:
+
+```{r}
+### parameter for each lag-day
+cp_dlconstant$matfit[cp_dlconstant$predvar==28]
+
+### combined model parameter for the cumulative RR (this is the sum for all of the above parameters)
+cp_dlconstant$allfit[cp_dlconstant$predvar==28]
+
+### corresponding standard error for the cumulative RR parameter
+cp_dlconstant$allse[cp_dlconstant$predvar==28]
+```
+
+If we exponentiate the model parameter we will get the cumulative RR estimate and likewise using the model parameter and standard error we can derive 95% Confidence Intervals (CIs) for the cumulative RR. For the central estimate:
+
+$$
+RR=exp(\beta)=exp(-0.148)=0.86
+$$
+For the confidence interval: 
+
+$$
+exp(\beta \pm 1.96*se) = exp(-0.148 \pm 1.96*0.05) = (0.78, 0.95)
+$$
+
+The `crosspred` object, it turns out, stores this information as well (in the `allRRfit`, `allRRlow`, and `allRRhigh` elements), so we can extract these elements directly without doing the math:
+
+```{r}
+cp_dlconstant$allRRfit[cp_dlconstant$predvar==28]
+cp_dlconstant$allRRlow[cp_dlconstant$predvar==28]
+cp_dlconstant$allRRhigh[cp_dlconstant$predvar==28]
+```
+
+Does this look accurate? Do we expect a 14% decrease in mortality comparing a very hot month to a cool month?
+
+Now let's calculate the cumulative RR for temperature at 28 degrees for the smooth lag-response function model from before (i.e., pull those same elements from the model we fit before
+with a smoother lag-response function):
+
+```{r}
+cp_dl$allRRfit[cp_dl$predvar==28]
+
+cp_dl$allRRlow[cp_dl$predvar==28]
+
+cp_dl$allRRhigh[cp_dl$predvar==28]
+```
+
+Based on this model, we infer there's about a 6% cumulative increase associated with a 
+temperature of 28 degrees C compared to 7 degrees.
+
+Does this look more accurate? Which of the two lag-response functions is more likely to be true?
+
 4. **Assume that we are interested in the potential effect of a 5-day 
-heatwave occurring on lags 1 to 5? You can assess this as the effect of hot temperature 
+heatwave occurring on lags 0 to 4? You can assess this as the effect of hot temperature 
 (e.g., 28 degrees C) during these lags, while the temperature remains warm but more 
 mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for 
 the whole month. What is the effect under the 'constant' model? How about the smooth 
 function lag model?** 
 
+Using the `crosspred` function we can compare any exposure history over a lag-window of interest to a reference value (or values varying over time in the same window). Realistically, a whole month of extremely high exposures is unlikely. Extreme phenomena (such as 28 degree mean daily temperature in London) are more likely to last a shorter period of time. Furthermore, the effect of an event like  a heat wave (likely occurring in the summer) is probably better assessed with a referent value more akin to what the heat wave is replacing, i.e., a warm but more mild summer temperature rather than temperatures more likely to occur in other seasons. We saw above that the effect of hot temperatures tends to be more short term, so let's assess the potential effect of a 5-day heatwave assessed on the last day of the heatwave. The rest of the days in the month are at 20 degrees C and we will use the same value as the referent value for the whole month. Realistically there will be variability in the temperatures during these days as well, but for the purposes of this exercise let's keep it constant at 20 for simplicity. Let's assess this effect using the constant lag-response model.
 
+```{r}
+hw_constant <- crosspred(dl_basis_5, dist_lag_mod_6, 
+                         at = exphist(c(rep(20, 26), rep(28, 5)), times = 31, lag = 30) , 
+                         cen = 20, bylag = 1)
+```
+
+The `exphist` function allows us to designate distinct exposure values for the entire lag-window. The exposure values here appear in an oldest (lag30) to most recent (lag0) order. The `times` argument determines were the list of exposure begins in the lag window (here `time = 31` or lag30 from 0-30). The effect estimate and corresponding CI can be extracted as above.
+```{r}
+hw_constant$allRRfit
+hw_constant$allRRlow
+hw_constant$allRRhigh
+```
+Now, lets repeat this with the smooth function lag-response model:
+
+```{r}
+hw_smooth<-crosspred(dl_basis_4, dist_lag_mod_5, 
+                     at = exphist(c(rep(20, 26), rep(28, 5)), times = 31, lag = 30) , 
+                     cen = 20, bylag = 1)
+
+hw_smooth$allRRfit
+hw_smooth$allRRlow
+hw_smooth$allRRhigh
+```
+
+
+We see that the constant lag-response model underestimates the RR and does not capture any potential effect of a heatwave, while the smooth term lag-response model indicates that there is a 40% increase in mortality for the last day of the heatwave. Note that this increase in mortality is not the only effect, as based on out model the heatwave started having an effect on the same day it started, i.e. we would expect all 5 heatwave days to have a temperature related increase in mortality compared to the days before the heat-wave. We can look at the increase in mortality for each day if we look at the individual effect estimates: 
+
+```{r}
+### individual lag-day parameters
+hw_smooth$matfit
+
+#### individual lag-day RRs
+hw_smooth$matRRfit
+```
+
+
+The first day of the heatwave will have an effect corresponding to a lag0 effect:
+
+$$
+RR=exp(0.107)=1.11
+$$
+
+The second day of the heatwave will have an effect corresponding to a lag0 and lag1 effect:
+
+$$
+RR = exp(0.107 + 0.085) = 1.21
+$$
+
+(This quantity is also equal to the product of the lag-day specific RRs for lag0 and lag1:)
+
+$$
+1.11 \times 1.09 = 1.21
+$$
+
+And so on, until we reach our last day of the heatwave with RR=1.39. There is a bidirectional relationship for this RR, as you can interpret this as the overall effect of the heatwave on mortality on the last day of the heatwave, or as the overall effect of temperature on the first day of the heatwave on mortality over the next 5 days.

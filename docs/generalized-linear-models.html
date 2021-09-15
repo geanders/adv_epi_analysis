@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-09-13" />
+<meta name="date" content="2021-09-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1214,7 +1214,7 @@ a larger time of life lost. This question—of whether deaths observed to be
 associated with an environmental exposure were displaced by only a small amount of
 time—can be explored by investigating whether an observed increase in mortality
 across a community during an exposure is then offset by a lower-than-expected
-rate of mortality in the following days and weeks.This phenomenon is sometimes<br />
+rate of mortality in the following days and weeks.This phenomenon is sometimes
 also referred to as ‘harvesting’ or a ‘harvesting effect.’</p>
 <p>All of these questions can be explored through a type of model called a
 <em>distributed lag model</em>. Conceptually, these models investigate how an exposure
@@ -1233,9 +1233,9 @@ more days from exposure. As a result, distributed lag models are used widely in
 environmental epidemiology studies of time series data, to ensure that important
 associations aren’t missed by limiting the model to focus on risk that are
 detectable on the same day as the exposure. They can also help us identify influential
-windows of exposure as well as help eliminate potential confoundign by exposures
+windows of exposure as well as help eliminate potential confounding by exposures
 occurring at proximal times to the window of interest. For example, today’s exposure
-may appear to have an effect on a helath outcome even if in reality yesterday’s
+may appear to have an effect on a health outcome even if in reality yesterday’s
 exposure is the influential one and we don’t control for it, because today’s and
 yesterday’s exposure to temperature or air pollution are likely to be very similar.</p>
 <p>To fit a distributed lag model, you can start with a fairly straightforward
@@ -1275,16 +1275,16 @@ previous model equation could be rewritten as:</p>
 log(E(Y)) = \alpha + \sum_{l=0}^2{\beta_lX_l} + \mathbf{\gamma^{&#39;}W} + ns(time)
 \]</span></p>
 <p>This version of a distributed lag model is nice because it is fairly simple—we’re taking the
-idea of fitting a linear term for an exposure, and then expanding it to look include the
+idea of fitting a linear term for an exposure, and then expanding it to include the
 exposure on earlier days by adding the same type of term for exposure measured at each lag.
-However, it does have some downsides. The main downside is that as we alluded to above, exposure
+However, it does have some downsides. The main downside is that exposure
 tends to be very strongly correlated from one day to the next. Any time you put different terms in a regression model that are correlated, you create the risk of <em>collinearity</em>, and associated
-problemswith fitting the model. The term <em>collinearity</em> refers to the idea that you have two or more
+problems with fitting the model. The term <em>collinearity</em> refers to the idea that you have two or more
 columns in your model matrix that give identical (or, if you loosen the definition a bit,
 very similar) information. To fit coefficients for each term, the modeling algorithm is trying
 to identify weights to place on each column in the model matrix that result in a model that
 gives the best likelihood of the data you see. If two or more columns have (almost) identical
-information, then the algorithm struggles to determine how to define weight across these
+information, then the algorithm struggles to determine how to distribute weight across these
 two columns. The implications are that you can end up with a lot of instability in model
 coefficients for the columns that are collinear, as well as very inflated estimates of the
 standard error. Long story short, it can cause problems in your regression model if you include
@@ -1293,9 +1293,9 @@ try to avoid doing that.</p>
 <p>There are alternative distributed lag models that can help avoid this instability that can
 arise from fitting a distributed lag by using a separate term for each lag. All of them share
 a common feature—they somehow fit a function of the lags instead of each separate lag, so
-that we end up adding fewer terms to the regression model (and, in term, are somewhat
-constraining that pattern that the distributed lag effects follow). The most extreme
-is to use a term that reduces all the lag terms to a single term, which you can do by
+that we end up adding fewer terms to the regression model (and, in turn, are somewhat
+constraining the pattern that the distributed lag effects follow). At the most extreme,
+you can use a function that reduces all the lag terms to a single term, which you can do by
 averaging the exposure across all lags. In other words, you could take the same-day
 temperature, yesterday’s temperature, and the temperature the day before that, and average
 those three temperatures to create the term you put in the model. The model equation
@@ -1311,8 +1311,8 @@ lags, because you’re only including a single term for exposure in the model. H
 there is a downside—this model will provide you with a single estimate for the
 lagged effects, without allowing you to explore patterns across lags (for example,
 is the association mostly on the day of exposure, or are there some delayed effects on
-following days? the main assumption is that the effect is constant across all days in the
-window of interest).</p>
+following days?). Instead, the main assumption is that the effect is constant across
+all days in the window of interest.</p>
 <p>Another approach is more complex, but it allows you to explore patterns across lags.
 Instead of reducing the lagged exposure to a single term in the model, you can reduce
 it to a few terms that represent the basis for a smooth function. Often, a polynomial
@@ -1329,11 +1329,11 @@ at both lower (colder) and higher (hotter) temperatures.</p>
 same time, including a non-linear function to describe how the association evolves
 across lagged time following the exposure. The approach is to extend the idea of
 using a basis function—instead of using a basis function in a single dimension, we’ll
-use cross of basis functions in two dimensions. One dimension is the level of exposure
+use a cross of basis functions in two dimensions. One dimension is the level of exposure
 (e.g., cold to hot temperatures), and the other is the timing between the exposure and
 the outcome (e.g., same-day to lagged by many days). In terms of the mechanics of
 building a model matrix to use to fit the regression model, everything follows directly
-from the idea we explored early of using a function like a spline to create basis
+from the idea we explored earlier of using a function like a spline to create basis
 variables in that model matrix for a term with a non-linear association with the
 outcome variable. However, the mechanics do get quite cumbersome as so many terms are
 included, and so again we will use the <code>dlnm</code> package to handle these mechanics as we
@@ -1360,14 +1360,12 @@ between temperature and mortality look like at lag 0 days? How about at lag 21 d
 What does the pattern of lagged effects look like when comparing the relative risk of
 mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
 (7 degrees C)? What about when comparing mortality at a cold temperature
-(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the
-cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
-milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure? If you use a constant term for the effect of exposure
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? If you use a constant
+term for the effect of exposure
 over a month as opposed to the smooth function you just used, how does the overall
 cumulative RR compare?</li>
 <li>Assume that we are interested in the potential effect of a 5-day
-heatwave occurring on lags x to x? You can assess this as the effect of hot temperature
+heatwave occurring on lags 0 to 4? You can assess this as the effect of hot temperature
 (e.g., 28 degrees C) during these lags, while the temperature remains warm but more
 mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for
 the whole month. What is the effect under the ‘constant’ model? How about the smooth
@@ -1413,7 +1411,7 @@ suite of packages can be used to create these columns:</p>
 <span id="cb139-6"><a href="generalized-linear-models.html#cb139-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_5 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">5</span>), </span>
 <span id="cb139-7"><a href="generalized-linear-models.html#cb139-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_6 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">6</span>), </span>
 <span id="cb139-8"><a href="generalized-linear-models.html#cb139-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">tmean_7 =</span> <span class="fu">lag</span>(tmean, <span class="at">n =</span> <span class="dv">7</span>))</span></code></pre></div>
-<p>You can see that each of these have taken <code>tmean</code> and then offset it by moving it down
+<p>You can see below that each of these have taken <code>tmean</code> and then offset it by moving it down
 by one or more rows (down one row for lag 1, two for lag 2, etc.). As a result, we now have
 columns that give us today’s temperature, yesterday’s, and so on, all lined up with the
 row with the observation for daily mortality:</p>
@@ -1456,9 +1454,10 @@ fit for each of these distributed lag terms:</p>
 ## 6 tmean_5 -0.000515  0.000797    -0.645 5.19e- 1
 ## 7 tmean_6 -0.00107   0.000789    -1.36  1.73e- 1
 ## 8 tmean_7 -0.00209   0.000593    -3.52  4.30e- 4</code></pre>
-<p>We can pull out all those estimates, calculate the 95% confidence intervals (do this before
-you take the exponential to get to the relative risk estimate!), and then exponentiate all
-the terms to get estimates of relative risk of mortality per unit increase in temperature.</p>
+<p>We can pull out all those estimates, calculate the 95% confidence intervals (do this <em>before</em>
+you take the exponential to get to the relative risk estimate, not after!), and then
+exponentiate all the terms to get estimates of relative risk of mortality per unit increase
+in temperature.</p>
 <div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="generalized-linear-models.html#cb145-1" aria-hidden="true" tabindex="-1"></a>dist_lag_terms <span class="ot">&lt;-</span> dist_lag_mod_1 <span class="sc">%&gt;%</span> </span>
 <span id="cb145-2"><a href="generalized-linear-models.html#cb145-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb145-3"><a href="generalized-linear-models.html#cb145-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(term, <span class="st">&quot;tmean&quot;</span>)) <span class="sc">%&gt;%</span> </span>
@@ -1481,8 +1480,8 @@ the terms to get estimates of relative risk of mortality per unit increase in te
 ## 6 tmean_5     5 0.999  0.998   1.00 
 ## 7 tmean_6     6 0.999  0.997   1.00 
 ## 8 tmean_7     7 0.998  0.997   0.999</code></pre>
-<p>You can plot these estimates to explore how the association changes by lag (notice how the
-geom <code>geom_pointrange</code> is very helpful here!):</p>
+<p>You can plot these estimates to explore how the association changes by lag (notice how
+<code>geom_pointrange</code> is very helpful here!):</p>
 <div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="generalized-linear-models.html#cb147-1" aria-hidden="true" tabindex="-1"></a>dist_lag_terms <span class="sc">%&gt;%</span> </span>
 <span id="cb147-2"><a href="generalized-linear-models.html#cb147-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> lag, <span class="at">y =</span> rr)) <span class="sc">+</span> </span>
 <span id="cb147-3"><a href="generalized-linear-models.html#cb147-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
@@ -1491,7 +1490,8 @@ geom <code>geom_pointrange</code> is very helpful here!):</p>
 <span id="cb147-6"><a href="generalized-linear-models.html#cb147-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Relative risk of mortality</span><span class="sc">\n</span><span class="st">per degree increase in temperature&quot;</span>) <span class="sc">+</span> </span>
 <span id="cb147-7"><a href="generalized-linear-models.html#cb147-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">linetype =</span> <span class="dv">3</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-90-1.png" width="672" /></p>
-<p>You can also use the <code>dlnm</code> package to fit this model, using the <code>crossbasis</code> function
+<p>You can also, as an alternative, use the <code>dlnm</code> package to fit this
+model, using the <code>crossbasis</code> function
 to set up the distributed lag basis to include in the regression, and then the <code>crosspred</code>
 function to extract results after fitting the regression model and to plot results.</p>
 <p>First, you’ll again use <code>crossbasis</code> to create the basis, as you did earlier when using this
@@ -1553,16 +1553,18 @@ exclude any observations with <em>any</em> columns of missing data.</p>
 some of the special functions for plotting in <code>dlnm</code>. We can plot the “slice” of comparing
 the relative risk at 1 degree C (<code>var = 1</code>) (this will give us the one-unit increase,
 because by default the crossbasis set-up with 0 degrees as the baseline, so this is
-one degree above that value). The <code>crosspred</code> function predicts based on a crossbasis
-and a regression model object that uses that crossbasis, then the <code>plot</code> function has a
-special method for plotting the resulting crosspred object (to see the helpfile for this
+one degree above that value). The <code>crosspred</code> function predicts based on two things: (1)
+a crossbasis and (2) a regression model object that uses that crossbasis. Once you create
+an object with <code>crosspred</code>, then the <code>plot</code> function has a
+special method for plotting that object (to see the helpfile for this
 plot method, type <code>?plot.crosspred</code> in your R console).</p>
 <div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="generalized-linear-models.html#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis, dist_lag_mod_2) <span class="sc">%&gt;%</span> </span>
 <span id="cb154-2"><a href="generalized-linear-models.html#cb154-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">1</span>, <span class="at">ci =</span> <span class="st">&quot;bars&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
-<p>If you look at the correlations between temperature, however, you’ll see they are very
-strongly correlated, which means that we could have some issues with collinearity if we
-use this simpler distributed lag model, with a separate coefficient for each lag:</p>
+<p>However, even though mechanically we can fit this model, we should think about whether
+it’s a good idea, or whether we should contrain the lag function some.
+If you look at the correlations between temperature at different lags, you’ll see they are very
+strongly correlated:</p>
 <div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="generalized-linear-models.html#cb155-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
 <span id="cb155-2"><a href="generalized-linear-models.html#cb155-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tmean, tmean_1<span class="sc">:</span>tmean_7) <span class="sc">%&gt;%</span> </span>
 <span id="cb155-3"><a href="generalized-linear-models.html#cb155-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(<span class="at">use =</span> <span class="st">&quot;complete.obs&quot;</span>) </span></code></pre></div>
@@ -1584,7 +1586,9 @@ use this simpler distributed lag model, with a separate coefficient for each lag
 ## tmean_5 0.8846283
 ## tmean_6 0.9431482
 ## tmean_7 1.0000000</code></pre>
-<p>Next, we’ll explore a model that constrains the lagged effects to follow a smooth
+<p>This means that we could have some issues with collinearity if we
+use this simpler distributed lag model, with a separate coefficient for each lag
+Next, we’ll explore a model that constrains the lagged effects to follow a smooth
 function, to help avoid this potential instability in the modeling.</p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Start with the model from the first question, but change it to use a smooth
@@ -1612,12 +1616,12 @@ can use the same parameters in setting up each basis function).</p>
 function for <code>onebasis</code>. When we fit a separate coefficient for each lag, we used the
 “integer” function, which creates a set of basis variables with indicators for each
 separate lag (this is really similar to the idea of basis variables for a categorical
-variable, like day of the week).</p>
-<p>Here, we want to instead use a smooth function, with fewer degrees of freedom (i.e., fewer
+variable, like day of the week). This is what we did in the first part of the exercise.</p>
+<p>Now, we want to instead use a smooth function, with fewer degrees of freedom (i.e., fewer
 columns created in the matrix of basis values). Two popular options for that function are
 the “poly” function, which will fit a polynomial, or the “ns” function, which will fit
 a natural cubic spline (just like we did earlier to create a non-linear function of
-temperature). We’ll use “ns” in this example (<code>fun = ns</code> in the list of parameters for
+temperature). We’ll use “ns” in this example (<code>fun = "ns"</code> in the list of parameters for
 <code>arglag</code>).</p>
 <p>For some of these functions, you’ll need to specify additional parameters to clarify
 how they should be built. For example, if you’re using a spline, you need to specify
@@ -1701,10 +1705,8 @@ between temperature and mortality look like at lag 0 days? How about at lag 21 d
 What does the pattern of lagged effects look like when comparing the relative risk of
 mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature
 (7 degrees C)? What about when comparing mortality at a cold temperature
-(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the
-cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a
-milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure? If you use a constant term for the effect of exposure
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? If you use a constant
+term for the effect of exposure
 over a month as opposed to the smooth function you just used, how does the overall
 cumulative RR compare?</strong></li>
 </ol>
@@ -1718,51 +1720,63 @@ this dimension of the crossbasis. We can use a spline for temperature by specify
 4, but again, feel free to experiment):</p>
 <div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="generalized-linear-models.html#cb163-1" aria-hidden="true" tabindex="-1"></a>dl_basis_4 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
 <span id="cb163-2"><a href="generalized-linear-models.html#cb163-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
-<span id="cb163-3"><a href="generalized-linear-models.html#cb163-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">5</span>))</span></code></pre></div>
+<span id="cb163-3"><a href="generalized-linear-models.html#cb163-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">6</span>))</span></code></pre></div>
 <p>Try looking at the crossbasis from this function (you’ll need to look past the 30th row
 or so, since the earliest rows will all be missing since they’re in that range where
 they don’t have lag data available for the exposure). You can see that we now have a
 <em>lot</em> of columns: specifically, we have 4 (degrees of freedom for the temperature spline)
-times 5 (degrees of freedom for the lag spline) = 20 columns.</p>
+times 6 (degrees of freedom for the lag spline) = 24 columns.</p>
 <div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="generalized-linear-models.html#cb164-1" aria-hidden="true" tabindex="-1"></a>dl_basis_4 <span class="sc">%&gt;%</span> </span>
 <span id="cb164-2"><a href="generalized-linear-models.html#cb164-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb164-3"><a href="generalized-linear-models.html#cb164-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">28</span><span class="sc">:</span><span class="dv">38</span>)</span></code></pre></div>
-<pre><code>##       v1.l1    v1.l2    v1.l3    v1.l4       v1.l5      v2.l1      v2.l2
-## 1        NA       NA       NA       NA          NA         NA         NA
-## 2        NA       NA       NA       NA          NA         NA         NA
-## 3        NA       NA       NA       NA          NA         NA         NA
-## 4  2.761039 3.997877 2.270266 3.233986 -0.57618666 -0.6476740 -0.9204305
-## 5  2.668897 4.023218 2.331192 3.379841 -0.44045281 -0.6808901 -0.9105162
-## 6  2.597078 4.038829 2.390537 3.454790 -0.33703666 -0.7105258 -0.9052107
-## 7  2.564832 4.043947 2.422375 3.492696 -0.08551391 -0.7326065 -0.9045334
-## 8  2.491398 4.033905 2.404209 3.593013  0.08504674 -0.7635506 -0.9097586
-## 9  2.342457 4.003091 2.320497 3.862538  0.03369753 -0.8334343 -0.9226668
-## 10 2.282906 3.949254 2.322582 3.954232 -0.17572292 -0.8553998 -0.9441819
-## 11 2.259979 3.877105 2.258828 4.202319 -0.19706918 -0.8828778 -0.9729276
-##         v2.l3      v2.l4        v2.l5    v3.l1    v3.l2    v3.l3    v3.l4
-## 1          NA         NA           NA       NA       NA       NA       NA
-## 2          NA         NA           NA       NA       NA       NA       NA
-## 3          NA         NA           NA       NA       NA       NA       NA
-## 4  -0.5810436 -1.1792423 -0.103868127 1.675142 2.374818 1.442488 2.821684
-## 5  -0.5532776 -1.1558093 -0.079483003 1.733576 2.358711 1.396614 2.765277
-## 6  -0.5285540 -1.1403549 -0.049230096 1.781872 2.349637 1.356949 2.729928
-## 7  -0.5085435 -1.1357676  0.005314667 1.811710 2.347824 1.326218 2.722338
-## 8  -0.5025200 -1.1122547  0.050393725 1.862702 2.355930 1.325598 2.672637
-## 9  -0.5327496 -0.9920020  0.015000395 1.973101 2.377416 1.380339 2.479005
-## 10 -0.5286118 -0.9552027 -0.046539254 2.016020 2.413900 1.377029 2.414106
-## 11 -0.5615277 -0.8240561 -0.082721353 2.043549 2.462664 1.424478 2.227474
-##          v3.l5      v4.l1     v4.l2      v4.l3     v4.l4        v4.l5
-## 1           NA         NA        NA         NA        NA           NA
-## 2           NA         NA        NA         NA        NA           NA
-## 3           NA         NA        NA         NA        NA           NA
-## 4   0.21289849 -0.9586487 -1.359059 -0.8255059 -1.614791 -0.121837367
-## 5   0.16334484 -0.9920895 -1.349841 -0.7992530 -1.582510 -0.093478849
-## 6   0.10071654 -1.0197280 -1.344648 -0.7765534 -1.562281 -0.057637978
-## 7  -0.01746731 -1.0368037 -1.343611 -0.7589669 -1.557937  0.009996179
-## 8  -0.11182911 -1.0659854 -1.348250 -0.7586120 -1.529495  0.063997470
-## 9  -0.06963965 -1.1291648 -1.360546 -0.7899392 -1.418683  0.039853323
-## 10  0.06149683 -1.1537262 -1.381425 -0.7880451 -1.381542 -0.035193354
-## 11  0.08860827 -1.1694805 -1.409331 -0.8151992 -1.274737 -0.050708665</code></pre>
+<pre><code>##       v1.l1    v1.l2    v1.l3    v1.l4    v1.l5       v1.l6      v2.l1
+## 1        NA       NA       NA       NA       NA          NA         NA
+## 2        NA       NA       NA       NA       NA          NA         NA
+## 3        NA       NA       NA       NA       NA          NA         NA
+## 4  2.068939 3.299498 3.111270 1.738184 2.541810 -0.51512317 -0.5552531
+## 5  1.955177 3.314862 3.125558 1.820183 2.690445 -0.40693744 -0.5967078
+## 6  1.886111 3.299149 3.148516 1.893007 2.766242 -0.32385143 -0.6273517
+## 7  1.882405 3.248469 3.180797 1.927784 2.804239 -0.08305771 -0.6419354
+## 8  1.852973 3.165440 3.220817 1.900001 2.905860  0.08447527 -0.6588751
+## 9  1.757370 3.058913 3.263914 1.795344 3.175517  0.03686863 -0.7106452
+## 10 1.760596 2.944202 3.299498 1.779203 3.259667 -0.16712630 -0.7084665
+## 11 1.797646 2.838520 3.314862 1.698607 3.497240 -0.17786583 -0.7118631
+##         v2.l2      v2.l3      v2.l4      v2.l5         v2.l6    v3.l1    v3.l2
+## 1          NA         NA         NA         NA            NA       NA       NA
+## 2          NA         NA         NA         NA            NA       NA       NA
+## 3          NA         NA         NA         NA            NA       NA       NA
+## 4  -0.7011824 -0.7707934 -0.4847858 -0.9916438 -0.0956588789 1.405249 1.838701
+## 5  -0.6979016 -0.7603742 -0.4547662 -0.9667940 -0.0791413415 1.478133 1.830775
+## 6  -0.7047091 -0.7492423 -0.4287099 -0.9503322 -0.0554076103 1.526744 1.841501
+## 7  -0.7234011 -0.7371123 -0.4081381 -0.9450033 -0.0058689802 1.541114 1.873929
+## 8  -0.7537142 -0.7241504 -0.4035141 -0.9205842  0.0358717107 1.565836 1.927170
+## 9  -0.7930344 -0.7111578 -0.4381402 -0.7997450 -0.0007806944 1.643309 1.996194
+## 10 -0.8364025 -0.7011824 -0.4373333 -0.7657041 -0.0621066847 1.644968 2.071685
+## 11 -0.8780716 -0.6979016 -0.4735973 -0.6384769 -0.0958995727 1.631672 2.143093
+##       v3.l3    v3.l4    v3.l5       v3.l6      v4.l1     v4.l2     v4.l3
+## 1        NA       NA       NA          NA         NA        NA        NA
+## 2        NA       NA       NA          NA         NA        NA        NA
+## 3        NA       NA       NA          NA         NA        NA        NA
+## 4  1.955381 1.180876 2.353392  0.20605400 -0.8041945 -1.052250 -1.119024
+## 5  1.942554 1.126503 2.294679  0.17194514 -0.8459049 -1.047714 -1.111683
+## 6  1.926528 1.081359 2.257968  0.12135036 -0.8737239 -1.053852 -1.102512
+## 7  1.906672 1.048474 2.249542  0.01133949 -0.8819473 -1.072411 -1.091149
+## 8  1.883354 1.051489 2.198457 -0.07875894 -0.8960954 -1.102879 -1.077804
+## 9  1.858659 1.116576 2.004017 -0.03652356 -0.9404317 -1.142380 -1.063672
+## 10 1.838701 1.121782 1.943746  0.09297047 -0.9413808 -1.185582 -1.052250
+## 11 1.830775 1.177720 1.763872  0.11448195 -0.9337721 -1.226447 -1.047714
+##         v4.l4     v4.l5        v4.l6
+## 1          NA        NA           NA
+## 2          NA        NA           NA
+## 3          NA        NA           NA
+## 4  -0.6757908 -1.346797 -0.117920408
+## 5  -0.6446743 -1.313197 -0.098400617
+## 6  -0.6188389 -1.292188 -0.069446282
+## 7  -0.6000200 -1.287366 -0.006489356
+## 8  -0.6017453 -1.258131  0.045072099
+## 9  -0.6389933 -1.146857  0.020901671
+## 10 -0.6419722 -1.112366 -0.053205061
+## 11 -0.6739847 -1.009427 -0.065515636</code></pre>
 <p>The <code>dlnm</code> package has done
 the work of setting up this crossbasis function, as well as creating this matrix of
 basis variables from our original simple column of temperature measurements. This
@@ -1771,7 +1785,7 @@ function that we started with. However, the underlying principles and mechanics 
 same, they’re just scaling up to allow some more complex “shapes” in our exposure-response
 association.</p>
 <p>We can add this new crossbasis function to the regression model, and then predict from
-the crossbasis and function to get a view of how temperature is (non-linearly) associated
+the crossbasis and regression model to get a view of how temperature is (non-linearly) associated
 with mortality risk at different lags, comparing to a baseline temperature of 7 degrees C:</p>
 <div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="generalized-linear-models.html#cb166-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_4 <span class="sc">+</span> </span>
 <span id="cb166-2"><a href="generalized-linear-models.html#cb166-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
@@ -1784,10 +1798,7 @@ whole thing by running <code>cp_dl</code> to print it out). We can extract eleme
 (for example, if we want to get effect estimates or estimates of confidence intervals).
 We can also create a variety of plots from this object. The following plots all use the
 <code>plot</code> method for <code>crosspred</code> objects, so you can access the helpfile with <code>?plot.crosspred</code>.</p>
-<p>First, we can look at “slices,” where we focus on just one lag value and look at the
-non-linear relationship between temperature and mortality risk at that lag only. For example,
-here are plots showing the relationship between temperature and mortality risk on the
-same day of exposure (lag 0) and 21 days after exposure (lag 21):</p>
+<p>First, we can look at “slices,” where we focus on just one lag value and look at the non-linear relationship between temperature and mortality risk at that lag only. For example, here are plots showing the relationship between temperature and mortality risk on the same day of exposure (lag 0) and 21 days after exposure (lag 21):</p>
 <div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="generalized-linear-models.html#cb167-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">lag =</span> <span class="dv">0</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-105-1.png" width="672" /></p>
 <div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="generalized-linear-models.html#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">lag =</span> <span class="dv">21</span>)</span></code></pre></div>
@@ -1810,8 +1821,8 @@ three-dimensional association between the exposure, lag time, and risk of the ou
 For example, the default plot created from the <code>crosspred</code> object is a three-dimensional
 plot (the <code>theta</code>, <code>phi</code>, and <code>lphi</code> parameters shift the angle we view it from), while
 the “contour” plot type shows us a contour plot of these results (in other words, showing
-the exposure and lag varables in two dimensions of a two-dimensional plot then showing
-relative risk using color for each combination). Here is the code to create those plots:</p>
+the exposure and lag variables in two dimensions of a two-dimensional plot then showing
+relative risk using color for each combination). You can think of the ‘sliced’ plots from above as two-dimensional slices of the three-dimensional graph if we slice right at the selected <code>lag</code> or <code>var</code> value. Here is the code to create those plots:</p>
 <div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="generalized-linear-models.html#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">theta =</span> <span class="dv">200</span>, <span class="at">phi =</span> <span class="dv">40</span>, <span class="at">lphi =</span> <span class="dv">30</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-107-1.png" width="672" /></p>
 <div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="generalized-linear-models.html#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dl, <span class="at">ptype =</span> <span class="st">&quot;contour&quot;</span>)</span></code></pre></div>
@@ -1820,7 +1831,7 @@ relative risk using color for each combination). Here is the code to create thos
 <div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="generalized-linear-models.html#cb173-1" aria-hidden="true" tabindex="-1"></a>dl_basis_5 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
 <span id="cb173-2"><a href="generalized-linear-models.html#cb173-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
 <span id="cb173-3"><a href="generalized-linear-models.html#cb173-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;strata&quot;</span>, <span class="at">df =</span> <span class="dv">1</span>))</span></code></pre></div>
-<p>If we look at the <code>crossbasis</code> from this function you’ll see that we have far fewer columns.</p>
+<p>The function <code>strata</code> in <code>arglag</code> essentially breaks up the lag window into strata equaling the degrees of freedom specified, and the lag-response is assumed to be constant for each day within each stratum. Here we specified <code>df=1</code> so the lag-response is assumed to be constant for the entire lag window. In other words, the exposure in each day in the lag window is constrained to have the same effect. If we look at the <code>crossbasis</code> from this function you’ll see that we have far fewer columns. Remember that the total number of columns is determined by the total number of degrees of freedom, which is the product of the df’s in each of <code>argvar</code> and <code>arglag</code> so in this case 4.</p>
 <div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="generalized-linear-models.html#cb174-1" aria-hidden="true" tabindex="-1"></a>dl_basis_5 <span class="sc">%&gt;%</span> </span>
 <span id="cb174-2"><a href="generalized-linear-models.html#cb174-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb174-3"><a href="generalized-linear-models.html#cb174-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">28</span><span class="sc">:</span><span class="dv">38</span>)</span></code></pre></div>
@@ -1836,14 +1847,155 @@ relative risk using color for each combination). Here is the code to create thos
 ## 9  15.89771 -4.127076 10.317738 -5.904626
 ## 10 15.96057 -4.094014 10.267995 -5.876159
 ## 11 16.37863 -3.880472  9.958228 -5.698886</code></pre>
+<p>We can now run the same model as above replacing the <code>crossbasis</code> with the one we just created and
+repeat the prediction to see how the temperature effect comparing to a baseline temperature
+of 7 degrees C changes when we constrain the lag-response to be constant.</p>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="generalized-linear-models.html#cb176-1" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_6 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_5 <span class="sc">+</span> </span>
+<span id="cb176-2"><a href="generalized-linear-models.html#cb176-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb176-3"><a href="generalized-linear-models.html#cb176-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb176-4"><a href="generalized-linear-models.html#cb176-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
+<span id="cb176-5"><a href="generalized-linear-models.html#cb176-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb176-6"><a href="generalized-linear-models.html#cb176-6" aria-hidden="true" tabindex="-1"></a>cp_dlconstant <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(dl_basis_5, dist_lag_mod_6, <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">bylag =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>If we look at the same plots and sliced plots as above we can see that this is a much simple model.</p>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="generalized-linear-models.html#cb177-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dlconstant, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">lag =</span> <span class="dv">0</span>)</span>
+<span id="cb177-2"><a href="generalized-linear-models.html#cb177-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dlconstant, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">lag =</span> <span class="dv">21</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-111-1.png" width="672" /></p>
+<p>The two plots are identical (because we assume that the exposure-response is the same at all lags) with colder temperatures having a negative effect, while the warmer temperatures appear to be protective.</p>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="generalized-linear-models.html#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dlconstant, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="dv">28</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-112-1.png" width="672" /></p>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="generalized-linear-models.html#cb179-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dlconstant, <span class="at">ptype =</span> <span class="st">&quot;slices&quot;</span>, <span class="at">var =</span> <span class="sc">-</span><span class="dv">4</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-112-2.png" width="672" /></p>
+<p>Here we see the constant lag-response more clearly, but at different effects depending on the set temperature. The hot temperature appears to be mildly protective (RR &lt; 1.0), while the cold temperature is harmful (RR &gt; 1.0).</p>
+<p>The reduced complexity is evident in the 3-d plot (which looks “flat” on one of the dimensions) and the contour plot (which has large rectangular areas) as well.</p>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="generalized-linear-models.html#cb180-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dlconstant, <span class="at">theta =</span> <span class="dv">200</span>, <span class="at">phi =</span> <span class="dv">40</span>, <span class="at">lphi =</span> <span class="dv">30</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-113-1.png" width="672" /></p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="generalized-linear-models.html#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cp_dlconstant, <span class="at">ptype =</span> <span class="st">&quot;contour&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-113-2.png" width="672" /></p>
+<p>One other thing that we can do with the model output is we can estimate the cumulative risk
+across lags, for example for a month of hot temperature (28 degrees C) compared to cooler temperature (7 degrees C). We do this by essentially accumulating the RRs from each lag-day as follows. The crosspred object has estimates of the coefficients for each lag day (in the
+<code>matfit</code> element), and you
+could add these up yourself, or you can extract a difference element (<code>allfit</code>) that has
+already added these up for you to get a cumulative effect estimate. If you’d like to
+calculate confidence intervals, you can get an estimate of the standard error for this
+cumulative estimate with the <code>allse</code> element of the crosspred object. We can get all these
+for a temperature of 28 degrees C; since we set the crosspred object to be centered at
+7 degrees C, this will allow us to compare 28 to 7 degrees C:</p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="generalized-linear-models.html#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="do">### parameter for each lag-day</span></span>
+<span id="cb182-2"><a href="generalized-linear-models.html#cb182-2" aria-hidden="true" tabindex="-1"></a>cp_dlconstant<span class="sc">$</span>matfit[cp_dlconstant<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##  [1] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+##  [6] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [11] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [16] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [21] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [26] -0.004774825 -0.004774825 -0.004774825 -0.004774825 -0.004774825
+## [31] -0.004774825</code></pre>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="generalized-linear-models.html#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="do">### combined model parameter for the cumulative RR (this is the sum for all of the above parameters)</span></span>
+<span id="cb184-2"><a href="generalized-linear-models.html#cb184-2" aria-hidden="true" tabindex="-1"></a>cp_dlconstant<span class="sc">$</span>allfit[cp_dlconstant<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##         28 
+## -0.1480196</code></pre>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="generalized-linear-models.html#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="do">### corresponding standard error for the cumulative RR parameter</span></span>
+<span id="cb186-2"><a href="generalized-linear-models.html#cb186-2" aria-hidden="true" tabindex="-1"></a>cp_dlconstant<span class="sc">$</span>allse[cp_dlconstant<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##         28 
+## 0.05128501</code></pre>
+<p>If we exponentiate the model parameter we will get the cumulative RR estimate and likewise using the model parameter and standard error we can derive 95% Confidence Intervals (CIs) for the cumulative RR. For the central estimate:</p>
+<p><span class="math display">\[
+RR=exp(\beta)=exp(-0.148)=0.86
+\]</span>
+For the confidence interval:</p>
+<p><span class="math display">\[
+exp(\beta \pm 1.96*se) = exp(-0.148 \pm 1.96*0.05) = (0.78, 0.95)
+\]</span></p>
+<p>The <code>crosspred</code> object, it turns out, stores this information as well (in the <code>allRRfit</code>, <code>allRRlow</code>, and <code>allRRhigh</code> elements), so we can extract these elements directly without doing the math:</p>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="generalized-linear-models.html#cb188-1" aria-hidden="true" tabindex="-1"></a>cp_dlconstant<span class="sc">$</span>allRRfit[cp_dlconstant<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##        28 
+## 0.8624142</code></pre>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="generalized-linear-models.html#cb190-1" aria-hidden="true" tabindex="-1"></a>cp_dlconstant<span class="sc">$</span>allRRlow[cp_dlconstant<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##        28 
+## 0.7799415</code></pre>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="generalized-linear-models.html#cb192-1" aria-hidden="true" tabindex="-1"></a>cp_dlconstant<span class="sc">$</span>allRRhigh[cp_dlconstant<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##        28 
+## 0.9536078</code></pre>
+<p>Does this look accurate? Do we expect a 14% decrease in mortality comparing a very hot month to a cool month?</p>
+<p>Now let’s calculate the cumulative RR for temperature at 28 degrees for the smooth lag-response function model from before (i.e., pull those same elements from the model we fit before
+with a smoother lag-response function):</p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="generalized-linear-models.html#cb194-1" aria-hidden="true" tabindex="-1"></a>cp_dl<span class="sc">$</span>allRRfit[cp_dl<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##       28 
+## 1.078548</code></pre>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="generalized-linear-models.html#cb196-1" aria-hidden="true" tabindex="-1"></a>cp_dl<span class="sc">$</span>allRRlow[cp_dl<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##        28 
+## 0.9768645</code></pre>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="generalized-linear-models.html#cb198-1" aria-hidden="true" tabindex="-1"></a>cp_dl<span class="sc">$</span>allRRhigh[cp_dl<span class="sc">$</span>predvar<span class="sc">==</span><span class="dv">28</span>]</span></code></pre></div>
+<pre><code>##       28 
+## 1.190816</code></pre>
+<p>Based on this model, we infer there’s about a 6% cumulative increase associated with a
+temperature of 28 degrees C compared to 7 degrees.</p>
+<p>Does this look more accurate? Which of the two lag-response functions is more likely to be true?</p>
 <ol start="4" style="list-style-type: decimal">
 <li><strong>Assume that we are interested in the potential effect of a 5-day
-heatwave occurring on lags 1 to 5? You can assess this as the effect of hot temperature
+heatwave occurring on lags 0 to 4? You can assess this as the effect of hot temperature
 (e.g., 28 degrees C) during these lags, while the temperature remains warm but more
 mild (e.g., 20 degrees C) the rest of the month, against constant 20 degrees C for
 the whole month. What is the effect under the ‘constant’ model? How about the smooth
 function lag model?</strong></li>
 </ol>
+<p>Using the <code>crosspred</code> function we can compare any exposure history over a lag-window of interest to a reference value (or values varying over time in the same window). Realistically, a whole month of extremely high exposures is unlikely. Extreme phenomena (such as 28 degree mean daily temperature in London) are more likely to last a shorter period of time. Furthermore, the effect of an event like a heat wave (likely occurring in the summer) is probably better assessed with a referent value more akin to what the heat wave is replacing, i.e., a warm but more mild summer temperature rather than temperatures more likely to occur in other seasons. We saw above that the effect of hot temperatures tends to be more short term, so let’s assess the potential effect of a 5-day heatwave assessed on the last day of the heatwave. The rest of the days in the month are at 20 degrees C and we will use the same value as the referent value for the whole month. Realistically there will be variability in the temperatures during these days as well, but for the purposes of this exercise let’s keep it constant at 20 for simplicity. Let’s assess this effect using the constant lag-response model.</p>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="generalized-linear-models.html#cb200-1" aria-hidden="true" tabindex="-1"></a>hw_constant <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(dl_basis_5, dist_lag_mod_6, </span>
+<span id="cb200-2"><a href="generalized-linear-models.html#cb200-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">at =</span> <span class="fu">exphist</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">20</span>, <span class="dv">26</span>), <span class="fu">rep</span>(<span class="dv">28</span>, <span class="dv">5</span>)), <span class="at">times =</span> <span class="dv">31</span>, <span class="at">lag =</span> <span class="dv">30</span>) , </span>
+<span id="cb200-3"><a href="generalized-linear-models.html#cb200-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">cen =</span> <span class="dv">20</span>, <span class="at">bylag =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>The <code>exphist</code> function allows us to designate distinct exposure values for the entire lag-window. The exposure values here appear in an oldest (lag30) to most recent (lag0) order. The <code>times</code> argument determines were the list of exposure begins in the lag window (here <code>time = 31</code> or lag30 from 0-30). The effect estimate and corresponding CI can be extracted as above.</p>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="generalized-linear-models.html#cb201-1" aria-hidden="true" tabindex="-1"></a>hw_constant<span class="sc">$</span>allRRfit</span></code></pre></div>
+<pre><code>##       31 
+## 1.004005</code></pre>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="generalized-linear-models.html#cb203-1" aria-hidden="true" tabindex="-1"></a>hw_constant<span class="sc">$</span>allRRlow</span></code></pre></div>
+<pre><code>##        31 
+## 0.9891951</code></pre>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="generalized-linear-models.html#cb205-1" aria-hidden="true" tabindex="-1"></a>hw_constant<span class="sc">$</span>allRRhigh</span></code></pre></div>
+<pre><code>##       31 
+## 1.019037</code></pre>
+<p>Now, lets repeat this with the smooth function lag-response model:</p>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="generalized-linear-models.html#cb207-1" aria-hidden="true" tabindex="-1"></a>hw_smooth<span class="ot">&lt;-</span><span class="fu">crosspred</span>(dl_basis_4, dist_lag_mod_5, </span>
+<span id="cb207-2"><a href="generalized-linear-models.html#cb207-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">at =</span> <span class="fu">exphist</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">20</span>, <span class="dv">26</span>), <span class="fu">rep</span>(<span class="dv">28</span>, <span class="dv">5</span>)), <span class="at">times =</span> <span class="dv">31</span>, <span class="at">lag =</span> <span class="dv">30</span>) , </span>
+<span id="cb207-3"><a href="generalized-linear-models.html#cb207-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">cen =</span> <span class="dv">20</span>, <span class="at">bylag =</span> <span class="dv">1</span>)</span>
+<span id="cb207-4"><a href="generalized-linear-models.html#cb207-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb207-5"><a href="generalized-linear-models.html#cb207-5" aria-hidden="true" tabindex="-1"></a>hw_smooth<span class="sc">$</span>allRRfit</span></code></pre></div>
+<pre><code>##       31 
+## 1.402728</code></pre>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="generalized-linear-models.html#cb209-1" aria-hidden="true" tabindex="-1"></a>hw_smooth<span class="sc">$</span>allRRlow</span></code></pre></div>
+<pre><code>##       31 
+## 1.356389</code></pre>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="generalized-linear-models.html#cb211-1" aria-hidden="true" tabindex="-1"></a>hw_smooth<span class="sc">$</span>allRRhigh</span></code></pre></div>
+<pre><code>##       31 
+## 1.450651</code></pre>
+<p>We see that the constant lag-response model underestimates the RR and does not capture any potential effect of a heatwave, while the smooth term lag-response model indicates that there is a 40% increase in mortality for the last day of the heatwave. Note that this increase in mortality is not the only effect, as based on out model the heatwave started having an effect on the same day it started, i.e. we would expect all 5 heatwave days to have a temperature related increase in mortality compared to the days before the heat-wave. We can look at the increase in mortality for each day if we look at the individual effect estimates:</p>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="generalized-linear-models.html#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="do">### individual lag-day parameters</span></span>
+<span id="cb213-2"><a href="generalized-linear-models.html#cb213-2" aria-hidden="true" tabindex="-1"></a>hw_smooth<span class="sc">$</span>matfit</span></code></pre></div>
+<pre><code>##         lag0       lag1       lag2       lag3       lag4 lag5 lag6 lag7 lag8
+## 31 0.1196662 0.09213574 0.06563143 0.04117951 0.01980617    0    0    0    0
+##    lag9 lag10 lag11 lag12 lag13 lag14 lag15 lag16 lag17 lag18 lag19 lag20 lag21
+## 31    0     0     0     0     0     0     0     0     0     0     0     0     0
+##    lag22 lag23 lag24 lag25 lag26 lag27 lag28 lag29 lag30
+## 31     0     0     0     0     0     0     0     0     0</code></pre>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="generalized-linear-models.html#cb215-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### individual lag-day RRs</span></span>
+<span id="cb215-2"><a href="generalized-linear-models.html#cb215-2" aria-hidden="true" tabindex="-1"></a>hw_smooth<span class="sc">$</span>matRRfit</span></code></pre></div>
+<pre><code>##        lag0     lag1     lag2     lag3     lag4 lag5 lag6 lag7 lag8 lag9 lag10
+## 31 1.127121 1.096514 1.067833 1.042039 1.020004    1    1    1    1    1     1
+##    lag11 lag12 lag13 lag14 lag15 lag16 lag17 lag18 lag19 lag20 lag21 lag22
+## 31     1     1     1     1     1     1     1     1     1     1     1     1
+##    lag23 lag24 lag25 lag26 lag27 lag28 lag29 lag30
+## 31     1     1     1     1     1     1     1     1</code></pre>
+<p>The first day of the heatwave will have an effect corresponding to a lag0 effect:</p>
+<p><span class="math display">\[
+RR=exp(0.107)=1.11
+\]</span></p>
+<p>The second day of the heatwave will have an effect corresponding to a lag0 and lag1 effect:</p>
+<p><span class="math display">\[
+RR = exp(0.107 + 0.085) = 1.21
+\]</span></p>
+<p>(This quantity is also equal to the product of the lag-day specific RRs for lag0 and lag1:)</p>
+<p><span class="math display">\[
+1.11 \times 1.09 = 1.21
+\]</span></p>
+<p>And so on, until we reach our last day of the heatwave with RR=1.39. There is a bidirectional relationship for this RR, as you can interpret this as the overall effect of the heatwave on mortality on the last day of the heatwave, or as the overall effect of temperature on the first day of the heatwave on mortality over the next 5 days.</p>
 
 </div>
 </div>
