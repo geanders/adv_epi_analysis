@@ -1002,7 +1002,7 @@ a larger time of life lost. This question---of whether deaths observed to be
 associated with an environmental exposure were displaced by only a small amount of
 time---can be explored by investigating whether an observed increase in mortality 
 across a community during an exposure is then offset by a lower-than-expected
-rate of mortality in the following days and weeks.This phenomenon is sometimes  
+rate of mortality in the following days and weeks.This phenomenon is sometimes 
 also referred to as 'harvesting' or a 'harvesting effect'.
 
 All of these questions can be explored through a type of model called a 
@@ -1022,9 +1022,9 @@ more days from exposure. As a result, distributed lag models are used widely in
 environmental epidemiology studies of time series data, to ensure that important
 associations aren't missed by limiting the model to focus on risk that are 
 detectable on the same day as the exposure. They can also help us identify influential
-windows of exposure as well as help eliminate potential confoundign by exposures 
+windows of exposure as well as help eliminate potential confounding by exposures 
 occurring at proximal times to the window of interest. For example, today's exposure 
-may appear to have an effect on a helath outcome even if in reality yesterday's 
+may appear to have an effect on a health outcome even if in reality yesterday's 
 exposure is the influential one and we don't control for it, because today's and 
 yesterday's exposure to temperature or air pollution are likely to be very similar. 
 
@@ -1072,16 +1072,16 @@ log(E(Y)) = \alpha + \sum_{l=0}^2{\beta_lX_l} + \mathbf{\gamma^{'}W} + ns(time)
 $$
 
 This version of a distributed lag model is nice because it is fairly simple---we're taking the
-idea of fitting a linear term for an exposure, and then expanding it to look include the 
+idea of fitting a linear term for an exposure, and then expanding it to include the 
 exposure on earlier days by adding the same type of term for exposure measured at each lag.
-However, it does have some downsides. The main downside is that as we alluded to above, exposure 
+However, it does have some downsides. The main downside is that exposure 
 tends to be very strongly correlated from one day to the next. Any time you put different terms in a regression model that are correlated, you create the risk of *collinearity*, and associated 
-problemswith fitting the model. The term *collinearity* refers to the idea that you have two or more
+problems with fitting the model. The term *collinearity* refers to the idea that you have two or more
 columns in your model matrix that give identical (or, if you loosen the definition a bit, 
 very similar) information. To fit coefficients for each term, the modeling algorithm is trying
 to identify weights to place on each column in the model matrix that result in a model that
 gives the best likelihood of the data you see. If two or more columns have (almost) identical
-information, then the algorithm struggles to determine how to define weight across these 
+information, then the algorithm struggles to determine how to distribute weight across these 
 two columns. The implications are that you can end up with a lot of instability in model 
 coefficients for the columns that are collinear, as well as very inflated estimates of the
 standard error. Long story short, it can cause problems in your regression model if you include
@@ -1091,9 +1091,9 @@ try to avoid doing that.
 There are alternative distributed lag models that can help avoid this instability that can 
 arise from fitting a distributed lag by using a separate term for each lag. All of them share
 a common feature---they somehow fit a function of the lags instead of each separate lag, so 
-that we end up adding fewer terms to the regression model (and, in term, are somewhat 
-constraining that pattern that the distributed lag effects follow). The most extreme
-is to use a term that reduces all the lag terms to a single term, which you can do by 
+that we end up adding fewer terms to the regression model (and, in turn, are somewhat 
+constraining the pattern that the distributed lag effects follow). At the most extreme,
+you can use a function that reduces all the lag terms to a single term, which you can do by 
 averaging the exposure across all lags. In other words, you could take the same-day 
 temperature, yesterday's temperature, and the temperature the day before that, and average
 those three temperatures to create the term you put in the model. The model equation 
@@ -1111,8 +1111,8 @@ lags, because you're only including a single term for exposure in the model. How
 there is a downside---this model will provide you with a single estimate for the 
 lagged effects, without allowing you to explore patterns across lags (for example, 
 is the association mostly on the day of exposure, or are there some delayed effects on 
-following days? the main assumption is that the effect is constant across all days in the 
-window of interest).
+following days?). Instead, the main assumption is that the effect is constant across 
+all days in the window of interest.
 
 Another approach is more complex, but it allows you to explore patterns across lags. 
 Instead of reducing the lagged exposure to a single term in the model, you can reduce
@@ -1132,11 +1132,11 @@ We can fit a GLM that incorporates the exposure using a non-linear shape while, 
 same time, including a non-linear function to describe how the association evolves 
 across lagged time following the exposure. The approach is to extend the idea of 
 using a basis function---instead of using a basis function in a single dimension, we'll
-use cross of basis functions in two dimensions. One dimension is the level of exposure
+use a cross of basis functions in two dimensions. One dimension is the level of exposure
 (e.g., cold to hot temperatures), and the other is the timing between the exposure and
 the outcome (e.g., same-day to lagged by many days). In terms of the mechanics of 
 building a model matrix to use to fit the regression model, everything follows directly 
-from the idea we explored early of using a function like a spline to create basis 
+from the idea we explored earlier of using a function like a spline to create basis 
 variables in that model matrix for a term with a non-linear association with the
 outcome variable. However, the mechanics do get quite cumbersome as so many terms are
 included, and so again we will use the `dlnm` package to handle these mechanics as we
@@ -1165,10 +1165,8 @@ between temperature and mortality look like at lag 0 days? How about at lag 21 d
 What does the pattern of lagged effects look like when comparing the relative risk of
 mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature 
 (7 degrees C)? What about when comparing mortality at a cold temperature 
-(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the 
-cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a 
-milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure? If you use a constant term for the effect of exposure 
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? If you use a constant 
+term for the effect of exposure 
 over a month as opposed to the smooth function you just used, how does the overall
 cumulative RR compare?
 4. Assume that we are interested in the potential effect of a 5-day 
@@ -1218,7 +1216,7 @@ obs <- obs %>%
          tmean_7 = lag(tmean, n = 7))
 ```
 
-You can see that each of these have taken `tmean` and then offset it by moving it down 
+You can see below that each of these have taken `tmean` and then offset it by moving it down 
 by one or more rows (down one row for lag 1, two for lag 2, etc.). As a result, we now have
 columns that give us today's temperature, yesterday's, and so on, all lined up with the 
 row with the observation for daily mortality: 
@@ -1254,9 +1252,10 @@ dist_lag_mod_1 %>%
   filter(str_detect(term, "tmean"))
 ```
 
-We can pull out all those estimates, calculate the 95% confidence intervals (do this before
-you take the exponential to get to the relative risk estimate!), and then exponentiate all
-the terms to get estimates of relative risk of mortality per unit increase in temperature.
+We can pull out all those estimates, calculate the 95% confidence intervals (do this *before*
+you take the exponential to get to the relative risk estimate, not after!), and then 
+exponentiate all the terms to get estimates of relative risk of mortality per unit increase 
+in temperature.
 
 ```{r}
 dist_lag_terms <- dist_lag_mod_1 %>% 
@@ -1272,8 +1271,8 @@ dist_lag_terms <- dist_lag_mod_1 %>%
 dist_lag_terms
 ```
 
-You can plot these estimates to explore how the association changes by lag (notice how the
-geom `geom_pointrange` is very helpful here!):
+You can plot these estimates to explore how the association changes by lag (notice how 
+`geom_pointrange` is very helpful here!):
 
 ```{r}
 dist_lag_terms %>% 
@@ -1285,7 +1284,8 @@ dist_lag_terms %>%
   geom_hline(yintercept = 1, color = "red", linetype = 3)
 ```
 
-You can also use the `dlnm` package to fit this model, using the `crossbasis` function
+You can also, as an alternative, use the `dlnm` package to fit this 
+model, using the `crossbasis` function
 to set up the distributed lag basis to include in the regression, and then the `crosspred`
 function to extract results after fitting the regression model and to plot results.
 
@@ -1340,9 +1340,10 @@ You can proceed from here to plot estimates by lag using ggplot, but you can als
 some of the special functions for plotting in `dlnm`. We can plot the "slice" of comparing
 the relative risk at 1 degree C (`var = 1`) (this will give us the one-unit increase, 
 because by default the crossbasis set-up with 0 degrees as the baseline, so this is 
-one degree above that value). The `crosspred` function predicts based on a crossbasis
-and a regression model object that uses that crossbasis, then the `plot` function has a
-special method for plotting the resulting crosspred object (to see the helpfile for this
+one degree above that value). The `crosspred` function predicts based on two things: (1) 
+a crossbasis and (2) a regression model object that uses that crossbasis. Once you create 
+an object with `crosspred`, then the `plot` function has a
+special method for plotting that object (to see the helpfile for this
 plot method, type `?plot.crosspred` in your R console). 
 
 ```{r}
@@ -1350,9 +1351,10 @@ crosspred(dl_basis, dist_lag_mod_2) %>%
   plot(ptype = "slices", var = 1, ci = "bars")
 ```
 
-If you look at the correlations between temperature, however, you'll see they are very 
-strongly correlated, which means that we could have some issues with collinearity if we
-use this simpler distributed lag model, with a separate coefficient for each lag:
+However, even though mechanically we can fit this model, we should think about whether
+it's a good idea, or whether we should contrain the lag function some.
+If you look at the correlations between temperature at different lags, you'll see they are very 
+strongly correlated:
 
 ```{r}
 obs %>% 
@@ -1360,6 +1362,8 @@ obs %>%
   cor(use = "complete.obs") 
 ```
 
+This means that we could have some issues with collinearity if we
+use this simpler distributed lag model, with a separate coefficient for each lag
 Next, we'll explore a model that constrains the lagged effects to follow a smooth
 function, to help avoid this potential instability in the modeling.
 
@@ -1391,13 +1395,13 @@ To see the range of functions you can use for this crossbasis function, check th
 function for `onebasis`. When we fit a separate coefficient for each lag, we used the
 "integer" function, which creates a set of basis variables with indicators for each 
 separate lag (this is really similar to the idea of basis variables for a categorical
-variable, like day of the week). 
+variable, like day of the week). This is what we did in the first part of the exercise.
 
-Here, we want to instead use a smooth function, with fewer degrees of freedom (i.e., fewer
+Now, we want to instead use a smooth function, with fewer degrees of freedom (i.e., fewer
 columns created in the matrix of basis values). Two popular options for that function are 
 the "poly" function, which will fit a polynomial, or the "ns" function, which will fit
 a natural cubic spline (just like we did earlier to create a non-linear function of 
-temperature). We'll use "ns" in this example (`fun = ns` in the list of parameters for
+temperature). We'll use "ns" in this example (`fun = "ns"` in the list of parameters for
 `arglag`). 
 
 For some of these functions, you'll need to specify additional parameters to clarify 
@@ -1488,10 +1492,8 @@ between temperature and mortality look like at lag 0 days? How about at lag 21 d
 What does the pattern of lagged effects look like when comparing the relative risk of
 mortality at a hot temperature (e.g., 28 degrees C) to a milder temperature 
 (7 degrees C)? What about when comparing mortality at a cold temperature 
-(e.g., -4 degrees C) to a milder temperature (7 degrees C)? What is the 
-cumulative relative risk at a hot temperature (e.g., 28 degrees C) to a 
-milder temperature (7 degrees C), once you incorporated all lagged effects
-up to a month after exposure? If you use a constant term for the effect of exposure 
+(e.g., -4 degrees C) to a milder temperature (7 degrees C)? If you use a constant 
+term for the effect of exposure 
 over a month as opposed to the smooth function you just used, how does the overall
 cumulative RR compare?**
 
@@ -1507,14 +1509,14 @@ this dimension of the crossbasis. We can use a spline for temperature by specify
 ```{r message = FALSE, warning = FALSE}
 dl_basis_4 <- crossbasis(obs$tmean, lag = 30,
                        argvar = list(fun = "ns", df = 4), 
-                       arglag = list(fun = "ns", df = 5))
+                       arglag = list(fun = "ns", df = 6))
 ```
 
 Try looking at the crossbasis from this function (you'll need to look past the 30th row 
 or so, since the earliest rows will all be missing since they're in that range where 
 they don't have lag data available for the exposure). You can see that we now have a 
 *lot* of columns: specifically, we have 4 (degrees of freedom for the temperature spline)
-times 5 (degrees of freedom for the lag spline) = 20 columns. 
+times 6 (degrees of freedom for the lag spline) = 24 columns. 
 
 ```{r}
 dl_basis_4 %>% 
@@ -1531,7 +1533,7 @@ same, they're just scaling up to allow some more complex "shapes" in our exposur
 association.
 
 We can add this new crossbasis function to the regression model, and then predict from 
-the crossbasis and function to get a view of how temperature is (non-linearly) associated
+the crossbasis and regression model to get a view of how temperature is (non-linearly) associated
 with mortality risk at different lags, comparing to a baseline temperature of 7 degrees C:
 
 ```{r}
@@ -1580,7 +1582,7 @@ three-dimensional association between the exposure, lag time, and risk of the ou
 For example, the default plot created from the `crosspred` object is a three-dimensional 
 plot (the `theta`, `phi`, and `lphi` parameters shift the angle we view it from), while
 the "contour" plot type shows us a contour plot of these results (in other words, showing
-the exposure and lag varables in two dimensions of a two-dimensional plot then showing
+the exposure and lag variables in two dimensions of a two-dimensional plot then showing
 relative risk using color for each combination). Here is the code to create those plots:
 
 ```{r}
