@@ -20,8 +20,9 @@ readings-1
 splines-in-glms
 distributed-lags-and-cross-basis-functions-in-glms
 natural-experiments
+readings-2
+natural-experiments-1
 interrupted-time-series
-difference-in-differences
 risk-assessment
 longitudinal-cohort-study-designs
 longitudinal-cohort-data
