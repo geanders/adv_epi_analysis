@@ -287,7 +287,7 @@ int_ts_mod1 %>%
   tidy() %>% 
   filter(term == "smokban") %>% 
   mutate(rr = exp(estimate), 
-         low_rr = exp(estimate - qt(0.975, df = 56) * std.error), 
+         low_rr = exp(estimate + qt(0.025, df = 56) * std.error), 
          high_rr = exp(estimate + qt(0.975, df = 56) * std.error)) %>% 
   select(rr, low_rr, high_rr)
 ```
