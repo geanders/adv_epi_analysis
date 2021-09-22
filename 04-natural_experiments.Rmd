@@ -24,21 +24,21 @@ interest) associated with the material in this chapter:
 
 If you want to test a scientific hypothesis---like whether a vaccine has a certain success rate in preventing infection---the ideal way to do it is to run a randomized controlled experiment. The "controlled" part of the experiment indicates that there will be some study subjects that get the treatment and some that instead will serve as a comparison by not being treated---that is, they will be controls. The randomized part of the experiment is that you will divide the study subjects into groups of treated and controls randomly, rather than through some method that could introduce confounding (like by assigning all study subjects in one city to treatment and all in other city to control).
 
-The randomized controlled experiment is an extraordinary tool in science, as it allows a comparison of treated versus controls while in theory removing the risk of confounding by external factors. For an external factor to confound the estimate of an association, it must itself be associated with both the treatment (or exposure, in most cases for environmental epidemiology) and the outcome. By randomly distributing the study subjects into treatment or control, you (in theory) break any possibly association between external factors and the treatment. 
+The randomized controlled experiment is an extraordinary tool in science, as it allows a comparison of treated versus controls while in theory removing the risk of confounding by external factors. For an external factor to confound the estimate of an association, it must itself be associated with both the treatment (or exposure, in most cases for environmental epidemiology) and the outcome. By randomly distributing the study subjects into treatment or control, you (in theory) break any possibly association between external factors and the treatment. This ensures exchangeability between the treated and controls, and we can use one group as a proxy for the other. In other words the treated are a good indication of what would happen to the controls if they themselves were treated and the controls are a good inciation of what woud happn to the treated if they were assigned to be controls. 
 
-This is only "in theory" for a few reasons. First, unless you have huge numbers of study subjects, there is a reasonable chance that just by chance there will be some differences between treated and controlled groups in some external factors. For example, if you have ten study subjects, five female and five male, and you randomly distribute them into two groups, it wouldn't be that unusual to have one group with eight females and two males and the other with two females and eight males, and so there would remain an association between biological sex and treatment among the randomized study subjects. This chance is why you will often see, in papers describing randomized controlled experiments (e.g., for clinical trials), tables that give distributions of several external factors for the treatment and control groups. As you have more and more study subjects, it will become less likely to have a large difference in external factors by treatment group. One other reason, however, that the distribution of treatment is only random in theory is that some people may not comply or otherwise carry through with their assigned treatment. This mechanism is a risk regardless of the size of the study population. This could result from a subject not complying with the assigned treatment, but could also result from something like a doctor taking a study subject off the assigned treatment for one reason or another. 
+This is only "in theory" for a few reasons. First, unless you have huge numbers of study subjects, there is a reasonable chance that just by chance there will be some differences between treated and controlled groups in some external factors. For example, if you have ten study subjects, five female and five male, and you randomly distribute them into two groups, it wouldn't be that unusual to have one group with eight females and two males and the other with two females and eight males, and so there would remain an association between biological sex and treatment among the randomized study subjects. This chance is why you will often see, in papers describing randomized controlled experiments (e.g., for clinical trials), tables that give distributions of several external factors for the treatment and control groups. As you have more and more study subjects, it will become less likely to have a large difference in external factors by treatment group. One other reason, however, that the distribution of treatment is only random in theory is that some people may not comply or otherwise carry through with their assigned treatment. This mechanism is a risk regardless of the size of the study population. This could result from a subject not complying with the assigned treatment, but could also result from something like a doctor taking a study subject off the assigned treatment for one reason or another. We will revisit the issue of non-compliance, intention-to-treat analysis in a later chapter (instrumental variables). 
 
-Randomized controlled experiments are therefore powerful (although not ironclad). However, there are many cases in environmental epidemiology where we cannot use them. This is for both practical and ethical reasons. From a practical standpoint, for example, we may want to explore how tropical cyclones affect health risk. It is (currently) impossible to create a hurricane and "apply" it to a group of study subjects that you've assigned to be "exposed". From an ethical standpoint, many of the exposures we study in environmental epidemiology are harmful, and it can often be unethical to assign a study subject to an exposure that is known or thought to be harmful for the sake of science. (By contrast, in a clinical trial of a medication, there is a chance that the medication will have harmful side effects, but it's being test because there is a chance it will improve the health of the study subjects.) There are some cases where randomized controlled experiments can be used in environmental epidemiology---for example, better designs of indoor cookstoves are hypothesized to improve health, and so could be tested in this way. However, for many research questions, environmental epidemiologists often rely on observational data to help answer the question, rather than data generated through a randomized controlled trial.
+Randomized controlled experiments are therefore powerful (although not ironclad). However, there are many cases in environmental epidemiology where we cannot use them. This is for both practical and ethical reasons. From a practical standpoint, for example, we may want to explore how tropical cyclones affect health risk. It is (currently) impossible to create a hurricane and "apply" it to a group of study subjects that you've assigned to be "exposed". From an ethical standpoint, many of the exposures we study in environmental epidemiology are harmful, and it can often be unethical to assign a study subject to an exposure that is known or thought to be harmful for the sake of science. (By contrast, in a clinical trial of a medication, there is a chance that the medication will have harmful side effects, but it's being tested because there is a chance it will improve the health of the study subjects.) There are some cases where randomized controlled experiments can be used in environmental epidemiology---for example, better designs of indoor cookstoves are hypothesized to improve health, and so could be tested in this way. However, for many research questions, environmental epidemiologists often rely on observational data to help answer the question, rather than data generated through a randomized controlled trial.
 
-We have been using observation data in our examples up to this point, and we've explored how we can use a regression modeling framework to control for potential confounders. In other words, in these examples, since we were unable to use randomization of the treatment (i.e., exposure) to remove risk of confounding from external factors, we instead had to think very careful about which external might confound our estimate of the association and in what way, and then address those factors in the statistical modeling through the use of control variables and sensitivity analysis.
+We have been using observational data in our examples up to this point, and we've explored how we can use a regression modeling framework to control for potential confounders. In other words, in these examples, since we were unable to use randomization of the treatment (i.e., exposure) to remove risk of confounding from external factors, we instead had to think very careful about which external factors might confound our estimate of the association and in what way, and then address those factors in the statistical modeling through the use of control variables and sensitivity analysis.
 
 In this chapter, we'll look at another way that we can leverage observational data to test scientific hypotheses, and that's through natural experiments. To be clear, these two methods are not mutually exclusive; instead, you could build studies where you incorporate both a natural experiment as well as control for factors that might still cause some residual confounding if not controlled for. 
 
 A natural experiment occurs when something happens that divides a group of potential study subjects into some who are treated (or exposed) and some who are not, and does so in a way where this division should be pretty close to random, at least in regards to most external factors that could be confounders. This division could be by space---for example, you could have an exposure that hits one geographic area but spares a neighboring area that is otherwise very comparable. This division could also be by time---you could have a policy that is implemented at a certain date, and so the study population immediately before that date was unexposed to this new policy while those after the date were exposed. 
 
-Typically, the "randomization" of treatment (or exposure) imposed by the natural experiment won't be perfect, and it usually won't even be as good as what could be done under a controlled randomized experiment. However, it is often good enough that it allows us to use observational data, which is often much easier and cheaper to get at a large scale than data generated by a controlled experiment. This has the advantages of increased statistical power, and in many cases observational data that cover a large scale may offer improved external validity for the study results, since the data are typically collected in conditions that more closely reflect "real life" conditions.
+Typically, the "randomization" of treatment (or exposure) imposed by the natural experiment won't be perfect, and it usually won't even be as good as what could be done under a controlled randomized experiment. However, it is often good enough that it allows us to use observational data, which is  much easier and cheaper to get at a large scale than data generated by a controlled experiment. This has the advantages of increased statistical power, and in many cases observational data that cover a large scale may offer improved external validity for the study results, since the data are typically collected in conditions that more closely reflect "real life" conditions.
 
-In this chapter, we will focus on a study design called an *interrupted time series*. This study design can be applied in cases where there has been an abrupt change at a certain time point that would influence how treatment is assigned before and after that time point. For example, there might be a new law that prevents indoor smoking in restaurants. If that policy goes into effect on a specific change, then exposure to secondary smoke in the population would change abruptly to be lower (at least, on average across the population) after that date compared to before. As another example, if the workers at a factory that is a heavy pollutor goes on strike (and so all equipment stops running) on a specific date, then the pollution exposure in that city might abruptly change from before the strike to during the strike, and then change again after the strike is over. 
+In this chapter, we will focus on a study design called an *interrupted time series*. This study design can be applied in cases where there has been an abrupt change at a certain time point that would influence how treatment is assigned before and after that time point. For example, there might be a new law that prevents indoor smoking in restaurants. If that policy goes into effect on a specific date, then exposure to secondary smoke in the population would change abruptly to be lower (at least, on average across the population) after that date compared to before. As another example, if the workers at a factory that is a heavy polluter goes on strike (and so all equipment stops running) on a specific date, then the pollution exposure in that city might abruptly change from before the strike to during the strike, and then change again after the strike is over. 
 
 This study design belongs to a more general type of natural experiment study design called a "regression discontinuity" design. Broadly, a regression discontinuity design can be applied anytime there is a threshold at which the chance of treatment (or exposure) changes abruptly. Interrupted time series are limited to cases where this threshold comes at a specific time, and where you have collected time series data. However, there are plenty of set-ups that would create other regression discontinuities that could be exploited to answer a scientific hypothesis. 
 
@@ -86,7 +86,7 @@ sicily
 
 In this case, it looks like the time-step for observations is by month. In other words, we have one measurement per month. The `time` variable has already been added---this gives us the month in the study period. The outcome variable of interest is `aces`, which gives the number of hospital admissions for acute coronary events (ACEs) in each month. 
 
-The forcing variable in the study is, since it is an interrupted time series, time. We will be comparing risk of ACE hospitalizations before and after the date of the indoor smoking ban, so that date will form our threshold rule for the study. The creators of this dataset already added a variable with data on this threshold rule: the `smokban` variable is `0` before the ban and `1` after.
+The forcing variable in the study is, since it is an interrupted time series, `time`. We will be comparing risk of ACE hospitalizations before and after the date of the indoor smoking ban, so that date will form our threshold rule for the study. The creators of this dataset already added a variable with data on this threshold rule: the `smokban` variable is `0` before the ban and `1` after.
 
 We can take a look using `smokban` to see when the ban was implemented. One 
 way to do this is to group the data by the `smokban` variable and then use `slice` to see the first three rows within each group. Based on this, it looks like the ban started the 37th month of the study:
@@ -116,7 +116,7 @@ Two other variables are also included in the data, `pop` and `stdpop`. These giv
 
 However, in some cases you will have a population that changes more abruptly. For example, if you may want to count outcomes based on insurance claims. If the number of enrollees for that insurance change substantially on certain dates (e.g., the start of the month or start of the year, which can be points where many new people become eligible for the insurance), you can get abrupt changes in the size of your study population. 
 
-If you have the population size for each observation in the time series, then you can address this when you fit your statistical model. You can still fit the data with a Poisson regression model, but you will include something called an *offset*. You will include that in you regression model equation when you fit the regression with R, as we'll look at in the next part of the exercise. 
+If you have the population size for each observation in the time series, then you can address this when you fit your statistical model. You can still fit the data with a Poisson regression model, but you will include something called an *offset*. You will include that in you regression model equation when you fit the regression with R, as we'll look at in the next part of the exercise. The *offset* also allows us to model rates rather than counts as we show later in the chapter. 
 
 For right now, we can use the information about population size to change our plot a bit, so that it shows the rate of hospitalizations for coronary events (times 10,000) in each month of the study, rather than the unadjusted count: 
 
@@ -170,10 +170,20 @@ near_thres_mod <- glm(aces ~ offset(log(stdpop)) + smokban,
 The model equation for the model you are fitting with this code is: 
 
 $$
+log(E(Y_t)) = \beta_0 + \beta_1 X_t + log(StdPop_t)
+$$
+(Note that there is no paratemer for the offset term!) We can rearrange this as:
+
+$$
+log(E(Y_t)) - log(StdPop_t) = \beta_0 + \beta_1 X_t 
+$$
+And based on the properties of logarithmic functions the above is equivalent to this which is essenntially a model for rates
+
+$$
 log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t 
 $$
 
-Where $E(Y/Std.Pop.)$ is the expected rate of outcome $Y$ on day $t$ (the $StdPop_t$ in the denominator makes this a rate based on the standardize population size that day), $\beta_0$ is a model intercept, $X_t$ is an indicator variable that is 1 after the ban and 0 before the ban, and $\beta_1$ is the estimate of the log relative rate after the ban versus before the ban.
+$E(Y/Std.Pop.)$ is the expected rate of outcome $Y$ on day $t$ (the $StdPop_t$ in the denominator makes this a rate based on the standardize population size that day rather than just a count), $\beta_0$ is a model intercept, $X_t$ is an indicator variable that is 1 after the ban and 0 before the ban, and $\beta_1$ is the estimate of the log rate ratio after the ban versus before the ban.
 
 You can use the same technique as always to extract the estimates of the coefficients (again, notice that you don't get one for the offset term!):
 
@@ -186,17 +196,25 @@ near_thres_mod %>%
 Based on these, there is a decrease in rates of ACE after the smoking ban, and we would reject the null hypothesis that the size of the change in rates post- versus pre-ban is 0 (because the p-value is lower than 0.05, although barely).
 
 From these estimates, we can also get an estimate of the relative rate for the 
-group right after the ban versus right before the ban, as well as the 95% confidence intervals for that estimate. Since we only have a few data points (6), we shouldn't use 1.96 in calculating the confidence intervals, but instead get the right value for our sample size using `qt`. Since we have 6 data points are are estimating one coefficient plus the intercept, we have 6 - 2 degrees of freedom for this comparison:
+group right after the ban versus right before the ban, as well as the 95% confidence intervals for that estimate. Since we only have a few data points (6), we shouldn't use 1.96 in calculating the confidence intervals, but instead get the right value for our sample size using `qt`, which allows us to get quantiles of interest from the (student's) t-distribution. (The 1.96, is taken from the standard normal distribution (z-scores), but because of out small sample size n=6 the t-distribution will deviate considerably for that)) Since we have 6 data points and are estimating one coefficient plus the intercept, we have 6 - 2 degrees of freedom for this comparison:
 
 ```{r}
 near_thres_mod %>% 
   tidy() %>% 
   filter(term == "smokban") %>% 
   mutate(rr = exp(estimate), 
-         low_rr = exp(estimate - qt(0.975, df = 4) * std.error), 
+         low_rr = exp(estimate + qt(0.025, df = 4) * std.error), 
          high_rr = exp(estimate + qt(0.975, df = 4) * std.error)) %>% 
   select(rr, low_rr, high_rr)
 ```
+
+(We can check the quantilies of the t-distriution for 4 df, if we want to see how far away from the 1.96 value we are)
+```{r}
+qt(0.025, df = 4)
+qt(0.975, df = 4) 
+```
+
+We can see that $\pm 1.96$ would have given us deceptively narrower CIs
 
 Now we can try some larger windows. Here is the analysis for 6 month-windows
 on either side of the ban. The only things that change are the window for selecting data to include and the degrees of freedom used when calculating confidence intervals: 
@@ -213,7 +231,7 @@ near_thres_mod2 %>%
   tidy() %>% 
   filter(term == "smokban") %>% 
   mutate(rr = exp(estimate), 
-         low_rr = exp(estimate - qt(0.975, df = 10) * std.error), 
+         low_rr = exp(estimate + qt(0.025, df = 10) * std.error), 
          high_rr = exp(estimate + qt(0.975, df = 10) * std.error)) %>% 
   select(rr, low_rr, high_rr)
 ```
@@ -232,7 +250,7 @@ near_thres_mod3 %>%
   tidy() %>% 
   filter(term == "smokban") %>% 
   mutate(rr = exp(estimate), 
-         low_rr = exp(estimate - qt(0.975, df = 22) * std.error), 
+         low_rr = exp(estimate + qt(0.025, df = 22) * std.error), 
          high_rr = exp(estimate + qt(0.975, df = 22) * std.error)) %>% 
   select(rr, low_rr, high_rr)
 ```
