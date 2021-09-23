@@ -4789,6 +4789,8 @@ We will use a new example dataset for this chapter---the dataset that comes with
   Next, let's look at how the rates of the outcome changes right before and right after the ban. At this stage, we won't worry about any underlying time trends in the outcome rates. Instead, compare the outcome rates in two groups---the data points collected for the time points right before the ban, and then the data collected for time points right after the ban. Try a few windows for capturing ``right before'' and ``right after'' (e.g., 3 months, 6 months, 12 months). How does the precision of the estimate change as you change that window? How do you think the potential might change for residual confounding from long-term trends in the outcome rates irrespective of the ban?
 \item
   Now see if you can fit a regression model that uses all the data, while using a regression term to allow for a long-term trend in the rates of the outcome. You may want to try out several of the model structures shown in Figure 2 of \citet{bernal2017interrupted}. Can you interpret the model coefficients that you get from fitting these models? What conclusions do you draw about whether rates of hospitalization for acute coronary events are affected by exposure to secondary smoke?
+\item
+  Now let's try to control for long-term and seasonal trends beyond the linear term for time. Fit a model using a harmonic term like in \citet{bernal2017interrupted}. Do the coefficients from the model for the smoking ban and linear time term change? In previous examples, we've been using flexible functions for this such as splines. Repeat the model from above using a spline term. How does this model compare with respect to the smoking ban coefficient? Why?
 \end{enumerate}
 
 \emph{Applied exercise: Example code}
@@ -5275,7 +5277,7 @@ To fit this model in R, you can run:
 \StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "smokban"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{rr =} \KeywordTok{exp}\NormalTok{(estimate), }
-         \DataTypeTok{low_rr =} \KeywordTok{exp}\NormalTok{(estimate }\OperatorTok{-}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{, }\DataTypeTok{df =} \DecValTok{55}\NormalTok{) }\OperatorTok{*}\StringTok{ }\NormalTok{std.error), }
+         \DataTypeTok{low_rr =} \KeywordTok{exp}\NormalTok{(estimate }\OperatorTok{+}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.025}\NormalTok{, }\DataTypeTok{df =} \DecValTok{55}\NormalTok{) }\OperatorTok{*}\StringTok{ }\NormalTok{std.error), }
          \DataTypeTok{high_rr =} \KeywordTok{exp}\NormalTok{(estimate }\OperatorTok{+}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{, }\DataTypeTok{df =} \DecValTok{55}\NormalTok{) }\OperatorTok{*}\StringTok{ }\NormalTok{std.error)) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{select}\NormalTok{(rr, low_rr, high_rr)}
 \end{Highlighting}
@@ -5289,6 +5291,140 @@ To fit this model in R, you can run:
 \end{verbatim}
 
 Based on these results, there is not a statistically significant change in the slope of the time trend after the ban compared to before (i.e., a p-value of 0.18 for testing against the null that this coefficient is 0). We get a very similar estimate of the abrupt change in ACE rates right when the ban was implemented as compared to the simpler model we fit without a term for change in slope of the long-term time trends.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  \textbf{Now let's try to control for long-term and seasonal trends beyond the linear term for time. Fit a model using a harmonic term like in \citet{bernal2017interrupted}. Do the coefficients from the model for the smoking ban and linear time term change? In previous examples, we've been using flexible functions for this such as splines. Repeat the model from above using a spline term. How does this model compare with respect to the smoking ban coefficient? Why?}
+\end{enumerate}
+
+We've been adjusting for long-term and seasonal trends using a flexible spline term so far. Let's try and incorporate this in the mode here. Here we will try a new function from the \texttt{tsModel} package called \texttt{harmonic}. The \texttt{harmonic} function will fit pairs of sine and cosine functions in a given period of time. Here we will define the function as \texttt{harmonic(month,2,12)} fitting two pairs of sine and cosine functions over a 12-month period. These combined sine and cosine functions create a sinusoidal patten with peaks and troughs that we've seen for seasonal treands previously.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tsModel)}
+\NormalTok{int_ts_mod3 <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(aces }\OperatorTok{~}\StringTok{ }\KeywordTok{offset}\NormalTok{(}\KeywordTok{log}\NormalTok{(stdpop)) }\OperatorTok{+}\StringTok{ }\NormalTok{smokban }\OperatorTok{+}\StringTok{ }\NormalTok{time }\OperatorTok{+}\StringTok{ }
+\StringTok{                     }\KeywordTok{I}\NormalTok{(time }\OperatorTok{-}\StringTok{ }\DecValTok{36}\NormalTok{)}\OperatorTok{:}\NormalTok{smokban }\OperatorTok{+}\StringTok{ }\KeywordTok{harmonic}\NormalTok{(month,}\DecValTok{2}\NormalTok{,}\DecValTok{12}\NormalTok{), }
+                      \DataTypeTok{data =}\NormalTok{ sicily, }
+                      \DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+In order to visualize the effect of the harmonic function we can plot the predicted values from this model same as above:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod_data2 <-}\StringTok{ }\NormalTok{int_ts_mod3 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{stdpop =}\NormalTok{ sicily}\OperatorTok{$}\NormalTok{stdpop,}
+         \DataTypeTok{aces_adj =}\NormalTok{ aces }\OperatorTok{/}\StringTok{ }\NormalTok{stdpop }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{10} \OperatorTok{^}\StringTok{ }\DecValTok{5}\NormalTok{)) }
+\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}\StringTok{  }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ mod_data2, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time, }
+                                  \DataTypeTok{y =}\NormalTok{ aces }\OperatorTok{/}\StringTok{ }\NormalTok{stdpop }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{10} \OperatorTok{^}\StringTok{ }\DecValTok{5}\NormalTok{))) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ mod_data2, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time, }
+                                 \DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted) }\OperatorTok{/}\StringTok{ }\NormalTok{stdpop }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{10} \OperatorTok{^}\StringTok{ }\DecValTok{5}\NormalTok{)), }
+            \DataTypeTok{color =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-140-1.pdf}
+
+We see that the addition of the harmonic term now yields a more flexible overall function over time. Now let's check how the coefficients for \texttt{smokban} and \texttt{time} changed if at all
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{int_ts_mod3 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8 x 5
+##   term                    estimate std.error statistic  p.value
+##   <chr>                      <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)             -6.25     0.0189    -331.    1.20e-86
+## 2 smokban                 -0.132    0.0298      -4.43  5.07e- 5
+## 3 time                     0.00510  0.000875     5.83  3.72e- 7
+## 4 harmonic(month, 2, 12)1  0.0383   0.0102       3.77  4.27e- 4
+## 5 harmonic(month, 2, 12)2 -0.0176   0.00970     -1.82  7.49e- 2
+## 6 harmonic(month, 2, 12)3  0.0384   0.00971      3.95  2.42e- 4
+## 7 harmonic(month, 2, 12)4  0.0150   0.00975      1.53  1.31e- 1
+## 8 smokban:I(time - 36)     0.00148  0.00185      0.799 4.28e- 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{int_ts_mod3 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "smokban"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{rr =} \KeywordTok{exp}\NormalTok{(estimate), }
+         \DataTypeTok{low_rr =} \KeywordTok{exp}\NormalTok{(estimate }\OperatorTok{+}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.025}\NormalTok{, }\DataTypeTok{df =} \DecValTok{51}\NormalTok{) }\OperatorTok{*}\StringTok{ }\NormalTok{std.error), }
+         \DataTypeTok{high_rr =} \KeywordTok{exp}\NormalTok{(estimate }\OperatorTok{+}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{, }\DataTypeTok{df =} \DecValTok{51}\NormalTok{) }\OperatorTok{*}\StringTok{ }\NormalTok{std.error)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(rr, low_rr, high_rr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##      rr low_rr high_rr
+##   <dbl>  <dbl>   <dbl>
+## 1 0.876  0.826   0.930
+\end{verbatim}
+
+The change in the slope of the time trend after the ban is still not statistically significant, but we see that the RR for the smoking ban term is actually marginally lower, meaning a slighlty more protetive effect after adjusting for the seasonal trends with a harmonic term.
+
+Now why did we use this type of function as opposed to a spline? Let's repeat the model from above with a natural spline term as we had been doing in the previous example, with 30 df's (\textasciitilde6 per year).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(splines)}
+\NormalTok{int_ts_mod4 <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(aces }\OperatorTok{~}\StringTok{ }\KeywordTok{offset}\NormalTok{(}\KeywordTok{log}\NormalTok{(stdpop)) }\OperatorTok{+}\StringTok{ }\NormalTok{smokban }\OperatorTok{+}\StringTok{ }\NormalTok{time }\OperatorTok{+}\StringTok{ }
+\StringTok{                     }\KeywordTok{I}\NormalTok{(time }\OperatorTok{-}\StringTok{ }\DecValTok{36}\NormalTok{)}\OperatorTok{:}\NormalTok{smokban }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(time, }\DataTypeTok{df=}\DecValTok{30}\NormalTok{), }
+                      \DataTypeTok{data =}\NormalTok{ sicily, }
+                      \DataTypeTok{family =} \StringTok{"quasipoisson"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod_data3 <-}\StringTok{ }\NormalTok{int_ts_mod4 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{stdpop =}\NormalTok{ sicily}\OperatorTok{$}\NormalTok{stdpop,}
+         \DataTypeTok{aces_adj =}\NormalTok{ aces }\OperatorTok{/}\StringTok{ }\NormalTok{stdpop }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{10} \OperatorTok{^}\StringTok{ }\DecValTok{5}\NormalTok{)) }
+\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}\StringTok{  }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ mod_data3, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time, }
+                                  \DataTypeTok{y =}\NormalTok{ aces }\OperatorTok{/}\StringTok{ }\NormalTok{stdpop }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{10} \OperatorTok{^}\StringTok{ }\DecValTok{5}\NormalTok{))) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ mod_data3, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ time, }
+                                 \DataTypeTok{y =} \KeywordTok{exp}\NormalTok{(.fitted) }\OperatorTok{/}\StringTok{ }\NormalTok{stdpop }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{10} \OperatorTok{^}\StringTok{ }\DecValTok{5}\NormalTok{)), }
+            \DataTypeTok{color =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-143-1.pdf}
+We see that the spline term has succesfully fitted a flexible function over time. Now let's check the smoking ban RR
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{int_ts_mod4 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "smokban"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{rr =} \KeywordTok{exp}\NormalTok{(estimate), }
+         \DataTypeTok{low_rr =} \KeywordTok{exp}\NormalTok{(estimate }\OperatorTok{+}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.025}\NormalTok{, }\DataTypeTok{df =} \DecValTok{25}\NormalTok{) }\OperatorTok{*}\StringTok{ }\NormalTok{std.error), }
+         \DataTypeTok{high_rr =} \KeywordTok{exp}\NormalTok{(estimate }\OperatorTok{+}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{, }\DataTypeTok{df =} \DecValTok{25}\NormalTok{) }\OperatorTok{*}\StringTok{ }\NormalTok{std.error)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(rr, low_rr, high_rr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##      rr low_rr high_rr
+##   <dbl>  <dbl>   <dbl>
+## 1  1.00  0.632    1.59
+\end{verbatim}
+
+The RR for the smoking ban term is now null. A richly parameterized spline term with a lot of degrees of freedom is actually too felxible a function for this analysis. Because of all the flexibility we are affording it, it is absorbing the drop in ACE rates occurring immediately after the ban in the overall function for time. Although spline functions and their flexibility can be an invaluable tool in modeling complex exposure-respone relationships, in this case it actually masked the effect of interest.
 
 \hypertarget{risk-assessment}{%
 \chapter{Risk assessment}\label{risk-assessment}}
@@ -5537,7 +5673,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-145-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-151-1.pdf}
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
 
@@ -5576,7 +5712,7 @@ get a top-level snapshot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-146-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-152-1.pdf}
 Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \begin{Shaded}
@@ -5600,7 +5736,7 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 ## use `guide = "none"` instead.
 \end{verbatim}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-147-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-153-1.pdf}
 
 Many of the variables are available for all observations, with no missingness,
 including records of the subject's ID, measures of death, stroke, CVD, and other
@@ -5624,7 +5760,7 @@ example, you could see if missingness varies by the period of the observation:
 ## use `guide = "none"` instead.
 \end{verbatim}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-148-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-154-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:
@@ -5640,7 +5776,7 @@ was associated with death of the study subject:
 ## use `guide = "none"` instead.
 \end{verbatim}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-149-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-155-1.pdf}
 
 There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both \texttt{glucose} and
@@ -5657,7 +5793,7 @@ variables:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-150-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-156-1.pdf}
 
 The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
@@ -5678,7 +5814,7 @@ You can also do things like facet by sex to explore patterns at a finer level:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-151-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-157-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -5920,7 +6056,7 @@ We can see that the mean age at incident MI hospitalization among males and fema
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-165-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-171-1.pdf}
 We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of \texttt{sex=1} and \texttt{sex=2} which are the values for males and females respectively. This is an indicator that the sex variable is of class \texttt{numeric} and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
 
 \begin{Shaded}
@@ -5953,7 +6089,7 @@ If we repeat the function for the boxplot now we get separate boxplots by sex
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-168-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-174-1.pdf}
 
 We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
 
@@ -6038,7 +6174,7 @@ The numbers assigned to each individual represent their censoring times, with ea
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-170-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-176-1.pdf}
 We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival \(\hat{S}(t)\) drops to about 0.65 at the end of follow-up, or in other words about 35\% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the \texttt{Surv} function, substituting time of death with respect to follow-up time with age at death.
@@ -6051,7 +6187,7 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-171-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-177-1.pdf}
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.
 
 The Cox proportional hazards model in a simple form has this form

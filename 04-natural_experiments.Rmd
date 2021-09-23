@@ -59,6 +59,7 @@ We will use a new example dataset for this chapter---the dataset that comes with
 1. Load the data into R and explore the dataset. Plot the time series of the data on the outcome of interest as it varies over the study period. Use a visual marker in the plot to show the intervention (the date the law was implemented). 
 2. Next, let's look at how the rates of the outcome changes right before and right after the ban. At this stage, we won't worry about any underlying time trends in the outcome rates. Instead, compare the outcome rates in two groups---the data points collected for the time points right before the ban, and then the data collected for time points right after the ban. Try a few windows for capturing "right before" and "right after" (e.g., 3 months, 6 months, 12 months). How does the precision of the estimate change as you change that window? How do you think the potential might change for residual confounding from long-term trends in the outcome rates irrespective of the ban?
 3. Now see if you can fit a regression model that uses all the data, while using a regression term to allow for a long-term trend in the rates of the outcome. You may want to try out several of the model structures shown in Figure 2 of @bernal2017interrupted. Can you interpret the model coefficients that you get from fitting these models? What conclusions do you draw about whether rates of hospitalization for acute coronary events are affected by exposure to secondary smoke?
+4. Now let's try to control for long-term and seasonal trends beyond the linear term for time. Fit a model using a harmonic term like in @bernal2017interrupted. Do the coefficients from the model for the smoking ban and linear time term change? In previous examples, we've been using flexible functions for this such as splines. Repeat the model from above using a spline term. How does this model compare with respect to the smoking ban coefficient? Why?
 
 
 *Applied exercise: Example code*
@@ -337,9 +338,85 @@ int_ts_mod1 %>%
   tidy() %>% 
   filter(term == "smokban") %>% 
   mutate(rr = exp(estimate), 
-         low_rr = exp(estimate - qt(0.975, df = 55) * std.error), 
+         low_rr = exp(estimate + qt(0.025, df = 55) * std.error), 
          high_rr = exp(estimate + qt(0.975, df = 55) * std.error)) %>% 
   select(rr, low_rr, high_rr)
 ```
 
 Based on these results, there is not a statistically significant change in the slope of the time trend after the ban compared to before (i.e., a p-value of 0.18 for testing against the null that this coefficient is 0). We get a very similar estimate of the abrupt change in ACE rates right when the ban was implemented as compared to the simpler model we fit without a term for change in slope of the long-term time trends.
+
+4. **Now let's try to control for long-term and seasonal trends beyond the linear term for time. Fit a model using a harmonic term like in @bernal2017interrupted. Do the coefficients from the model for the smoking ban and linear time term change? In previous examples, we've been using flexible functions for this such as splines. Repeat the model from above using a spline term. How does this model compare with respect to the smoking ban coefficient? Why?**
+
+We've been adjusting for long-term and seasonal trends using a flexible spline term so far. Let's try and incorporate this in the mode here. Here we will try a new function from the `tsModel` package called `harmonic`. The `harmonic` function will fit pairs of sine and cosine functions in a given period of time. Here we will define the function as `harmonic(month,2,12)` fitting two pairs of sine and cosine functions over a 12-month period. These combined sine and cosine functions create a sinusoidal patten with peaks and troughs that we've seen for seasonal treands previously. 
+
+```{r message = FALSE, warning = FALSE}
+library(tsModel)
+int_ts_mod3 <- glm(aces ~ offset(log(stdpop)) + smokban + time + 
+                     I(time - 36):smokban + harmonic(month,2,12), 
+                      data = sicily, 
+                      family = "quasipoisson")
+```
+
+In order to visualize the effect of the harmonic function we can plot the predicted values from  this model same as above:
+
+```{r}
+mod_data2 <- int_ts_mod3 %>% 
+  augment() %>% 
+  mutate(stdpop = sicily$stdpop,
+         aces_adj = aces / stdpop * (10 ^ 5)) 
+ggplot() +  
+  geom_point(data = mod_data2, aes(x = time, 
+                                  y = aces / stdpop * (10 ^ 5))) + 
+  geom_line(data = mod_data2, aes(x = time, 
+                                 y = exp(.fitted) / stdpop * (10 ^ 5)), 
+            color = "red")
+```
+
+We see that the addition of the harmonic term now yields a more  flexible overall function over time. Now let's check how the coefficients for `smokban` and `time` changed if at all
+
+```{r}
+int_ts_mod3 %>% 
+  tidy()
+int_ts_mod3 %>% 
+  tidy() %>% 
+  filter(term == "smokban") %>% 
+  mutate(rr = exp(estimate), 
+         low_rr = exp(estimate + qt(0.025, df = 51) * std.error), 
+         high_rr = exp(estimate + qt(0.975, df = 51) * std.error)) %>% 
+  select(rr, low_rr, high_rr)
+```
+The change in the slope of the time trend after the ban is still not statistically significant, but we see that the RR for the smoking ban term is actually marginally lower, meaning a slighlty more protetive effect after adjusting for the seasonal trends with a harmonic term.
+
+Now why did we use this type of function as opposed to a spline? Let's repeat the model from above with a natural spline term as we had been doing in the previous example, with 30 df's (~6 per year).
+```{r}
+library(splines)
+int_ts_mod4 <- glm(aces ~ offset(log(stdpop)) + smokban + time + 
+                     I(time - 36):smokban + ns(time, df=30), 
+                      data = sicily, 
+                      family = "quasipoisson")
+```
+
+```{r}
+mod_data3 <- int_ts_mod4 %>% 
+  augment() %>% 
+  mutate(stdpop = sicily$stdpop,
+         aces_adj = aces / stdpop * (10 ^ 5)) 
+ggplot() +  
+  geom_point(data = mod_data3, aes(x = time, 
+                                  y = aces / stdpop * (10 ^ 5))) + 
+  geom_line(data = mod_data3, aes(x = time, 
+                                 y = exp(.fitted) / stdpop * (10 ^ 5)), 
+            color = "red")
+```
+We see that the spline term has succesfully fitted a flexible function over time. Now let's check the smoking ban RR
+
+```{r}
+int_ts_mod4 %>% 
+  tidy() %>% 
+  filter(term == "smokban") %>% 
+  mutate(rr = exp(estimate), 
+         low_rr = exp(estimate + qt(0.025, df = 25) * std.error), 
+         high_rr = exp(estimate + qt(0.975, df = 25) * std.error)) %>% 
+  select(rr, low_rr, high_rr)
+```
+The RR for the smoking ban term is now null. A richly parameterized spline term with a lot of degrees of freedom is actually too felxible a function for this analysis. Because of all the flexibility we are affording it, it is absorbing the drop in ACE rates occurring immediately after the ban in the overall function for time. Although spline functions and their flexibility can be an invaluable tool in modeling complex exposure-respone relationships, in this case it actually masked the effect of interest. 
