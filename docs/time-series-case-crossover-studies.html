@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 3 Time series / case-crossover studies | Advanced Epidemiological Analysis</title>
   <meta name="description" content="This is the coursebook for the Colorado State University course ERHS 732, Advanced Epidemiological Analysis." />
-  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 3 Time series / case-crossover studies | Advanced Epidemiological Analysis" />
   <meta property="og:type" content="book" />
@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-09-22" />
+<meta name="date" content="2021-09-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,7 +33,8 @@
   
 <link rel="prev" href="courseinfo.html"/>
 <link rel="next" href="generalized-linear-models.html"/>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -50,24 +51,22 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -87,7 +86,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -120,6 +119,29 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 
@@ -136,10 +158,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Advanced Epidemiological Analysis</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i><b>1.1</b> License</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a><ul>
+<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="courseinfo.html"><a href="courseinfo.html#course-learning-objectives"><i class="fa fa-check"></i><b>2.1</b> Course learning objectives</a></li>
 <li class="chapter" data-level="2.2" data-path="courseinfo.html"><a href="courseinfo.html#meeting-time-and-place"><i class="fa fa-check"></i><b>2.2</b> Meeting time and place</a></li>
 <li class="chapter" data-level="2.3" data-path="courseinfo.html"><a href="courseinfo.html#class-structure-and-expectations"><i class="fa fa-check"></i><b>2.3</b> Class Structure and Expectations</a></li>
@@ -149,35 +173,46 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.7" data-path="courseinfo.html"><a href="courseinfo.html#prerequisites-and-preparation"><i class="fa fa-check"></i><b>2.7</b> Prerequisites and Preparation</a></li>
 <li class="chapter" data-level="2.8" data-path="courseinfo.html"><a href="courseinfo.html#academic-honesty"><i class="fa fa-check"></i><b>2.8</b> Academic Honesty</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover studies</a><ul>
+<li class="chapter" data-level="3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover studies</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#readings"><i class="fa fa-check"></i><b>3.1</b> Readings</a></li>
 <li class="chapter" data-level="3.2" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#time-series-and-case-crossover-study-designs"><i class="fa fa-check"></i><b>3.2</b> Time series and case-crossover study designs</a></li>
 <li class="chapter" data-level="3.3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#time-series-data"><i class="fa fa-check"></i><b>3.3</b> Time series data</a></li>
 <li class="chapter" data-level="3.4" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#exploratory-data-analysis"><i class="fa fa-check"></i><b>3.4</b> Exploratory data analysis</a></li>
 <li class="chapter" data-level="3.5" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#statistical-modeling-for-a-time-series-study"><i class="fa fa-check"></i><b>3.5</b> Statistical modeling for a time series study</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a><ul>
+<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a>
+<ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#readings-1"><i class="fa fa-check"></i><b>4.1</b> Readings</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.2</b> Splines in GLMs</a></li>
 <li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#distributed-lags-and-cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.3</b> Distributed lags and cross-basis functions in GLMs</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a><ul>
+<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
+<ul>
 <li class="chapter" data-level="5.1" data-path="natural-experiments.html"><a href="natural-experiments.html#readings-2"><i class="fa fa-check"></i><b>5.1</b> Readings</a></li>
 <li class="chapter" data-level="5.2" data-path="natural-experiments.html"><a href="natural-experiments.html#natural-experiments-1"><i class="fa fa-check"></i><b>5.2</b> Natural experiments</a></li>
 <li class="chapter" data-level="5.3" data-path="natural-experiments.html"><a href="natural-experiments.html#interrupted-time-series"><i class="fa fa-check"></i><b>5.3</b> Interrupted time series</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="risk-assessment.html"><a href="risk-assessment.html"><i class="fa fa-check"></i><b>6</b> Risk assessment</a></li>
-<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a><ul>
+<li class="chapter" data-level="6" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html"><i class="fa fa-check"></i><b>6</b> Estimating health impacts</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html#readings-3"><i class="fa fa-check"></i><b>6.1</b> Readings</a></li>
+<li class="chapter" data-level="6.2" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html#attributable-risk-and-attributable-number"><i class="fa fa-check"></i><b>6.2</b> Attributable risk and attributable number</a></li>
+<li class="chapter" data-level="6.3" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html#quantifying-potential-health-impacts-under-different-scenarios"><i class="fa fa-check"></i><b>6.3</b> Quantifying potential health impacts under different scenarios</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a>
+<ul>
 <li class="chapter" data-level="7.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#longitudinal-cohort-data"><i class="fa fa-check"></i><b>7.1</b> Longitudinal cohort data</a></li>
 <li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.2</b> Coding a survival analysis</a></li>
-<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a><ul>
+<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a>
+<ul>
 <li class="chapter" data-level="7.3.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.3.1</b> Multi-level exposure</a></li>
 <li class="chapter" data-level="7.3.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.3.2</b> Recurrent outcome</a></li>
 <li class="chapter" data-level="7.3.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.3.3</b> Time-varying coeffificents</a></li>
 <li class="chapter" data-level="7.3.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.3.4</b> Using survey results</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a><ul>
+<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a>
+<ul>
 <li class="chapter" data-level="8.1" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#inverse-probability-weighting"><i class="fa fa-check"></i><b>8.1</b> Inverse probability weighting</a></li>
 <li class="chapter" data-level="8.2" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#propensity-scores"><i class="fa fa-check"></i><b>8.2</b> Propensity scores</a></li>
 </ul></li>
@@ -205,7 +240,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="time-series-case-crossover-studies" class="section level1">
+<div id="time-series-case-crossover-studies" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Time series / case-crossover studies</h1>
 <p>We’ll start by exploring common characteristics in time series data for
 environmental epidemiology. In the first have of the class, we’re
@@ -223,13 +258,13 @@ model that fits the exposure-response association between particulate matter
 concentration and daily risk of cardiovascular mortality. These statistical
 models—and the type of data used to fit them—will be the focus of the
 first part of this course.</p>
-<div id="readings" class="section level2">
+<div id="readings" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Readings</h2>
 <p>The required readings for this chapter are:</p>
 <ul>
-<li><span class="citation">Bhaskaran et al. (<a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>)</span> Provides an overview of time series regression
+<li><span class="citation"><a href="#ref-bhaskaran2013time" role="doc-biblioref">Bhaskaran et al.</a> (<a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>)</span> Provides an overview of time series regression
 in environmental epidemiology.</li>
-<li><span class="citation">Vicedo-Cabrera, Sera, and Gasparrini (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> Provides a tutorial of all the steps for a
+<li><span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> Provides a tutorial of all the steps for a
 projecting of health impacts of temperature extremes under climate change.
 One of the steps is to fit the exposure-response association using present-day data
 (the section on “Estimation of Exposure-Response Associations” in the paper).
@@ -243,45 +278,45 @@ for the exercises for class.</li>
 <p>The following are supplemental readings (i.e., not required, but may be of
 interest) associated with the material in this chapter:</p>
 <ul>
-<li><span class="citation">Armstrong et al. (<a href="#ref-armstrong2012commentary" role="doc-biblioref">2012</a>)</span> Commentary that provides context on how epidemiological
+<li><span class="citation"><a href="#ref-armstrong2012commentary" role="doc-biblioref">B. Armstrong et al.</a> (<a href="#ref-armstrong2012commentary" role="doc-biblioref">2012</a>)</span> Commentary that provides context on how epidemiological
 research on temperature and health can help inform climate change policy.</li>
-<li><span class="citation">Dominici and Peng (<a href="#ref-dominici2008statistical1" role="doc-biblioref">2008</a><a href="#ref-dominici2008statistical1" role="doc-biblioref">c</a>)</span> Overview of study designs for studying climate-related
+<li><span class="citation"><a href="#ref-dominici2008statistical1" role="doc-biblioref">Dominici and Peng</a> (<a href="#ref-dominici2008statistical1" role="doc-biblioref">2008c</a>)</span> Overview of study designs for studying climate-related
 exposures (air pollution in this case) and human health. Chapter in a book that is
 available online through the CSU library.</li>
-<li><span class="citation">Armstrong (<a href="#ref-armstrong2006models" role="doc-biblioref">2006</a>)</span> Covers similar material as <span class="citation">Bhaskaran et al. (<a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>)</span>, but with
+<li><span class="citation"><a href="#ref-armstrong2006models" role="doc-biblioref">B. Armstrong</a> (<a href="#ref-armstrong2006models" role="doc-biblioref">2006</a>)</span> Covers similar material as <span class="citation"><a href="#ref-bhaskaran2013time" role="doc-biblioref">Bhaskaran et al.</a> (<a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>)</span>, but with
 more focus on the statistical modeling framework</li>
-<li><span class="citation">Gasparrini and Armstrong (<a href="#ref-gasparrini2010time" role="doc-biblioref">2010</a>)</span> Describes some of the advances made to time series study
+<li><span class="citation"><a href="#ref-gasparrini2010time" role="doc-biblioref">Gasparrini and Armstrong</a> (<a href="#ref-gasparrini2010time" role="doc-biblioref">2010</a>)</span> Describes some of the advances made to time series study
 designs and statistical analysis, specifically in the context of temperature</li>
-<li><span class="citation">Basu, Dominici, and Samet (<a href="#ref-basu2005temperature" role="doc-biblioref">2005</a>)</span> Compares time series and case-crossover study designs in
+<li><span class="citation"><a href="#ref-basu2005temperature" role="doc-biblioref">Basu, Dominici, and Samet</a> (<a href="#ref-basu2005temperature" role="doc-biblioref">2005</a>)</span> Compares time series and case-crossover study designs in
 the context of exploring temperature and health. Includes a nice illustration
 of different referent periods, including time-stratified.</li>
-<li><span class="citation">Armstrong, Gasparrini, and Tobias (<a href="#ref-armstrong2014conditional" role="doc-biblioref">2014</a>)</span> This paper describes different data structures for
+<li><span class="citation"><a href="#ref-armstrong2014conditional" role="doc-biblioref">B. G. Armstrong, Gasparrini, and Tobias</a> (<a href="#ref-armstrong2014conditional" role="doc-biblioref">2014</a>)</span> This paper describes different data structures for
 case-crossover data, as well as how conditional Poisson regression can be used
 in some cases to fit a statistical model to these data.
 Supplemental material for this paper is available at
 <a href="https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13" class="uri">https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-122#Sec13</a>.</li>
-<li><span class="citation">Imai et al. (<a href="#ref-imai2015time" role="doc-biblioref">2015</a>)</span> Typically, the time series study design covered in this
+<li><span class="citation"><a href="#ref-imai2015time" role="doc-biblioref">Imai et al.</a> (<a href="#ref-imai2015time" role="doc-biblioref">2015</a>)</span> Typically, the time series study design covered in this
 chapter is used to study non-communicable health outcomes. This paper discusses
 opportunities and limitations in applying a similar framework for infectious
 disease.</li>
-<li><span class="citation">Dominici and Peng (<a href="#ref-dominici2008statistical4" role="doc-biblioref">2008</a><a href="#ref-dominici2008statistical4" role="doc-biblioref">b</a>)</span> Heavier on statistics. Describes some of the
+<li><span class="citation"><a href="#ref-dominici2008statistical4" role="doc-biblioref">Dominici and Peng</a> (<a href="#ref-dominici2008statistical4" role="doc-biblioref">2008b</a>)</span> Heavier on statistics. Describes some of the
 statistical challenges of working with time series data for air pollution
 epidemiology. Chapter in a book that is available online through the CSU library.</li>
-<li><span class="citation">Lu and Zeger (<a href="#ref-lu2007equivalence" role="doc-biblioref">2007</a>)</span> Heavier on statistics. This paper shows how, under
+<li><span class="citation"><a href="#ref-lu2007equivalence" role="doc-biblioref">Lu and Zeger</a> (<a href="#ref-lu2007equivalence" role="doc-biblioref">2007</a>)</span> Heavier on statistics. This paper shows how, under
 conditions often common for environmental epidemiology studies, case-crossover
 and time series methods are equivalent.</li>
-<li><span class="citation">Gasparrini (<a href="#ref-gasparrini2014modeling" role="doc-biblioref">2014</a>)</span> Heavier on statistics. This provides the statistical
+<li><span class="citation"><a href="#ref-gasparrini2014modeling" role="doc-biblioref">Gasparrini</a> (<a href="#ref-gasparrini2014modeling" role="doc-biblioref">2014</a>)</span> Heavier on statistics. This provides the statistical
 framework for the distributed lag model for environmental epidemiology time
 series studies.</li>
-<li><span class="citation">Dunn and Smyth (<a href="#ref-dunn2018generalized1" role="doc-biblioref">2018</a>)</span> Introduction to statistical models, moving into regression models and
+<li><span class="citation"><a href="#ref-dunn2018generalized1" role="doc-biblioref">Dunn and Smyth</a> (<a href="#ref-dunn2018generalized1" role="doc-biblioref">2018</a>)</span> Introduction to statistical models, moving into regression models and
 generalized linear models. Chapter in a book that is available online through the CSU library.</li>
-<li><span class="citation">James et al. (<a href="#ref-james2013introduction3" role="doc-biblioref">2013</a>)</span> General overview of linear regression, with an R coding
+<li><span class="citation"><a href="#ref-james2013introduction3" role="doc-biblioref">James et al.</a> (<a href="#ref-james2013introduction3" role="doc-biblioref">2013</a>)</span> General overview of linear regression, with an R coding
 “lab” at the end to provide coding examples. Covers model fit, continuous, binary,
 and categorical covariates, and interaction terms. Chapter in a book that is
 available online through the CSU library.</li>
 </ul>
 </div>
-<div id="time-series-and-case-crossover-study-designs" class="section level2">
+<div id="time-series-and-case-crossover-study-designs" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Time series and case-crossover study designs</h2>
 <p>In the first half of this course, we’ll take a deep look at how researchers
 can study how environmental exposures and health risk are linked using
@@ -387,36 +422,36 @@ be essentially equivalent (and, in fact, can use the same study data), only with
 slightly different terms used to control for temporal patterns in the statistical
 model fit to the data. Several interesting papers have been written to explore
 differences and similarities in these two study designs as applied in environmental
-epidemiology <span class="citation">(Basu, Dominici, and Samet <a href="#ref-basu2005temperature" role="doc-biblioref">2005</a>; Armstrong, Gasparrini, and Tobias <a href="#ref-armstrong2014conditional" role="doc-biblioref">2014</a>; Lu and Zeger <a href="#ref-lu2007equivalence" role="doc-biblioref">2007</a>)</span>.</p>
+epidemiology <span class="citation">(<a href="#ref-basu2005temperature" role="doc-biblioref">Basu, Dominici, and Samet 2005</a>; <a href="#ref-armstrong2014conditional" role="doc-biblioref">B. G. Armstrong, Gasparrini, and Tobias 2014</a>; <a href="#ref-lu2007equivalence" role="doc-biblioref">Lu and Zeger 2007</a>)</span>.</p>
 <p>These types of study designs in practice use similar datasets. In earlier
 presentations of the case-crossover design, these data would be set up a bit
 differently for statistical modeling. More recent work, however, has clarified
 how they can be modeled similarly to when using a time series study design,
-allowing the data to be set up in a similar way <span class="citation">(Armstrong, Gasparrini, and Tobias <a href="#ref-armstrong2014conditional" role="doc-biblioref">2014</a>)</span>.</p>
+allowing the data to be set up in a similar way <span class="citation">(<a href="#ref-armstrong2014conditional" role="doc-biblioref">B. G. Armstrong, Gasparrini, and Tobias 2014</a>)</span>.</p>
 <p>Several excellent commentaries or reviews are available that provide more
 details on these two study designs and how they have been used specifically
-investigate the relationship between climate-related exposures and health <span class="citation">(Bhaskaran et al. <a href="#ref-bhaskaran2013time" role="doc-biblioref">2013</a>; Armstrong <a href="#ref-armstrong2006models" role="doc-biblioref">2006</a>; Gasparrini and Armstrong <a href="#ref-gasparrini2010time" role="doc-biblioref">2010</a>)</span>.
+investigate the relationship between climate-related exposures and health <span class="citation">(<a href="#ref-bhaskaran2013time" role="doc-biblioref">Bhaskaran et al. 2013</a>; <a href="#ref-armstrong2006models" role="doc-biblioref">B. Armstrong 2006</a>; <a href="#ref-gasparrini2010time" role="doc-biblioref">Gasparrini and Armstrong 2010</a>)</span>.
 Further, these designs are just two tools in a wider collection of study designs
 that can be used to explore the health effects of climate-related exposures.
-<span class="citation">Dominici and Peng (<a href="#ref-dominici2008statistical1" role="doc-biblioref">2008</a><a href="#ref-dominici2008statistical1" role="doc-biblioref">c</a>)</span> provides a nice overview of this broader set of designs.</p>
+<span class="citation"><a href="#ref-dominici2008statistical1" role="doc-biblioref">Dominici and Peng</a> (<a href="#ref-dominici2008statistical1" role="doc-biblioref">2008c</a>)</span> provides a nice overview of this broader set of designs.</p>
 </div>
-<div id="time-series-data" class="section level2">
+<div id="time-series-data" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Time series data</h2>
 <p>Let’s explore the type of dataset that can be used for these
 time series–style studies in environmental epidemiology. In the examples
 in this chapter, we’ll be using data that comes as part of the Supplemental
-Material in one of this chapter’s required readings, <span class="citation">(Vicedo-Cabrera, Sera, and Gasparrini <a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>.
+Material in one of this chapter’s required readings, <span class="citation">(<a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini 2019</a>)</span>.
 Follow the link for the supplement for this article and then look for the
-file “lndn_obs.csv”. This is the file we’ll use as the example data in this
+file “lndn_obs.csv.” This is the file we’ll use as the example data in this
 chapter.</p>
 <p>These data are saved in a csv format (that is, a plain text file, with commas
 used as the delimiter), and so they can be read into R using the <code>read_csv</code>
 function from the <code>readr</code> package (part of the tidyverse). For example, you can
 use the following code to read in these data, assuming you have saved them in a
 “data” subdirectory of your current working directory:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="time-series-case-crossover-studies.html#cb1-1"></a><span class="kw">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
-<span id="cb1-2"><a href="time-series-case-crossover-studies.html#cb1-2"></a>obs &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>)</span>
-<span id="cb1-3"><a href="time-series-case-crossover-studies.html#cb1-3"></a>obs</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="time-series-case-crossover-studies.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
+<span id="cb1-2"><a href="time-series-case-crossover-studies.html#cb1-2" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>)</span>
+<span id="cb1-3"><a href="time-series-case-crossover-studies.html#cb1-3" aria-hidden="true" tabindex="-1"></a>obs</span></code></pre></div>
 <pre><code>## # A tibble: 8,279 x 14
 ##    date        year month   day   doy dow     all all_0_64 all_65_74 all_75_84
 ##    &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -474,7 +509,7 @@ If different health outcome counts are available, these can be modeled in separa
 statistical models to determine an exposure-response function for each outcome.</li>
 </ul>
 </div>
-<div id="exploratory-data-analysis" class="section level2">
+<div id="exploratory-data-analysis" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Exploratory data analysis</h2>
 <p>When working with time series data, it is helpful to start with some exploratory
 data analysis. This type of time series data will often be secondary data—it is
@@ -507,12 +542,12 @@ The <code>lubridate</code> package from the <code>tidyverse</code>, for example,
 in R, and time series data will typically have at least one column with the
 timestamp of the observation (e.g., the date for daily data).
 You may find it worthwhile to explore this package some more. There is a helpful
-chapter in <span class="citation">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, <a href="https://r4ds.had.co.nz/dates-and-times.html" class="uri">https://r4ds.had.co.nz/dates-and-times.html</a>, as well
+chapter in <span class="citation"><a href="#ref-wickham2016r" role="doc-biblioref">Wickham and Grolemund</a> (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, <a href="https://r4ds.had.co.nz/dates-and-times.html" class="uri">https://r4ds.had.co.nz/dates-and-times.html</a>, as well
 as a cheatsheet at
 <a href="https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf" class="uri">https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf</a>. For
 visualizations, if you are still learning techniques in R, two books
 you may find useful are
-<span class="citation">Healy (<a href="#ref-healy2018data" role="doc-biblioref">2018</a>)</span> (available online at <a href="https://socviz.co/" class="uri">https://socviz.co/</a>) and <span class="citation">Chang (<a href="#ref-chang2018r" role="doc-biblioref">2018</a>)</span>
+<span class="citation"><a href="#ref-healy2018data" role="doc-biblioref">Healy</a> (<a href="#ref-healy2018data" role="doc-biblioref">2018</a>)</span> (available online at <a href="https://socviz.co/" class="uri">https://socviz.co/</a>) and <span class="citation"><a href="#ref-chang2018r" role="doc-biblioref">Chang</a> (<a href="#ref-chang2018r" role="doc-biblioref">2018</a>)</span>
 (available online at <a href="http://www.cookbook-r.com/Graphs/" class="uri">http://www.cookbook-r.com/Graphs/</a>).</p>
 <p><em>Applied: Exploring time series data</em></p>
 <p>Read the example time series data into R and explore it to answer the following
@@ -541,18 +576,18 @@ dates / years are covered by the time series data?)</strong></li>
 <p>In the <code>obs</code> dataset, the date of each observation is included in a column called
 <code>date</code>. The data type of this column is “Date”—you can check this by using
 the <code>class</code> function from base R:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="time-series-case-crossover-studies.html#cb3-1"></a><span class="kw">class</span>(obs<span class="op">$</span>date)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="time-series-case-crossover-studies.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(obs<span class="sc">$</span>date)</span></code></pre></div>
 <pre><code>## [1] &quot;Date&quot;</code></pre>
 <p>Since this column has a “Date” data type, you can run some mathematical function
 calls on it. For example, you can use the <code>min</code> function from base R to get the
 earliest date in the dataset and the <code>max</code> function to get the latest.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="time-series-case-crossover-studies.html#cb5-1"></a><span class="kw">min</span>(obs<span class="op">$</span>date)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="time-series-case-crossover-studies.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(obs<span class="sc">$</span>date)</span></code></pre></div>
 <pre><code>## [1] &quot;1990-01-01&quot;</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="time-series-case-crossover-studies.html#cb7-1"></a><span class="kw">max</span>(obs<span class="op">$</span>date)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="time-series-case-crossover-studies.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(obs<span class="sc">$</span>date)</span></code></pre></div>
 <pre><code>## [1] &quot;2012-08-31&quot;</code></pre>
 <p>You can also run the <code>range</code> function to get both the earliest and latest dates
 with a single call:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="time-series-case-crossover-studies.html#cb9-1"></a><span class="kw">range</span>(obs<span class="op">$</span>date)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="time-series-case-crossover-studies.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(obs<span class="sc">$</span>date)</span></code></pre></div>
 <pre><code>## [1] &quot;1990-01-01&quot; &quot;2012-08-31&quot;</code></pre>
 <p>This provides the range of the study period for these data. One interesting point
 is that it’s not a round set of years—instead, the data ends during the summer
@@ -566,13 +601,12 @@ for the last year, since only part of the year’s included. For example, if you
 wanted to count the total deaths in each year of the study period, it will look
 like they go down a lot the last year, when really it’s only because only about half
 of the last year is included in the study period:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="time-series-case-crossover-studies.html#cb11-1"></a>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb11-2"><a href="time-series-case-crossover-studies.html#cb11-2"></a><span class="st">  </span><span class="kw">group_by</span>(year) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb11-3"><a href="time-series-case-crossover-studies.html#cb11-3"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">deaths_in_year =</span> <span class="kw">sum</span>(all)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb11-4"><a href="time-series-case-crossover-studies.html#cb11-4"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> deaths_in_year)) <span class="op">+</span></span>
-<span id="cb11-5"><a href="time-series-case-crossover-studies.html#cb11-5"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
-<span id="cb11-6"><a href="time-series-case-crossover-studies.html#cb11-6"></a><span class="st">  </span><span class="kw">geom_point</span>() </span></code></pre></div>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="time-series-case-crossover-studies.html#cb11-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="time-series-case-crossover-studies.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="time-series-case-crossover-studies.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">deaths_in_year =</span> <span class="fu">sum</span>(all)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-4"><a href="time-series-case-crossover-studies.html#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> deaths_in_year)) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="time-series-case-crossover-studies.html#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb11-6"><a href="time-series-case-crossover-studies.html#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() </span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Are there any missing dates within this time period? Are there any recorded
@@ -585,7 +619,7 @@ any of the observations in the dataset. This helps answer the second and third
 parts of the question. The <code>summary</code> function will provide
 a summary of the values in each column of the dataset, including the count
 of missing values (<code>NA</code>s) if there are any:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="time-series-case-crossover-studies.html#cb13-1"></a><span class="kw">summary</span>(obs)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="time-series-case-crossover-studies.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(obs)</span></code></pre></div>
 <pre><code>##       date                 year          month             day       
 ##  Min.   :1990-01-01   Min.   :1990   Min.   : 1.000   Min.   : 1.00  
 ##  1st Qu.:1995-09-01   1st Qu.:1995   1st Qu.: 3.000   1st Qu.: 8.00  
@@ -628,15 +662,15 @@ dates outside of the warm season excluded.</p>
 easiest is to check
 the number of days between the start and end date of the study period, and
 then see if the number of observations in the dataset is the same:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="time-series-case-crossover-studies.html#cb15-1"></a><span class="co"># Calculate number of days in study period</span></span>
-<span id="cb15-2"><a href="time-series-case-crossover-studies.html#cb15-2"></a>obs <span class="op">%&gt;%</span><span class="st">            </span><span class="co"># Using piping (%&gt;%) throughout to keep code clear</span></span>
-<span id="cb15-3"><a href="time-series-case-crossover-studies.html#cb15-3"></a><span class="st">  </span><span class="kw">pull</span>(date) <span class="op">%&gt;%</span><span class="st">   </span><span class="co"># Extract the `date` column as a vector</span></span>
-<span id="cb15-4"><a href="time-series-case-crossover-studies.html#cb15-4"></a><span class="st">  </span><span class="kw">range</span>() <span class="op">%&gt;%</span><span class="st">      </span><span class="co"># Take the range of dates (earliest and latest)</span></span>
-<span id="cb15-5"><a href="time-series-case-crossover-studies.html#cb15-5"></a><span class="st">  </span><span class="kw">diff</span>()           <span class="co"># Calculate time difference from start to finish of study </span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="time-series-case-crossover-studies.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate number of days in study period</span></span>
+<span id="cb14-2"><a href="time-series-case-crossover-studies.html#cb14-2" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span>            <span class="co"># Using piping (%&gt;%) throughout to keep code clear</span></span>
+<span id="cb14-3"><a href="time-series-case-crossover-studies.html#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(date) <span class="sc">%&gt;%</span>   <span class="co"># Extract the `date` column as a vector</span></span>
+<span id="cb14-4"><a href="time-series-case-crossover-studies.html#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">range</span>() <span class="sc">%&gt;%</span>      <span class="co"># Take the range of dates (earliest and latest)</span></span>
+<span id="cb14-5"><a href="time-series-case-crossover-studies.html#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diff</span>()           <span class="co"># Calculate time difference from start to finish of study </span></span></code></pre></div>
 <pre><code>## Time difference of 8278 days</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="time-series-case-crossover-studies.html#cb17-1"></a><span class="co"># Get number of observations in dataset---should be 1 more than time difference</span></span>
-<span id="cb17-2"><a href="time-series-case-crossover-studies.html#cb17-2"></a>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb17-3"><a href="time-series-case-crossover-studies.html#cb17-3"></a><span class="st">  </span><span class="kw">nrow</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="time-series-case-crossover-studies.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get number of observations in dataset---should be 1 more than time difference</span></span>
+<span id="cb16-2"><a href="time-series-case-crossover-studies.html#cb16-2" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="time-series-case-crossover-studies.html#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div>
 <pre><code>## [1] 8279</code></pre>
 <p>This indicates that there is an observation for every date over the study period,
 since the number of observations should be one more than the time difference.
@@ -650,14 +684,14 @@ and the outcome. For example, the following code plots a dot for each daily
 temperature observation over the study period. The points are set to a smaller
 size (<code>size = 0.5</code>) and plotted with some transparency (<code>alpha = 0.5</code>) since
 there are so many observations.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="time-series-case-crossover-studies.html#cb19-1"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb19-2"><a href="time-series-case-crossover-studies.html#cb19-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="time-series-case-crossover-studies.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb18-2"><a href="time-series-case-crossover-studies.html#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>There is (unsurprisingly) clear evidence here of a strong seasonal trend in mean temperature,
 with values typically lowest in the winter and highest in the summer.</p>
 <p>You can plot the outcome variable in the same way:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="time-series-case-crossover-studies.html#cb20-1"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> all)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb20-2"><a href="time-series-case-crossover-studies.html#cb20-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="time-series-case-crossover-studies.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
+<span id="cb19-2"><a href="time-series-case-crossover-studies.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Again, there are seasonal trends, although in this case they are inversed.
 Mortality tends to be highest in the winter and lowest in the summer. Further, the
@@ -677,11 +711,11 @@ and it would be no problem to leave the y-axis as-is. We’ve used the
 that make it preferable to the default R color scale, including that it
 is perceptible for most types of color blindness and be printed out in grayscale
 and still be correctly interpreted.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="time-series-case-crossover-studies.html#cb21-1"></a><span class="kw">library</span>(viridis)</span>
-<span id="cb21-2"><a href="time-series-case-crossover-studies.html#cb21-2"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> doy, <span class="dt">y =</span> year, <span class="dt">fill =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb21-3"><a href="time-series-case-crossover-studies.html#cb21-3"></a><span class="st">  </span><span class="kw">geom_tile</span>() <span class="op">+</span></span>
-<span id="cb21-4"><a href="time-series-case-crossover-studies.html#cb21-4"></a><span class="st">  </span><span class="kw">scale_y_reverse</span>() <span class="op">+</span><span class="st"> </span></span>
-<span id="cb21-5"><a href="time-series-case-crossover-studies.html#cb21-5"></a><span class="st">  </span><span class="kw">scale_fill_viridis</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="time-series-case-crossover-studies.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb20-2"><a href="time-series-case-crossover-studies.html#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> doy, <span class="at">y =</span> year, <span class="at">fill =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb20-3"><a href="time-series-case-crossover-studies.html#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb20-4"><a href="time-series-case-crossover-studies.html#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span> </span>
+<span id="cb20-5"><a href="time-series-case-crossover-studies.html#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>From this visualization, you can see that temperatures tend to be higher in the
 summer months and lower in the winter months. “Spells” of extreme heat or cold
@@ -693,10 +727,10 @@ yellow in the plot.</p>
 focused on mortality among the oldest age group, as temperature sensitivity
 tends to increase with age, so this might be where the strongest patterns are
 evident.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="time-series-case-crossover-studies.html#cb22-1"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> doy, <span class="dt">y =</span> year, <span class="dt">fill =</span> all_85plus)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb22-2"><a href="time-series-case-crossover-studies.html#cb22-2"></a><span class="st">  </span><span class="kw">geom_tile</span>() <span class="op">+</span></span>
-<span id="cb22-3"><a href="time-series-case-crossover-studies.html#cb22-3"></a><span class="st">  </span><span class="kw">scale_y_reverse</span>() <span class="op">+</span><span class="st"> </span></span>
-<span id="cb22-4"><a href="time-series-case-crossover-studies.html#cb22-4"></a><span class="st">  </span><span class="kw">scale_fill_viridis</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="time-series-case-crossover-studies.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> doy, <span class="at">y =</span> year, <span class="at">fill =</span> all_85plus)) <span class="sc">+</span> </span>
+<span id="cb21-2"><a href="time-series-case-crossover-studies.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb21-3"><a href="time-series-case-crossover-studies.html#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span> </span>
+<span id="cb21-4"><a href="time-series-case-crossover-studies.html#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>For mortality, there tends to be an increase in the winter compared to the summer.
 Some winters have stretches with particularly high mortality—these are likely
@@ -709,26 +743,25 @@ unusual spot of light green in the summer.</p>
 <p>Some of the plots we created in the last section help in exploring this
 question. For example, the following plot shows a clear pattern of decreasing
 daily mortality counts, on average, over the course of the study period:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="time-series-case-crossover-studies.html#cb23-1"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> all)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb23-2"><a href="time-series-case-crossover-studies.html#cb23-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="time-series-case-crossover-studies.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
+<span id="cb22-2"><a href="time-series-case-crossover-studies.html#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>It can be helpful to add a smooth line to help detect these longer-term
 patterns, which you can do with <code>geom_smooth</code>:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="time-series-case-crossover-studies.html#cb24-1"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> all)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb24-2"><a href="time-series-case-crossover-studies.html#cb24-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb24-3"><a href="time-series-case-crossover-studies.html#cb24-3"></a><span class="st">  </span><span class="kw">geom_smooth</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="time-series-case-crossover-studies.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
+<span id="cb23-2"><a href="time-series-case-crossover-studies.html#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb23-3"><a href="time-series-case-crossover-studies.html#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>You could also take the median mortality count across each year in the
 study period, although you should take out any years without a full year’s
 worth of data before you do this, since there are seasonal trends in the
 outcome:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="time-series-case-crossover-studies.html#cb25-1"></a>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb25-2"><a href="time-series-case-crossover-studies.html#cb25-2"></a><span class="st">  </span><span class="kw">group_by</span>(year) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb25-3"><a href="time-series-case-crossover-studies.html#cb25-3"></a><span class="st">  </span><span class="kw">filter</span>(year <span class="op">!=</span><span class="st"> </span><span class="dv">2012</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># Take out the last year</span></span>
-<span id="cb25-4"><a href="time-series-case-crossover-studies.html#cb25-4"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">median_mort =</span> <span class="kw">median</span>(all)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb25-5"><a href="time-series-case-crossover-studies.html#cb25-5"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> median_mort)) <span class="op">+</span></span>
-<span id="cb25-6"><a href="time-series-case-crossover-studies.html#cb25-6"></a><span class="st">  </span><span class="kw">geom_line</span>()</span></code></pre></div>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="time-series-case-crossover-studies.html#cb24-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="time-series-case-crossover-studies.html#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="time-series-case-crossover-studies.html#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">!=</span> <span class="dv">2012</span>) <span class="sc">%&gt;%</span> <span class="co"># Take out the last year</span></span>
+<span id="cb24-4"><a href="time-series-case-crossover-studies.html#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median_mort =</span> <span class="fu">median</span>(all)) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-5"><a href="time-series-case-crossover-studies.html#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> median_mort)) <span class="sc">+</span></span>
+<span id="cb24-6"><a href="time-series-case-crossover-studies.html#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <p>Again, we see a clear pattern of decreasing mortality rates in this city over time.
 This means we need to think carefully about long-term time patterns as a potential
@@ -744,32 +777,32 @@ with day of week?</strong></li>
 this is in a character data type, so it doesn’t have the order of weekdays
 encoded (e.g., Monday comes before Tuesday). This makes it hard to look for
 patterns related to things like weekend / weekday.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="time-series-case-crossover-studies.html#cb27-1"></a><span class="kw">class</span>(obs<span class="op">$</span>dow)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="time-series-case-crossover-studies.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(obs<span class="sc">$</span>dow)</span></code></pre></div>
 <pre><code>## [1] &quot;character&quot;</code></pre>
 <p>We could convert this to a factor and encode the weekday order when we do
 it, but it’s even easier to just recreate the column from the <code>date</code> column.
 We used the <code>wday</code> function from the <code>lubridate</code> package to do this—it extracts
 weekday as a factor, with the order of weekdays encoded (using a special
 “ordered” factor type):</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="time-series-case-crossover-studies.html#cb29-1"></a><span class="kw">library</span>(lubridate)</span>
-<span id="cb29-2"><a href="time-series-case-crossover-studies.html#cb29-2"></a>obs &lt;-<span class="st"> </span>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb29-3"><a href="time-series-case-crossover-studies.html#cb29-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dow =</span> <span class="kw">wday</span>(date, <span class="dt">label =</span> <span class="ot">TRUE</span>))</span>
-<span id="cb29-4"><a href="time-series-case-crossover-studies.html#cb29-4"></a></span>
-<span id="cb29-5"><a href="time-series-case-crossover-studies.html#cb29-5"></a><span class="kw">class</span>(obs<span class="op">$</span>dow)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="time-series-case-crossover-studies.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb27-2"><a href="time-series-case-crossover-studies.html#cb27-2" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
+<span id="cb27-3"><a href="time-series-case-crossover-studies.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dow =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb27-4"><a href="time-series-case-crossover-studies.html#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="time-series-case-crossover-studies.html#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(obs<span class="sc">$</span>dow)</span></code></pre></div>
 <pre><code>## [1] &quot;ordered&quot; &quot;factor&quot;</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="time-series-case-crossover-studies.html#cb31-1"></a><span class="kw">levels</span>(obs<span class="op">$</span>dow)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="time-series-case-crossover-studies.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(obs<span class="sc">$</span>dow)</span></code></pre></div>
 <pre><code>## [1] &quot;Sun&quot; &quot;Mon&quot; &quot;Tue&quot; &quot;Wed&quot; &quot;Thu&quot; &quot;Fri&quot; &quot;Sat&quot;</code></pre>
 <p>We looked at the mean, median, and 25th and 75th quantiles of the mortality
 counts by day of week:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="time-series-case-crossover-studies.html#cb33-1"></a>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb33-2"><a href="time-series-case-crossover-studies.html#cb33-2"></a><span class="st">  </span><span class="kw">group_by</span>(dow) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb33-3"><a href="time-series-case-crossover-studies.html#cb33-3"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="kw">mean</span>(all), </span>
-<span id="cb33-4"><a href="time-series-case-crossover-studies.html#cb33-4"></a>            <span class="kw">median</span>(all), </span>
-<span id="cb33-5"><a href="time-series-case-crossover-studies.html#cb33-5"></a>            <span class="kw">quantile</span>(all, <span class="fl">0.25</span>), </span>
-<span id="cb33-6"><a href="time-series-case-crossover-studies.html#cb33-6"></a>            <span class="kw">quantile</span>(all, <span class="fl">0.75</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="time-series-case-crossover-studies.html#cb31-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="time-series-case-crossover-studies.html#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(dow) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-3"><a href="time-series-case-crossover-studies.html#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(all), </span>
+<span id="cb31-4"><a href="time-series-case-crossover-studies.html#cb31-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">median</span>(all), </span>
+<span id="cb31-5"><a href="time-series-case-crossover-studies.html#cb31-5" aria-hidden="true" tabindex="-1"></a>            <span class="fu">quantile</span>(all, <span class="fl">0.25</span>), </span>
+<span id="cb31-6"><a href="time-series-case-crossover-studies.html#cb31-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">quantile</span>(all, <span class="fl">0.75</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 7 x 5
 ##   dow   `mean(all)` `median(all)` `quantile(all, 0.25)` `quantile(all, 0.75)`
-##   &lt;ord&gt;       &lt;dbl&gt;         &lt;dbl&gt;                 &lt;dbl&gt;                 &lt;dbl&gt;
+## * &lt;ord&gt;       &lt;dbl&gt;         &lt;dbl&gt;                 &lt;dbl&gt;                 &lt;dbl&gt;
 ## 1 Sun          156.           154                  136                    173
 ## 2 Mon          161.           159                  138                    179
 ## 3 Tue          161.           158                  139                    179
@@ -780,15 +813,15 @@ counts by day of week:</p>
 <p>Mortality tends to be a bit higher on weekdays than weekends, but it’s not
 a dramatic difference.</p>
 <p>We did the same check for temperature:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="time-series-case-crossover-studies.html#cb35-1"></a>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb35-2"><a href="time-series-case-crossover-studies.html#cb35-2"></a><span class="st">  </span><span class="kw">group_by</span>(dow) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb35-3"><a href="time-series-case-crossover-studies.html#cb35-3"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="kw">mean</span>(tmean), </span>
-<span id="cb35-4"><a href="time-series-case-crossover-studies.html#cb35-4"></a>            <span class="kw">median</span>(tmean), </span>
-<span id="cb35-5"><a href="time-series-case-crossover-studies.html#cb35-5"></a>            <span class="kw">quantile</span>(tmean, <span class="fl">0.25</span>), </span>
-<span id="cb35-6"><a href="time-series-case-crossover-studies.html#cb35-6"></a>            <span class="kw">quantile</span>(tmean, <span class="fl">0.75</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="time-series-case-crossover-studies.html#cb33-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span> </span>
+<span id="cb33-2"><a href="time-series-case-crossover-studies.html#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(dow) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-3"><a href="time-series-case-crossover-studies.html#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(tmean), </span>
+<span id="cb33-4"><a href="time-series-case-crossover-studies.html#cb33-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">median</span>(tmean), </span>
+<span id="cb33-5"><a href="time-series-case-crossover-studies.html#cb33-5" aria-hidden="true" tabindex="-1"></a>            <span class="fu">quantile</span>(tmean, <span class="fl">0.25</span>), </span>
+<span id="cb33-6"><a href="time-series-case-crossover-studies.html#cb33-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">quantile</span>(tmean, <span class="fl">0.75</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 7 x 5
 ##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.2… `quantile(tmean, 0.…
-##   &lt;ord&gt;         &lt;dbl&gt;           &lt;dbl&gt;                 &lt;dbl&gt;                &lt;dbl&gt;
+## * &lt;ord&gt;         &lt;dbl&gt;           &lt;dbl&gt;                 &lt;dbl&gt;                &lt;dbl&gt;
 ## 1 Sun            11.6            11.3                  7.48                 15.9
 ## 2 Mon            11.6            11.4                  7.33                 15.8
 ## 3 Tue            11.5            11.4                  7.48                 15.9
@@ -798,13 +831,13 @@ a dramatic difference.</p>
 ## 7 Sat            11.6            11.5                  7.53                 15.9</code></pre>
 <p>In this case, there does not seem to be much of a pattern by weekday.</p>
 <p>You can also visualize the association using boxplots:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="time-series-case-crossover-studies.html#cb37-1"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">wday</span>(date, <span class="dt">label =</span> <span class="ot">TRUE</span>), <span class="dt">y =</span> all)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb37-2"><a href="time-series-case-crossover-studies.html#cb37-2"></a><span class="st">  </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="time-series-case-crossover-studies.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>), <span class="at">y =</span> all)) <span class="sc">+</span> </span>
+<span id="cb35-2"><a href="time-series-case-crossover-studies.html#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>You can also try violin plots—these show the full distribution better than
 boxplots, which only show quantiles.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="time-series-case-crossover-studies.html#cb38-1"></a><span class="kw">ggplot</span>(obs, <span class="kw">aes</span>(<span class="dt">x =</span> dow, <span class="dt">y =</span> all)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb38-2"><a href="time-series-case-crossover-studies.html#cb38-2"></a><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">draw_quantiles =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="time-series-case-crossover-studies.html#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs, <span class="fu">aes</span>(<span class="at">x =</span> dow, <span class="at">y =</span> all)) <span class="sc">+</span> </span>
+<span id="cb36-2"><a href="time-series-case-crossover-studies.html#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">draw_quantiles =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>))</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p>All these reinforce that there are some small differences in weekend versus weekday
 patterns for mortality. There isn’t much pattern by weekday with temperature, so
@@ -815,10 +848,10 @@ variation in the health outcome, it might be worth including in our models anywa
 to help reduce random noise.</p>
 <p>Exploratory data analysis is an excellent tool for exploring your data before
 you begin fitting a statistical model, and you should get in the habit of using
-it regularly in your research. <span class="citation">Dominici and Peng (<a href="#ref-dominici2008statistical5" role="doc-biblioref">2008</a><a href="#ref-dominici2008statistical5" role="doc-biblioref">a</a>)</span> provides another walk-through of exploring this type of data, including some more advanced tools
+it regularly in your research. <span class="citation"><a href="#ref-dominici2008statistical5" role="doc-biblioref">Dominici and Peng</a> (<a href="#ref-dominici2008statistical5" role="doc-biblioref">2008a</a>)</span> provides another walk-through of exploring this type of data, including some more advanced tools
 for exploring autocorrelation and time patterns.</p>
 </div>
-<div id="statistical-modeling-for-a-time-series-study" class="section level2">
+<div id="statistical-modeling-for-a-time-series-study" class="section level2" number="3.5">
 <h2><span class="header-section-number">3.5</span> Statistical modeling for a time series study</h2>
 <p>Now that we’ve explored the data typical of a time series study in climate
 epidemiology, we’ll look at how we can fit a statistical model to those
@@ -833,12 +866,12 @@ Along the way, we’ll discuss key components and choices in this modeling proce
 The statistical modeling is based heavily on regression modeling, and specifically
 generalized linear regression. To help you get the most of this section, you
 may find it helpful to review regression modeling and generalized linear models.
-Some resources for that include <span class="citation">Dunn and Smyth (<a href="#ref-dunn2018generalized1" role="doc-biblioref">2018</a>)</span> and <span class="citation">James et al. (<a href="#ref-james2013introduction3" role="doc-biblioref">2013</a>)</span> .</p>
-<p>One of the readings for this week, <span class="citation">Vicedo-Cabrera, Sera, and Gasparrini (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>, includes a section
+Some resources for that include <span class="citation"><a href="#ref-dunn2018generalized1" role="doc-biblioref">Dunn and Smyth</a> (<a href="#ref-dunn2018generalized1" role="doc-biblioref">2018</a>)</span> and <span class="citation"><a href="#ref-james2013introduction3" role="doc-biblioref">James et al.</a> (<a href="#ref-james2013introduction3" role="doc-biblioref">2013</a>)</span> .</p>
+<p>One of the readings for this week, <span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>, includes a section
 on fitting exposure-response functions to describe the association between
 daily mean temperature and mortality risk. This article includes example
 code in its supplemental material, with code for fitting the model to
-these time series data in the file named “01EstimationERassociation.r”.
+these time series data in the file named “01EstimationERassociation.r.”
 Please download that file and take a look at the code.</p>
 <p>The model in the code may at first seem complex, but it is made up of a number of
 fairly straightforward pieces (although some may initially seem complex):</p>
@@ -862,7 +895,7 @@ by fitting these two elements through one construct in the GLM, a
 <em>cross-basis term</em></li>
 </ul>
 <p>In this section and the next chapter, we will work through the elements,
-building up the code to get to the full model that is fit in <span class="citation">Vicedo-Cabrera, Sera, and Gasparrini (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>.</p>
+building up the code to get to the full model that is fit in <span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span>.</p>
 <p><em>Fitting a GLM to time series data</em></p>
 <p>The generalized linear model (GLM) framework unites a number of types of
 regression models you may have previously worked with. One basic regression
@@ -887,7 +920,7 @@ come closer to a normal distribution the further their average gets from
 0). For binary data—like whether each person in a study population died on
 a given day or not—normally distributed errors are also unlikely. Instead,
 in these two cases, it is typically more appropriate to fit GLMs with
-Poisson and binomial “families”, respectively, where the family designation
+Poisson and binomial “families,” respectively, where the family designation
 includes an appropriate specification for the variance when fitting the model
 based on these outcome types.</p>
 <p>The other element that distinguishes different types of regression within
@@ -963,12 +996,12 @@ column for daily mortality counts for all ages, in this example), followed
 by a tilde (<code>~</code>), followed by all independent variables (only <code>tmean</code> in this
 example). If multiple independent variables are included, they are joined using
 <code>+</code>. We’ll see an example when we start adding control for confounders later.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="time-series-case-crossover-studies.html#cb39-1"></a>mod_linear_reg &lt;-<span class="st"> </span><span class="kw">glm</span>(all <span class="op">~</span><span class="st"> </span>tmean, <span class="dt">data =</span> obs)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="time-series-case-crossover-studies.html#cb37-1" aria-hidden="true" tabindex="-1"></a>mod_linear_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs)</span></code></pre></div>
 <p>Once you have fit a model and assigned it to an R object, you can explore it
 and use resulting values. First, the <code>print</code> method for a regression model
 gives some summary information. This method is automatically called if you
 enter the model object’s name at the console:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="time-series-case-crossover-studies.html#cb40-1"></a>mod_linear_reg</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="time-series-case-crossover-studies.html#cb38-1" aria-hidden="true" tabindex="-1"></a>mod_linear_reg</span></code></pre></div>
 <pre><code>## 
 ## Call:  glm(formula = all ~ tmean, data = obs)
 ## 
@@ -981,7 +1014,7 @@ enter the model object’s name at the console:</p>
 ## Residual Deviance: 6766000   AIC: 79020</code></pre>
 <p>More information is printed if you run the <code>summary</code> method on the model
 object:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="time-series-case-crossover-studies.html#cb42-1"></a><span class="kw">summary</span>(mod_linear_reg)</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="time-series-case-crossover-studies.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_linear_reg)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = all ~ tmean, data = obs)
@@ -1013,8 +1046,8 @@ focusing on some of the more advanced elements of how regression models are
 commonly fit to data from time series and case-crossover study designs in
 environmental epidemiology. For a refresher on the basics of fitting
 statistical models in R, you may want to check out Chapters 22 through 24 of
-<span class="citation">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, a book that is available online, as well as <span class="citation">Dunn and Smyth (<a href="#ref-dunn2018generalized1" role="doc-biblioref">2018</a>)</span> and
-<span class="citation">James et al. (<a href="#ref-james2013introduction3" role="doc-biblioref">2013</a>)</span> .</p>
+<span class="citation"><a href="#ref-wickham2016r" role="doc-biblioref">Wickham and Grolemund</a> (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, a book that is available online, as well as <span class="citation"><a href="#ref-dunn2018generalized1" role="doc-biblioref">Dunn and Smyth</a> (<a href="#ref-dunn2018generalized1" role="doc-biblioref">2018</a>)</span> and
+<span class="citation"><a href="#ref-james2013introduction3" role="doc-biblioref">James et al.</a> (<a href="#ref-james2013introduction3" role="doc-biblioref">2013</a>)</span> .</p>
 <p>Finally, there are some newer tools for extracting information from model fit
 objects. The <code>broom</code> package extracts different elements from these objects
 and returns them in a “tidy” data format, which makes it much easier to use
@@ -1024,9 +1057,8 @@ can be very useful in working with output from regression modeling in R.</p>
 <p>The <code>broom</code> package includes three main functions for extracting data from
 regression model objects. First, the <code>glance</code> function returns overall data
 about the model fit, including the AIC and BIC:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="time-series-case-crossover-studies.html#cb44-1"></a><span class="kw">library</span>(broom)</span></code></pre></div>
-<pre><code>## Warning: package &#39;broom&#39; was built under R version 4.0.2</code></pre>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="time-series-case-crossover-studies.html#cb46-1"></a><span class="kw">glance</span>(mod_linear_reg)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="time-series-case-crossover-studies.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb42-2"><a href="time-series-case-crossover-studies.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(mod_linear_reg)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 8
 ##   null.deviance df.null  logLik    AIC    BIC deviance df.residual  nobs
 ##           &lt;dbl&gt;   &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;
@@ -1034,7 +1066,7 @@ about the model fit, including the AIC and BIC:</p>
 <p>The <code>tidy</code> function returns data at the level of the model coefficients,
 including the estimate for each model parameter, its standard error, test
 statistic, and p-value.</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="time-series-case-crossover-studies.html#cb48-1"></a><span class="kw">tidy</span>(mod_linear_reg)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="time-series-case-crossover-studies.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_linear_reg)</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
@@ -1044,7 +1076,7 @@ statistic, and p-value.</p>
 observations, including the fitted value for each observation, the residual
 between the fitted and true value, and some measures of influence on the model
 fit.</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="time-series-case-crossover-studies.html#cb50-1"></a><span class="kw">augment</span>(mod_linear_reg)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="time-series-case-crossover-studies.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(mod_linear_reg)</span></code></pre></div>
 <pre><code>## # A tibble: 8,279 x 8
 ##      all tmean .fitted .resid .std.resid     .hat .sigma  .cooksd
 ##    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
@@ -1061,17 +1093,17 @@ fit.</p>
 ## # … with 8,269 more rows</code></pre>
 <p>One way you can use <code>augment</code> is to graph the fitted values for each observation
 after fitting the model:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="time-series-case-crossover-studies.html#cb52-1"></a>mod_linear_reg <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb52-2"><a href="time-series-case-crossover-studies.html#cb52-2"></a><span class="st">  </span><span class="kw">augment</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb52-3"><a href="time-series-case-crossover-studies.html#cb52-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb52-4"><a href="time-series-case-crossover-studies.html#cb52-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> all), <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb52-5"><a href="time-series-case-crossover-studies.html#cb52-5"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> .fitted), <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb52-6"><a href="time-series-case-crossover-studies.html#cb52-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="time-series-case-crossover-studies.html#cb48-1" aria-hidden="true" tabindex="-1"></a>mod_linear_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb48-2"><a href="time-series-case-crossover-studies.html#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb48-3"><a href="time-series-case-crossover-studies.html#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb48-4"><a href="time-series-case-crossover-studies.html#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb48-5"><a href="time-series-case-crossover-studies.html#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb48-6"><a href="time-series-case-crossover-studies.html#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <p>For more on the <code>broom</code> package, including some excellent examples of how it
-can be used to streamline complex regression analyses, see <span class="citation">Robinson (<a href="#ref-robinson2014broom" role="doc-biblioref">2014</a>)</span>.
+can be used to streamline complex regression analyses, see <span class="citation"><a href="#ref-robinson2014broom" role="doc-biblioref">Robinson</a> (<a href="#ref-robinson2014broom" role="doc-biblioref">2014</a>)</span>.
 There is also a nice example of how it can be used in one of the chapters of
-<span class="citation">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, available online at <a href="https://r4ds.had.co.nz/many-models.html" class="uri">https://r4ds.had.co.nz/many-models.html</a>.</p>
+<span class="citation"><a href="#ref-wickham2016r" role="doc-biblioref">Wickham and Grolemund</a> (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>, available online at <a href="https://r4ds.had.co.nz/many-models.html" class="uri">https://r4ds.had.co.nz/many-models.html</a>.</p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Change your function call to fit a regression model in the Poisson family.</strong></li>
 </ol>
@@ -1086,7 +1118,7 @@ case a log function so that <span class="math inline">\(log(Y)=\beta_{0}+\beta_{
 this as <span class="math inline">\(Y=exp(\beta_{0}+\beta_{1}X1)\)</span>.</p>
 <p>In the <code>glm</code> call, you can specify this with the <code>family</code>
 parameter, for which “poisson” is one choice.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="time-series-case-crossover-studies.html#cb53-1"></a>mod_pois_reg &lt;-<span class="st"> </span><span class="kw">glm</span>(all <span class="op">~</span><span class="st"> </span>tmean, <span class="dt">data =</span> obs, <span class="dt">family =</span> <span class="st">&quot;poisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="time-series-case-crossover-studies.html#cb49-1" aria-hidden="true" tabindex="-1"></a>mod_pois_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>)</span></code></pre></div>
 <p>One thing to keep in mind with this change is that the model now uses a
 non-identity link between the combination of independent variable(s) and the
 dependent variable. You will need to keep this in mind when you interpret
@@ -1096,7 +1128,7 @@ increase in mortality counts for a one-unit (i.e., one degree Celsius) increase
 in temperature, now the estimated coefficient should be interpreted as the
 expected increase in the natural log-transform of mortality count for a one-unit
 increase in temperature.</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="time-series-case-crossover-studies.html#cb54-1"></a><span class="kw">summary</span>(mod_pois_reg)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="time-series-case-crossover-studies.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_pois_reg)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = all ~ tmean, family = &quot;poisson&quot;, data = obs)
@@ -1127,40 +1159,40 @@ see by looking at the range of the y-scale that these values are for the log
 of expected mortality, rather than expected mortality (compare, for example, to
 the similar plot shown from the first model, which was linear), and that the fitted
 association for that <em>transformation</em>, not for untransformed mortality counts, is linear:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="time-series-case-crossover-studies.html#cb56-1"></a>mod_pois_reg <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb56-2"><a href="time-series-case-crossover-studies.html#cb56-2"></a><span class="st">  </span><span class="kw">augment</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb56-3"><a href="time-series-case-crossover-studies.html#cb56-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb56-4"><a href="time-series-case-crossover-studies.html#cb56-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> <span class="kw">log</span>(all)), <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb56-5"><a href="time-series-case-crossover-studies.html#cb56-5"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> .fitted), <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb56-6"><a href="time-series-case-crossover-studies.html#cb56-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Log(Expected mortality count)&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="time-series-case-crossover-studies.html#cb52-1" aria-hidden="true" tabindex="-1"></a>mod_pois_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb52-2"><a href="time-series-case-crossover-studies.html#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb52-3"><a href="time-series-case-crossover-studies.html#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb52-4"><a href="time-series-case-crossover-studies.html#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(all)), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb52-5"><a href="time-series-case-crossover-studies.html#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb52-6"><a href="time-series-case-crossover-studies.html#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Log(Expected mortality count)&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 <p>You can use exponentiation to transform the fitted values back to just be the
 expected mortality count based on the model fit. Once you make this
 transformation, you can see how the link in the Poisson family specification
 enforced a curved relationship between mean daily temperature and the
 untransformed expected mortality count.</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="time-series-case-crossover-studies.html#cb57-1"></a>mod_pois_reg <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb57-2"><a href="time-series-case-crossover-studies.html#cb57-2"></a><span class="st">  </span><span class="kw">augment</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb57-3"><a href="time-series-case-crossover-studies.html#cb57-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb57-4"><a href="time-series-case-crossover-studies.html#cb57-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> all), <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb57-5"><a href="time-series-case-crossover-studies.html#cb57-5"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> <span class="kw">exp</span>(.fitted)), <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb57-6"><a href="time-series-case-crossover-studies.html#cb57-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="time-series-case-crossover-studies.html#cb53-1" aria-hidden="true" tabindex="-1"></a>mod_pois_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb53-2"><a href="time-series-case-crossover-studies.html#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb53-3"><a href="time-series-case-crossover-studies.html#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb53-4"><a href="time-series-case-crossover-studies.html#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb53-5"><a href="time-series-case-crossover-studies.html#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb53-6"><a href="time-series-case-crossover-studies.html#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <p>For this model, we can interpret the coefficient for the temperature covariate
 as the expected log relative risk in the health outcome associated with a
 one-unit increase in temperature. We can exponentiate this value to get an
 estimate of the relative risk:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="time-series-case-crossover-studies.html#cb58-1"></a><span class="co"># Extract the temperature coefficient from the model</span></span>
-<span id="cb58-2"><a href="time-series-case-crossover-studies.html#cb58-2"></a>tmean_coef &lt;-<span class="st"> </span>mod_pois_reg <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb58-3"><a href="time-series-case-crossover-studies.html#cb58-3"></a><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb58-4"><a href="time-series-case-crossover-studies.html#cb58-4"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;tmean&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># Extract the row with the tmean estimates</span></span>
-<span id="cb58-5"><a href="time-series-case-crossover-studies.html#cb58-5"></a><span class="st">  </span><span class="kw">pull</span>(estimate) <span class="co"># Extract just the point estimate</span></span>
-<span id="cb58-6"><a href="time-series-case-crossover-studies.html#cb58-6"></a></span>
-<span id="cb58-7"><a href="time-series-case-crossover-studies.html#cb58-7"></a><span class="co"># Estimate of the log relative risk for a one-unit increase in temperature</span></span>
-<span id="cb58-8"><a href="time-series-case-crossover-studies.html#cb58-8"></a>tmean_coef </span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="time-series-case-crossover-studies.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the temperature coefficient from the model</span></span>
+<span id="cb54-2"><a href="time-series-case-crossover-studies.html#cb54-2" aria-hidden="true" tabindex="-1"></a>tmean_coef <span class="ot">&lt;-</span> mod_pois_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb54-3"><a href="time-series-case-crossover-studies.html#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb54-4"><a href="time-series-case-crossover-studies.html#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;tmean&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># Extract the row with the tmean estimates</span></span>
+<span id="cb54-5"><a href="time-series-case-crossover-studies.html#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(estimate) <span class="co"># Extract just the point estimate</span></span>
+<span id="cb54-6"><a href="time-series-case-crossover-studies.html#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-7"><a href="time-series-case-crossover-studies.html#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate of the log relative risk for a one-unit increase in temperature</span></span>
+<span id="cb54-8"><a href="time-series-case-crossover-studies.html#cb54-8" aria-hidden="true" tabindex="-1"></a>tmean_coef </span></code></pre></div>
 <pre><code>## [1] -0.0147728</code></pre>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="time-series-case-crossover-studies.html#cb60-1"></a><span class="co"># Estimate of the relative risk for a one-unit increase in temperature</span></span>
-<span id="cb60-2"><a href="time-series-case-crossover-studies.html#cb60-2"></a><span class="kw">exp</span>(tmean_coef)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="time-series-case-crossover-studies.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate of the relative risk for a one-unit increase in temperature</span></span>
+<span id="cb56-2"><a href="time-series-case-crossover-studies.html#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(tmean_coef)</span></code></pre></div>
 <pre><code>## [1] 0.9853358</code></pre>
 <p>If you want to estimate the confidence interval for this estimate, you should
 calculate that <em>before</em> exponentiating.</p>
@@ -1173,7 +1205,7 @@ estimate and its estimated standard error.</strong></li>
 <p>In the R <code>glm</code> call, there is a family that is similar to Poisson (including
 using a log link), but that allows for overdispersion. You can specify it
 with the “quasipoisson” choice for the <code>family</code> parameter in the <code>glm</code> call:</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="time-series-case-crossover-studies.html#cb62-1"></a>mod_ovdisp_reg &lt;-<span class="st"> </span><span class="kw">glm</span>(all <span class="op">~</span><span class="st"> </span>tmean, <span class="dt">data =</span> obs, <span class="dt">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="time-series-case-crossover-studies.html#cb58-1" aria-hidden="true" tabindex="-1"></a>mod_ovdisp_reg <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean, <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>When you use this family, there will be some new information in the summary
 for the model object. It will now include a dispersion parameter (<span class="math inline">\(\phi\)</span>). If this
 is close to 1, then the data were close to the assumed variance for a Poisson
@@ -1182,7 +1214,7 @@ example, the overdispersion is around 5, suggesting the data are overdispersed
 (this might come down some when we start including independent variables that
 explain some of the variation in the outcome variable, like long-term and
 seasonal trends).</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="time-series-case-crossover-studies.html#cb63-1"></a><span class="kw">summary</span>(mod_ovdisp_reg)</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="time-series-case-crossover-studies.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_ovdisp_reg)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = all ~ tmean, family = &quot;quasipoisson&quot;, data = obs)
@@ -1208,14 +1240,14 @@ seasonal trends).</p>
 <p>If you compare the estimates of the temperature coefficient from the Poisson
 regression with those when you allow for overdispersion, you’ll see something
 interesting:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="time-series-case-crossover-studies.html#cb65-1"></a><span class="kw">tidy</span>(mod_pois_reg) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb65-2"><a href="time-series-case-crossover-studies.html#cb65-2"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;tmean&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="time-series-case-crossover-studies.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_pois_reg) <span class="sc">%&gt;%</span> </span>
+<span id="cb61-2"><a href="time-series-case-crossover-studies.html#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;tmean&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 5
 ##   term  estimate std.error statistic p.value
 ##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 tmean  -0.0148  0.000158     -93.3       0</code></pre>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="time-series-case-crossover-studies.html#cb67-1"></a><span class="kw">tidy</span>(mod_ovdisp_reg) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb67-2"><a href="time-series-case-crossover-studies.html#cb67-2"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;tmean&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="time-series-case-crossover-studies.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_ovdisp_reg) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-2"><a href="time-series-case-crossover-studies.html#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;tmean&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 5
 ##   term  estimate std.error statistic p.value
 ##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
@@ -1244,15 +1276,15 @@ with a <code>+</code>. In this case, we need to do one more step: earlier, we ad
 etc.). However, we need to strip off this order before we include the factor in
 the <code>glm</code> call. One way to do this is with the <code>factor</code> call, specifying
 <code>ordered = FALSE</code>. Here is the full call to fit this model:</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="time-series-case-crossover-studies.html#cb69-1"></a>mod_ctrl_dow &lt;-<span class="st"> </span><span class="kw">glm</span>(all <span class="op">~</span><span class="st"> </span>tmean <span class="op">+</span><span class="st"> </span><span class="kw">factor</span>(dow, <span class="dt">ordered =</span> <span class="ot">FALSE</span>), </span>
-<span id="cb69-2"><a href="time-series-case-crossover-studies.html#cb69-2"></a>                    <span class="dt">data =</span> obs, <span class="dt">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="time-series-case-crossover-studies.html#cb65-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> tmean <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb65-2"><a href="time-series-case-crossover-studies.html#cb65-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>When you look at the summary for the model object, you can see that the
 model has fit a separate model parameter for six of the seven weekdays. The one
 weekday that isn’t fit (Sunday in this case) serves as a baseline —these
 estimates specify how the log of the expected mortality count is expected to
 differ on, for example, Monday versus Sunday (by about 0.03), if the temperature
 is the same for the two days.</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="time-series-case-crossover-studies.html#cb70-1"></a><span class="kw">summary</span>(mod_ctrl_dow)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="time-series-case-crossover-studies.html#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_ctrl_dow)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = all ~ tmean + factor(dow, ordered = FALSE), family = &quot;quasipoisson&quot;, 
@@ -1291,12 +1323,12 @@ and will likely be worth including in the final model.</p>
 for each observation. As a result, if you plot fitted values of expected
 mortality versus mean daily temperature, you’ll see some “hoppiness” in the
 fitted line:</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="time-series-case-crossover-studies.html#cb72-1"></a>mod_ctrl_dow <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb72-2"><a href="time-series-case-crossover-studies.html#cb72-2"></a><span class="st">  </span><span class="kw">augment</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb72-3"><a href="time-series-case-crossover-studies.html#cb72-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb72-4"><a href="time-series-case-crossover-studies.html#cb72-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> all), <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb72-5"><a href="time-series-case-crossover-studies.html#cb72-5"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> <span class="kw">exp</span>(.fitted)), <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb72-6"><a href="time-series-case-crossover-studies.html#cb72-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="time-series-case-crossover-studies.html#cb68-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="sc">%&gt;%</span> </span>
+<span id="cb68-2"><a href="time-series-case-crossover-studies.html#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb68-3"><a href="time-series-case-crossover-studies.html#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb68-4"><a href="time-series-case-crossover-studies.html#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb68-5"><a href="time-series-case-crossover-studies.html#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb68-6"><a href="time-series-case-crossover-studies.html#cb68-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
 <p>This is because each fitted value is also incorporating the expected influence
 of day of week on the mortality count, and that varies across the observations
@@ -1304,13 +1336,13 @@ of day of week on the mortality count, and that varies across the observations
 expected mortality from the model, because they occur on different days).</p>
 <p>If you plot the model fits separately for each day of the week, you’ll see that
 the line is smooth across all observations from the same day of the week:</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="time-series-case-crossover-studies.html#cb73-1"></a>mod_ctrl_dow <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb73-2"><a href="time-series-case-crossover-studies.html#cb73-2"></a><span class="st">  </span><span class="kw">augment</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb73-3"><a href="time-series-case-crossover-studies.html#cb73-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> tmean)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb73-4"><a href="time-series-case-crossover-studies.html#cb73-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> all), <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb73-5"><a href="time-series-case-crossover-studies.html#cb73-5"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> <span class="kw">exp</span>(.fitted)), <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb73-6"><a href="time-series-case-crossover-studies.html#cb73-6"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb73-7"><a href="time-series-case-crossover-studies.html#cb73-7"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>obs<span class="op">$</span>dow)</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="time-series-case-crossover-studies.html#cb69-1" aria-hidden="true" tabindex="-1"></a>mod_ctrl_dow <span class="sc">%&gt;%</span> </span>
+<span id="cb69-2"><a href="time-series-case-crossover-studies.html#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb69-3"><a href="time-series-case-crossover-studies.html#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tmean)) <span class="sc">+</span> </span>
+<span id="cb69-4"><a href="time-series-case-crossover-studies.html#cb69-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb69-5"><a href="time-series-case-crossover-studies.html#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">exp</span>(.fitted)), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb69-6"><a href="time-series-case-crossover-studies.html#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Expected mortality count&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb69-7"><a href="time-series-case-crossover-studies.html#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> obs<span class="sc">$</span>dow)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 <p><em>Wrapping up</em></p>
 <p>At this point, the coefficient estimates suggests that risk of mortality
@@ -1321,63 +1353,63 @@ up to this point?</p>
 </div>
 </div>
 <h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-armstrong2006models">
-<p>Armstrong, Ben. 2006. “Models for the Relationship Between Ambient Temperature and Daily Mortality.” <em>Epidemiology</em>, 624–31.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-armstrong2006models" class="csl-entry">
+Armstrong, Ben. 2006. <span>“Models for the Relationship Between Ambient Temperature and Daily Mortality.”</span> <em>Epidemiology</em>, 624–31.
 </div>
-<div id="ref-armstrong2014conditional">
-<p>Armstrong, Ben G, Antonio Gasparrini, and Aurelio Tobias. 2014. “Conditional Poisson Models: A Flexible Alternative to Conditional Logistic Case Cross-over Analysis.” <em>BMC Medical Research Methodology</em> 14 (1): 122.</p>
+<div id="ref-armstrong2014conditional" class="csl-entry">
+Armstrong, Ben G, Antonio Gasparrini, and Aurelio Tobias. 2014. <span>“Conditional <span>Poisson</span> Models: A Flexible Alternative to Conditional Logistic Case Cross-over Analysis.”</span> <em>BMC Medical Research Methodology</em> 14 (1): 122.
 </div>
-<div id="ref-armstrong2012commentary">
-<p>Armstrong, Ben, Shakoor Hajat, Sari Kovats, Simon Lloyd, Noah Scovronick, and Paul Wilkinson. 2012. “Commentary: Climate Changehow Can Epidemiology Best Inform Policy?” <em>Epidemiology</em> 23 (6): 780–84.</p>
+<div id="ref-armstrong2012commentary" class="csl-entry">
+Armstrong, Ben, Shakoor Hajat, Sari Kovats, Simon Lloyd, Noah Scovronick, and Paul Wilkinson. 2012. <span>“Commentary: Climate ChangeHow Can Epidemiology Best Inform Policy?”</span> <em>Epidemiology</em> 23 (6): 780–84.
 </div>
-<div id="ref-basu2005temperature">
-<p>Basu, Rupa, Francesca Dominici, and Jonathan M Samet. 2005. “Temperature and Mortality Among the Elderly in the United States: A Comparison of Epidemiologic Methods.” <em>Epidemiology</em>, 58–66.</p>
+<div id="ref-basu2005temperature" class="csl-entry">
+Basu, Rupa, Francesca Dominici, and Jonathan M Samet. 2005. <span>“Temperature and Mortality Among the Elderly in the United States: A Comparison of Epidemiologic Methods.”</span> <em>Epidemiology</em>, 58–66.
 </div>
-<div id="ref-bhaskaran2013time">
-<p>Bhaskaran, Krishnan, Antonio Gasparrini, Shakoor Hajat, Liam Smeeth, and Ben Armstrong. 2013. “Time Series Regression Studies in Environmental Epidemiology.” <em>International Journal of Epidemiology</em> 42 (4): 1187–95.</p>
+<div id="ref-bhaskaran2013time" class="csl-entry">
+Bhaskaran, Krishnan, Antonio Gasparrini, Shakoor Hajat, Liam Smeeth, and Ben Armstrong. 2013. <span>“Time Series Regression Studies in Environmental Epidemiology.”</span> <em>International Journal of Epidemiology</em> 42 (4): 1187–95.
 </div>
-<div id="ref-chang2018r">
-<p>Chang, Winston. 2018. <em>R Graphics Cookbook: Practical Recipes for Visualizing Data</em>. O’Reilly Media.</p>
+<div id="ref-chang2018r" class="csl-entry">
+Chang, Winston. 2018. <em>R Graphics Cookbook: Practical Recipes for Visualizing Data</em>. O’Reilly Media.
 </div>
-<div id="ref-dominici2008statistical5">
-<p>Dominici, Francesca, and Roger D Peng. 2008a. “Exploratory Data Analysis.” In <em>Statistical Methods for Environmental Epidemiology with R</em>, 41–67. Springer.</p>
+<div id="ref-dominici2008statistical5" class="csl-entry">
+Dominici, Francesca, and Roger D Peng. 2008a. <span>“Exploratory Data Analysis.”</span> In <em>Statistical Methods for Environmental Epidemiology with r</em>, 41–67. Springer.
 </div>
-<div id="ref-dominici2008statistical4">
-<p>Dominici, Francesca, and Roger D Peng. 2008b. “Statistical Issues in Estimating the Health Effects of Spatial–Temporal Environmental Exposures.” In <em>Statistical Methods for Environmental Epidemiology with R</em>, 31–40. Springer.</p>
+<div id="ref-dominici2008statistical4" class="csl-entry">
+———. 2008b. <span>“Statistical Issues in Estimating the Health Effects of Spatial–Temporal Environmental Exposures.”</span> In <em>Statistical Methods for Environmental Epidemiology with r</em>, 31–40. Springer.
 </div>
-<div id="ref-dominici2008statistical1">
-<p>Dominici, Francesca, and Roger D Peng. 2008c. “Studies of Air Pollution and Health.” In <em>Statistical Methods for Environmental Epidemiology with R</em>, 1–6. Springer.</p>
+<div id="ref-dominici2008statistical1" class="csl-entry">
+———. 2008c. <span>“Studies of Air Pollution and Health.”</span> In <em>Statistical Methods for Environmental Epidemiology with r</em>, 1–6. Springer.
 </div>
-<div id="ref-dunn2018generalized1">
-<p>Dunn, Peter K, and Gordon K Smyth. 2018. “Statistical Models.” In <em>Generalized Linear Models with Examples in R</em>, 1–30. Springer.</p>
+<div id="ref-dunn2018generalized1" class="csl-entry">
+Dunn, Peter K, and Gordon K Smyth. 2018. <span>“Statistical Models.”</span> In <em>Generalized Linear Models with Examples in r</em>, 1–30. Springer.
 </div>
-<div id="ref-gasparrini2014modeling">
-<p>Gasparrini, Antonio. 2014. “Modeling Exposure–Lag–Response Associations with Distributed Lag Non-Linear Models.” <em>Statistics in Medicine</em> 33 (5): 881–99.</p>
+<div id="ref-gasparrini2014modeling" class="csl-entry">
+Gasparrini, Antonio. 2014. <span>“Modeling Exposure–Lag–Response Associations with Distributed Lag Non-Linear Models.”</span> <em>Statistics in Medicine</em> 33 (5): 881–99.
 </div>
-<div id="ref-gasparrini2010time">
-<p>Gasparrini, Antonio, and Ben Armstrong. 2010. “Time Series Analysis on the Health Effects of Temperature: Advancements and Limitations.” <em>Environmental Research</em> 110 (6): 633–38.</p>
+<div id="ref-gasparrini2010time" class="csl-entry">
+Gasparrini, Antonio, and Ben Armstrong. 2010. <span>“Time Series Analysis on the Health Effects of Temperature: Advancements and Limitations.”</span> <em>Environmental Research</em> 110 (6): 633–38.
 </div>
-<div id="ref-healy2018data">
-<p>Healy, Kieran. 2018. <em>Data Visualization: A Practical Introduction</em>. Princeton University Press.</p>
+<div id="ref-healy2018data" class="csl-entry">
+Healy, Kieran. 2018. <em>Data Visualization: A Practical Introduction</em>. Princeton University Press.
 </div>
-<div id="ref-imai2015time">
-<p>Imai, Chisato, Ben Armstrong, Zaid Chalabi, Punam Mangtani, and Masahiro Hashizume. 2015. “Time Series Regression Model for Infectious Disease and Weather.” <em>Environmental Research</em> 142: 319–27.</p>
+<div id="ref-imai2015time" class="csl-entry">
+Imai, Chisato, Ben Armstrong, Zaid Chalabi, Punam Mangtani, and Masahiro Hashizume. 2015. <span>“Time Series Regression Model for Infectious Disease and Weather.”</span> <em>Environmental Research</em> 142: 319–27.
 </div>
-<div id="ref-james2013introduction3">
-<p>James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2013. “Linear Regression.” In <em>An Introduction to Statistical Learning: With Applications in R</em>, 59–126. Springer.</p>
+<div id="ref-james2013introduction3" class="csl-entry">
+James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2013. <span>“Linear Regression.”</span> In <em>An Introduction to Statistical Learning: With Applications in r</em>, 59–126. Springer.
 </div>
-<div id="ref-lu2007equivalence">
-<p>Lu, Yun, and Scott L Zeger. 2007. “On the Equivalence of Case-Crossover and Time Series Methods in Environmental Epidemiology.” <em>Biostatistics</em> 8 (2): 337–44.</p>
+<div id="ref-lu2007equivalence" class="csl-entry">
+Lu, Yun, and Scott L Zeger. 2007. <span>“On the Equivalence of Case-Crossover and Time Series Methods in Environmental Epidemiology.”</span> <em>Biostatistics</em> 8 (2): 337–44.
 </div>
-<div id="ref-robinson2014broom">
-<p>Robinson, David. 2014. “Broom: An R Package for Converting Statistical Analysis Objects into Tidy Data Frames.” <em>arXiv Preprint arXiv:1412.3565</em>.</p>
+<div id="ref-robinson2014broom" class="csl-entry">
+Robinson, David. 2014. <span>“Broom: An r Package for Converting Statistical Analysis Objects into Tidy Data Frames.”</span> <em>arXiv Preprint arXiv:1412.3565</em>.
 </div>
-<div id="ref-vicedo2019hands">
-<p>Vicedo-Cabrera, Ana M, Francesco Sera, and Antonio Gasparrini. 2019. “Hands-on Tutorial on a Modeling Framework for Projections of Climate Change Impacts on Health.” <em>Epidemiology</em> 30 (3): 321–29.</p>
+<div id="ref-vicedo2019hands" class="csl-entry">
+Vicedo-Cabrera, Ana M, Francesco Sera, and Antonio Gasparrini. 2019. <span>“Hands-on Tutorial on a Modeling Framework for Projections of Climate Change Impacts on Health.”</span> <em>Epidemiology</em> 30 (3): 321–29.
 </div>
-<div id="ref-wickham2016r">
-<p>Wickham, Hadley, and Garrett Grolemund. 2016. <em>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data</em>. " O’Reilly Media, Inc.".</p>
+<div id="ref-wickham2016r" class="csl-entry">
+Wickham, Hadley, and Garrett Grolemund. 2016. <em>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data</em>. " O’Reilly Media, Inc.".
 </div>
 </div>
             </section>
@@ -1409,6 +1441,7 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
+"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -1429,6 +1462,10 @@ gitbook.start({
 "text": null
 },
 "download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
+"search": {
+"engine": "lunr",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }

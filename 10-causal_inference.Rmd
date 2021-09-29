@@ -1,1 +1,10 @@
 # Causal inference
+
+The readings for this chapter are: 
+
+
+
+The following are supplemental readings (i.e., not required, but may be of
+interest) associated with the material in this chapter:
+
+- @samet2016epidemiology A historical overview of how epidemiology tackled the question of causality for non-communicable diseases through research on the health effects of smoking

@@ -19,6 +19,10 @@ interest) associated with the material in this chapter:
 - @turner2021creating Provides reccomendations on making graphs to illustrate interrupted time series data
 - @linden2017challenges An interesting analysis of challenges to validity when an interrupted time series study is conducted without controls (i.e., with a single group)
 - @bottomley2019analysing Introduces a more complex approach for interrupted time series, where a control is included to help control for trends with time
+- @dimick2014methods A short overview of the difference-in-differences design
+- @howe2016gotta An example of a study that uses difference-in-differences, in this case to study the role of Pokemon GO on physical activity
+- @maciejewski2020regression A short overview of the regression discontinuity design
+- @haber2021covid An overview of potential study designs for assessing COVID-19 policies, including interrupted time series and difference-in-differences
 
 ## Natural experiments
 
