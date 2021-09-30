@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 6 Estimating health impacts | Advanced Epidemiological Analysis</title>
   <meta name="description" content="This is the coursebook for the Colorado State University course ERHS 732, Advanced Epidemiological Analysis." />
-  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 6 Estimating health impacts | Advanced Epidemiological Analysis" />
   <meta property="og:type" content="book" />
@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-09-28" />
+<meta name="date" content="2021-09-29" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,8 +33,7 @@
   
 <link rel="prev" href="natural-experiments.html"/>
 <link rel="next" href="longitudinal-cohort-study-designs.html"/>
-<script src="libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -51,22 +50,24 @@
 
 
 
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -86,7 +87,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -119,29 +120,6 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<style type="text/css">
-/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}
-</style>
-
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 
@@ -158,12 +136,10 @@ div.csl-indent {
 <li><a href="./">Advanced Epidemiological Analysis</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
-<ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Overview</a><ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i><b>1.1</b> License</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a>
-<ul>
+<li class="chapter" data-level="2" data-path="courseinfo.html"><a href="courseinfo.html"><i class="fa fa-check"></i><b>2</b> Course information</a><ul>
 <li class="chapter" data-level="2.1" data-path="courseinfo.html"><a href="courseinfo.html#course-learning-objectives"><i class="fa fa-check"></i><b>2.1</b> Course learning objectives</a></li>
 <li class="chapter" data-level="2.2" data-path="courseinfo.html"><a href="courseinfo.html#meeting-time-and-place"><i class="fa fa-check"></i><b>2.2</b> Meeting time and place</a></li>
 <li class="chapter" data-level="2.3" data-path="courseinfo.html"><a href="courseinfo.html#class-structure-and-expectations"><i class="fa fa-check"></i><b>2.3</b> Class Structure and Expectations</a></li>
@@ -173,46 +149,39 @@ div.csl-indent {
 <li class="chapter" data-level="2.7" data-path="courseinfo.html"><a href="courseinfo.html#prerequisites-and-preparation"><i class="fa fa-check"></i><b>2.7</b> Prerequisites and Preparation</a></li>
 <li class="chapter" data-level="2.8" data-path="courseinfo.html"><a href="courseinfo.html#academic-honesty"><i class="fa fa-check"></i><b>2.8</b> Academic Honesty</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover studies</a>
-<ul>
+<li class="chapter" data-level="3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html"><i class="fa fa-check"></i><b>3</b> Time series / case-crossover studies</a><ul>
 <li class="chapter" data-level="3.1" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#readings"><i class="fa fa-check"></i><b>3.1</b> Readings</a></li>
 <li class="chapter" data-level="3.2" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#time-series-and-case-crossover-study-designs"><i class="fa fa-check"></i><b>3.2</b> Time series and case-crossover study designs</a></li>
 <li class="chapter" data-level="3.3" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#time-series-data"><i class="fa fa-check"></i><b>3.3</b> Time series data</a></li>
 <li class="chapter" data-level="3.4" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#exploratory-data-analysis"><i class="fa fa-check"></i><b>3.4</b> Exploratory data analysis</a></li>
 <li class="chapter" data-level="3.5" data-path="time-series-case-crossover-studies.html"><a href="time-series-case-crossover-studies.html#statistical-modeling-for-a-time-series-study"><i class="fa fa-check"></i><b>3.5</b> Statistical modeling for a time series study</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a>
-<ul>
+<li class="chapter" data-level="4" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html"><i class="fa fa-check"></i><b>4</b> Generalized linear models</a><ul>
 <li class="chapter" data-level="4.1" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#readings-1"><i class="fa fa-check"></i><b>4.1</b> Readings</a></li>
 <li class="chapter" data-level="4.2" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#splines-in-glms"><i class="fa fa-check"></i><b>4.2</b> Splines in GLMs</a></li>
 <li class="chapter" data-level="4.3" data-path="generalized-linear-models.html"><a href="generalized-linear-models.html#distributed-lags-and-cross-basis-functions-in-glms"><i class="fa fa-check"></i><b>4.3</b> Distributed lags and cross-basis functions in GLMs</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a>
-<ul>
+<li class="chapter" data-level="5" data-path="natural-experiments.html"><a href="natural-experiments.html"><i class="fa fa-check"></i><b>5</b> Natural experiments</a><ul>
 <li class="chapter" data-level="5.1" data-path="natural-experiments.html"><a href="natural-experiments.html#readings-2"><i class="fa fa-check"></i><b>5.1</b> Readings</a></li>
 <li class="chapter" data-level="5.2" data-path="natural-experiments.html"><a href="natural-experiments.html#natural-experiments-1"><i class="fa fa-check"></i><b>5.2</b> Natural experiments</a></li>
 <li class="chapter" data-level="5.3" data-path="natural-experiments.html"><a href="natural-experiments.html#interrupted-time-series"><i class="fa fa-check"></i><b>5.3</b> Interrupted time series</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html"><i class="fa fa-check"></i><b>6</b> Estimating health impacts</a>
-<ul>
+<li class="chapter" data-level="6" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html"><i class="fa fa-check"></i><b>6</b> Estimating health impacts</a><ul>
 <li class="chapter" data-level="6.1" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html#readings-3"><i class="fa fa-check"></i><b>6.1</b> Readings</a></li>
 <li class="chapter" data-level="6.2" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html#attributable-risk-and-attributable-number"><i class="fa fa-check"></i><b>6.2</b> Attributable risk and attributable number</a></li>
 <li class="chapter" data-level="6.3" data-path="estimating-health-impacts.html"><a href="estimating-health-impacts.html#quantifying-potential-health-impacts-under-different-scenarios"><i class="fa fa-check"></i><b>6.3</b> Quantifying potential health impacts under different scenarios</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a>
-<ul>
+<li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a><ul>
 <li class="chapter" data-level="7.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#longitudinal-cohort-data"><i class="fa fa-check"></i><b>7.1</b> Longitudinal cohort data</a></li>
 <li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.2</b> Coding a survival analysis</a></li>
-<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a>
-<ul>
+<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a><ul>
 <li class="chapter" data-level="7.3.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.3.1</b> Multi-level exposure</a></li>
 <li class="chapter" data-level="7.3.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.3.2</b> Recurrent outcome</a></li>
 <li class="chapter" data-level="7.3.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.3.3</b> Time-varying coeffificents</a></li>
 <li class="chapter" data-level="7.3.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.3.4</b> Using survey results</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a>
-<ul>
+<li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a><ul>
 <li class="chapter" data-level="8.1" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#inverse-probability-weighting"><i class="fa fa-check"></i><b>8.1</b> Inverse probability weighting</a></li>
 <li class="chapter" data-level="8.2" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html#propensity-scores"><i class="fa fa-check"></i><b>8.2</b> Propensity scores</a></li>
 </ul></li>
@@ -240,50 +209,51 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="estimating-health-impacts" class="section level1" number="6">
+<div id="estimating-health-impacts" class="section level1">
 <h1><span class="header-section-number">Chapter 6</span> Estimating health impacts</h1>
-<div id="readings-3" class="section level2" number="6.1">
+<div id="readings-3" class="section level2">
 <h2><span class="header-section-number">6.1</span> Readings</h2>
 <p>The readings for this chapter are:</p>
 <ul>
-<li><span class="citation"><a href="#ref-balbus2016climate" role="doc-biblioref">Balbus et al.</a> (<a href="#ref-balbus2016climate" role="doc-biblioref">2016</a>)</span> Overview on climate change and human health, including a section on quantifying health impacts. The first chapter in a report on climate change and human health by the US Global Change Research Program.</li>
-<li><span class="citation"><a href="#ref-steenland2006overview" role="doc-biblioref">Steenland and Armstrong</a> (<a href="#ref-steenland2006overview" role="doc-biblioref">2006</a>)</span> (Just the section on attributable fraction) Overview on estimating burden of disease through measures like attributable risk and attributable number (Note: The equation for <span class="math inline">\(AF_{pop}\)</span> in this paper in equation 3 aligns with the equations for attributable risk described in this chapter)</li>
-<li><span class="citation"><a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone</a> (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span> Calculating attributable risk from distributed lag non-linear models. Example code is included for this paper.</li>
-<li><span class="citation"><a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini</a> (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> Provides a tutorial of all the steps for a
+<li><span class="citation">Balbus et al. (<a href="#ref-balbus2016climate" role="doc-biblioref">2016</a>)</span> Overview on climate change and human health, including a section on quantifying health impacts. The first chapter in a report on climate change and human health by the US Global Change Research Program.</li>
+<li><span class="citation">Steenland and Armstrong (<a href="#ref-steenland2006overview" role="doc-biblioref">2006</a>)</span> (Just the section on attributable fraction) Overview on estimating burden of disease through measures like attributable risk and attributable number (Note: The equation for <span class="math inline">\(AF_{pop}\)</span> in this paper in equation 3 aligns with the equations for attributable risk described in this chapter)</li>
+<li><span class="citation">Gasparrini and Leone (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span> Calculating attributable risk from distributed lag non-linear models. Example code is included for this paper.</li>
+<li><span class="citation">Vicedo-Cabrera, Sera, and Gasparrini (<a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> Provides a tutorial of all the steps for a
 projecting of health impacts of temperature extremes under climate change.</li>
 </ul>
 <p>The following are supplemental readings (i.e., not required, but may be of
 interest) associated with the material in this chapter:</p>
 <ul>
-<li><span class="citation"><a href="#ref-kinney2008approaches" role="doc-biblioref">Kinney et al.</a> (<a href="#ref-kinney2008approaches" role="doc-biblioref">2008</a>)</span> A review of challenges and approaches for projecting heat-related deaths under climate change</li>
-<li><span class="citation"><a href="#ref-benichou2006attributable" role="doc-biblioref">Benichou</a> (<a href="#ref-benichou2006attributable" role="doc-biblioref">2006</a>)</span> Encyclopedia entry on attributable risk</li>
-<li><span class="citation"><a href="#ref-northridge1995public" role="doc-biblioref">Northridge</a> (<a href="#ref-northridge1995public" role="doc-biblioref">1995</a>)</span> Brief summary of attributable risk with examples from epidemiology</li>
+<li><span class="citation">Kinney et al. (<a href="#ref-kinney2008approaches" role="doc-biblioref">2008</a>)</span> A review of challenges and approaches for projecting heat-related deaths under climate change</li>
+<li><span class="citation">Benichou (<a href="#ref-benichou2006attributable" role="doc-biblioref">2006</a>)</span> Encyclopedia entry on attributable risk</li>
+<li><span class="citation">Northridge (<a href="#ref-northridge1995public" role="doc-biblioref">1995</a>)</span> Brief summary of attributable risk with examples from epidemiology</li>
+<li><span class="citation">Greenland and Robins (<a href="#ref-greenland1988conceptual" role="doc-biblioref">1988</a>)</span> Definition and interpretation of attributable fractions</li>
 </ul>
 </div>
-<div id="attributable-risk-and-attributable-number" class="section level2" number="6.2">
+<div id="attributable-risk-and-attributable-number" class="section level2">
 <h2><span class="header-section-number">6.2</span> Attributable risk and attributable number</h2>
 <p>So far, we have focused on estimating the relative risk of exposure on a health outcome. In some cases—where we can assume a linear relationship between the exposure and the log counts of the outcome—we were able to get a single measure of the relative risk per unit change of the exposure. In this case, the single measure of relative risk applies to a one-unit change anywhere along the range of exposure observed for the population. One common example is the association between outdoor particulate matter concentration and mortality, which is typically modeled using a linear association, resulting in a single estimate of relative risk per unit increase in the exposure (as a note, this “unit” can be any constant change in the exposure—often it will be selected to reflect a realistically important change in the exposure, for example, an increase of <span class="math inline">\(10 \mu g/m^3\)</span> for <span class="math inline">\(PM_{2.5}\)</span>).</p>
 <p>We have also looked at some more complex cases, where we’ve used a non-linear function of the exposure to model associated risk of the health outcome. In these cases, it becomes a bit more complicated to interpret the results. First, you need to identify a “baseline” of exposure to use as a comparison for measurements of relative risk. While for a linear association, you can measure a relative risk per unit change, regardless of where the change happens along the range of exposure, for a non-linear association, you must pick specific points to compare, and a unit change in exposure will vary across the range of exposure. For example, when looking at temperature and mortality in London, we compared risk at specific high and low temperatures to a baseline at a mild, “safe” temperature, one where mortality risk was observed to be at its lowest. In other words, we selected a baseline level of exposure to use as a reference and then compared relative risk at “slices” of the non-linear exposure-response function to get summaries of the observed relative risk. As we moved to cross-basis functions, we similarly took “slices” to look at risk at specific lags or specific temperatures.</p>
 <p>These techniques point towards a general theme—when we are studying how an environmental exposure is associated with risk of a health outcome, we need to not only fit an appropriate statistical model to describe the association, but we also need to extract some summaries from that model that we can use to communicate what we’ve found. Not only is this important for communicating our findings, it’s also critical for making sure our findings can be used to improve public health.</p>
 <p>So far, we have focused on summarizing and communicating our results based on estimates of relative risk. These estimates are a common summary in published environmental epidemiology studies, and they’re helpful in identifying how levels of an exposure translate to increased health risk. However, they fail to incorporate one facet that is very important when trying to translate findings to public health impacts—they do not incorporate how common or rare exposures of different levels are in real life. For example, say you fit a model that shows an exposure-response function for temperature and mortality that is very flat everywhere except at very high temperatures. If those very high temperatures occur often (say, 20 days a year on average), then temperature would cause many more excess deaths in the community compared to if those temperatures are very rare (say, 1 day every five years on average). In other words, to interpret the public health impact of an exposure, you need to consider not only how health risk changes with the level of the exposure, but also how frequently different levels of exposure occur.</p>
-<p>One epidemiological measure that incorporates these two facets is the measure of <strong>attributable risk</strong>. Attributable risk aims to measure the proportion of cases of disease in a population that is attributable to an exposure—in other words, what proportion of cases would you have avoided in a population if the exposure were eliminated (or, in cases where that doesn’t make sense like temperature, held at its safest level)? A number of other terms are sometimes also used to describe this idea, including <em>population attributable risk</em>, <em>attributable fraction</em>, and <em>etiological fraction</em>.</p>
+<p>One epidemiological measure that incorporates these two facets is the measure of <strong>attributable risk</strong>. Attributable risk aims to measure the proportion of cases of disease in a population that is attributable to an exposure—in other words, what proportion of cases would you have avoided in a population if the exposure were eliminated (or, in cases where that doesn’t make sense like temperature, held at its safest level)? A number of other terms are sometimes also used to describe this idea, including <em>population attributable risk</em>, <em>attributable fraction</em>. <em>Etiological</em> or <em>etiologic fraction</em> also appears in the literature as an equivalent or interchangeable term to <em>attributable fraction</em>, but as Greenland and Robins point out <span class="citation">(Greenland and Robins <a href="#ref-greenland1988conceptual" role="doc-biblioref">1988</a>)</span> the interpretation of each is more nuanced, and the two are not necessarily the same quantity.</p>
 <p>In the simple case of a binary exposure (in other words, everyone in the study population can either be exposed or unexposed, but there aren’t different levels of exposure), the attributable risk (<span class="math inline">\(AR\)</span>) can be expressed mathematically as:</p>
 <p><span class="math display">\[
 AR = \frac{Pr(D) - Pr(D|\bar{E})}{Pr(D)}
 \]</span>
-where <span class="math inline">\(Pr(D)\)</span> is the probability of the disease in the population and <span class="math inline">\(Pr(D|\bar{E})\)</span> is the probability of the disease if the whole population were unexposed. This can be expressed in terms of the probability of exposure and the relative risk of exposure on the outcome <span class="citation">(<a href="#ref-benichou2006attributable" role="doc-biblioref">Benichou 2006</a>; <a href="#ref-northridge1995public" role="doc-biblioref">Northridge 1995</a>)</span>:</p>
+where <span class="math inline">\(Pr(D)\)</span> is the probability of the disease in the population and <span class="math inline">\(Pr(D|\bar{E})\)</span> is the probability of the disease if the whole population were unexposed. This can be expressed in terms of the probability of exposure and the relative risk of exposure on the outcome <span class="citation">(Benichou <a href="#ref-benichou2006attributable" role="doc-biblioref">2006</a>; Northridge <a href="#ref-northridge1995public" role="doc-biblioref">1995</a>)</span>:</p>
 <p><span class="math display">\[
 AR = \frac{Pr(E) * (RR-1)}{[Pr(E) * (RR-1)] + 1}
 \]</span>
 where <span class="math inline">\(Pr(E)\)</span> is the probability of exposure in the population (again, this is for a binary exposure) and <span class="math inline">\(RR\)</span> is the relative risk of the outcome associated with exposure.</p>
-<p>Another similar measure is also helpful in estimating the impact of the exposure—the <strong>attributable number</strong>. The attributable number gives an estimate of the absolute number of cases that would have been avoided had the entire population been unexposed. It essentially takes the attributable risk and multiplies it by the prevalence of the outcome in the population, to move from a proportion of cases that are attributable to the exposure to the number of cases that are attributable (<span class="math inline">\(AN\)</span>) <span class="citation">(<a href="#ref-benichou2006attributable" role="doc-biblioref">Benichou 2006</a>; <a href="#ref-northridge1995public" role="doc-biblioref">Northridge 1995</a>)</span>:</p>
+<p>Another similar measure is also helpful in estimating the impact of the exposure—the <strong>attributable number</strong>. The attributable number gives an estimate of the absolute number of cases that would have been avoided had the entire population been unexposed. It essentially takes the attributable risk and multiplies it by the prevalence of the outcome in the population, to move from a proportion of cases that are attributable to the exposure to the number of cases that are attributable (<span class="math inline">\(AN\)</span>) <span class="citation">(Benichou <a href="#ref-benichou2006attributable" role="doc-biblioref">2006</a>; Northridge <a href="#ref-northridge1995public" role="doc-biblioref">1995</a>)</span>:</p>
 <p><span class="math display">\[
 AN = AR * n
 \]</span>
 where <span class="math inline">\(n\)</span> is the total number of cases in the population.</p>
 <p>This measure is often helpful in communicating total impacts to people who are not epidemiologists. For example, this measurement can be used to determine the number of excess deaths that were likely caused by a disaster, helping to conceptualize it’s impact on a population. These estimates can also be extended to help calculate economic costs related to health impacts. For example, an estimate of excess hospitalizations related to an exposure can be multiplied by the average cost of hospitalization in that population for the outcome to generate a back-of-the-envelope estimate of the costs to an insurer related to that exposure.</p>
 <p>It becomes a bit more complex to estimate the attributable risk when the exposure is continuous rather than binary, but the process is conceptually similar. First, you need to determine a baseline level of exposure. This will serve in creating a counterfactual—in the attributable risk, you will be comparing to an alternative scenario where the exposure is always at this level. There are a few ways you can pick this baseline. If the level of the exposure can really (and reasonably) take a value of 0, then you can use that for the comparison. For example, if you are studying smoking and health, it would be reasonable to set non-smoking as the baseline. For other exposures, there may always be some background level of the exposure—a level that couldn’t be eliminated regardless of policy choices or other actions—and in that case it may make sense to set the baseline to this background level of exposure. Finally, there are some cases where the “safest” level comes within the range of exposure, rather than at a minimum or maximum value. Temperature is an example of this, where the lowest risk of many health outcomes occurs at a mild temperature in the middle of the temperature range. In this case, the baseline is often set at this “safest” level of exposure. For temperature and mortality, this point is called the <em>minimum mortality temperature</em>. Any of these choices can be fine, but since there are choices, it’s important that you clearly describe your baseline when estimating attributable risk, and justify why it’s a helpful baseline in interpreting health impacts of the exposure.</p>
-<p>Second, you need to compare each observed exposure in the population to this baseline level. For each observation, you’ll estimate the relative risk at that observed exposure compared to the baseline. You can then get an observation-level estimate of attributable fraction for each exposure of an exposure, which can be used to estimate a component of attributable number for each exposure, and sum these contributions to get an estimate for the population as a whole, incorporating the range of exposures among that population. Mathematically, the steps for this are to look at each observation in the population (i.e., each “exposure,” which in a daily time series would be each date) and calculate the attributable fraction (<span class="math inline">\(AF_{x_i}\)</span>) for that “exposure” (<span class="math inline">\(x_i\)</span>) (adapted from <span class="citation"><a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone</a> (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>). You can calculate the attributable fraction for each observed exposure as:</p>
+<p>Second, you need to compare each observed exposure in the population to this baseline level. For each observation, you’ll estimate the relative risk at that observed exposure compared to the baseline. You can then get an observation-level estimate of attributable fraction for each exposure of an exposure, which can be used to estimate a component of attributable number for each exposure, and sum these contributions to get an estimate for the population as a whole, incorporating the range of exposures among that population. Mathematically, the steps for this are to look at each observation in the population (i.e., each “exposure”, which in a daily time series would be each date) and calculate the attributable fraction (<span class="math inline">\(AF_{x_i}\)</span>) for that “exposure” (<span class="math inline">\(x_i\)</span>) (adapted from <span class="citation">Gasparrini and Leone (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>). You can calculate the attributable fraction for each observed exposure as:</p>
 <p><span class="math display">\[
 AF_{x_i} = \frac{(RR_{x_i} - 1)}{RR_{x_i}}
 \]</span></p>
@@ -295,16 +265,16 @@ AF_{x_i} = \frac{exp(\beta_{x_i}) - 1}{exp(\beta_{x_i})} \\
 = 1 - exp(-\beta_{x_i})
 \]</span></p>
 <p>If you have categories of exposure, you may have calculated <span class="math inline">\(\beta_{x_i}\)</span> for each of those categories compared to a baseline. If you have fit a non-linear association, you can get the <span class="math inline">\(\beta_{x_i}\)</span> for each of the many exposure levels (e.g., each temperature) by “slicing” the exposure-response function at that level in comparison to a baseline. In practice, we can calculate this for each day in a time series by “slicing” to get the estimate of <span class="math inline">\(\beta_{x_i}\)</span> for that day’s temperature.</p>
-<p>By multiplying this by the total number of cases observed at exposure level (<span class="math inline">\(n_{x_i}\)</span>), you can estimate the attributable number for that specific exposure (<span class="math inline">\(AN_{x_i}\)</span>) (adapted from <span class="citation"><a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone</a> (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>):</p>
+<p>By multiplying this by the total number of cases observed at exposure level (<span class="math inline">\(n_{x_i}\)</span>), you can estimate the attributable number for that specific exposure (<span class="math inline">\(AN_{x_i}\)</span>) (adapted from <span class="citation">Gasparrini and Leone (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>):</p>
 <p><span class="math display">\[
 AN_{x_i} = n_{x_i} * AF_{x_i}
 \]</span></p>
 <p>In practice, for a time series study, you could do this by taking your estimate of <span class="math inline">\(AF_{x_i}\)</span> for each day in the study and then multiplying it by the number of cases (e.g., deaths) observed on that study day.</p>
-<p>You can then sum all the observation-level attributable number estimates to get the total attributable number in the population (for a time series, this will be over the study period) (adapted from <span class="citation"><a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone</a> (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>):</p>
+<p>You can then sum all the observation-level attributable number estimates to get the total attributable number in the population (for a time series, this will be over the study period) (adapted from <span class="citation">Gasparrini and Leone (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>):</p>
 <p><span class="math display">\[
 AN = \sum_{i=1}^{n}{AN_{x_i}} 
 \]</span></p>
-<p>From this attributable number, you can estimate an attributable fraction by dividing by the total number of cases in the population (adapted from <span class="citation"><a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone</a> (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>):</p>
+<p>From this attributable number, you can estimate an attributable fraction by dividing by the total number of cases in the population (adapted from <span class="citation">Gasparrini and Leone (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>):</p>
 <p><span class="math display">\[
 AR = \frac{AN}{\sum_{i=1}^{n}{n_i}}
 \]</span></p>
@@ -318,34 +288,34 @@ AR = \frac{AN}{\sum_{i=1}^{n}{n_i}}
 </ol>
 <p><em>Applied exercise: Example code</em></p>
 <p>Here is the code to read in the data and create that model and crossbasis you will need in this exercise:</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="estimating-health-impacts.html#cb265-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
-<span id="cb265-2"><a href="estimating-health-impacts.html#cb265-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb265-3"><a href="estimating-health-impacts.html#cb265-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
-<span id="cb265-4"><a href="estimating-health-impacts.html#cb265-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb265-5"><a href="estimating-health-impacts.html#cb265-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb265-6"><a href="estimating-health-impacts.html#cb265-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb265-7"><a href="estimating-health-impacts.html#cb265-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load and clean the data</span></span>
-<span id="cb265-8"><a href="estimating-health-impacts.html#cb265-8" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb265-9"><a href="estimating-health-impacts.html#cb265-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dow =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb265-10"><a href="estimating-health-impacts.html#cb265-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> <span class="fu">as.numeric</span>(date) <span class="sc">-</span> <span class="fu">first</span>(<span class="fu">as.numeric</span>(date)))</span>
-<span id="cb265-11"><a href="estimating-health-impacts.html#cb265-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb265-12"><a href="estimating-health-impacts.html#cb265-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dlnm)</span>
-<span id="cb265-13"><a href="estimating-health-impacts.html#cb265-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
-<span id="cb265-14"><a href="estimating-health-impacts.html#cb265-14" aria-hidden="true" tabindex="-1"></a>temp_basis <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">0</span>, </span>
-<span id="cb265-15"><a href="estimating-health-impacts.html#cb265-15" aria-hidden="true" tabindex="-1"></a>                         <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
-<span id="cb265-16"><a href="estimating-health-impacts.html#cb265-16" aria-hidden="true" tabindex="-1"></a>                         <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;integer&quot;</span>))</span>
-<span id="cb265-17"><a href="estimating-health-impacts.html#cb265-17" aria-hidden="true" tabindex="-1"></a>dlnm_mod_1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> temp_basis <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb265-18"><a href="estimating-health-impacts.html#cb265-18" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
-<span id="cb265-19"><a href="estimating-health-impacts.html#cb265-19" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="estimating-health-impacts.html#cb269-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
+<span id="cb269-2"><a href="estimating-health-impacts.html#cb269-2"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb269-3"><a href="estimating-health-impacts.html#cb269-3"></a><span class="kw">library</span>(viridis)</span>
+<span id="cb269-4"><a href="estimating-health-impacts.html#cb269-4"></a><span class="kw">library</span>(lubridate)</span>
+<span id="cb269-5"><a href="estimating-health-impacts.html#cb269-5"></a><span class="kw">library</span>(broom)</span>
+<span id="cb269-6"><a href="estimating-health-impacts.html#cb269-6"></a></span>
+<span id="cb269-7"><a href="estimating-health-impacts.html#cb269-7"></a><span class="co"># Load and clean the data</span></span>
+<span id="cb269-8"><a href="estimating-health-impacts.html#cb269-8"></a>obs &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb269-9"><a href="estimating-health-impacts.html#cb269-9"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dow =</span> <span class="kw">wday</span>(date, <span class="dt">label =</span> <span class="ot">TRUE</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb269-10"><a href="estimating-health-impacts.html#cb269-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">time =</span> <span class="kw">as.numeric</span>(date) <span class="op">-</span><span class="st"> </span><span class="kw">first</span>(<span class="kw">as.numeric</span>(date)))</span>
+<span id="cb269-11"><a href="estimating-health-impacts.html#cb269-11"></a></span>
+<span id="cb269-12"><a href="estimating-health-impacts.html#cb269-12"></a><span class="kw">library</span>(dlnm)</span>
+<span id="cb269-13"><a href="estimating-health-impacts.html#cb269-13"></a><span class="kw">library</span>(splines)</span>
+<span id="cb269-14"><a href="estimating-health-impacts.html#cb269-14"></a>temp_basis &lt;-<span class="st"> </span><span class="kw">crossbasis</span>(obs<span class="op">$</span>tmean, <span class="dt">lag =</span> <span class="dv">0</span>, </span>
+<span id="cb269-15"><a href="estimating-health-impacts.html#cb269-15"></a>                         <span class="dt">argvar =</span> <span class="kw">list</span>(<span class="dt">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="dt">df =</span> <span class="dv">4</span>), </span>
+<span id="cb269-16"><a href="estimating-health-impacts.html#cb269-16"></a>                         <span class="dt">arglag =</span> <span class="kw">list</span>(<span class="dt">fun =</span> <span class="st">&quot;integer&quot;</span>))</span>
+<span id="cb269-17"><a href="estimating-health-impacts.html#cb269-17"></a>dlnm_mod_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(all <span class="op">~</span><span class="st"> </span>temp_basis <span class="op">+</span><span class="st"> </span><span class="kw">factor</span>(dow, <span class="dt">ordered =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb269-18"><a href="estimating-health-impacts.html#cb269-18"></a><span class="st">                          </span><span class="kw">ns</span>(time, <span class="dt">df =</span> <span class="dv">158</span>), </span>
+<span id="cb269-19"><a href="estimating-health-impacts.html#cb269-19"></a>                        <span class="dt">data =</span> obs, <span class="dt">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li><strong>Start with the model you fit as <code>dlnm_mod_1</code> in Chapter 4, as well as the <code>obs</code> dataset you used to fit it. Using 7 degrees C as the baseline exposure, determine the fraction of deaths attributable to heat in the first week of July in 2012 in London.</strong></li>
 </ol>
 <p>Let’s start by pulling out the observations for the first week in July of 2012 (note that you can use <code>interval</code> and <code>%within%</code> from lubridate to help pull observations with a date within a certain range):</p>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="estimating-health-impacts.html#cb266-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb266-2"><a href="estimating-health-impacts.html#cb266-2" aria-hidden="true" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb266-3"><a href="estimating-health-impacts.html#cb266-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">%within%</span> <span class="fu">interval</span>(<span class="fu">ymd</span>(<span class="st">&quot;2012-07-01&quot;</span>), <span class="fu">ymd</span>(<span class="st">&quot;2012-07-07&quot;</span>))) <span class="sc">%&gt;%</span> </span>
-<span id="cb266-4"><a href="estimating-health-impacts.html#cb266-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, all, tmean)</span>
-<span id="cb266-5"><a href="estimating-health-impacts.html#cb266-5" aria-hidden="true" tabindex="-1"></a>july_week</span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="estimating-health-impacts.html#cb270-1"></a><span class="kw">library</span>(lubridate)</span>
+<span id="cb270-2"><a href="estimating-health-impacts.html#cb270-2"></a>july_week &lt;-<span class="st"> </span>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb270-3"><a href="estimating-health-impacts.html#cb270-3"></a><span class="st">  </span><span class="kw">filter</span>(date <span class="op">%within%</span><span class="st"> </span><span class="kw">interval</span>(<span class="kw">ymd</span>(<span class="st">&quot;2012-07-01&quot;</span>), <span class="kw">ymd</span>(<span class="st">&quot;2012-07-07&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb270-4"><a href="estimating-health-impacts.html#cb270-4"></a><span class="st">  </span><span class="kw">select</span>(date, all, tmean)</span>
+<span id="cb270-5"><a href="estimating-health-impacts.html#cb270-5"></a>july_week</span></code></pre></div>
 <pre><code>## # A tibble: 7 x 3
 ##   date         all tmean
 ##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;
@@ -360,8 +330,8 @@ AR = \frac{AN}{\sum_{i=1}^{n}{n_i}}
 <p>First, let’s calculate the attributable fraction. To do this, we need to use
 the model that we fit earlier to determine what the log relative risk is for each day’s temperature. You can use the <code>crosspred</code> function to determine the log relative risk at any temperature compared to a baseline temperature that you specify. In the <code>crosspred</code> call, you’ll use the <code>cen</code> parameter to say which temperature you want to use as your baseline and the <code>at</code> parameter to say which temperatures you want to predict to—in this case, we want to predict to the temperatures for the first week in July of 2012 (<code>july_week$tmean</code>).</p>
 <p>The <code>crosspred</code> object includes a lot of output; the <code>matfit</code> part gives the central estimates of log relative risk at each temperature:</p>
-<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="estimating-health-impacts.html#cb268-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb268-2"><a href="estimating-health-impacts.html#cb268-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">at =</span> july_week<span class="sc">$</span>tmean)<span class="sc">$</span>matfit</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="estimating-health-impacts.html#cb272-1"></a><span class="kw">crosspred</span>(<span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb272-2"><a href="estimating-health-impacts.html#cb272-2"></a>          <span class="dt">cen =</span> <span class="dv">7</span>, <span class="dt">at =</span> july_week<span class="op">$</span>tmean)<span class="op">$</span>matfit</span></code></pre></div>
 <pre><code>##                        lag0
 ## 14.6077699661255 0.01199433
 ## 15.190845489502  0.01275503
@@ -371,15 +341,15 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 18.4983215332031 0.04512788
 ## 19.1906547546387 0.05791965</code></pre>
 <p>With some code, you can extract this and join it with the <code>july_2012</code> dataframe:</p>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="estimating-health-impacts.html#cb270-1" aria-hidden="true" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb270-2"><a href="estimating-health-impacts.html#cb270-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">at =</span> july_week<span class="sc">$</span>tmean) <span class="sc">%&gt;%</span> </span>
-<span id="cb270-3"><a href="estimating-health-impacts.html#cb270-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;matfit&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb270-4"><a href="estimating-health-impacts.html#cb270-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb270-5"><a href="estimating-health-impacts.html#cb270-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;tmean&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb270-6"><a href="estimating-health-impacts.html#cb270-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;beta_x&quot;</span> <span class="ot">=</span> lag0) <span class="sc">%&gt;%</span> </span>
-<span id="cb270-7"><a href="estimating-health-impacts.html#cb270-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tmean =</span> <span class="fu">as.numeric</span>(tmean)) <span class="sc">%&gt;%</span> </span>
-<span id="cb270-8"><a href="estimating-health-impacts.html#cb270-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(july_week, ., <span class="at">by =</span> <span class="st">&quot;tmean&quot;</span>) </span>
-<span id="cb270-9"><a href="estimating-health-impacts.html#cb270-9" aria-hidden="true" tabindex="-1"></a>july_week</span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="estimating-health-impacts.html#cb274-1"></a>july_week &lt;-<span class="st"> </span><span class="kw">crosspred</span>(<span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb274-2"><a href="estimating-health-impacts.html#cb274-2"></a>          <span class="dt">cen =</span> <span class="dv">7</span>, <span class="dt">at =</span> july_week<span class="op">$</span>tmean) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb274-3"><a href="estimating-health-impacts.html#cb274-3"></a><span class="st">  </span><span class="kw">pluck</span>(<span class="st">&quot;matfit&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb274-4"><a href="estimating-health-impacts.html#cb274-4"></a><span class="st">  </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb274-5"><a href="estimating-health-impacts.html#cb274-5"></a><span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="dt">var =</span> <span class="st">&quot;tmean&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb274-6"><a href="estimating-health-impacts.html#cb274-6"></a><span class="st">  </span><span class="kw">rename</span>(<span class="st">&quot;beta_x&quot;</span> =<span class="st"> </span>lag0) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb274-7"><a href="estimating-health-impacts.html#cb274-7"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tmean =</span> <span class="kw">as.numeric</span>(tmean)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb274-8"><a href="estimating-health-impacts.html#cb274-8"></a><span class="st">  </span><span class="kw">inner_join</span>(july_week, ., <span class="dt">by =</span> <span class="st">&quot;tmean&quot;</span>) </span>
+<span id="cb274-9"><a href="estimating-health-impacts.html#cb274-9"></a>july_week</span></code></pre></div>
 <pre><code>## # A tibble: 7 x 4
 ##   date         all tmean beta_x
 ##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
@@ -391,10 +361,10 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 6 2012-07-06   102  17.0 0.0246
 ## 7 2012-07-07   109  16.0 0.0160</code></pre>
 <p>From this, you can calculate attributable risk on each day as <span class="math inline">\(AR = 1 - exp(-\beta_x)\)</span> and then calculate attributable number as <span class="math inline">\(AN = AR * n\)</span>:</p>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="estimating-health-impacts.html#cb272-1" aria-hidden="true" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> july_week <span class="sc">%&gt;%</span> </span>
-<span id="cb272-2"><a href="estimating-health-impacts.html#cb272-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">attr_frac =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>beta_x),</span>
-<span id="cb272-3"><a href="estimating-health-impacts.html#cb272-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">attr_num =</span> all <span class="sc">*</span> attr_frac)</span>
-<span id="cb272-4"><a href="estimating-health-impacts.html#cb272-4" aria-hidden="true" tabindex="-1"></a>july_week</span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="estimating-health-impacts.html#cb276-1"></a>july_week &lt;-<span class="st"> </span>july_week <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb276-2"><a href="estimating-health-impacts.html#cb276-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">attr_frac =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>beta_x),</span>
+<span id="cb276-3"><a href="estimating-health-impacts.html#cb276-3"></a>         <span class="dt">attr_num =</span> all <span class="op">*</span><span class="st"> </span>attr_frac)</span>
+<span id="cb276-4"><a href="estimating-health-impacts.html#cb276-4"></a>july_week</span></code></pre></div>
 <pre><code>## # A tibble: 7 x 6
 ##   date         all tmean beta_x attr_frac attr_num
 ##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
@@ -407,36 +377,36 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 7 2012-07-07   109  16.0 0.0160    0.0159     1.73</code></pre>
 <p>Over this week, the fraction of deaths attributable to heat on any day (compared to a baseline of 7 degrees C) ranged from about 1.2% of all deaths to about 5.6% of all deaths. Across these days, between 1.2 and 6.2 deaths on a given day were attributable to heat.</p>
 <p>We can get the total number of deaths attributable to heat, as well as the total attributable fraction over the time period, by summing up across the week for the attributable number and then dividing this by the total number of cases in the week to get the attributable fraction:</p>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="estimating-health-impacts.html#cb274-1" aria-hidden="true" tabindex="-1"></a>july_week <span class="sc">%&gt;%</span> </span>
-<span id="cb274-2"><a href="estimating-health-impacts.html#cb274-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">tot_attr_num =</span> <span class="fu">sum</span>(attr_num), </span>
-<span id="cb274-3"><a href="estimating-health-impacts.html#cb274-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">tot_attr_frac =</span> tot_attr_num <span class="sc">/</span> <span class="fu">sum</span>(all))</span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="estimating-health-impacts.html#cb278-1"></a>july_week <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb278-2"><a href="estimating-health-impacts.html#cb278-2"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">tot_attr_num =</span> <span class="kw">sum</span>(attr_num), </span>
+<span id="cb278-3"><a href="estimating-health-impacts.html#cb278-3"></a>            <span class="dt">tot_attr_frac =</span> tot_attr_num <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(all))</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 2
 ##   tot_attr_num tot_attr_frac
 ##          &lt;dbl&gt;         &lt;dbl&gt;
 ## 1         20.7        0.0273</code></pre>
 <p>This tells us that there were about 21 deaths attributable to heat in London that week (i.e., deaths that would not have occurred if the temperature was instead 7 degrees C each day in the week), and that this makes up about 3% of all the deaths in London that week.</p>
 <p>You can plot day-by-day estimates of the total deaths, highlighting the number that are attributable to temperature, during this period:</p>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="estimating-health-impacts.html#cb276-1" aria-hidden="true" tabindex="-1"></a>july_week <span class="sc">%&gt;%</span> </span>
-<span id="cb276-2"><a href="estimating-health-impacts.html#cb276-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span> </span>
-<span id="cb276-3"><a href="estimating-health-impacts.html#cb276-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">fill =</span> <span class="st">&quot;cyan3&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb276-4"><a href="estimating-health-impacts.html#cb276-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> attr_num), <span class="at">fill =</span> <span class="st">&quot;cyan4&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="estimating-health-impacts.html#cb280-1"></a>july_week <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb280-2"><a href="estimating-health-impacts.html#cb280-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb280-3"><a href="estimating-health-impacts.html#cb280-3"></a><span class="st">  </span><span class="kw">geom_col</span>(<span class="kw">aes</span>(<span class="dt">y =</span> all), <span class="dt">fill =</span> <span class="st">&quot;cyan3&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb280-4"><a href="estimating-health-impacts.html#cb280-4"></a><span class="st">  </span><span class="kw">geom_col</span>(<span class="kw">aes</span>(<span class="dt">y =</span> attr_num), <span class="dt">fill =</span> <span class="st">&quot;cyan4&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-151-1.png" width="672" /></p>
-<p>With this example, you can see how you can calculate these estimates from scratch. However, this will become cumbersome as you move to larger and more complex examples. Fortunately, the authors of <span class="citation"><a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone</a> (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span> included an R script with code for a function to do this, both for these simpler examples and as you move to more complex examples. To download the script for this function, go <a href="https://raw.githubusercontent.com/gasparrini/2014_gasparrini_BMCmrm_Rcodedata/master/attrdl.R">here</a> and save the file as a plain text file, with the extension “.R.” (As a note, make sure you use this link for the file—an earlier version of the script was posted on the website of the article, but it’s changed some since then, and you want the newer version.) Once you unzip this file, it should be an R script named “attrdl.R.” Put this script somewhere convenient to your working directory and source the code in it using the <code>source</code> function. For example, if you saved the R script in a subdirectory “code” of the current working directory, you would run:</p>
-<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="estimating-health-impacts.html#cb277-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;code/attrdl.R&quot;</span>)</span></code></pre></div>
+<p>With this example, you can see how you can calculate these estimates from scratch. However, this will become cumbersome as you move to larger and more complex examples. Fortunately, the authors of <span class="citation">Gasparrini and Leone (<a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span> included an R script with code for a function to do this, both for these simpler examples and as you move to more complex examples. To download the script for this function, go <a href="https://raw.githubusercontent.com/gasparrini/2014_gasparrini_BMCmrm_Rcodedata/master/attrdl.R">here</a> and save the file as a plain text file, with the extension “.R”. (As a note, make sure you use this link for the file—an earlier version of the script was posted on the website of the article, but it’s changed some since then, and you want the newer version.) Once you unzip this file, it should be an R script named “attrdl.R”. Put this script somewhere convenient to your working directory and source the code in it using the <code>source</code> function. For example, if you saved the R script in a subdirectory “code” of the current working directory, you would run:</p>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="estimating-health-impacts.html#cb281-1"></a><span class="kw">source</span>(<span class="st">&quot;code/attrdl.R&quot;</span>)</span></code></pre></div>
 <p>This will run all the code in the file, which creates a new function called <code>attrdl</code>. This function also has a helpfile, which you can find <a href="https://static-content.springer.com/esm/art%3A10.1186%2F1471-2288-14-55/MediaObjects/12874_2014_1076_MOESM2_ESM.pdf">here</a>.</p>
 <p>The <code>attrdl</code> function has four required arguments: a vector with the exposure, a crossbasis function, a vector with the cases that correspond to each value in the exposure vector, and the value of the exposure that you want to use as a baseline. You can also include a fitted model. In our example, the exposure will be a vector of the temperature on each day of the first week of July 2012 in London, and the cases vector will be the number of deaths observed on each of those days. We will use 7 degrees C as our baseline. The crossbasis will be the crossbasis object we used to fit our model, and we’ll include the fitted model. We can run the function as:</p>
-<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="estimating-health-impacts.html#cb278-1" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
-<span id="cb278-2"><a href="estimating-health-impacts.html#cb278-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="estimating-health-impacts.html#cb282-1"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> july_week<span class="op">$</span>tmean, <span class="dt">cases =</span> july_week<span class="op">$</span>all, </span>
+<span id="cb282-2"><a href="estimating-health-impacts.html#cb282-2"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, <span class="dt">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
 <pre><code>## [1] 0.02727977</code></pre>
 <p>By default, it gives us the attributable risk for the week. You can see that this matches the value we got when we did this calculation from scratch, but it certainly saves us a lot of time. This function will also help us tackle tougher cases, like when we have model associations across a distributed lag.</p>
 <p>You can also use this function to get the attributable number. You just need to add the argument <code>type = "an"</code>:</p>
-<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="estimating-health-impacts.html#cb280-1" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
-<span id="cb280-2"><a href="estimating-health-impacts.html#cb280-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="estimating-health-impacts.html#cb284-1"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> july_week<span class="op">$</span>tmean, <span class="dt">cases =</span> july_week<span class="op">$</span>all, </span>
+<span id="cb284-2"><a href="estimating-health-impacts.html#cb284-2"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, <span class="dt">cen =</span> <span class="dv">7</span>, <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 20.73262</code></pre>
 <p>If we want to get the values for each day of the week, we can include the argument <code>tot = FALSE</code>. This will give us an estimate for each date, rather than the estimate of the total over the period:</p>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="estimating-health-impacts.html#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
-<span id="cb282-2"><a href="estimating-health-impacts.html#cb282-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>, </span>
-<span id="cb282-3"><a href="estimating-health-impacts.html#cb282-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">&quot;an&quot;</span>, <span class="at">tot =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="estimating-health-impacts.html#cb286-1"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> july_week<span class="op">$</span>tmean, <span class="dt">cases =</span> july_week<span class="op">$</span>all, </span>
+<span id="cb286-2"><a href="estimating-health-impacts.html#cb286-2"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, <span class="dt">cen =</span> <span class="dv">7</span>, </span>
+<span id="cb286-3"><a href="estimating-health-impacts.html#cb286-3"></a>       <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>, <span class="dt">tot =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
 <pre><code>## [1] 1.228037 1.571579 2.855759 6.190165 4.677225 2.480511 1.729346</code></pre>
 <p>Again, you can see that this agrees with the calculations we did from scratch.</p>
 <ol start="2" style="list-style-type: decimal">
@@ -444,47 +414,47 @@ the model that we fit earlier to determine what the log relative risk is for eac
 </ol>
 <p>With the <code>attrdl</code> function, it’s very straightforward to extend these calculations to look at the whole study period, rather than just one week. The only tricky part, conceptually, is that we want to generate separate estimates for heat and cold. Heat-attributable mortality will only occur when the temperature is higher than our baseline of 7 degrees Celsius, while cold-attributable mortality will only occur when the temperature is lower than 7 degrees Celsius.</p>
 <p>One way we can do this is to split apart the original dataset into two datasets—one with all the observations on “cold” days (those below 7 degrees C) and one with all the observations on “hot” days (those above 8 degrees C). Then we can run the function to calculate attributable risk and attributable number on these two datasets separately, to get separate estimates for heat-attributable and cold attributable mortality.</p>
-<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="estimating-health-impacts.html#cb284-1" aria-hidden="true" tabindex="-1"></a>obs_cold <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb284-2"><a href="estimating-health-impacts.html#cb284-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tmean <span class="sc">&lt;</span> <span class="dv">7</span>)</span>
-<span id="cb284-3"><a href="estimating-health-impacts.html#cb284-3" aria-hidden="true" tabindex="-1"></a>obs_hot <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb284-4"><a href="estimating-health-impacts.html#cb284-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tmean <span class="sc">&gt;</span> <span class="dv">7</span>)</span>
-<span id="cb284-5"><a href="estimating-health-impacts.html#cb284-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb284-6"><a href="estimating-health-impacts.html#cb284-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate cold-related attributable risk over the study period</span></span>
-<span id="cb284-7"><a href="estimating-health-impacts.html#cb284-7" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_cold<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_cold<span class="sc">$</span>all, </span>
-<span id="cb284-8"><a href="estimating-health-impacts.html#cb284-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb284-9"><a href="estimating-health-impacts.html#cb284-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="estimating-health-impacts.html#cb288-1"></a>obs_cold &lt;-<span class="st"> </span>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb288-2"><a href="estimating-health-impacts.html#cb288-2"></a><span class="st">  </span><span class="kw">filter</span>(tmean <span class="op">&lt;</span><span class="st"> </span><span class="dv">7</span>)</span>
+<span id="cb288-3"><a href="estimating-health-impacts.html#cb288-3"></a>obs_hot &lt;-<span class="st"> </span>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb288-4"><a href="estimating-health-impacts.html#cb288-4"></a><span class="st">  </span><span class="kw">filter</span>(tmean <span class="op">&gt;</span><span class="st"> </span><span class="dv">7</span>)</span>
+<span id="cb288-5"><a href="estimating-health-impacts.html#cb288-5"></a></span>
+<span id="cb288-6"><a href="estimating-health-impacts.html#cb288-6"></a><span class="co"># Estimate cold-related attributable risk over the study period</span></span>
+<span id="cb288-7"><a href="estimating-health-impacts.html#cb288-7"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs_cold<span class="op">$</span>tmean, <span class="dt">cases =</span> obs_cold<span class="op">$</span>all, </span>
+<span id="cb288-8"><a href="estimating-health-impacts.html#cb288-8"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb288-9"><a href="estimating-health-impacts.html#cb288-9"></a>       <span class="dt">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
 <pre><code>## [1] 0.007327224</code></pre>
-<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="estimating-health-impacts.html#cb286-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
-<span id="cb286-2"><a href="estimating-health-impacts.html#cb286-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_cold<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_cold<span class="sc">$</span>all, </span>
-<span id="cb286-3"><a href="estimating-health-impacts.html#cb286-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb286-4"><a href="estimating-health-impacts.html#cb286-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="estimating-health-impacts.html#cb290-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
+<span id="cb290-2"><a href="estimating-health-impacts.html#cb290-2"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs_cold<span class="op">$</span>tmean, <span class="dt">cases =</span> obs_cold<span class="op">$</span>all, </span>
+<span id="cb290-3"><a href="estimating-health-impacts.html#cb290-3"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb290-4"><a href="estimating-health-impacts.html#cb290-4"></a>       <span class="dt">cen =</span> <span class="dv">7</span>, <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 2414.899</code></pre>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="estimating-health-impacts.html#cb288-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate heat-related attributable risk over the study period</span></span>
-<span id="cb288-2"><a href="estimating-health-impacts.html#cb288-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_hot<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_hot<span class="sc">$</span>all, </span>
-<span id="cb288-3"><a href="estimating-health-impacts.html#cb288-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb288-4"><a href="estimating-health-impacts.html#cb288-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="estimating-health-impacts.html#cb292-1"></a><span class="co"># Estimate heat-related attributable risk over the study period</span></span>
+<span id="cb292-2"><a href="estimating-health-impacts.html#cb292-2"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs_hot<span class="op">$</span>tmean, <span class="dt">cases =</span> obs_hot<span class="op">$</span>all, </span>
+<span id="cb292-3"><a href="estimating-health-impacts.html#cb292-3"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb292-4"><a href="estimating-health-impacts.html#cb292-4"></a>       <span class="dt">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
 <pre><code>## [1] 0.0235678</code></pre>
-<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="estimating-health-impacts.html#cb290-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
-<span id="cb290-2"><a href="estimating-health-impacts.html#cb290-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_hot<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_hot<span class="sc">$</span>all, </span>
-<span id="cb290-3"><a href="estimating-health-impacts.html#cb290-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb290-4"><a href="estimating-health-impacts.html#cb290-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="estimating-health-impacts.html#cb294-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
+<span id="cb294-2"><a href="estimating-health-impacts.html#cb294-2"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs_hot<span class="op">$</span>tmean, <span class="dt">cases =</span> obs_hot<span class="op">$</span>all, </span>
+<span id="cb294-3"><a href="estimating-health-impacts.html#cb294-3"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb294-4"><a href="estimating-health-impacts.html#cb294-4"></a>       <span class="dt">cen =</span> <span class="dv">7</span>, <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 23484.98</code></pre>
 <p>Another way that you can do this is to use the <code>range</code> argument in <code>attrdl</code>, which allows you to focus on the impacts in only one range of the exposure. For example, you could estimate the heat-related attributable number by using a range from the baseline temperature to the maximum temperature in the observations:</p>
-<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="estimating-health-impacts.html#cb292-1" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb292-2"><a href="estimating-health-impacts.html#cb292-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb292-3"><a href="estimating-health-impacts.html#cb292-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="estimating-health-impacts.html#cb296-1"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs<span class="op">$</span>tmean, <span class="dt">cases =</span> obs<span class="op">$</span>all, </span>
+<span id="cb296-2"><a href="estimating-health-impacts.html#cb296-2"></a>       <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb296-3"><a href="estimating-health-impacts.html#cb296-3"></a>       <span class="dt">cen =</span> <span class="dv">7</span>, <span class="dt">range =</span> <span class="kw">c</span>(<span class="dv">7</span>, <span class="kw">max</span>(obs<span class="op">$</span>tmean)), <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 23484.98</code></pre>
 <p>Based on these estimates, there were about 23,500 deaths over the approximately two-decade study period in London that we would expect to not have occurred if the temperature never exceeded 7 degrees C. This makes up about 2% of all mortality on days above 7 degrees C. On the other hand, based on this assessment, the impact from cold is much lower—only about 2,500 attributable deaths over the approximately two-decade study period, making only about 0.7% of all the deaths on days colder than 7 degrees C.</p>
 <p>There are a few caveats with these estimates. First, there are a lot fewer days that were below 7 degrees C in the study than that were above. This accounts for some of the difference in the total number of excess deaths attributable to heat versus cold over the study period. The location of the minimum mortality temperature, which we estimated from fitting a model with only immediate effects in this case, might shift as we include more lags, in which case we would recenter our estimates of attributable risk and attributable number in terms of the baseline temperature we compare to. This could change the numbers some just from having more days above or below the threshold.</p>
 <p>Second, we know from fitting the distributed lag non-linear models in an earlier chapter that cold tends to have a more lagged effect on mortality risk, while the effect of heat is more immediate. By limiting the model to lag 0, we’ve likely missed a lot of the effect of cold on mortality risk. We’ll address this in the next part of the exercise, where we’ll expand to use a model with a distributed lag.</p>
 <p>Finally, the choice of a baseline is tricky here. We’re using the minimum mortality temperature, and that’s a common choice. However, it’s pretty unrealistic to think that there would be a way that this “safest” baseline scenario would ever be met—you’d never be able to enforce the temperature in a city staying constant year-round. Another approach could be to take a sample “mild” summer and “mild” winter for your study city, and compare the health impacts during more severe years to that milder case. This would require a bit more work to calculate, as your baseline temperature would be changing throughout each season. There’s not a perfect solution to this issue of identifying a baseline, but it’s important to be clear when you communicate the baseline you’re using when you describe your results.</p>
 <p>Going back to the <code>attrdl</code> function, you can use the <code>tot = FALSE</code> argument to check out some interesting patterns in attributable numbers over your study. This argument estimates the attributable risk or number for each separate day in the study. For example, you can use it to add a column to your original data with the estimated attributable number for that day:</p>
-<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="estimating-health-impacts.html#cb294-1" aria-hidden="true" tabindex="-1"></a>obs_an_added <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb294-2"><a href="estimating-health-impacts.html#cb294-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, tmean, all) <span class="sc">%&gt;%</span> </span>
-<span id="cb294-3"><a href="estimating-health-impacts.html#cb294-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">an =</span> <span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb294-4"><a href="estimating-health-impacts.html#cb294-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb294-5"><a href="estimating-health-impacts.html#cb294-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>, <span class="at">tot =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb294-6"><a href="estimating-health-impacts.html#cb294-6" aria-hidden="true" tabindex="-1"></a>obs_an_added</span></code></pre></div>
+<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="estimating-health-impacts.html#cb298-1"></a>obs_an_added &lt;-<span class="st"> </span>obs <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb298-2"><a href="estimating-health-impacts.html#cb298-2"></a><span class="st">  </span><span class="kw">select</span>(date, tmean, all) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb298-3"><a href="estimating-health-impacts.html#cb298-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">an =</span> <span class="kw">attrdl</span>(<span class="dt">x =</span> obs<span class="op">$</span>tmean, <span class="dt">cases =</span> obs<span class="op">$</span>all, </span>
+<span id="cb298-4"><a href="estimating-health-impacts.html#cb298-4"></a>                     <span class="dt">basis =</span> temp_basis, <span class="dt">model =</span> dlnm_mod_<span class="dv">1</span>, </span>
+<span id="cb298-5"><a href="estimating-health-impacts.html#cb298-5"></a>                     <span class="dt">cen =</span> <span class="dv">7</span>, <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>, <span class="dt">tot =</span> <span class="ot">FALSE</span>))</span>
+<span id="cb298-6"><a href="estimating-health-impacts.html#cb298-6"></a>obs_an_added</span></code></pre></div>
 <pre><code>## # A tibble: 8,279 x 4
 ##    date       tmean   all      an
 ##    &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
@@ -500,117 +470,121 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 10 1990-01-10  9.51   214  1.84  
 ## # … with 8,269 more rows</code></pre>
 <p>With this, we can look at how the number of excess deaths vary by temperature. We can bin temperatures into broad bins and then plot the total number of attributable deaths for days with each temperature:</p>
-<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="estimating-health-impacts.html#cb296-1" aria-hidden="true" tabindex="-1"></a>obs_an_added <span class="sc">%&gt;%</span> </span>
-<span id="cb296-2"><a href="estimating-health-impacts.html#cb296-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp_round =</span> <span class="fu">round</span>(tmean)) <span class="sc">%&gt;%</span> </span>
-<span id="cb296-3"><a href="estimating-health-impacts.html#cb296-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(temp_round) <span class="sc">%&gt;%</span> </span>
-<span id="cb296-4"><a href="estimating-health-impacts.html#cb296-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">an_tot =</span> <span class="fu">sum</span>(an)) <span class="sc">%&gt;%</span> </span>
-<span id="cb296-5"><a href="estimating-health-impacts.html#cb296-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> temp_round, <span class="at">y =</span> an_tot)) <span class="sc">+</span> </span>
-<span id="cb296-6"><a href="estimating-health-impacts.html#cb296-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
-<span id="cb296-7"><a href="estimating-health-impacts.html#cb296-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, </span>
-<span id="cb296-8"><a href="estimating-health-impacts.html#cb296-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Total attributable excess deaths on</span><span class="sc">\n</span><span class="st">days with that temperature&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="estimating-health-impacts.html#cb300-1"></a>obs_an_added <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb300-2"><a href="estimating-health-impacts.html#cb300-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">temp_round =</span> <span class="kw">round</span>(tmean)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb300-3"><a href="estimating-health-impacts.html#cb300-3"></a><span class="st">  </span><span class="kw">group_by</span>(temp_round) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb300-4"><a href="estimating-health-impacts.html#cb300-4"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">an_tot =</span> <span class="kw">sum</span>(an)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb300-5"><a href="estimating-health-impacts.html#cb300-5"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> temp_round, <span class="dt">y =</span> an_tot)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb300-6"><a href="estimating-health-impacts.html#cb300-6"></a><span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb300-7"><a href="estimating-health-impacts.html#cb300-7"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, </span>
+<span id="cb300-8"><a href="estimating-health-impacts.html#cb300-8"></a>       <span class="dt">y =</span> <span class="st">&quot;Total attributable excess deaths on</span><span class="ch">\n</span><span class="st">days with that temperature&quot;</span>)</span></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-159-1.png" width="672" /></p>
 <p>Remember that our exposure-response function increased dramatically at extreme temperatures, especially extreme heat. Here, however, we see the role that frequency of exposure plays in the ultimate impact. Because extremely hot and extremely cold days are very rare, they don’t account for much of the heat- or cold-attributable mortality. Instead, a lot more comes at temperatures that are a bit milder than those extremes but that occur much more often. This, of course, might change depending on the baseline we’re using for comparison.</p>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Do the same calculation as in the previous part, but change the underlying model that you’re using. In this case, use the <code>dist_lag_mod_5</code> you fit in Chapter 4. What differences are there in attributable risk and attributable number when you use a model that incorporates lagged effects (<code>dist_lag_mod_5</code>) compared to one that only fits the immediate association (<code>dlnm_mod_1</code>)?</strong></li>
 </ol>
 <p>To start, re-run the code we used in Chapter 4 to fit <code>dist_lag_mod_5</code>, including the code to create the associated crossbasis function (<code>dl_basis_4</code>):</p>
-<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="estimating-health-impacts.html#cb297-1" aria-hidden="true" tabindex="-1"></a>dl_basis_4 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
-<span id="cb297-2"><a href="estimating-health-impacts.html#cb297-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
-<span id="cb297-3"><a href="estimating-health-impacts.html#cb297-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">6</span>))</span>
-<span id="cb297-4"><a href="estimating-health-impacts.html#cb297-4" aria-hidden="true" tabindex="-1"></a>dist_lag_mod_5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_4 <span class="sc">+</span> </span>
-<span id="cb297-5"><a href="estimating-health-impacts.html#cb297-5" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb297-6"><a href="estimating-health-impacts.html#cb297-6" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
-<span id="cb297-7"><a href="estimating-health-impacts.html#cb297-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="estimating-health-impacts.html#cb302-1"></a>dl_basis_<span class="dv">4</span> &lt;-<span class="st"> </span><span class="kw">crossbasis</span>(obs<span class="op">$</span>tmean, <span class="dt">lag =</span> <span class="dv">30</span>,</span>
+<span id="cb302-2"><a href="estimating-health-impacts.html#cb302-2"></a>                       <span class="dt">argvar =</span> <span class="kw">list</span>(<span class="dt">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="dt">df =</span> <span class="dv">4</span>), </span>
+<span id="cb302-3"><a href="estimating-health-impacts.html#cb302-3"></a>                       <span class="dt">arglag =</span> <span class="kw">list</span>(<span class="dt">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="dt">df =</span> <span class="dv">6</span>))</span>
+<span id="cb302-4"><a href="estimating-health-impacts.html#cb302-4"></a>dist_lag_mod_<span class="dv">5</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(all <span class="op">~</span><span class="st"> </span>dl_basis_<span class="dv">4</span> <span class="op">+</span><span class="st"> </span></span>
+<span id="cb302-5"><a href="estimating-health-impacts.html#cb302-5"></a><span class="st">                        </span><span class="kw">factor</span>(dow, <span class="dt">ordered =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb302-6"><a href="estimating-health-impacts.html#cb302-6"></a><span class="st">                          </span><span class="kw">ns</span>(time, <span class="dt">df =</span> <span class="dv">158</span>), </span>
+<span id="cb302-7"><a href="estimating-health-impacts.html#cb302-7"></a>                        <span class="dt">data =</span> obs, <span class="dt">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>First, let’s take a look to see if we should use a different baseline—in other words, is 7 degrees C still our best estimate of the minimum mortality temperature, now that we’re incorporating lagged effects? If we use <code>crosspred</code>, we can check the exposure-response curve for the cumulative effects over all the fitted lags, to see what the minimum point is on that curve:</p>
-<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="estimating-health-impacts.html#cb298-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis_4, dist_lag_mod_5, <span class="at">bylag =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb298-2"><a href="estimating-health-impacts.html#cb298-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;overall&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="estimating-health-impacts.html#cb303-1"></a><span class="kw">crosspred</span>(dl_basis_<span class="dv">4</span>, dist_lag_mod_<span class="dv">5</span>, <span class="dt">bylag =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb303-2"><a href="estimating-health-impacts.html#cb303-2"></a><span class="st">  </span><span class="kw">plot</span>(<span class="dt">ptype =</span> <span class="st">&quot;overall&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-161-1.png" width="672" /></p>
 <p>Now that we’re considering lagged effects, the temperature with minimum mortality risk has gone up quite a lot, to 18 degrees C. We’ll use that as our baseline in estimating attributable risk and number for heat and cold. We can already tell that this will increase our cold-attributable mortality by a bit most likely, since there will be a lot more days that are below this baseline temperature now. Following the same reasoning, this is also likely to decrease the heat-attributable mortality (although of course changes to the shape of the exposure-response curve will also affect our estimates).</p>
 <p>The other thing that we need to think about is how to incorporate lagged effects of temperature. You can do this by thinking of temperatures at different lags as different exposures. The mathematics for this gets more complicated, but fortunately the <code>attrdl</code> function can handle those mechanics for us.</p>
-<p>We do, however, have to decide whether we want to calculate these attributable impacts from lagged exposures under what’s called a “backward perspective” or a “forward perspective.” One of the required readings for this week has a full discussion of these two perspectives and the implications and assumptions of each <span class="citation">(<a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone 2014</a>)</span>. Simply put, the forward perspective is describing how one day’s temperature has impacts on its same day as well as following days, while the backward perspective calculates the impact that all the exposures in the lagged period before a certain day impact risk on that day.</p>
-<p>There is a way to calculate the separate impacts of heat and cold under either of these perspectives, but the forward perspective can be prone to some bias <span class="citation">(<a href="#ref-gasparrini2014attributable" role="doc-biblioref">Gasparrini and Leone 2014</a>)</span>, so we’ll use the backward perspective. Since we want to get estimates for heat and cold separately, we’ll use the <code>range</code> argument in the <code>attrdl</code> function. (With the lagged effects, it would be tricky to try to do this by separating the dataset into hot and cold days, since you’ll have some cases when you have temperatures that are both below and above the baseline temperature in the lag period.) You can specify that you’d like to use the backward perspective with the argument <code>dir = "back"</code>:</p>
-<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="estimating-health-impacts.html#cb299-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate cold-associated attributable risk</span></span>
-<span id="cb299-2"><a href="estimating-health-impacts.html#cb299-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb299-3"><a href="estimating-health-impacts.html#cb299-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb299-4"><a href="estimating-health-impacts.html#cb299-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fu">min</span>(obs<span class="sc">$</span>tmean), <span class="dv">18</span>), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
+<p>We do, however, have to decide whether we want to calculate these attributable impacts from lagged exposures under what’s called a “backward perspective” or a “forward perspective”. One of the required readings for this week has a full discussion of these two perspectives and the implications and assumptions of each <span class="citation">(Gasparrini and Leone <a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>. Simply put, the forward perspective is describing how one day’s temperature has impacts on its same day as well as following days, while the backward perspective calculates the impact that all the exposures in the lagged period before a certain day impact risk on that day.</p>
+<p>There is a way to calculate the separate impacts of heat and cold under either of these perspectives, but the forward perspective can be prone to some bias <span class="citation">(Gasparrini and Leone <a href="#ref-gasparrini2014attributable" role="doc-biblioref">2014</a>)</span>, so we’ll use the backward perspective. Since we want to get estimates for heat and cold separately, we’ll use the <code>range</code> argument in the <code>attrdl</code> function. (With the lagged effects, it would be tricky to try to do this by separating the dataset into hot and cold days, since you’ll have some cases when you have temperatures that are both below and above the baseline temperature in the lag period.) You can specify that you’d like to use the backward perspective with the argument <code>dir = "back"</code>:</p>
+<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="estimating-health-impacts.html#cb304-1"></a><span class="co"># Estimate cold-associated attributable risk</span></span>
+<span id="cb304-2"><a href="estimating-health-impacts.html#cb304-2"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs<span class="op">$</span>tmean, <span class="dt">cases =</span> obs<span class="op">$</span>all, </span>
+<span id="cb304-3"><a href="estimating-health-impacts.html#cb304-3"></a>       <span class="dt">basis =</span> dl_basis_<span class="dv">4</span>, <span class="dt">model =</span> dist_lag_mod_<span class="dv">5</span>, </span>
+<span id="cb304-4"><a href="estimating-health-impacts.html#cb304-4"></a>       <span class="dt">cen =</span> <span class="dv">18</span>, <span class="dt">range =</span> <span class="kw">c</span>(<span class="kw">min</span>(obs<span class="op">$</span>tmean), <span class="dv">18</span>), <span class="dt">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 0.09398662</code></pre>
-<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="estimating-health-impacts.html#cb301-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate cold-associated attributable number</span></span>
-<span id="cb301-2"><a href="estimating-health-impacts.html#cb301-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb301-3"><a href="estimating-health-impacts.html#cb301-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb301-4"><a href="estimating-health-impacts.html#cb301-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fu">min</span>(obs<span class="sc">$</span>tmean), <span class="dv">18</span>), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="estimating-health-impacts.html#cb306-1"></a><span class="co"># Estimate cold-associated attributable number</span></span>
+<span id="cb306-2"><a href="estimating-health-impacts.html#cb306-2"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs<span class="op">$</span>tmean, <span class="dt">cases =</span> obs<span class="op">$</span>all, </span>
+<span id="cb306-3"><a href="estimating-health-impacts.html#cb306-3"></a>       <span class="dt">basis =</span> dl_basis_<span class="dv">4</span>, <span class="dt">model =</span> dist_lag_mod_<span class="dv">5</span>, </span>
+<span id="cb306-4"><a href="estimating-health-impacts.html#cb306-4"></a>       <span class="dt">cen =</span> <span class="dv">18</span>, <span class="dt">range =</span> <span class="kw">c</span>(<span class="kw">min</span>(obs<span class="op">$</span>tmean), <span class="dv">18</span>), <span class="dt">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 124632.4</code></pre>
-<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="estimating-health-impacts.html#cb303-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate heat-associated attributable risk</span></span>
-<span id="cb303-2"><a href="estimating-health-impacts.html#cb303-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb303-3"><a href="estimating-health-impacts.html#cb303-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb303-4"><a href="estimating-health-impacts.html#cb303-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="estimating-health-impacts.html#cb308-1"></a><span class="co"># Estimate heat-associated attributable risk</span></span>
+<span id="cb308-2"><a href="estimating-health-impacts.html#cb308-2"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs<span class="op">$</span>tmean, <span class="dt">cases =</span> obs<span class="op">$</span>all, </span>
+<span id="cb308-3"><a href="estimating-health-impacts.html#cb308-3"></a>       <span class="dt">basis =</span> dl_basis_<span class="dv">4</span>, <span class="dt">model =</span> dist_lag_mod_<span class="dv">5</span>, </span>
+<span id="cb308-4"><a href="estimating-health-impacts.html#cb308-4"></a>       <span class="dt">cen =</span> <span class="dv">18</span>, <span class="dt">range =</span> <span class="kw">c</span>(<span class="dv">18</span>, <span class="kw">max</span>(obs<span class="op">$</span>tmean)), <span class="dt">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 0.002380825</code></pre>
-<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="estimating-health-impacts.html#cb305-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate heat-associated attributable number</span></span>
-<span id="cb305-2"><a href="estimating-health-impacts.html#cb305-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb305-3"><a href="estimating-health-impacts.html#cb305-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb305-4"><a href="estimating-health-impacts.html#cb305-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="estimating-health-impacts.html#cb310-1"></a><span class="co"># Estimate heat-associated attributable number</span></span>
+<span id="cb310-2"><a href="estimating-health-impacts.html#cb310-2"></a><span class="kw">attrdl</span>(<span class="dt">x =</span> obs<span class="op">$</span>tmean, <span class="dt">cases =</span> obs<span class="op">$</span>all, </span>
+<span id="cb310-3"><a href="estimating-health-impacts.html#cb310-3"></a>       <span class="dt">basis =</span> dl_basis_<span class="dv">4</span>, <span class="dt">model =</span> dist_lag_mod_<span class="dv">5</span>, </span>
+<span id="cb310-4"><a href="estimating-health-impacts.html#cb310-4"></a>       <span class="dt">cen =</span> <span class="dv">18</span>, <span class="dt">range =</span> <span class="kw">c</span>(<span class="dv">18</span>, <span class="kw">max</span>(obs<span class="op">$</span>tmean)), <span class="dt">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 3157.129</code></pre>
 <p>When we use this model that includes distributed lag effects of temperature, you can see that the impact of cold has increased substantially and the impact of heat has decreased substantially. This is because cold tends to have effects that are lagged after the initial exposure, while heat tends to be more immediate, and can even have somewhat of a pattern reflective of mortality displacement (although this depends on the study city). Once we incorporate the delayed effects of cold, the minimum mortality temperature also increase substantially, so many more days are below, rather than above, the baseline temperature we’re using for comparison as compared to the last part of the exercise.</p>
-<p>These long lagged effects of temperature start to bring in some questions about whether the effect is specifically from the absolute value of the temperature, or whether they may be starting to pick up some impacts that are caused by seasonality, rather than absolute temperature. As you include lags up to a month or longer, it gets harder to separate the impact of temperature specifically from the impact of season. This question is very important when you start thinking about the impacts of climate change. With climate change, we expect in many places that winter days will, on average, have a higher temperature. If the mortality risk of cold is caused by the absolute temperature, this would result in fewer cold-related deaths. However, if there are other seasonal factors (that we don’t expect to change, or at least not as much), then the rising winter temperatures would have less of a beneficial effect on winter mortality risk. There are a number of interesting papers that focus on this question and its implications for climate change projections <span class="citation">(<a href="#ref-kinney2015winter" role="doc-biblioref">Kinney et al. 2015</a>; <a href="#ref-ebi2015greater" role="doc-biblioref">Ebi 2015</a>; <a href="#ref-hajat2016excess" role="doc-biblioref">Hajat and Gasparrini 2016</a>)</span>. Also, there are some papers that go more deeply into how to estimate minimum mortality temperatures <span class="citation">(<a href="#ref-lee2017monte" role="doc-biblioref">Lee et al. 2017</a>; <a href="#ref-tobias2017investigating" role="doc-biblioref">Tobıas, Armstrong, and Gasparrini 2017</a>)</span>, as well as what baseline temperature makes a suitable threshold for estimating attributable risk for cold-related mortality <span class="citation">(<a href="#ref-arbuthnott2018cold" role="doc-biblioref">Arbuthnott et al. 2018</a>)</span>.</p>
+<p>These long lagged effects of temperature start to bring in some questions about whether the effect is specifically from the absolute value of the temperature, or whether they may be starting to pick up some impacts that are caused by seasonality, rather than absolute temperature. As you include lags up to a month or longer, it gets harder to separate the impact of temperature specifically from the impact of season. This question is very important when you start thinking about the impacts of climate change. With climate change, we expect in many places that winter days will, on average, have a higher temperature. If the mortality risk of cold is caused by the absolute temperature, this would result in fewer cold-related deaths. However, if there are other seasonal factors (that we don’t expect to change, or at least not as much), then the rising winter temperatures would have less of a beneficial effect on winter mortality risk. There are a number of interesting papers that focus on this question and its implications for climate change projections <span class="citation">(Kinney et al. <a href="#ref-kinney2015winter" role="doc-biblioref">2015</a>; Ebi <a href="#ref-ebi2015greater" role="doc-biblioref">2015</a>; Hajat and Gasparrini <a href="#ref-hajat2016excess" role="doc-biblioref">2016</a>)</span>. Also, there are some papers that go more deeply into how to estimate minimum mortality temperatures <span class="citation">(Lee et al. <a href="#ref-lee2017monte" role="doc-biblioref">2017</a>; Tobıas, Armstrong, and Gasparrini <a href="#ref-tobias2017investigating" role="doc-biblioref">2017</a>)</span>, as well as what baseline temperature makes a suitable threshold for estimating attributable risk for cold-related mortality <span class="citation">(Arbuthnott et al. <a href="#ref-arbuthnott2018cold" role="doc-biblioref">2018</a>)</span>.</p>
 </div>
-<div id="quantifying-potential-health-impacts-under-different-scenarios" class="section level2" number="6.3">
+<div id="quantifying-potential-health-impacts-under-different-scenarios" class="section level2">
 <h2><span class="header-section-number">6.3</span> Quantifying potential health impacts under different scenarios</h2>
 <p>You can use measures of attributable risk and attributable number to communicate the estimated impacts of the exposure in the population that you studied. However, you can also use this same idea to investigate the potential health impacts of an exposure under different scenarios. The basic framework on these calculations was to compare one scenario (a baseline of no, limited, or “safest” exposure) to another scenario (the observed levels of exposure in the population). It’s fairly straightforward to transfer this idea to broader applications—any case where you would like to compare one scenario of exposure to another scenario of exposure.</p>
-<p>You could do this a few ways. One is that you could calculate attributable impacts under both scenarios in comparison to some baseline, and compare the final impact estimates. One of this week’s readings <span class="citation">(<a href="#ref-vicedo2019hands" role="doc-biblioref">Vicedo-Cabrera, Sera, and Gasparrini 2019</a>)</span> describes this process, adding a code tutorial in the supplement. It describes the process in the context of projecting the potential heat-related mortality impacts of climate change, compared to present-day impacts.</p>
+<p>You could do this a few ways. One is that you could calculate attributable impacts under both scenarios in comparison to some baseline, and compare the final impact estimates. One of this week’s readings <span class="citation">(Vicedo-Cabrera, Sera, and Gasparrini <a href="#ref-vicedo2019hands" role="doc-biblioref">2019</a>)</span> describes this process, adding a code tutorial in the supplement. It describes the process in the context of projecting the potential heat-related mortality impacts of climate change, compared to present-day impacts.</p>
 <p>There are a few details that make this process a bit different from calculating attributable impacts based on the study data you used to fit the model. First, you do not have observations of exposure. Instead, you will use scenarios of exposure, generated under certain assumptions. For climate change projections, there are large climate modeling groups that have generated scenarios of future weather conditions under scenarios that are tied to assumptions about how drivers of climate change will change in the future. These scenarios can be used in place of exposure observations to project potential health impacts. Of course, there are more uncertainties that are introduced in this case, compared to observed exposures, since there is some uncertainty in those projections. Further, it is typically best to work with atmospheric scientists in deriving exposure scenarios from these projections, as you’ll need expertise to appropriately convert the climate model output to an appropriate representation of temperature exposures in a future period.</p>
 <p>Second, you will not have the observed number of cases (for example, deaths) on each day of a hypothetical scenario. Instead, you will need to incorporate an estimate of mortality each day in the scenario. One approach is to use present-day average daily mortality counts, as this allows you to isolate the role of climate change, separate from changes in demographics. Further, if you are considering scenarios that happen in the near future, this is a very reasonable approach. However, if you’re considering scenarios a few decades in the future, this won’t give a good estimate of the impact we might actually expect. One approach to try to improve this estimate is to use demographic projections of population into the future. You can pair this with mortality rates in certain subsets of the population (these could be, for example, by age and race) to try to generate a more realistic estimate of future impacts.</p>
-<p>Finally, when you use the estimate exposure-response functions that are estimated with present-day data to project impacts in a future period, there are a number of reasons that the exposure-response function might not provide as good of an estimate of how temperature would impact health. Exposure-response functions for temperature are not the same in every city. Instead, there’s clear evidence that, in cities with cooler climates, heat tends to start affecting risk at a lower temperature, and, in cities with hotter climates, cold tends to start affecting risk at a higher temperature. In other words, there’s not an “absolute” shape, tied to specific temperature values, that can universally describe how mortality risk changes with temperature. Further, there is evidence that these exposure-response functions have changed in the same city over time. This all suggests that there’s likely some influence from adaptation on these exposure-response functions. For example, a decreasing risk from heat over the 20th century likely was, at least in part, caused by adaptation through the invention and increased use of air conditioning, which reduces exposure to heat for at least some of the population at least some of the time. Other changes can come from changes in the population structure. For example, we know that temperature-related risk tends to be higher in older versus younger adults, so if a population is aging, that could change the shape of its overall exposure-response function, even without other changes. These questions are an area of continuing development for climate epidemiologists. Good discussions are available in a number of papers, including <span class="citation"><a href="#ref-kinney2008approaches" role="doc-biblioref">Kinney et al.</a> (<a href="#ref-kinney2008approaches" role="doc-biblioref">2008</a>)</span>, <span class="citation"><a href="#ref-arbuthnott2016changes" role="doc-biblioref">Arbuthnott et al.</a> (<a href="#ref-arbuthnott2016changes" role="doc-biblioref">2016</a>)</span>, <span class="citation"><a href="#ref-gosling2017adaptation" role="doc-biblioref">Gosling et al.</a> (<a href="#ref-gosling2017adaptation" role="doc-biblioref">2017</a>)</span>, and <span class="citation"><a href="#ref-kinney2018temporal" role="doc-biblioref">Kinney</a> (<a href="#ref-kinney2018temporal" role="doc-biblioref">2018</a>)</span>.</p>
+<p>Finally, when you use the estimate exposure-response functions that are estimated with present-day data to project impacts in a future period, there are a number of reasons that the exposure-response function might not provide as good of an estimate of how temperature would impact health. Exposure-response functions for temperature are not the same in every city. Instead, there’s clear evidence that, in cities with cooler climates, heat tends to start affecting risk at a lower temperature, and, in cities with hotter climates, cold tends to start affecting risk at a higher temperature. In other words, there’s not an “absolute” shape, tied to specific temperature values, that can universally describe how mortality risk changes with temperature. Further, there is evidence that these exposure-response functions have changed in the same city over time. This all suggests that there’s likely some influence from adaptation on these exposure-response functions. For example, a decreasing risk from heat over the 20th century likely was, at least in part, caused by adaptation through the invention and increased use of air conditioning, which reduces exposure to heat for at least some of the population at least some of the time. Other changes can come from changes in the population structure. For example, we know that temperature-related risk tends to be higher in older versus younger adults, so if a population is aging, that could change the shape of its overall exposure-response function, even without other changes. These questions are an area of continuing development for climate epidemiologists. Good discussions are available in a number of papers, including <span class="citation">Kinney et al. (<a href="#ref-kinney2008approaches" role="doc-biblioref">2008</a>)</span>, <span class="citation">Arbuthnott et al. (<a href="#ref-arbuthnott2016changes" role="doc-biblioref">2016</a>)</span>, <span class="citation">Gosling et al. (<a href="#ref-gosling2017adaptation" role="doc-biblioref">2017</a>)</span>, and <span class="citation">Kinney (<a href="#ref-kinney2018temporal" role="doc-biblioref">2018</a>)</span>.</p>
 
 </div>
 </div>
 <h3>References</h3>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-arbuthnott2016changes" class="csl-entry">
-Arbuthnott, Katherine, Shakoor Hajat, Clare Heaviside, and Sotiris Vardoulakis. 2016. <span>“Changes in Population Susceptibility to Heat and Cold over Time: Assessing Adaptation to Climate Change.”</span> <em>Environmental Health</em> 15 (1): 73–93.
+<div id="refs" class="references">
+<div id="ref-arbuthnott2016changes">
+<p>Arbuthnott, Katherine, Shakoor Hajat, Clare Heaviside, and Sotiris Vardoulakis. 2016. “Changes in Population Susceptibility to Heat and Cold over Time: Assessing Adaptation to Climate Change.” <em>Environmental Health</em> 15 (1): 73–93.</p>
 </div>
-<div id="ref-arbuthnott2018cold" class="csl-entry">
-———. 2018. <span>“What Is Cold-Related Mortality? A Multi-Disciplinary Perspective to Inform Climate Change Impact Assessments.”</span> <em>Environment International</em> 121: 119–29.
+<div id="ref-arbuthnott2018cold">
+<p>Arbuthnott, Katherine, Shakoor Hajat, Clare Heaviside, and Sotiris Vardoulakis. 2018. “What Is Cold-Related Mortality? A Multi-Disciplinary Perspective to Inform Climate Change Impact Assessments.” <em>Environment International</em> 121: 119–29.</p>
 </div>
-<div id="ref-balbus2016climate" class="csl-entry">
-Balbus, J, A Crimmins, JL Gamble, DR Easterling, KE Kunkel, S Saha, and MC Sarofim. 2016. <span>“Introduction: Climate Change and Human Health.”</span> In <em>The Impacts of Climate Change on Human Health in the United States: A Scientific Assessment</em>, 24–42. Washington, DC: U.S. Global Change Research Program.
+<div id="ref-balbus2016climate">
+<p>Balbus, J, A Crimmins, JL Gamble, DR Easterling, KE Kunkel, S Saha, and MC Sarofim. 2016. “Introduction: Climate Change and Human Health.” In <em>The Impacts of Climate Change on Human Health in the United States: A Scientific Assessment</em>, 24–42. Washington, DC: U.S. Global Change Research Program.</p>
 </div>
-<div id="ref-benichou2006attributable" class="csl-entry">
-Benichou, Jacques. 2006. <span>“Attributable Risk.”</span> <em>Encyclopedia of Environmetrics</em> 1.
+<div id="ref-benichou2006attributable">
+<p>Benichou, Jacques. 2006. “Attributable Risk.” <em>Encyclopedia of Environmetrics</em> 1.</p>
 </div>
-<div id="ref-ebi2015greater" class="csl-entry">
-Ebi, Kristie L. 2015. <span>“Greater Understanding Is Needed of Whether Warmer and Shorter Winters Associated with Climate Change Could Reduce Winter Mortality.”</span> <em>Environmental Research Letters</em> 10 (11): 111002.
+<div id="ref-ebi2015greater">
+<p>Ebi, Kristie L. 2015. “Greater Understanding Is Needed of Whether Warmer and Shorter Winters Associated with Climate Change Could Reduce Winter Mortality.” <em>Environmental Research Letters</em> 10 (11): 111002.</p>
 </div>
-<div id="ref-gasparrini2014attributable" class="csl-entry">
-Gasparrini, Antonio, and Michela Leone. 2014. <span>“Attributable Risk from Distributed Lag Models.”</span> <em>BMC Medical Research Methodology</em> 14 (1): 1–8.
+<div id="ref-gasparrini2014attributable">
+<p>Gasparrini, Antonio, and Michela Leone. 2014. “Attributable Risk from Distributed Lag Models.” <em>BMC Medical Research Methodology</em> 14 (1): 1–8.</p>
 </div>
-<div id="ref-gosling2017adaptation" class="csl-entry">
-Gosling, Simon N, David M Hondula, Aditi Bunker, Dolores Ibarreta, Junguo Liu, Xinxin Zhang, and Rainer Sauerborn. 2017. <span>“Adaptation to Climate Change: A Comparative Analysis of Modeling Methods for Heat-Related Mortality.”</span> <em>Environmental Health Perspectives</em> 125 (8): 087008.
+<div id="ref-gosling2017adaptation">
+<p>Gosling, Simon N, David M Hondula, Aditi Bunker, Dolores Ibarreta, Junguo Liu, Xinxin Zhang, and Rainer Sauerborn. 2017. “Adaptation to Climate Change: A Comparative Analysis of Modeling Methods for Heat-Related Mortality.” <em>Environmental Health Perspectives</em> 125 (8): 087008.</p>
 </div>
-<div id="ref-hajat2016excess" class="csl-entry">
-Hajat, Shakoor, and Antonio Gasparrini. 2016. <span>“The Excess Winter Deaths Measure: Why Its Use Is Misleading for Public Health Understanding of Cold-Related Health Impacts.”</span> <em>Epidemiology (Cambridge, Mass.)</em> 27 (4): 486.
+<div id="ref-greenland1988conceptual">
+<p>Greenland, Sander, and James M Robins. 1988. “Conceptual Problems in the Definition and Interpretation of Attributable Fractions.” <em>American Journal of Epidemiology</em> 128 (6): 1185–97.</p>
 </div>
-<div id="ref-kinney2018temporal" class="csl-entry">
-Kinney, Patrick L. 2018. <span>“Temporal Trends in Heat-Related Mortality: Implications for Future Projections.”</span> <em>Atmosphere</em> 9 (10): 409.
+<div id="ref-hajat2016excess">
+<p>Hajat, Shakoor, and Antonio Gasparrini. 2016. “The Excess Winter Deaths Measure: Why Its Use Is Misleading for Public Health Understanding of Cold-Related Health Impacts.” <em>Epidemiology (Cambridge, Mass.)</em> 27 (4): 486.</p>
 </div>
-<div id="ref-kinney2008approaches" class="csl-entry">
-Kinney, Patrick L, Marie S O’Neill, Michelle L Bell, and Joel Schwartz. 2008. <span>“Approaches for Estimating Effects of Climate Change on Heat-Related Deaths: Challenges and Opportunities.”</span> <em>Environmental Science &amp; Policy</em> 11 (1): 87–96.
+<div id="ref-kinney2018temporal">
+<p>Kinney, Patrick L. 2018. “Temporal Trends in Heat-Related Mortality: Implications for Future Projections.” <em>Atmosphere</em> 9 (10): 409.</p>
 </div>
-<div id="ref-kinney2015winter" class="csl-entry">
-Kinney, Patrick L, Joel Schwartz, Mathilde Pascal, Elisaveta Petkova, Alain Le Tertre, Sylvia Medina, and Robert Vautard. 2015. <span>“Winter Season Mortality: Will Climate Warming Bring Benefits?”</span> <em>Environmental Research Letters</em> 10 (6): 064016.
+<div id="ref-kinney2008approaches">
+<p>Kinney, Patrick L, Marie S O’Neill, Michelle L Bell, and Joel Schwartz. 2008. “Approaches for Estimating Effects of Climate Change on Heat-Related Deaths: Challenges and Opportunities.” <em>Environmental Science &amp; Policy</em> 11 (1): 87–96.</p>
 </div>
-<div id="ref-lee2017monte" class="csl-entry">
-Lee, Whanhee, Ho Kim, Sunghee Hwang, Antonella Zanobetti, Joel D Schwartz, and Yeonseung Chung. 2017. <span>“Monte Carlo Simulation-Based Estimation for the Minimum Mortality Temperature in Temperature-Mortality Association Study.”</span> <em>BMC Medical Research Methodology</em> 17 (1): 1–10.
+<div id="ref-kinney2015winter">
+<p>Kinney, Patrick L, Joel Schwartz, Mathilde Pascal, Elisaveta Petkova, Alain Le Tertre, Sylvia Medina, and Robert Vautard. 2015. “Winter Season Mortality: Will Climate Warming Bring Benefits?” <em>Environmental Research Letters</em> 10 (6): 064016.</p>
 </div>
-<div id="ref-northridge1995public" class="csl-entry">
-Northridge, Mary E. 1995. <span>“Public Health Methods–Attributable Risk as a Link Between Causality and Public Health Action.”</span> <em>American Journal of Public Health</em> 85 (9): 1202–4.
+<div id="ref-lee2017monte">
+<p>Lee, Whanhee, Ho Kim, Sunghee Hwang, Antonella Zanobetti, Joel D Schwartz, and Yeonseung Chung. 2017. “Monte Carlo Simulation-Based Estimation for the Minimum Mortality Temperature in Temperature-Mortality Association Study.” <em>BMC Medical Research Methodology</em> 17 (1): 1–10.</p>
 </div>
-<div id="ref-steenland2006overview" class="csl-entry">
-Steenland, Kyle, and Ben Armstrong. 2006. <span>“An Overview of Methods for Calculating the Burden of Disease Due to Specific Risk Factors.”</span> <em>Epidemiology</em>, 512–19.
+<div id="ref-northridge1995public">
+<p>Northridge, Mary E. 1995. “Public Health Methods–Attributable Risk as a Link Between Causality and Public Health Action.” <em>American Journal of Public Health</em> 85 (9): 1202–4.</p>
 </div>
-<div id="ref-tobias2017investigating" class="csl-entry">
-Tobıas, Aurelio, Ben Armstrong, and Antonio Gasparrini. 2017. <span>“Investigating Uncertainty in the Minimum Mortality Temperature.”</span> <em>Epidemiology</em> 28: 72–76.
+<div id="ref-steenland2006overview">
+<p>Steenland, Kyle, and Ben Armstrong. 2006. “An Overview of Methods for Calculating the Burden of Disease Due to Specific Risk Factors.” <em>Epidemiology</em>, 512–19.</p>
 </div>
-<div id="ref-vicedo2019hands" class="csl-entry">
-Vicedo-Cabrera, Ana M, Francesco Sera, and Antonio Gasparrini. 2019. <span>“Hands-on Tutorial on a Modeling Framework for Projections of Climate Change Impacts on Health.”</span> <em>Epidemiology</em> 30 (3): 321–29.
+<div id="ref-tobias2017investigating">
+<p>Tobıas, Aurelio, Ben Armstrong, and Antonio Gasparrini. 2017. “Investigating Uncertainty in the Minimum Mortality Temperature.” <em>Epidemiology</em> 28: 72–76.</p>
+</div>
+<div id="ref-vicedo2019hands">
+<p>Vicedo-Cabrera, Ana M, Francesco Sera, and Antonio Gasparrini. 2019. “Hands-on Tutorial on a Modeling Framework for Projections of Climate Change Impacts on Health.” <em>Epidemiology</em> 30 (3): 321–29.</p>
 </div>
 </div>
             </section>
@@ -642,7 +616,6 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -663,10 +636,6 @@ gitbook.start({
 "text": null
 },
 "download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
-"search": {
-"engine": "lunr",
-"options": null
-},
 "toc": {
 "collapse": "subsection"
 }

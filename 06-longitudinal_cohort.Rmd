@@ -59,6 +59,7 @@ questions:
 4. What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females? 
 5. What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers
 
+
 Based on this exploratory exercise in this section, talk about the potential
 for confounding when these data are analyzed to estimate the association between
 smoking and risk of incident MI. 
@@ -386,7 +387,15 @@ $h(t)=\frac{\partial log(S(t))}{\partial t}$
 $H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
 
 
-The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk. A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.
+The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk. 
+*Applied exercise: Survival curves and simple survival analysis*
+1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?
+2. How do (survival) curves for mortality compare between men and women? How about for MI?
+3. What is the Hazard Ratio for smoking and the risk of MI, from a Cox Proportional Hazards model? 
+
+**1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?**
+
+A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.
 
 In R we would estimate Survival $S(t)$ with all-cause mortality representing failure as follows:
 ```{r}
@@ -404,7 +413,7 @@ fit1<-survfit(Surv(timedth, death) ~ 1, data = fhs_first)
 fit1 %>%
 ggsurvplot(xlab="Time to death (days)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
-We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
+We can see that as follow-up time increases survival decreases rather monotonically over time, or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the `Surv` function, substituting time of death with respect to follow-up time with age at death.
 
@@ -415,11 +424,28 @@ ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity
 ```
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases. 
 
+**2.How do (survival) curves for mortality compare between men and women? How about for MI?**
+
+Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between men and women we would fit the same model as above among men and women respecitvely and then compare the two.
+
+```{r}
+ S1=Surv(fhs_first$timedth,fhs_first$death)
+ head(S1)
+```
+
+
+
+
+
+
+
+
+
 The Cox proportional hazards model in a simple form has this form
 
 $log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
 
-where $\lambda(t)$ represent the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The baseline hazard $\lambda_{0}(t)$ is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, $\lambda_{0}(t)$ is not estimated by the model. 
+where $\lambda(t)$ represents the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The baseline hazard $\lambda_{0}(t)$ is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, $\lambda_{0}(t)$ is not estimated by the model. 
 The above model can also be writen as 
 
 $\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}$
