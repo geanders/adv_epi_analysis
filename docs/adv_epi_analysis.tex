@@ -113,7 +113,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-09-29}
+\date{2021-10-11}
 
 \begin{document}
 \maketitle
@@ -6064,6 +6064,14 @@ meant as general background on how to fit survival analysis models.
   \citet{bradburn2003survival2}
 \end{itemize}
 
+Lastly, this article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{hernan2010hazards}
+\end{itemize}
+
 \hypertarget{longitudinal-cohort-data}{%
 \section{Longitudinal cohort data}\label{longitudinal-cohort-data}}
 
@@ -6549,7 +6557,8 @@ We can create a new age at death variable for those with \texttt{death=1} using 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs_first<-fhs_first }\OperatorTok{%>%}\StringTok{ }
-\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{agedth=}\NormalTok{age}\OperatorTok{+}\NormalTok{timedth}\OperatorTok{/}\FloatTok{365.25}\NormalTok{)}
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{agedth=}\NormalTok{age}\OperatorTok{+}\NormalTok{timedth}\OperatorTok{/}\FloatTok{365.25}\NormalTok{,}
+       \DataTypeTok{timedthy=}\NormalTok{timedth}\OperatorTok{/}\FloatTok{365.25}\NormalTok{) }\CommentTok{###also creating a year time-to-death variable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -6720,9 +6729,13 @@ Similar to the exercise above we can compare BMI distributions by MI case status
 In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or \texttt{glm} family that model an outcome that may follow a gaussian (linear regression), binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered `censored'. Censoring can occur in three ways:
 
 \begin{itemize}
-\item the participant does not experience the event of interest before the study end
-\item the participant is lossed to follow-up before experiencing the event of interest
-\item the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participants that dies from a different cause is considered censored)
+\tightlist
+\item
+  the participant does not experience the event of interest before the study end
+\item
+  the participant is lost to follow-up before experiencing the event of interest
+\item
+  the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participant that dies from a different cause is considered censored)
 \end{itemize}
 
 These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome then adjustment for censoring has to happen.
@@ -6742,7 +6755,7 @@ If we know any of \(S(t)\), \(H(t)\) or \(h(t)\), we can derive the rest based o
 The \texttt{survival} package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in \citet{wong1989risk}.
 \emph{Applied exercise: Survival curves and simple survival analysis}
 1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?
-2. How do (survival) curves for mortality compare between men and women? How about for MI?
+2. How do (survival) curves for mortality compare between males and females? How about for MI?
 3. What is the Hazard Ratio for smoking and the risk of MI, from a Cox Proportional Hazards model?
 
 \textbf{1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?}
@@ -6785,9 +6798,9 @@ The numbers assigned to each individual represent their censoring times, with ea
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit1<-}\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(timedth, death) }\OperatorTok{~}\StringTok{ }\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ fhs_first)}
-\NormalTok{fit1 }\OperatorTok{%>%}
-\KeywordTok{ggsurvplot}\NormalTok{(}\DataTypeTok{xlab=}\StringTok{"Time to death (days)"}\NormalTok{,}\DataTypeTok{ylab=}\KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{'Overall Survival Probablity '}\NormalTok{, }\KeywordTok{hat}\NormalTok{(S)}\OperatorTok{*}\StringTok{"(t)"}\NormalTok{)))}
+\NormalTok{fit_time<-}\StringTok{  }\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(timedthy, death) }\OperatorTok{~}\StringTok{ }\DecValTok{1}\NormalTok{, }\DataTypeTok{data=}\NormalTok{fhs_first)}
+\NormalTok{fit_time }\OperatorTok{%>%}
+\KeywordTok{ggsurvplot}\NormalTok{(}\DataTypeTok{xlab=}\StringTok{"Time to death (years)"}\NormalTok{,}\DataTypeTok{ylab=}\KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{'Overall Survival Probablity '}\NormalTok{, }\KeywordTok{hat}\NormalTok{(S)}\OperatorTok{*}\StringTok{"(t)"}\NormalTok{)))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -6798,8 +6811,8 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit2<-}\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(agedth, death) }\OperatorTok{~}\StringTok{ }\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ fhs_first)}
-\NormalTok{fit2 }\OperatorTok{%>%}
+\NormalTok{fit_age<-}\StringTok{ }\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(agedth, death) }\OperatorTok{~}\StringTok{ }\DecValTok{1}\NormalTok{, }\DataTypeTok{data=}\NormalTok{fhs_first)}
+\NormalTok{fit_age }\OperatorTok{%>%}
 \KeywordTok{ggsurvplot}\NormalTok{(}\DataTypeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\DataTypeTok{ylab=}\KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{'Overall Survival Probablity '}\NormalTok{, }\KeywordTok{hat}\NormalTok{(S)}\OperatorTok{*}\StringTok{"(t)"}\NormalTok{)))}
 \end{Highlighting}
 \end{Shaded}
@@ -6807,20 +6820,66 @@ We can repeat this estimation with a different time-scale of interest. Other tha
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-195-1.pdf}
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.
 
-\textbf{2.How do (survival) curves for mortality compare between men and women? How about for MI?}
+\textbf{2.How do (survival) curves for mortality compare between males and females? How about for MI?}
 
-Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between men and women we would fit the same model as above among men and women respecitvely and then compare the two.
+Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independet variable. For all cause mortality:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{ S1=}\KeywordTok{Surv}\NormalTok{(fhs_first}\OperatorTok{$}\NormalTok{timedth,fhs_first}\OperatorTok{$}\NormalTok{death)}
- \KeywordTok{head}\NormalTok{(S1)}
+\NormalTok{fit_bysex<-}\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(timedthy, death) }\OperatorTok{~}\StringTok{ }\NormalTok{sex, }\DataTypeTok{data=}\NormalTok{fhs_first)}
+\NormalTok{fit_age_bysex<-}\StringTok{ }\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(agedth, death) }\OperatorTok{~}\StringTok{ }\NormalTok{sex, }\DataTypeTok{data=}\NormalTok{fhs_first)}
+
+\NormalTok{fit_bysex}\OperatorTok{%>%}
+\KeywordTok{ggsurvplot}\NormalTok{(}\DataTypeTok{xlab=}\StringTok{"Time to death (years)"}\NormalTok{,}\DataTypeTok{ylab=}\KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{'Overall Survival Probablity '}\NormalTok{, }\KeywordTok{hat}\NormalTok{(S)}\OperatorTok{*}\StringTok{"(t)"}\NormalTok{)), }\DataTypeTok{legend.labs=}\KeywordTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{,}\StringTok{"Female"}\NormalTok{),}
+  \DataTypeTok{legend.title=}\StringTok{"Sex"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{verbatim}
-## [1] 8766+ 8766+ 8766+ 2956  8766+ 8766+
-\end{verbatim}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-196-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit_age_bysex}\OperatorTok{%>%}
+\KeywordTok{ggsurvplot}\NormalTok{(}\DataTypeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\DataTypeTok{ylab=}\KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{'Overall Survival Probablity '}\NormalTok{, }\KeywordTok{hat}\NormalTok{(S)}\OperatorTok{*}\StringTok{"(t)"}\NormalTok{)), }\DataTypeTok{legend.labs=}\KeywordTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{,}\StringTok{"Female"}\NormalTok{),}
+  \DataTypeTok{legend.title=}\StringTok{"Sex"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-196-2.pdf}
+You can now see that the survival rate for males drops quicker (at a younger age) than for females.
+Similarly if we look at MI as the outcome:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit_age_MIbysex<-}\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(agemi, mi_fchd) }\OperatorTok{~}\StringTok{ }\NormalTok{sex, }\DataTypeTok{data=}\NormalTok{fhs_first )}
+
+\NormalTok{fit_age_MIbysex }\OperatorTok{%>%}
+\KeywordTok{ggsurvplot}\NormalTok{(}\DataTypeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\DataTypeTok{ylab=}\KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{'MI Survival Probablity '}\NormalTok{, }\KeywordTok{hat}\NormalTok{(S)}\OperatorTok{*}\StringTok{"(t)"}\NormalTok{)), }\DataTypeTok{legend.labs=}\KeywordTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{,}\StringTok{"Female"}\NormalTok{),}
+  \DataTypeTok{legend.title=}\StringTok{"Sex"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-197-1.pdf}
+Once again we see a difference in the survival rates with age by sex, which is in line with what we already know from the literature.
+
+We can actually approach survival rates by smoking status in the same manner:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit_age_MIsmoking<-}\KeywordTok{survfit}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(agemi, mi_fchd) }\OperatorTok{~}\StringTok{ }\NormalTok{cursmoke, }\DataTypeTok{data=}\NormalTok{fhs_first )}
+
+\NormalTok{fit_age_MIsmoking }\OperatorTok{%>%}
+\KeywordTok{ggsurvplot}\NormalTok{(}\DataTypeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\DataTypeTok{ylab=}\KeywordTok{expression}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{'MI Survival Probablity '}\NormalTok{, }\KeywordTok{hat}\NormalTok{(S)}\OperatorTok{*}\StringTok{"(t)"}\NormalTok{)), }\DataTypeTok{legend.labs=}\KeywordTok{c}\NormalTok{(}\StringTok{"Non-smokers"}\NormalTok{, }\StringTok{"Smokers"}\NormalTok{),}
+  \DataTypeTok{legend.title=}\StringTok{"Smoking status at baseline"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-198-1.pdf}
+Once again we can observe that there is a difference in survival rates for MI, by smoking status at baseline.
+
+The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example we can compare survival rates among smokers and non-smokers, but we can't really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we've been fitting. The \texttt{survreg} function in the \texttt{survival} package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the \emph{exponential}, \emph{Weibull}, \emph{log-normal (log(T) is normally distributed)} or \emph{log-logistic} distributions.
+
+The majority of survival analyses for longitudinal cohort data, however has been dominated by the Cox proportional hazards model over the past few decades, and this is the type of model we will focus on here. The main advantage of the Cox proportional hazards model is that we don't have to make any distributional assumptions about the outcome or residuals. We simply model the instantaneous hazard of the outcome at specific time intervals as a function of covariates of interest, and the assumptions we have to make is that of `proportional hazards'. This assumptions stipulates that the hazards across levels of covariates of interest are proportional over time. In other words the ratio of the hazards across levels covariates should be constant over time.
 
 The Cox proportional hazards model in a simple form has this form
 
@@ -6833,8 +6892,205 @@ The above model can also be writen as
 
 \(e^{\beta_{1}}\) is the hazard ratio comparing those hose with \(X=1\) and \(X=0\)
 
-Using the \texttt{fhs} data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI.
+Using the \texttt{fhs} data we will fit a simple Cox proportional hazard for the effect of smoking on the hazard for MI.
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph_mod1<-}\KeywordTok{coxph}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(timedth, death) }\OperatorTok{~}\StringTok{ }\NormalTok{cursmoke, }\DataTypeTok{data=}\NormalTok{fhs_first)}
+\end{Highlighting}
+\end{Shaded}
+
+If we see the estimated parameters of the model, there isn't an intercept term as we've commented above:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(broom)}
+\NormalTok{coxph_mod1 }\OperatorTok{%>%}
+\KeywordTok{tidy}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 5
+##   term     estimate std.error statistic p.value
+##   <chr>       <dbl>     <dbl>     <dbl>   <dbl>
+## 1 cursmoke   0.0867    0.0508      1.71  0.0880
+\end{verbatim}
+
+The parameter for the covariate of interest is equivalent to the log of the hazard ratio comparing current smokers at baseline to non-smokers. We can extract the hazard ratio by exponentiating that parameter.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph_mod1 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "cursmoke"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{hr =} \KeywordTok{exp}\NormalTok{(estimate),}
+         \DataTypeTok{low_ci =}\NormalTok{ estimate }\OperatorTok{-}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error, }
+         \DataTypeTok{high_ci =}\NormalTok{ estimate }\OperatorTok{+}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error, }
+         \DataTypeTok{low_hr =} \KeywordTok{exp}\NormalTok{(low_ci), }
+         \DataTypeTok{high_hr =} \KeywordTok{exp}\NormalTok{(high_ci)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(term, hr, low_hr, high_hr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   <chr>    <dbl>  <dbl>   <dbl>
+## 1 cursmoke  1.09  0.987    1.20
+\end{verbatim}
+
+We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence intervals include the null.
+
+We have said that the main assumption we need to make here is that of proportional hazards. The \texttt{survival} package actually allows us to check this with the \texttt{cox.zph} function
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{phtest<-}\KeywordTok{cox.zph}\NormalTok{(coxph_mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+The output of this function is the result of a \(\chi^2\) test for the proportional hazards assumption. If the p-value here was below 0.05 we would have to reject the null hypothesis that the proportional hazards assumption holds.
+We can also plot the parameter(s) of interest across time from this output. If the proportional hazards assumption holds (constant HR) then the parameter should resemble a horizontal line with respect to time.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(phtest)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-203-1.pdf}
+
+Here we see that the line is besically horizontal. Now let's repeat the model adjusting for some covariates, specifically sex and age.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph_mod2<-}\KeywordTok{coxph}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(timedth, death) }\OperatorTok{~}\StringTok{ }\NormalTok{cursmoke }\OperatorTok{+}\StringTok{ }\NormalTok{sex }\OperatorTok{+}\StringTok{ }\NormalTok{age, }\DataTypeTok{data=}\NormalTok{fhs_first)}
+\NormalTok{coxph_mod2 }\OperatorTok{%>%}
+\KeywordTok{tidy}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 5
+##   term     estimate std.error statistic   p.value
+##   <chr>       <dbl>     <dbl>     <dbl>     <dbl>
+## 1 cursmoke   0.338    0.0535       6.32 2.64e- 10
+## 2 sex2      -0.540    0.0525     -10.3  9.35e- 25
+## 3 age        0.0967   0.00327     29.6  3.79e-192
+\end{verbatim}
+
+We can already see that the parameter for smoking is now quite higher, but let's estimate the HR and 95\% CI:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph_mod2 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "cursmoke"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{hr =} \KeywordTok{exp}\NormalTok{(estimate),}
+         \DataTypeTok{low_ci =}\NormalTok{ estimate }\OperatorTok{-}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error, }
+         \DataTypeTok{high_ci =}\NormalTok{ estimate }\OperatorTok{+}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error, }
+         \DataTypeTok{low_hr =} \KeywordTok{exp}\NormalTok{(low_ci), }
+         \DataTypeTok{high_hr =} \KeywordTok{exp}\NormalTok{(high_ci)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(term, hr, low_hr, high_hr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   <chr>    <dbl>  <dbl>   <dbl>
+## 1 cursmoke  1.40   1.26    1.56
+\end{verbatim}
+
+The estimated Hazard Ratio is now 1.40 and the 95\% CI does not include the null. We can determine that there was some confounding by these variables leading the estimate from the previous model to be biased towards the null. Let's test the ph assumption for this model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{phtest2<-}\KeywordTok{cox.zph}\NormalTok{(coxph_mod2)}
+\NormalTok{phtest2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          chisq df     p
+## cursmoke 0.373  1 0.541
+## sex      3.776  1 0.052
+## age      3.046  1 0.081
+## GLOBAL   7.747  3 0.052
+\end{verbatim}
+
+We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption.
+
+Now let's see what happens if repeat the above model using age as the time-scale of interest in the survival function of the model:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph_modage1<-}\KeywordTok{coxph}\NormalTok{(}\KeywordTok{Surv}\NormalTok{(agedth, death) }\OperatorTok{~}\StringTok{ }\NormalTok{cursmoke }\OperatorTok{+}\StringTok{ }\NormalTok{sex, }\DataTypeTok{data=}\NormalTok{fhs_first)}
+\NormalTok{coxph_modage1 }\OperatorTok{%>%}
+\KeywordTok{tidy}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   term     estimate std.error statistic  p.value
+##   <chr>       <dbl>     <dbl>     <dbl>    <dbl>
+## 1 cursmoke    0.373    0.0529      7.05 1.73e-12
+## 2 sex2       -0.539    0.0526    -10.2  1.46e-24
+\end{verbatim}
+
+Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph_modage1 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ "cursmoke"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{hr =} \KeywordTok{exp}\NormalTok{(estimate),}
+         \DataTypeTok{low_ci =}\NormalTok{ estimate }\OperatorTok{-}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error, }
+         \DataTypeTok{high_ci =}\NormalTok{ estimate }\OperatorTok{+}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error, }
+         \DataTypeTok{low_hr =} \KeywordTok{exp}\NormalTok{(low_ci), }
+         \DataTypeTok{high_hr =} \KeywordTok{exp}\NormalTok{(high_ci)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(term, hr, low_hr, high_hr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   <chr>    <dbl>  <dbl>   <dbl>
+## 1 cursmoke  1.45   1.31    1.61
+\end{verbatim}
+
+We also see that the HR is similar as above (slightly higher).
+
+Testing for the proportional hazards assumption in this model:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{phtestage<-}\KeywordTok{cox.zph}\NormalTok{(coxph_modage1)}
+\NormalTok{phtestage}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           chisq df       p
+## cursmoke 11.637  1 0.00065
+## sex       0.657  1 0.41770
+## GLOBAL   15.358  2 0.00046
+\end{verbatim}
+
+Here we see that the assumption fails. If we plot the results of the models we can also see that we no longer have that horizontal line and in the case of smoking, it deviates from the that line significantly.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{)) }\CommentTok{###graphical parameters to plot two plots side by side (1 row, 2 columns)}
+\KeywordTok{plot}\NormalTok{(phtestage)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-210-1.pdf}
 \emph{Note: Variables of interest to continue with:
 for mixed models, \texttt{sysbp}, \texttt{diabp}, \texttt{totchol} compared to \texttt{cigpday}, \texttt{bmi} smoking or not
 for long. analysis, \texttt{timemi} and \texttt{timestrk} and \texttt{hyperten}, exposure: \texttt{cigpday}, \texttt{sysbp}, \texttt{diabp}, \texttt{bmi}}

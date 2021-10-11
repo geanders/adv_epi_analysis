@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-09-29" />
+<meta name="date" content="2021-10-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -222,6 +222,10 @@ meant as general background on how to fit survival analysis models.</p>
 <li><p><span class="citation">Clark et al. (<a href="#ref-clark2003survival" role="doc-biblioref">2003</a>)</span></p></li>
 <li><p><span class="citation">Bradburn et al. (<a href="#ref-bradburn2003survival" role="doc-biblioref">2003</a><a href="#ref-bradburn2003survival" role="doc-biblioref">b</a>)</span></p></li>
 <li><p><span class="citation">Bradburn et al. (<a href="#ref-bradburn2003survival2" role="doc-biblioref">2003</a><a href="#ref-bradburn2003survival2" role="doc-biblioref">a</a>)</span></p></li>
+</ul>
+<p>Lastly, this article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves</p>
+<ul>
+<li><span class="citation">Hernán (<a href="#ref-hernan2010hazards" role="doc-biblioref">2010</a>)</span></li>
 </ul>
 <div id="longitudinal-cohort-data" class="section level2">
 <h2><span class="header-section-number">7.1</span> Longitudinal cohort data</h2>
@@ -485,7 +489,8 @@ the deaths.</p>
 <p>In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The <code>age</code> variable in <code>fhs</code> represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for <code>age</code> would be less than the age at death. We will use the <code>timedth</code> variable to help us determine the actual age at death. The value of <code>timedth</code> is the number of days from beginning of follow-up until death for those with <code>death=1</code>, while it is a fixed value of <code>timedth=8766</code> (the maximum duration of follow-up) for those with <code>death=0</code>.</p>
 <p>We can create a new age at death variable for those with <code>death=1</code> using the <code>age</code> at baseline and <code>timedth</code> values</p>
 <div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="longitudinal-cohort-study-designs.html#cb348-1"></a>fhs_first&lt;-fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb348-2"><a href="longitudinal-cohort-study-designs.html#cb348-2"></a><span class="kw">mutate</span>(<span class="dt">agedth=</span>age<span class="op">+</span>timedth<span class="op">/</span><span class="fl">365.25</span>)</span></code></pre></div>
+<span id="cb348-2"><a href="longitudinal-cohort-study-designs.html#cb348-2"></a><span class="kw">mutate</span>(<span class="dt">agedth=</span>age<span class="op">+</span>timedth<span class="op">/</span><span class="fl">365.25</span>,</span>
+<span id="cb348-3"><a href="longitudinal-cohort-study-designs.html#cb348-3"></a>       <span class="dt">timedthy=</span>timedth<span class="op">/</span><span class="fl">365.25</span>) <span class="co">###also creating a year time-to-death variable</span></span></code></pre></div>
 <p>We can then get summary statistics on this new variable</p>
 <div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="longitudinal-cohort-study-designs.html#cb349-1"></a>fhs_first <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb349-2"><a href="longitudinal-cohort-study-designs.html#cb349-2"></a><span class="kw">summarize</span>(<span class="dt">min_agedth =</span> <span class="kw">min</span>(agedth),</span>
@@ -561,8 +566,12 @@ We see that R didn’t return two separate boxplots by sex, but rather one cente
 <div id="coding-a-survival-analysis" class="section level2">
 <h2><span class="header-section-number">7.2</span> Coding a survival analysis</h2>
 <p>[R package <code>survival</code>]</p>
-In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or <code>glm</code> family that model an outcome that may follow a gaussian (linear regression), binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered ‘censored’. Censoring can occur in three ways:
-
+<p>In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or <code>glm</code> family that model an outcome that may follow a gaussian (linear regression), binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered ‘censored’. Censoring can occur in three ways:</p>
+<ul>
+<li>the participant does not experience the event of interest before the study end</li>
+<li>the participant is lost to follow-up before experiencing the event of interest</li>
+<li>the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participant that dies from a different cause is considered censored)</li>
+</ul>
 <p>These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome then adjustment for censoring has to happen.</p>
 <p>Let’s assume that we are interested in all cause mortality as the event of interest let’s denote <span class="math inline">\(T\)</span> is time to death and <span class="math inline">\(T\geq 0\)</span>. We define the survival function as
 <span class="math inline">\(S(t)=Pr[T&gt;t]=1-F(t)\)</span>, where the survival function <span class="math inline">\(S(t)\)</span> is the probability that a participant survives past time <span class="math inline">\(t\)</span> (<span class="math inline">\(Pr[T&gt;t]=1\)</span>). <span class="math inline">\(F(t)\)</span> is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, <span class="math inline">\(R(t)\)</span>) or the probability that that an individual will have a survival time less than or equal to t (<span class="math inline">\([Pr(T≤t)]\)</span>)</p>
@@ -574,7 +583,7 @@ If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math i
 <p>The <code>survival</code> package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in <span class="citation">Wong et al. (<a href="#ref-wong1989risk" role="doc-biblioref">1989</a>)</span>.
 <em>Applied exercise: Survival curves and simple survival analysis</em>
 1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?
-2. How do (survival) curves for mortality compare between men and women? How about for MI?
+2. How do (survival) curves for mortality compare between males and females? How about for MI?
 3. What is the Hazard Ratio for smoking and the risk of MI, from a Cox Proportional Hazards model?</p>
 <p><strong>1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?</strong></p>
 <p>A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.</p>
@@ -588,30 +597,155 @@ If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math i
 <pre><code>## Warning: package &#39;survminer&#39; was built under R version 4.0.2</code></pre>
 <pre><code>## Loading required package: ggpubr</code></pre>
 <pre><code>## Warning: package &#39;ggpubr&#39; was built under R version 4.0.2</code></pre>
-<div class="sourceCode" id="cb371"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb371-1"><a href="longitudinal-cohort-study-designs.html#cb371-1"></a>fit1&lt;-<span class="kw">survfit</span>(<span class="kw">Surv</span>(timedth, death) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> fhs_first)</span>
-<span id="cb371-2"><a href="longitudinal-cohort-study-designs.html#cb371-2"></a>fit1 <span class="op">%&gt;%</span></span>
-<span id="cb371-3"><a href="longitudinal-cohort-study-designs.html#cb371-3"></a><span class="kw">ggsurvplot</span>(<span class="dt">xlab=</span><span class="st">&quot;Time to death (days)&quot;</span>,<span class="dt">ylab=</span><span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="kw">hat</span>(S)<span class="op">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb371"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb371-1"><a href="longitudinal-cohort-study-designs.html#cb371-1"></a>fit_time&lt;-<span class="st">  </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(timedthy, death) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>fhs_first)</span>
+<span id="cb371-2"><a href="longitudinal-cohort-study-designs.html#cb371-2"></a>fit_time <span class="op">%&gt;%</span></span>
+<span id="cb371-3"><a href="longitudinal-cohort-study-designs.html#cb371-3"></a><span class="kw">ggsurvplot</span>(<span class="dt">xlab=</span><span class="st">&quot;Time to death (years)&quot;</span>,<span class="dt">ylab=</span><span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="kw">hat</span>(S)<span class="op">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-194-1.png" width="672" />
 We can see that as follow-up time increases survival decreases rather monotonically over time, or in other words the number of people who have died increases. Survival <span class="math inline">\(\hat{S}(t)\)</span> drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.</p>
 <p>We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the <code>Surv</code> function, substituting time of death with respect to follow-up time with age at death.</p>
-<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="longitudinal-cohort-study-designs.html#cb372-1"></a>fit2&lt;-<span class="kw">survfit</span>(<span class="kw">Surv</span>(agedth, death) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> fhs_first)</span>
-<span id="cb372-2"><a href="longitudinal-cohort-study-designs.html#cb372-2"></a>fit2 <span class="op">%&gt;%</span></span>
+<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="longitudinal-cohort-study-designs.html#cb372-1"></a>fit_age&lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(agedth, death) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>fhs_first)</span>
+<span id="cb372-2"><a href="longitudinal-cohort-study-designs.html#cb372-2"></a>fit_age <span class="op">%&gt;%</span></span>
 <span id="cb372-3"><a href="longitudinal-cohort-study-designs.html#cb372-3"></a><span class="kw">ggsurvplot</span>(<span class="dt">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="dt">ylab=</span><span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="kw">hat</span>(S)<span class="op">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-195-1.png" width="672" />
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.</p>
-<p><strong>2.How do (survival) curves for mortality compare between men and women? How about for MI?</strong></p>
-<p>Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between men and women we would fit the same model as above among men and women respecitvely and then compare the two.</p>
-<div class="sourceCode" id="cb373"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb373-1"><a href="longitudinal-cohort-study-designs.html#cb373-1"></a> S1=<span class="kw">Surv</span>(fhs_first<span class="op">$</span>timedth,fhs_first<span class="op">$</span>death)</span>
-<span id="cb373-2"><a href="longitudinal-cohort-study-designs.html#cb373-2"></a> <span class="kw">head</span>(S1)</span></code></pre></div>
-<pre><code>## [1] 8766+ 8766+ 8766+ 2956  8766+ 8766+</code></pre>
+<p><strong>2.How do (survival) curves for mortality compare between males and females? How about for MI?</strong></p>
+<p>Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independet variable. For all cause mortality:</p>
+<div class="sourceCode" id="cb373"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb373-1"><a href="longitudinal-cohort-study-designs.html#cb373-1"></a>fit_bysex&lt;-<span class="kw">survfit</span>(<span class="kw">Surv</span>(timedthy, death) <span class="op">~</span><span class="st"> </span>sex, <span class="dt">data=</span>fhs_first)</span>
+<span id="cb373-2"><a href="longitudinal-cohort-study-designs.html#cb373-2"></a>fit_age_bysex&lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(agedth, death) <span class="op">~</span><span class="st"> </span>sex, <span class="dt">data=</span>fhs_first)</span>
+<span id="cb373-3"><a href="longitudinal-cohort-study-designs.html#cb373-3"></a></span>
+<span id="cb373-4"><a href="longitudinal-cohort-study-designs.html#cb373-4"></a>fit_bysex<span class="op">%&gt;%</span></span>
+<span id="cb373-5"><a href="longitudinal-cohort-study-designs.html#cb373-5"></a><span class="kw">ggsurvplot</span>(<span class="dt">xlab=</span><span class="st">&quot;Time to death (years)&quot;</span>,<span class="dt">ylab=</span><span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="kw">hat</span>(S)<span class="op">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="dt">legend.labs=</span><span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
+<span id="cb373-6"><a href="longitudinal-cohort-study-designs.html#cb373-6"></a>  <span class="dt">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-196-1.png" width="672" /></p>
+<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="longitudinal-cohort-study-designs.html#cb374-1"></a>fit_age_bysex<span class="op">%&gt;%</span></span>
+<span id="cb374-2"><a href="longitudinal-cohort-study-designs.html#cb374-2"></a><span class="kw">ggsurvplot</span>(<span class="dt">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="dt">ylab=</span><span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="kw">hat</span>(S)<span class="op">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="dt">legend.labs=</span><span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
+<span id="cb374-3"><a href="longitudinal-cohort-study-designs.html#cb374-3"></a>  <span class="dt">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-196-2.png" width="672" />
+You can now see that the survival rate for males drops quicker (at a younger age) than for females.
+Similarly if we look at MI as the outcome:</p>
+<div class="sourceCode" id="cb375"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb375-1"><a href="longitudinal-cohort-study-designs.html#cb375-1"></a>fit_age_MIbysex&lt;-<span class="kw">survfit</span>(<span class="kw">Surv</span>(agemi, mi_fchd) <span class="op">~</span><span class="st"> </span>sex, <span class="dt">data=</span>fhs_first )</span>
+<span id="cb375-2"><a href="longitudinal-cohort-study-designs.html#cb375-2"></a></span>
+<span id="cb375-3"><a href="longitudinal-cohort-study-designs.html#cb375-3"></a>fit_age_MIbysex <span class="op">%&gt;%</span></span>
+<span id="cb375-4"><a href="longitudinal-cohort-study-designs.html#cb375-4"></a><span class="kw">ggsurvplot</span>(<span class="dt">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="dt">ylab=</span><span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&#39;MI Survival Probablity &#39;</span>, <span class="kw">hat</span>(S)<span class="op">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="dt">legend.labs=</span><span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
+<span id="cb375-5"><a href="longitudinal-cohort-study-designs.html#cb375-5"></a>  <span class="dt">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-197-1.png" width="672" />
+Once again we see a difference in the survival rates with age by sex, which is in line with what we already know from the literature.</p>
+<p>We can actually approach survival rates by smoking status in the same manner:</p>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="longitudinal-cohort-study-designs.html#cb376-1"></a>fit_age_MIsmoking&lt;-<span class="kw">survfit</span>(<span class="kw">Surv</span>(agemi, mi_fchd) <span class="op">~</span><span class="st"> </span>cursmoke, <span class="dt">data=</span>fhs_first )</span>
+<span id="cb376-2"><a href="longitudinal-cohort-study-designs.html#cb376-2"></a></span>
+<span id="cb376-3"><a href="longitudinal-cohort-study-designs.html#cb376-3"></a>fit_age_MIsmoking <span class="op">%&gt;%</span></span>
+<span id="cb376-4"><a href="longitudinal-cohort-study-designs.html#cb376-4"></a><span class="kw">ggsurvplot</span>(<span class="dt">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="dt">ylab=</span><span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&#39;MI Survival Probablity &#39;</span>, <span class="kw">hat</span>(S)<span class="op">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="dt">legend.labs=</span><span class="kw">c</span>(<span class="st">&quot;Non-smokers&quot;</span>, <span class="st">&quot;Smokers&quot;</span>),</span>
+<span id="cb376-5"><a href="longitudinal-cohort-study-designs.html#cb376-5"></a>  <span class="dt">legend.title=</span><span class="st">&quot;Smoking status at baseline&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-198-1.png" width="672" />
+Once again we can observe that there is a difference in survival rates for MI, by smoking status at baseline.</p>
+<p>The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example we can compare survival rates among smokers and non-smokers, but we can’t really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we’ve been fitting. The <code>survreg</code> function in the <code>survival</code> package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the <em>exponential</em>, <em>Weibull</em>, <em>log-normal (log(T) is normally distributed)</em> or <em>log-logistic</em> distributions.</p>
+<p>The majority of survival analyses for longitudinal cohort data, however has been dominated by the Cox proportional hazards model over the past few decades, and this is the type of model we will focus on here. The main advantage of the Cox proportional hazards model is that we don’t have to make any distributional assumptions about the outcome or residuals. We simply model the instantaneous hazard of the outcome at specific time intervals as a function of covariates of interest, and the assumptions we have to make is that of ‘proportional hazards’. This assumptions stipulates that the hazards across levels of covariates of interest are proportional over time. In other words the ratio of the hazards across levels covariates should be constant over time.</p>
 <p>The Cox proportional hazards model in a simple form has this form</p>
 <p><span class="math inline">\(log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X\)</span></p>
 <p>where <span class="math inline">\(\lambda(t)\)</span> represents the hazard at time <span class="math inline">\(t\)</span>, <span class="math inline">\(\lambda_{0}(t)\)</span> is the baseline hazard at time <span class="math inline">\(t\)</span>, and <span class="math inline">\(\beta_{1}\)</span> is the log hazard for those with <span class="math inline">\(X=1\)</span> compared to <span class="math inline">\(X=0\)</span>. The baseline hazard <span class="math inline">\(\lambda_{0}(t)\)</span> is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, <span class="math inline">\(\lambda_{0}(t)\)</span> is not estimated by the model.
 The above model can also be writen as</p>
 <p><span class="math inline">\(\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}\)</span></p>
 <p><span class="math inline">\(e^{\beta_{1}}\)</span> is the hazard ratio comparing those hose with <span class="math inline">\(X=1\)</span> and <span class="math inline">\(X=0\)</span></p>
-<p>Using the <code>fhs</code> data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI.</p>
-<p><em>Note: Variables of interest to continue with:
+<p>Using the <code>fhs</code> data we will fit a simple Cox proportional hazard for the effect of smoking on the hazard for MI.</p>
+<div class="sourceCode" id="cb377"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb377-1"><a href="longitudinal-cohort-study-designs.html#cb377-1"></a>coxph_mod1&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(timedth, death) <span class="op">~</span><span class="st"> </span>cursmoke, <span class="dt">data=</span>fhs_first)</span></code></pre></div>
+<p>If we see the estimated parameters of the model, there isn’t an intercept term as we’ve commented above:</p>
+<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="longitudinal-cohort-study-designs.html#cb378-1"></a><span class="kw">library</span>(broom)</span>
+<span id="cb378-2"><a href="longitudinal-cohort-study-designs.html#cb378-2"></a>coxph_mod1 <span class="op">%&gt;%</span></span>
+<span id="cb378-3"><a href="longitudinal-cohort-study-designs.html#cb378-3"></a><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 5
+##   term     estimate std.error statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke   0.0867    0.0508      1.71  0.0880</code></pre>
+<p>The parameter for the covariate of interest is equivalent to the log of the hazard ratio comparing current smokers at baseline to non-smokers. We can extract the hazard ratio by exponentiating that parameter.</p>
+<div class="sourceCode" id="cb380"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb380-1"><a href="longitudinal-cohort-study-designs.html#cb380-1"></a>coxph_mod1 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb380-2"><a href="longitudinal-cohort-study-designs.html#cb380-2"></a><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb380-3"><a href="longitudinal-cohort-study-designs.html#cb380-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;cursmoke&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb380-4"><a href="longitudinal-cohort-study-designs.html#cb380-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb380-5"><a href="longitudinal-cohort-study-designs.html#cb380-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb380-6"><a href="longitudinal-cohort-study-designs.html#cb380-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb380-7"><a href="longitudinal-cohort-study-designs.html#cb380-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb380-8"><a href="longitudinal-cohort-study-designs.html#cb380-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb380-9"><a href="longitudinal-cohort-study-designs.html#cb380-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.09  0.987    1.20</code></pre>
+<p>We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence intervals include the null.</p>
+<p>We have said that the main assumption we need to make here is that of proportional hazards. The <code>survival</code> package actually allows us to check this with the <code>cox.zph</code> function</p>
+<div class="sourceCode" id="cb382"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb382-1"><a href="longitudinal-cohort-study-designs.html#cb382-1"></a>phtest&lt;-<span class="kw">cox.zph</span>(coxph_mod1)</span></code></pre></div>
+<p>The output of this function is the result of a <span class="math inline">\(\chi^2\)</span> test for the proportional hazards assumption. If the p-value here was below 0.05 we would have to reject the null hypothesis that the proportional hazards assumption holds.
+We can also plot the parameter(s) of interest across time from this output. If the proportional hazards assumption holds (constant HR) then the parameter should resemble a horizontal line with respect to time.</p>
+<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb383-1"><a href="longitudinal-cohort-study-designs.html#cb383-1"></a><span class="kw">plot</span>(phtest)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-203-1.png" width="672" /></p>
+<p>Here we see that the line is besically horizontal. Now let’s repeat the model adjusting for some covariates, specifically sex and age.</p>
+<div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb384-1"><a href="longitudinal-cohort-study-designs.html#cb384-1"></a>coxph_mod2&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(timedth, death) <span class="op">~</span><span class="st"> </span>cursmoke <span class="op">+</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>age, <span class="dt">data=</span>fhs_first)</span>
+<span id="cb384-2"><a href="longitudinal-cohort-study-designs.html#cb384-2"></a>coxph_mod2 <span class="op">%&gt;%</span></span>
+<span id="cb384-3"><a href="longitudinal-cohort-study-designs.html#cb384-3"></a><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 5
+##   term     estimate std.error statistic   p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 cursmoke   0.338    0.0535       6.32 2.64e- 10
+## 2 sex2      -0.540    0.0525     -10.3  9.35e- 25
+## 3 age        0.0967   0.00327     29.6  3.79e-192</code></pre>
+<p>We can already see that the parameter for smoking is now quite higher, but let’s estimate the HR and 95% CI:</p>
+<div class="sourceCode" id="cb386"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb386-1"><a href="longitudinal-cohort-study-designs.html#cb386-1"></a>coxph_mod2 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb386-2"><a href="longitudinal-cohort-study-designs.html#cb386-2"></a><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb386-3"><a href="longitudinal-cohort-study-designs.html#cb386-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;cursmoke&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb386-4"><a href="longitudinal-cohort-study-designs.html#cb386-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb386-5"><a href="longitudinal-cohort-study-designs.html#cb386-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb386-6"><a href="longitudinal-cohort-study-designs.html#cb386-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb386-7"><a href="longitudinal-cohort-study-designs.html#cb386-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb386-8"><a href="longitudinal-cohort-study-designs.html#cb386-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb386-9"><a href="longitudinal-cohort-study-designs.html#cb386-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.40   1.26    1.56</code></pre>
+<p>The estimated Hazard Ratio is now 1.40 and the 95% CI does not include the null. We can determine that there was some confounding by these variables leading the estimate from the previous model to be biased towards the null. Let’s test the ph assumption for this model.</p>
+<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb388-1"><a href="longitudinal-cohort-study-designs.html#cb388-1"></a>phtest2&lt;-<span class="kw">cox.zph</span>(coxph_mod2)</span>
+<span id="cb388-2"><a href="longitudinal-cohort-study-designs.html#cb388-2"></a>phtest2</span></code></pre></div>
+<pre><code>##          chisq df     p
+## cursmoke 0.373  1 0.541
+## sex      3.776  1 0.052
+## age      3.046  1 0.081
+## GLOBAL   7.747  3 0.052</code></pre>
+<p>We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption.</p>
+<p>Now let’s see what happens if repeat the above model using age as the time-scale of interest in the survival function of the model:</p>
+<div class="sourceCode" id="cb390"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb390-1"><a href="longitudinal-cohort-study-designs.html#cb390-1"></a>coxph_modage1&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(agedth, death) <span class="op">~</span><span class="st"> </span>cursmoke <span class="op">+</span><span class="st"> </span>sex, <span class="dt">data=</span>fhs_first)</span>
+<span id="cb390-2"><a href="longitudinal-cohort-study-designs.html#cb390-2"></a>coxph_modage1 <span class="op">%&gt;%</span></span>
+<span id="cb390-3"><a href="longitudinal-cohort-study-designs.html#cb390-3"></a><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 5
+##   term     estimate std.error statistic  p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 cursmoke    0.373    0.0529      7.05 1.73e-12
+## 2 sex2       -0.539    0.0526    -10.2  1.46e-24</code></pre>
+<p>Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it.</p>
+<div class="sourceCode" id="cb392"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb392-1"><a href="longitudinal-cohort-study-designs.html#cb392-1"></a>coxph_modage1 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb392-2"><a href="longitudinal-cohort-study-designs.html#cb392-2"></a><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb392-3"><a href="longitudinal-cohort-study-designs.html#cb392-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;cursmoke&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb392-4"><a href="longitudinal-cohort-study-designs.html#cb392-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb392-5"><a href="longitudinal-cohort-study-designs.html#cb392-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb392-6"><a href="longitudinal-cohort-study-designs.html#cb392-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb392-7"><a href="longitudinal-cohort-study-designs.html#cb392-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb392-8"><a href="longitudinal-cohort-study-designs.html#cb392-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb392-9"><a href="longitudinal-cohort-study-designs.html#cb392-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.45   1.31    1.61</code></pre>
+<p>We also see that the HR is similar as above (slightly higher).</p>
+<p>Testing for the proportional hazards assumption in this model:</p>
+<div class="sourceCode" id="cb394"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb394-1"><a href="longitudinal-cohort-study-designs.html#cb394-1"></a>phtestage&lt;-<span class="kw">cox.zph</span>(coxph_modage1)</span>
+<span id="cb394-2"><a href="longitudinal-cohort-study-designs.html#cb394-2"></a>phtestage</span></code></pre></div>
+<pre><code>##           chisq df       p
+## cursmoke 11.637  1 0.00065
+## sex       0.657  1 0.41770
+## GLOBAL   15.358  2 0.00046</code></pre>
+<p>Here we see that the assumption fails. If we plot the results of the models we can also see that we no longer have that horizontal line and in the case of smoking, it deviates from the that line significantly.</p>
+<div class="sourceCode" id="cb396"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb396-1"><a href="longitudinal-cohort-study-designs.html#cb396-1"></a><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="co">###graphical parameters to plot two plots side by side (1 row, 2 columns)</span></span>
+<span id="cb396-2"><a href="longitudinal-cohort-study-designs.html#cb396-2"></a><span class="kw">plot</span>(phtestage)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-210-1.png" width="672" />
+<em>Note: Variables of interest to continue with:
 for mixed models, <code>sysbp</code>, <code>diabp</code>, <code>totchol</code> compared to <code>cigpday</code>, <code>bmi</code> smoking or not
 for long. analysis, <code>timemi</code> and <code>timestrk</code> and <code>hyperten</code>, exposure: <code>cigpday</code>, <code>sysbp</code>, <code>diabp</code>, <code>bmi</code></em></p>
 </div>
@@ -646,6 +780,9 @@ for long. analysis, <code>timemi</code> and <code>timestrk</code> and <code>hype
 </div>
 <div id="ref-clark2003survival">
 <p>Clark, Taane G, Michael J Bradburn, Sharon B Love, and Douglas G Altman. 2003. “Survival Analysis Part I: Basic Concepts and First Analyses.” <em>British Journal of Cancer</em> 89 (2): 232–38.</p>
+</div>
+<div id="ref-hernan2010hazards">
+<p>Hernán, Miguel A. 2010. “The Hazards of Hazard Ratios.” <em>Epidemiology (Cambridge, Mass.)</em> 21 (1): 13.</p>
 </div>
 <div id="ref-wong1989risk">
 <p>Wong, Nathan D, Adrienne Cupples, Adrian M Ostfeld, Daniel Levy, and William B Kannel. 1989. “Risk Factors for Long-Term Coronary Prognosis After Initial Myocardial Infarction: The Framingham Study.” <em>American Journal of Epidemiology</em> 130 (3): 469–80.</p>
