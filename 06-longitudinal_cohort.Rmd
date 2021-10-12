@@ -15,6 +15,10 @@ meant as general background on how to fit survival analysis models.
 
 - @bradburn2003survival2
 
+Lastly, this article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves
+
+- @hernan2010hazards
+
 
 ## Longitudinal cohort data
 Example datasets are available online, but also made available to you on the course 
@@ -58,6 +62,7 @@ questions:
 3. How many participants die? What is the distribution of age at time of death?
 4. What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females? 
 5. What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers
+
 
 Based on this exploratory exercise in this section, talk about the potential
 for confounding when these data are analyzed to estimate the association between
@@ -276,7 +281,8 @@ We can create a new age at death variable for those with `death=1` using the `ag
 
 ```{r}
 fhs_first<-fhs_first %>% 
-mutate(agedth=age+timedth/365.25)
+mutate(agedth=age+timedth/365.25,
+       timedthy=timedth/365.25) ###also creating a year time-to-death variable
 ```
 
 We can then get summary statistics on this new variable 
@@ -365,11 +371,10 @@ Similar to the exercise above we can compare BMI distributions by MI case status
 [R package `survival`]
 
 In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered  'censored'. Censoring can occur in three ways:
-\begin{itemize}
-\item the participant does not experience the event of interest before the study end
-\item the participant is lossed to follow-up before experiencing the event of interest
-\item the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participants that dies from a different cause is considered censored)
-\end{itemize}
+
+- the participant does not experience the event of interest before the study end
+- the participant is lost to follow-up before experiencing the event of interest
+- the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participant that dies from a different cause is considered censored)
 
 These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome then adjustment for censoring has to happen.
 
@@ -386,7 +391,15 @@ $h(t)=\frac{\partial log(S(t))}{\partial t}$
 $H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
 
 
-The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk. A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.
+The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk. 
+*Applied exercise: Survival curves and simple survival analysis*
+1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?
+2. How do (survival) curves for mortality compare between males and females? How about for MI?
+3. What is the Hazard Ratio for smoking and the risk of MI, from a Cox Proportional Hazards model? 
+
+**1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?**
+
+A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.
 
 In R we would estimate Survival $S(t)$ with all-cause mortality representing failure as follows:
 ```{r}
@@ -400,34 +413,182 @@ The numbers assigned to each individual represent their censoring times, with ea
 
 ```{r}
 library(survminer) ##for plotting survival plots with ggplot2
-fit1<-survfit(Surv(timedth, death) ~ 1, data = fhs_first)
-fit1 %>%
-ggsurvplot(xlab="Time to death (days)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
+fit_time<-  survfit(Surv(timedthy, death) ~ 1, data=fhs_first)
+fit_time %>%
+ggsurvplot(xlab="Time to death (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
-We can see that as follow-up time increases survival decreases rather monotinacally over time, or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
+We can see that as follow-up time increases survival decreases rather monotonically over time, or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
 We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the `Surv` function, substituting time of death with respect to follow-up time with age at death.
 
 ```{r}
-fit2<-survfit(Surv(agedth, death) ~ 1, data = fhs_first)
-fit2 %>%
+
+fit_age<- survfit(Surv(agedth, death) ~ 1, data=fhs_first)
+fit_age %>%
 ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
 ```
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases. 
+
+**2.How do (survival) curves for mortality compare between males and females? How about for MI?**
+
+Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independet variable. For all cause mortality:
+
+```{r}
+fit_bysex<-survfit(Surv(timedthy, death) ~ sex, data=fhs_first)
+fit_age_bysex<- survfit(Surv(agedth, death) ~ sex, data=fhs_first)
+
+fit_bysex%>%
+ggsurvplot(xlab="Time to death (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Male","Female"),
+  legend.title="Sex")
+
+fit_age_bysex%>%
+ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Male","Female"),
+  legend.title="Sex")
+
+```
+You can now see that the survival rate for males drops quicker (at a younger age) than for females.
+Similarly if we look at MI as the outcome:
+```{r}
+fit_age_MIbysex<-survfit(Surv(agemi, mi_fchd) ~ sex, data=fhs_first )
+
+fit_age_MIbysex %>%
+ggsurvplot(xlab="Age (years)",ylab=expression(paste('MI Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Male","Female"),
+  legend.title="Sex")
+
+```
+Once again we see a difference in the survival rates with age by sex, which is in line with what we already know from the literature.
+
+We can actually approach survival rates by smoking status in the same manner:
+```{r}
+fit_age_MIsmoking<-survfit(Surv(agemi, mi_fchd) ~ cursmoke, data=fhs_first )
+
+fit_age_MIsmoking %>%
+ggsurvplot(xlab="Age (years)",ylab=expression(paste('MI Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Non-smokers", "Smokers"),
+  legend.title="Smoking status at baseline")
+
+```
+Once again we can observe that there is a difference in survival rates for MI, by smoking status at baseline.
+
+The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example we can compare survival rates among smokers and non-smokers, but we can't really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we've been fitting. The `survreg` function in the `survival` package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the *exponential*, *Weibull*, *log-normal (log(T) is normally distributed)* or *log-logistic* distributions.
+
+The majority of survival analyses for longitudinal cohort data, however has been dominated by the Cox proportional hazards model over the past few decades, and this is the type of model we will focus on here. The main advantage of the Cox proportional hazards model is that we don't have to make any distributional assumptions about the outcome or residuals. We simply model the instantaneous hazard of the outcome at specific time intervals as a function of covariates of interest, and the assumptions we have to make is that of 'proportional hazards'. This assumptions stipulates that the hazards across levels of covariates of interest are proportional over time. In other words the ratio of the hazards across levels covariates should be constant over time. 
 
 The Cox proportional hazards model in a simple form has this form
 
 $log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
 
-where $\lambda(t)$ represent the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The baseline hazard $\lambda_{0}(t)$ is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, $\lambda_{0}(t)$ is not estimated by the model. 
+where $\lambda(t)$ represents the hazard at time $t$, $\lambda_{0}(t)$ is the baseline hazard at time $t$, and $\beta_{1}$ is the log hazard for those with $X=1$ compared to $X=0$. The baseline hazard $\lambda_{0}(t)$ is similar to the intercept term in a linear model or glm and is the value of the hazard when all covariates equal 0. However, unlike the intercept term in a linear model or glm, $\lambda_{0}(t)$ is not estimated by the model. 
 The above model can also be writen as 
 
 $\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}$
 
 $e^{\beta_{1}}$ is the hazard ratio comparing those hose with $X=1$ and $X=0$
 
-Using the `fhs` data we will fit a simple Cox proportianal hazard for the effect of smoking on the hazard for MI. 
+Using the `fhs` data we will fit a simple Cox proportional hazard for the effect of smoking on the hazard for MI. 
 
+```{r}
+coxph_mod1<-coxph(Surv(timedth, death) ~ cursmoke, data=fhs_first)
+```
+
+If we see the estimated parameters of the model, there isn't an intercept term as we've commented above:
+
+```{r}
+library(broom)
+coxph_mod1 %>%
+tidy()
+```
+
+The parameter for the covariate of interest is equivalent to the log of the hazard ratio comparing current smokers at baseline to non-smokers. We can extract the hazard ratio by exponentiating that parameter.
+
+```{r}
+coxph_mod1 %>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+```
+We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence intervals include the null.
+
+We have said that the main assumption we need to make here is that of proportional hazards. The `survival` package actually allows us to check this with the `cox.zph` function
+
+```{r}
+phtest<-cox.zph(coxph_mod1)
+```
+
+The output of this function is the result of a $\chi^2$ test for the proportional hazards assumption. If the p-value here was below 0.05 we would have to reject the null hypothesis that the proportional hazards assumption holds. 
+We can also plot the parameter(s) of interest across time from this output. If the proportional hazards assumption holds (constant HR) then the parameter should resemble a horizontal line with respect to time. 
+
+```{r}
+plot(phtest)
+```
+
+Here we see that the line is besically horizontal. Now let's repeat the model adjusting for some covariates, specifically sex and age.
+
+```{r}
+coxph_mod2<-coxph(Surv(timedth, death) ~ cursmoke + sex + age, data=fhs_first)
+coxph_mod2 %>%
+tidy()
+```
+We can already see that the parameter for smoking is now quite higher, but let's estimate the HR and 95% CI:
+
+```{r}
+coxph_mod2 %>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+```
+The estimated Hazard Ratio is now 1.40 and the 95% CI does not include the null. We can determine that there was some confounding by these variables leading the estimate from the previous model to be biased towards the null. Let's test the ph assumption for this model.
+```{r}
+phtest2<-cox.zph(coxph_mod2)
+phtest2
+```
+
+We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption.
+
+Now let's see what happens if repeat the above model using age as the time-scale of interest in the survival function of the model:
+
+```{r}
+coxph_modage1<-coxph(Surv(agedth, death) ~ cursmoke + sex, data=fhs_first)
+coxph_modage1 %>%
+tidy()
+```
+Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it.
+
+```{r}
+coxph_modage1 %>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+```
+
+We also see that the HR is similar as above (slightly higher).
+
+Testing for the proportional hazards assumption in this model:
+
+```{r}
+phtestage<-cox.zph(coxph_modage1)
+phtestage
+```
+
+Here we see that the assumption fails. If we plot the results of the models we can also see that we no longer have that horizontal line and in the case of smoking, it deviates from the that line significantly. 
+```{r}
+par(mfrow=c(1,2)) ###graphical parameters to plot two plots side by side (1 row, 2 columns)
+plot(phtestage)
+```
 *Note: Variables of interest to continue with: 
 for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi` smoking or not
 for long. analysis, `timemi` and `timestrk` and `hyperten`, exposure: `cigpday`, `sysbp`, `diabp`, `bmi`*
