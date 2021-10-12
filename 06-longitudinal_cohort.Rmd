@@ -1,13 +1,13 @@
 # Longitudinal cohort study designs
 
-The readings for this chapter are
+The required readings for this chapter are:
 
-- @andersson201970
+- @andersson201970 Provides background on the study we'll use in this chapter for our example data
 
-- @wong1989risk
+- @wong1989risk An epidemiological study using the study data.
 
-The following are a series of instructional papers on survival analysis, that are 
-meant as general background on how to fit survival analysis models.  
+There are also some supplemental readings you may find useful. The following are a series of instructional papers on survival analysis, that are 
+meant as general background on how to fit survival analysis models:  
 
 - @clark2003survival
 
@@ -15,7 +15,7 @@ meant as general background on how to fit survival analysis models.
 
 - @bradburn2003survival2
 
-Lastly, this article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves
+Lastly, this article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves:
 
 - @hernan2010hazards
 
