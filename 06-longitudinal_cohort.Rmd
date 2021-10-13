@@ -50,13 +50,13 @@ fhs <- read_csv("data/frmgham2.csv")
 fhs
 ```
 
-You can find full details on the structure of this data in the codebook. At a broad scale, note that it includes several health outcomes related to heart disease, which the codebook calls "events" (`DEATH`: indicator of death from any cause; `ANYCHD`: indicator of one of several types of events related to coronary heart disease; `HOSPMI`: Hopitalization for myocardial infarction [heart attack], etc.). The data also includes a number of risk factors that the study researchers hypothesized might be linked to cardiovascular disease (`CURSMOKE`: if the study subject is currently a smoker; `TOTCHOL`: serum total cholesterol; `SYSBP`, `DIABP`: measures of the systolic and diastolic blood pressure, respectively; `BMI`: Body Mass Index; etc.). Finally, there are some characteristics of the study subject, like age (`AGE`) and sex (`SEX`), as well as some variables that are connected to either the time of the record or the time of certain events. 
+You can find full details on the structure of this data in the codebook. At a broad scale, note that it includes several health outcomes related to heart disease, which the codebook calls "events" (`DEATH`: indicator of death from any cause; `ANYCHD`: indicator of one of several types of events related to coronary heart disease; `HOSPMI`: Hopitalization for myocardial infarction [heart attack], etc.). The data also includes a number of risk factors that the study researchers hypothesized might be linked to cardiovascular disease (`CURSMOKE`: if the study subject is currently a smoker; `TOTCHOL`: serum total cholesterol; `SYSBP`, `DIABP`: measures of the systolic and diastolic blood pressure, respectively; `BMI`: Body Mass Index; etc.). Finally, there are some characteristics of the study subject, like age (`AGE`) and sex (`SEX`), as well as some variables that are connected to either the time of the record or the time of certain events (or of censoring, if the event did not happen during follow-up). 
 
 As you look through the data, pay attention to some features that are more characteristic of cohort studies, compared to features of the time series data we worked with in earlier chapters: 
 
 - One important difference compared to a time-series dataset is the `RANDID` variable. This is the unique identifier for unit for which we have repeated observations for over time.
 In this case the `RANDID` variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time. 
-- The `TIME` variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. `TIME` s always 0 for the first observation of each participant, and then for following measurements will track the time since follow-up started for that study participant.
+- The `TIME` variable indicates the number of days that have elapsed since beginning of follow-up of each observation. `TIME` is always 0 for the first observation of each participant (when `PERIOD` equals 1, for the first examination), and then for following measurements will track the time since follow-up started for that study participant.
 - The number of observations varies between participants (typical of many cohort studies)
 - The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.
 - Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (`SEX`, `educ`), while others will vary with each exam.
@@ -73,6 +73,50 @@ fhs <- fhs %>%
 fhs
 ```
 
+To look a bit more closely at how this dataset works, let's take a look just at the observations of the oldest study subjects at the first examination, those 69 or older (`age >= 69`) at their first examination (`period == 1`): 
+
+```{r}
+oldest_subjects <- fhs %>% 
+  filter(period == 1 & age >= 69) %>% 
+  pull(randid)
+oldest_subjects
+```
+
+Once we have the IDs of these study subjects (`oldest_subjects`), we can pull out the study data just for them. I'm limiting to a few columns: their ID (`randid`), the time of each examination (`time`), the number of each examination (`period`), whether they died during follow-up (`died`), and the number of days between the first examination and either death (if they died during follow-up) or censoring (i.e., stopped tracking the subject or lost them to follow-up) (`timedth`):
+
+```{r}
+fhs %>% 
+  filter(randid %in% oldest_subjects) %>% 
+  select(randid, time, period, death, timedth)
+```
+
+We can explore this subset of the data by plotting, for each of these study subjects, the timing of each of their examination periods, whether they died during follow-up, and the timing of their death or censoring: 
+
+```{r}
+fhs %>% 
+  filter(randid %in% oldest_subjects) %>% 
+  select(randid, time, period, death, timedth) %>% 
+  mutate(randid = as_factor(randid), 
+         randid = fct_reorder(randid, timedth),  # Arrange by time to death
+         period = as_factor(period),
+         death = as_factor(death),
+         timey = time / 365.25,                  # Convert from days to years
+         timedthy = timedth / 365.25) %>% 
+  ggplot() + 
+  geom_segment(aes(x = 0, xend = timedthy, 
+                   y = randid, yend = randid), color = "lightgray") + 
+  geom_point(aes(x = timedthy, y = randid, fill = death), shape = 22) + 
+  geom_point(aes(x = timey, y = randid, color = period)) + 
+  theme_classic() + 
+  labs(x = "Time since first examination (years)", 
+       y = "Patient ID", 
+       color = "Examination\nperiod") +
+  scale_fill_manual(name = "", values = c("white", "black"), 
+                    labels = c("Survived\nfollow-up", "Died during\nfollow-up"))
+```
+
+You can see that we have at least one examination (period 1) for each of the study subjects, and for some we have as many as three. One of these study subjects was tracked for almost 25 years without a recorded death (subject ID 9789948). All the other subjects in this subset died during follow-up. Some died within a few years of the first examination, and so did not survive to a second or later examination. Others survived longer but missed some later examinations.
+As you work with these data, keep in mind that they have multiple measurements (rows) for some but not all of the study subjects, and that events are recorded both in terms of whether they happened during follow-up (e.g., `death`) and also how long after the first examination the event occurred or the data for the subject was censored (e.g., `timedth`). 
 
 *Applied exercise: Exploring longitudinal cohort data*
 
@@ -82,8 +126,7 @@ questions:
 1. What is the number of participants and number of observations in the `fhs` dataset?
 2. Is there any missingness in the data?
 3. How many participants died during the observation period? What is the distribution of age at time of death?
-4. What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females? 
-5. What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers
+4. What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers?
 
 Based on this exploratory exercise, talk about the potential
 for confounding when these data are analyzed to estimate the association between
@@ -241,7 +284,7 @@ The `death` variable in the `fhs` data is an indicator for mortality if a partic
 
 If you arrange by the random ID and look at `period` and `death` for each subject,
 you can see that the `death` variable is the same for all periods for each
-subject:
+subject (this is what we mean by it being "time-invariant" in the data):
 
 ```{r}
 fhs %>% 
@@ -252,7 +295,7 @@ fhs %>%
 We need to think some about this convention of recording the data when we count
 the deaths.
 
-It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the `fhs` data using  `tidyverse` tools. The `group_by` functions groups data by unique values of designated variables (here `randid`) and the `slice` function selects rows as designated.
+It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the `fhs` data using  `tidyverse` tools. The `group_by` functions groups data by unique values of designated variables (here `randid`) and the `slice` function selects rows as designated. Here is an example of extracting the first row (`group_by(randid) %>% slice(1L)`) for each study subject:
 
 ```{r}
 fhs_first <- fhs %>% 
@@ -286,132 +329,174 @@ or using the `slice_tail` function:
 ```{r}
 fhs_last <- fhs %>% 
   group_by(randid) %>% 
-  slice_tail(n=1) %>% 
+  slice_tail(n = 1) %>% 
   ungroup()
 ```
 
-In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including `death = 1`. For example, we can use the `sum` function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1, the `sum` function will give us the number of deaths in the sample. 
+In this dataset we can extract statistics on baseline covariates (i.e., at the first examination) on the individual level, but also assess the number of participants with specific values, including `death = 1`. For example, we can use the `sum` function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1, the `sum` function will give us the number of deaths in the sample. 
 
 ```{r}
 sum(fhs_first$death) 
 ```
 
-Conversely using `tidyverse` tools we can extract the number of observations with `death = 1` using the `count` function
+Conversely using `tidyverse` tools we can extract the number of observations with `death = 1` using the `count` function:
 
 ```{r}
 fhs_first %>% 
   count(death) 
 ```
 
-Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in `fhs` below, although with the conventions of this particular dataset, it doesn't matter if we take the first or last observation for each study subject (since they give a time-invariant value for death).
+Based on this analysis, 1,550 of the study subjects, or about 35% of them, died during follow-up for this study.
 
-In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The `age` variable in `fhs` represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for `age` would be less than the age at death. We will use the `timedth` variable to help us determine the actual age at death. The value of `timedth` is the number of days from beginning of follow-up until death for those with `death=1`, while it is a fixed value of `timedth=8766` (the maximum duration of follow-up) for those with `death=0`.
+Note that, unlike in this sample data, in many datasets with longitudinal cohort data, survival or time-to-event outcomes will be recorded using time-varying conventions. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation (since the subject won't be tracked after death). In those cases, it will be important to take the last observation for each subject to count the number of deaths; for this dataset, we've got more flexibility since they use time-invariant recording conventions for outcomes like death.
 
-We can create a new age at death variable for those with `death=1` using the `age` at baseline and `timedth` values
+In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. First, we don't know the age at death of any study subjects who died after follow-up (which could be the end of the study or when they were lost to follow-up). Therefore, we should start by filtering the dataset to only include subjects who died during follow-up (`filter(death == 1)` in the next block of code).
 
-```{r}
-fhs_first<-fhs_first %>% 
-mutate(agedth=age+timedth/365.25,
-       timedthy=timedth/365.25) ###also creating a year time-to-death variable
-```
+Next, we need to use information in the dataset to calculate the age at the time of death for the study subjects who died during follow-up. 
+The `age` variable in `fhs` represents the participant's age at each visit. Typically a death would happen between visits so the last recorded value for `age` would be less than the age at death. We will instead use the `timedth` variable to help us determine the actual age at death. The value of `timedth` is the number of days from beginning of follow-up until death for those with `death = 1`, while it is a fixed value of `timedth = 8766` (the maximum duration of follow-up) for those with `death = 0` (did not die during follow-up).
 
-We can then get summary statistics on this new variable 
+We can create a new age at death variable for those with `death = 1` using the `age` at baseline and `timedth` values
 
 ```{r}
-fhs_first %>% 
-summarize(min_agedth = min(agedth),
-mean_agedth = mean(agedth),
-max_agedth = max(agedth))
+fhs_deaths <- fhs_first %>% 
+  filter(death == 1) %>% 
+  mutate(timedthy = timedth / 365.25, # time-to-death in years
+         agedth = age + timedthy) 
+fhs_deaths
 ```
 
-We can also check on these values by groups of interest such as sex
+We can then get summary statistics on this new variable:
 
 ```{r}
-fhs_first %>% 
-group_by(sex) %>%
-summarize(min_agedth = min(agedth),
-mean_agedth = mean(agedth),
-max_agedth = max(agedth))
+fhs_deaths %>% 
+  summarize(min_agedth = min(agedth),
+            mean_agedth = mean(agedth),
+            max_agedth = max(agedth),
+            missing_agedth = sum(is.na(agedth)))
 ```
 
-4. *What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?*
+The earliest death was at 38 years and the latest at 91, among deaths that occurred during follow-up. On average, subjects who died during follow-up for this study died when they were about 69 years old. There were no missing ages for study subjects who died during follow-up.
 
-Similar to the question about death (all-cause mortality) we can look at disease incidence, for example myocardial infarction (MI). The `fhs` dataset has the `hospmi` variable as an indicator for any participant who had a hospitalization due to MI and `timemi` gives the number of days from beginning of follow up to the hospitalization due to MI. We can create an age at incident MI hospitalizaton in a similar fashion as the example for age at death.
+We can also check on these values by groups of interest such as sex:
 
 ```{r}
-fhs_first<-fhs_first %>% 
-mutate(agemi=age+timemi/365.25)
+fhs_deaths %>%
+  group_by(sex) %>%
+  summarize(min_agedth = min(agedth),
+            mean_agedth = mean(agedth),
+            max_agedth = max(agedth))
 ```
 
-We can then get summary statistics on this new `agemi` variable 
+Of course, it's important to remember that these are summaries of the age at death *only* for the study subjects who died during follow-up. The mean age at death will be different across all our study subjects, but we don't have the information about age at death for those who died after censoring to include in calculating our summary statistics here. It is likely that they lived to older ages, if the most common reason for censoring is outliving follow-up. However, if they were censored because they dropped out of the cohort, then that might instead be associated with either longer or shorter average lifespans, in which case we don't have a great idea of which direction the average age of death would move if they were included. One thing that you could do is to average the age at either death or loss to follow-up---this would give you a lower bound on the average across the whole population, since you know that those who were censored survived to *at least* the age they were when they were censored.
+
+4. **What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers**
+
+Both BMI and smoking are recorded in a time-variant way; that is, their value can differ between different examinations for the same study subject. For example, you can look at a couple of study subjects: 
 
 ```{r}
-fhs_first %>% 
-summarize(min_agemi = min(agemi),
-mean_agemi = mean(agemi),
-max_agemi = max(agemi))
+fhs %>% 
+  filter(randid %in% c(6238, 16365)) %>% 
+  select(randid, period, bmi, cursmoke)
 ```
 
-And by sex
-```{r}
-fhs_first %>% 
-group_by(sex)  %>% 
-summarize(min_agemi = min(agemi),
-mean_agemi = mean(agemi),
-max_agemi = max(agemi))
-```
-We can see that the mean age at incident MI hospitalization among males and females is similar, but with males being somewhat younger on average at the time of incident MI. We can take a closer look at the distibution using boxplots:
+For the study subject with ID 6238, BMI changed a little bit across the three examinations, but not much, and the person remained a non-smoker. For the study subject with ID 16365, BMI increased steady across the examinations, and the person stopped smoking sometime after the first examination. 
 
-```{r message = FALSE, warning = FALSE}
-fhs_first %>% 
-  # define the axes for the boxplot
-  ggplot(aes(x = sex, y=agemi)) + 
-  geom_boxplot()
-```
-We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of `sex=1` and `sex=2` which are the values for males and females respectively. This is an indicator that the sex variable is of class `numeric` and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
+We will need to think about how to handle these variant values while we compare them to the invariant outcome (whether the subject was hospitalized for MI during follow-up). One thing that we could do is to see the association between average BMI for each study subject and whether they had a hospitalized MI event during follow-up:
 
 ```{r}
-class(fhs_first$sex)
+bmi_vs_mi <- fhs %>% 
+  group_by(randid) %>% 
+  summarize(bmi = mean(bmi, rm.na = TRUE), 
+            hospmi = first(hospmi))
+bmi_vs_mi
 ```
 
-We can trasform the variable to one of class `factor` in order for it to be trated as a cateogrical variable
+Now we can compare the distribution of these average BMIs among study subjects who did and did not have a hospitalization for MI during follow-up. A simple was is by creating some summaries: 
 
 ```{r}
-fhs_first<-fhs_first %>% 
-mutate(sex=as.factor(sex))
+bmi_vs_mi %>% 
+  group_by(hospmi) %>% 
+  summarize(perc_25 = quantile(bmi, 0.25, na.rm = TRUE), 
+            mean = mean(bmi, na.rm = TRUE), 
+            median = median(bmi, na.rm = TRUE),
+            perc_75 = quantile(bmi, 0.75, na.rm = TRUE))
 ```
 
-If we repeat the function for the boxplot now we get separate boxplots by sex
+We can also create a plot to help explore this question: 
 
-```{r message = FALSE, warning = FALSE}
-fhs_first %>% 
-  # define the axes for the boxplot
-  ggplot(aes(x = sex, y=agemi)) + 
-  geom_boxplot()
+```{r}
+bmi_vs_mi %>% 
+  ggplot(aes(x = bmi)) + 
+  geom_histogram() + 
+  facet_wrap(~ hospmi, ncol = 1, scale = "free_y")
 ```
 
-We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
+There is not a dramatic difference between the two groups in terms of the distribution of BMI. 
 
-5. *What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers*
+We might want to check how stable BMI tends to be within each study subject, and check variation in BMI within subjects (at different timepoints) compared to between subjects, to see if the average might be a reasonable summary of BMI for a study subject. We can check this within just the study subjects with three examinations and without any missing measures of BMI at those examinations. We can check it with a random sample of 20 subjects (since this uses `sample`, the sample you get, and so the plot, will likely be different):
 
-Similar to the exercise above we can compare BMI distributions by MI case status. 
+```{r}
+sample_check <- fhs %>% 
+  group_by(randid) %>% 
+  filter(max(period == 3) & !anyNA(bmi)) %>% 
+  pull(randid) %>% 
+  sample(size = 20)
+
+fhs %>% 
+  filter(randid %in% sample_check) %>% 
+  mutate(sex = factor(sex, levels = c(1, 2), labels = c("Male", "Female"))) %>%  
+  ggplot(aes(x = age, y = bmi, color = sex, group = randid)) +
+  geom_line(alpha = 0.4)
+```
+
+While there is some variation within study subjects in BMI, there tends to be more variation when comparing one study subject to another. Average BMI across the three examinations is therefore likely a reasonable measurement to use in exploratory analysis as we did in the previous plot.
+
+We can use a similar approach to compare BMI and smoking. In this case, one way we could summarize smoking for each study subject is to determine if they were a current smoker at any of their examinations. If we do this, we see that there may be a small, but not dramatic, difference in BMI between smokers and non-smokers:
+
+```{r}
+bmi_vs_smoke <- fhs %>% 
+  group_by(randid) %>% 
+  summarize(bmi = mean(bmi, rm.na = TRUE), 
+            smoke = max(cursmoke))
+
+bmi_vs_smoke %>% 
+  group_by(smoke) %>% 
+  summarize(perc_25 = quantile(bmi, 0.25, na.rm = TRUE), 
+            mean = mean(bmi, na.rm = TRUE), 
+            median = median(bmi, na.rm = TRUE),
+            perc_75 = quantile(bmi, 0.75, na.rm = TRUE)) 
+  
+```
+
+Again, we might want to check how "stable" smoking status is among study subjects, to get a better idea of how reasonable it is to use a single summary of smoking for each subject in this exploratory analysis. 
+
+```{r}
+fhs %>% 
+  group_by(randid) %>% 
+  summarize(always_no = max(cursmoke) == 0, 
+            always_yes = min(cursmoke) == 1, 
+            changes = !((sum(cursmoke) / n()) %in% c(0, 1))) %>% 
+  ungroup() %>% 
+  summarize(always_no = sum(always_no), 
+            always_yes = sum(always_yes), 
+            changes = sum(changes))
+```
+Less than 20% of the study subjects changed their smoking status over the course of the examinations. This isn't negligible, but it also means that for the majority of the study subjects, their smoking status was stable across all study examinations.
 
 ## Coding a survival analysis
 
-[R package `survival`]
-
-In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered  'censored'. Censoring can occur in three ways:
+In the context of survival analysis, what is modeled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or `glm` family that model an outcome that may follow a gaussian (linear regression),  binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered  'censored'. Censoring can occur in three ways:
 
 - the participant does not experience the event of interest before the study end
 - the participant is lost to follow-up before experiencing the event of interest
 - the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participant that dies from a different cause is considered censored)
 
-These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome then adjustment for censoring has to happen.
+These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome, then you must adjust for censoring or it could confound the estimates from your model.
 
-Let's assume that we are interested in all cause mortality as the event of interest let's denote  $T$ is time to death and $T\geq 0$. We define the survival function as 
-$S(t)=Pr[T>t]=1-F(t)$, where the survival function $S(t)$ is the probability that a participant survives past time $t$ ($Pr[T>t]=1$). $F(t)$ is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, $R(t)$) or the probability that that an individual will have a survival time less than or equal to t ($[Pr(T≤t)]$)
+Let's assume that we are interested in all-cause mortality as the event of interest, and let's denote  $T$ as time to death, where we can assume that $T\geq 0$. We define the survival function as 
+$S(t)=Pr[T>t]=1-F(t)$, where the survival function $S(t)$ is the probability that a participant survives past time $t$ ($Pr[T>t]=1$). $F(t)$ is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, $R(t)$) or the probability that that an individual will have a survival time less than or equal to t ($[Pr(T≤t)]$).
 
-Time to event $t$ is bounded by $[0,\infty)$ and $S(t)$ is non-increasing as $t$ becomes greater. At $t=0$, $S(t)=1$ and conversely as $t$ approaches $\infty$, $S(t)=0$. A property of the survival and probabilty density function is $S(t) = 1 – F(t)$: the survival function and the probability density function (or cumulative incidence function ($R(t)$) sum to 1.
+Time to event $t$ is bounded by $[0,\infty)$ (i.e., the time could be as low as 0, but no lower, and has no upper bound) and $S(t)$ is non-increasing as $t$ becomes greater. At $t=0$, $S(t)=1$ and conversely as $t$ approaches $\infty$, $S(t)=0$. A property of the survival and probabilty density function is $S(t) = 1 – F(t)$: the survival function and the probability density function (or cumulative incidence function ($R(t)$) sum to 1.
 
 Another useful function is the hazard Function, $h(t)$, which is the instantaneous potential of experiencing an event at time $t$, conditional on having survived to that time ($h(t)=\frac{Pr[t<T\leq t+\Delta t|T>t]}{\Delta t}=\frac{f(t)}{S(t)}$). The cumulative Hazard Function, $H(t)$ is defined as the integral of the hazard function from time $0$ to time $t$, which equals the area under the curve $h(t)$ between time $0$ and time $t$ ($H(t)=\int_{0}^{t}h(u)du$).
 If we know any of $S(t)$, $H(t)$ or $h(t)$, we can derive the rest based on the following relationships:
@@ -420,9 +505,10 @@ $h(t)=\frac{\partial log(S(t))}{\partial t}$
 
 $H(t)=-log(S(t))$ and conversely $S(t)=exp(-H(t))$
 
+The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model. This is the model that was also applied in one of this chapter's required readings, @wong1989risk. There are also some simple non-parametric ways to explore survival times, which we'll also explore in the exercise.
 
-The `survival` package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in @wong1989risk. 
 *Applied exercise: Survival curves and simple survival analysis*
+
 1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?
 2. How do (survival) curves for mortality compare between males and females? How about for MI?
 3. What is the Hazard Ratio for smoking and the risk of MI, from a Cox Proportional Hazards model? 
@@ -432,78 +518,142 @@ The `survival` package in R allows us to fit these types of models, including a 
 A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.
 
 In R we would estimate Survival $S(t)$ with all-cause mortality representing failure as follows:
+
 ```{r}
 library(survival)
- S1=Surv(fhs_first$timedth,fhs_first$death)
- head(S1)
+S1 <- Surv(time = fhs_first$timedth, 
+           event = fhs_first$death)
 ```
+
+The `Surv` function will be key as we look at time-to-event data. This function inputs two vectors: one for the `time` parameter that gives the follow-up time (either the time to the event, if the event happens during follow-up, or the time to censoring) and one for the `event` parameter, which gives a status indicator of whether the event happened during follow-up or whether then person was censored before the event happened. For our example data, we can use the column `timedth` to give the time until either death or censoring, and then the `death` column as an indicator of whether death happened before censoring. 
+
+The output of the `Surv` function is a special type of object in R with the class "Surv". If you look at the first few values, you can see that this object records both the follow-up time and the status at that follow-up time:
+
+```{r}
+class(S1)
+head(S1)
+```
+
 
 The numbers assigned to each individual represent their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven't failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).
 
+We can use the `Surv` function inside the `survfit` function to estimate the Kaplan-Meier curve for a set of data. If we aren't considering any covariates, we can include `~ 1` in the model equation, to estimate with only an intercept, rather than to explore differences in the curve based on covariates (we'll get to that idea later): 
 
 ```{r}
-library(survminer) ##for plotting survival plots with ggplot2
-fit_time<-  survfit(Surv(timedthy, death) ~ 1, data=fhs_first)
-fit_time %>%
-ggsurvplot(xlab="Time to death (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
+fhs_first <- fhs_first %>% 
+  mutate(timedthy = timedth / 365.25) # Calculate time in years, not days
+
+fit_time <- survfit(Surv(timedthy, death) ~ 1, data = fhs_first)
 ```
-We can see that as follow-up time increases survival decreases rather monotonically over time, or in other words the number of people who have died increases. Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
 
-We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the `Surv` function, substituting time of death with respect to follow-up time with age at death.
+This creates an object of the `survfit` class, that we can then use in some special plotting functions to look at the curve its estimated. If you print this object, you can see that it gives us some information about the total number of study subjects as well as the total number of events during follow-up (in this case, deaths):
 
 ```{r}
+class(fit_time)
+fit_time
+```
 
-fit_age<- survfit(Surv(agedth, death) ~ 1, data=fhs_first)
+You can also look at the structure of this object with `str`: 
+
+```{r}
+fit_time %>% 
+  str() 
+```
+
+It's listing many different times during the follow-up. For each, it's determined the number of people in the study at risk at that time (not dead or censored) and the number of events at that time point, as well as some other values. These calculations allow it to estimate the cumulative hazard at each time point during follow-up. 
+
+There are a number of ways you can plot this output to get a better idea of patterns in the survival curve estimated from the data. The `survminer` package allows you to do this in a way that interfaces well with `ggplot` (note also how you can use `expression` to include mathematical notation in an axis label): 
+
+```{r message = FALSE}
+library(survminer) # for plotting survival plots with ggplot2
+
+fit_time %>% 
+  ggsurvplot(xlab = "Time to death (years)",
+             ylab = expression(paste('Overall Survival Probablity ', 
+                                     hat(S)*"(t)")))
+```
+
+We can see that as follow-up time increases, survival decreases rather monotonically, steadily, and slowly over time. In other words, the number of people who have died increases as the length of follow-up increases, but not very quickly (which makes sense since the study population was largely healthy at the start of the study). Survival $\hat{S}(t)$ drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1,550 of 4,434 participants died during follow-up.
+
+We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the `Surv` function, substituting time of death with respect to follow-up time with age at death.
+
+```{r}
+fhs_first <- fhs_first %>% 
+  mutate(agedth = age + timedthy) # Calculate age at death
+fit_age <- survfit(Surv(agedth, death) ~ 1, data = fhs_first)
+
 fit_age %>%
-ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")))
+  ggsurvplot(xlab = "Age (years)",
+             ylab = expression(paste('Overall Survival Probablity ',
+                                     hat(S)*"(t)")))
 ```
-We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases. 
+
+We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s (part of this is likely because this study focused on subjects in their 30s and older at the baseline examination period), and then a sharper drop in survival as age increases. 
 
 **2.How do (survival) curves for mortality compare between males and females? How about for MI?**
 
-Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independet variable. For all cause mortality:
+Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independent variable. For all-cause mortality, we can run these models both based on follow-up time and on age (in separate models):
 
 ```{r}
-fit_bysex<-survfit(Surv(timedthy, death) ~ sex, data=fhs_first)
-fit_age_bysex<- survfit(Surv(agedth, death) ~ sex, data=fhs_first)
+fit_bysex <- survfit(Surv(timedthy, death) ~ sex, data = fhs_first)
+fit_age_bysex <- survfit(Surv(agedth, death) ~ sex, data = fhs_first)
 
-fit_bysex%>%
-ggsurvplot(xlab="Time to death (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Male","Female"),
+fit_bysex %>%
+  ggsurvplot(xlab = "Time to death (years)",
+             ylab = expression(paste('Overall Survival Probablity ',
+                                     hat(S) * "(t)")), 
+             legend.labs = c("Male", "Female"),
   legend.title="Sex")
 
-fit_age_bysex%>%
-ggsurvplot(xlab="Age (years)",ylab=expression(paste('Overall Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Male","Female"),
-  legend.title="Sex")
-
+fit_age_bysex %>%
+  ggsurvplot(xlab = "Age (years)",
+             ylab = expression(paste('Overall Survival Probablity ',
+                                     hat(S) * "(t)")),
+             legend.labs = c("Male", "Female"),
+  legend.title = "Sex")
 ```
-You can now see that the survival rate for males drops quicker (at a younger age) than for females.
-Similarly if we look at MI as the outcome:
+
+You can now see that the survival rate for males drops quicker (at a younger age) than for females, and that it also drops more quickly for males if we're looking across follow-up time.
+
+Similarly we can look at MI as the outcome. If we want to compare across age for the x-axis, then we need to calculate the age at the time of the first hospitalization for MI during follow-up. We can then put that variable in as the `time` parameter in `Surv` and use the status of whether the subject had an MI hospitalization by the end of follow-up for the `event` parameter, then plot as before:
+
 ```{r}
-fit_age_MIbysex<-survfit(Surv(agemi, mi_fchd) ~ sex, data=fhs_first )
+fhs_first <- fhs_first %>% 
+  mutate(timemiy = timemi / 365.25, 
+         agemi = age + timemiy) 
+fit_age_MIbysex <- survfit(Surv(agemi, hospmi) ~ sex, data = fhs_first )
 
 fit_age_MIbysex %>%
-ggsurvplot(xlab="Age (years)",ylab=expression(paste('MI Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Male","Female"),
-  legend.title="Sex")
+  ggsurvplot(xlab = "Age (years)",
+             ylab = expression(paste('MI Survival Probablity ', 
+                                     hat(S) * "(t)")),
+             legend.labs=c("Male","Female"),
+             legend.title="Sex")
 
 ```
-Once again we see a difference in the survival rates with age by sex, which is in line with what we already know from the literature.
 
-We can actually approach survival rates by smoking status in the same manner:
+Once again we see a difference in the survival rates (in this case, "survival" until first hospitalized myocardial infarction, even though the subject might survive the event) with age by sex, which is in line with what we already know from the literature.
+
+We can actually approach survival rates by smoking status in the same manner (in this case, we'll use the subject's smoking status at the baseline examination):
+
 ```{r}
-fit_age_MIsmoking<-survfit(Surv(agemi, mi_fchd) ~ cursmoke, data=fhs_first )
+fit_age_MIsmoking <- survfit(Surv(agemi, hospmi) ~ cursmoke, data = fhs_first )
 
 fit_age_MIsmoking %>%
-ggsurvplot(xlab="Age (years)",ylab=expression(paste('MI Survival Probablity ', hat(S)*"(t)")), legend.labs=c("Non-smokers", "Smokers"),
-  legend.title="Smoking status at baseline")
-
+ggsurvplot(xlab = "Age (years)",
+           ylab=expression(paste('MI Survival Probablity ', 
+                                 hat(S) * "(t)")), 
+           legend.labs=c("Non-smokers", "Smokers"),
+           legend.title="Smoking status at baseline")
 ```
+
 Once again we can observe that there is a difference in survival rates for MI, by smoking status at baseline.
 
-The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example we can compare survival rates among smokers and non-smokers, but we can't really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we've been fitting. The `survreg` function in the `survival` package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the *exponential*, *Weibull*, *log-normal (log(T) is normally distributed)* or *log-logistic* distributions.
+The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example, we can compare survival rates among smokers and non-smokers, but we can't really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we've been fitting. The `survreg` function in the `survival` package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the *exponential*, *Weibull*, *log-normal (log(T) is normally distributed)* or *log-logistic* distributions.
 
-The majority of survival analyses for longitudinal cohort data, however has been dominated by the Cox proportional hazards model over the past few decades, and this is the type of model we will focus on here. The main advantage of the Cox proportional hazards model is that we don't have to make any distributional assumptions about the outcome or residuals. We simply model the instantaneous hazard of the outcome at specific time intervals as a function of covariates of interest, and the assumptions we have to make is that of 'proportional hazards'. This assumptions stipulates that the hazards across levels of covariates of interest are proportional over time. In other words the ratio of the hazards across levels covariates should be constant over time. 
+The majority of survival analyses for longitudinal cohort data, however, has been dominated by the Cox proportional hazards model over the past few decades, and this is the type of model we will focus on for the rest of the chapter. The main advantage of the Cox proportional hazards model is that we don't have to make any distributional assumptions about the outcome or residuals. We simply model the instantaneous hazard of the outcome at specific time intervals as a function of covariates of interest, and the assumptions we have to make is that of 'proportional hazards'. This assumptions stipulates that the hazards across levels of covariates of interest are proportional over time. In other words the ratio of the hazards across levels of covariates should be constant over time. 
 
-The Cox proportional hazards model in a simple form has this form
+The Cox proportional hazards model in a simple form has this form:
 
 $log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X$
 
@@ -517,15 +667,15 @@ $e^{\beta_{1}}$ is the hazard ratio comparing those hose with $X=1$ and $X=0$
 Using the `fhs` data we will fit a simple Cox proportional hazard for the effect of smoking on the hazard for MI. 
 
 ```{r}
-coxph_mod1<-coxph(Surv(timedth, death) ~ cursmoke, data=fhs_first)
+coxph_mod1 <- coxph(Surv(timedth, death) ~ cursmoke, data = fhs_first)
 ```
 
-If we see the estimated parameters of the model, there isn't an intercept term as we've commented above:
+If we look the estimated parameters of the model (we can use `broom` to pull out a tidy version of these summaries, just as we did with GLM models), there isn't an intercept term, as noted above, just an estimate for the covariate we included (`cursmoke` for smoking status at the baseline examination):
 
 ```{r}
 library(broom)
 coxph_mod1 %>%
-tidy()
+  tidy()
 ```
 
 The parameter for the covariate of interest is equivalent to the log of the hazard ratio comparing current smokers at baseline to non-smokers. We can extract the hazard ratio by exponentiating that parameter.
@@ -541,12 +691,13 @@ coxph_mod1 %>%
          high_hr = exp(high_ci)) %>% 
   select(term, hr, low_hr, high_hr)
 ```
-We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence intervals include the null.
+
+We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence interval includes the null (hazard ratio of 1).
 
 We have said that the main assumption we need to make here is that of proportional hazards. The `survival` package actually allows us to check this with the `cox.zph` function
 
 ```{r}
-phtest<-cox.zph(coxph_mod1)
+phtest <- cox.zph(coxph_mod1)
 ```
 
 The output of this function is the result of a $\chi^2$ test for the proportional hazards assumption. If the p-value here was below 0.05 we would have to reject the null hypothesis that the proportional hazards assumption holds. 
@@ -556,14 +707,16 @@ We can also plot the parameter(s) of interest across time from this output. If t
 plot(phtest)
 ```
 
-Here we see that the line is besically horizontal. Now let's repeat the model adjusting for some covariates, specifically sex and age.
+Here we see that the line is basically horizontal. Now let's repeat the model adjusting for some covariates, specifically sex and age. We can include these in a model equation in `coxph` in a very similar way to how we built model equations for GLMs. The only difference is that the "outcome" part of the formula should be a `Surv` object, rather than a direct (untransformed) measure from the original data:
 
 ```{r}
-coxph_mod2<-coxph(Surv(timedth, death) ~ cursmoke + sex + age, data=fhs_first)
+coxph_mod2 <- coxph(Surv(timedth, death) ~ cursmoke + sex + age, 
+                    data = fhs_first)
 coxph_mod2 %>%
-tidy()
+  tidy()
 ```
-We can already see that the parameter for smoking is now quite higher, but let's estimate the HR and 95% CI:
+
+We can already see that the parameter for smoking is now quite a bit higher, but let's estimate the HR and 95% CI:
 
 ```{r}
 coxph_mod2 %>% 
@@ -576,22 +729,25 @@ coxph_mod2 %>%
          high_hr = exp(high_ci)) %>% 
   select(term, hr, low_hr, high_hr)
 ```
-The estimated Hazard Ratio is now 1.40 and the 95% CI does not include the null. We can determine that there was some confounding by these variables leading the estimate from the previous model to be biased towards the null. Let's test the ph assumption for this model.
+
+The estimated Hazard Ratio is now 1.40 and the 95% CI does not include the null (in fact, the lower bound of the 95% CI is 1.26). We can determine that there was some confounding by these variables (sex and age at the baseline examination) leading the estimate from the previous model of the association between smoking and time to death to be biased towards the null. Let's test the proportional hazard assumption for this model:
+
 ```{r}
-phtest2<-cox.zph(coxph_mod2)
+phtest2 <- cox.zph(coxph_mod2)
 phtest2
 ```
 
-We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption.
+We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption (p-values close to 0.05---if they were below 0.05, we'd reject the null hypothesis that the assumption holds).
 
-Now let's see what happens if repeat the above model using age as the time-scale of interest in the survival function of the model:
+Now let's see what happens if repeat the above model using age, rather than follow-up time, as the time-scale of interest in the survival function of the model:
 
 ```{r}
-coxph_modage1<-coxph(Surv(agedth, death) ~ cursmoke + sex, data=fhs_first)
+coxph_modage1 <- coxph(Surv(agedth, death) ~ cursmoke + sex, data = fhs_first)
 coxph_modage1 %>%
-tidy()
+  tidy()
 ```
-Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it.
+
+Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it. We can again convert the output to a hazard ratio and 95% CIs:
 
 ```{r}
 coxph_modage1 %>% 
@@ -605,23 +761,26 @@ coxph_modage1 %>%
   select(term, hr, low_hr, high_hr)
 ```
 
-We also see that the HR is similar as above (slightly higher).
+We also see that the HR is similar as in the previous model (although slightly higher in this case).
 
 Testing for the proportional hazards assumption in this model:
 
 ```{r}
-phtestage<-cox.zph(coxph_modage1)
+phtestage <- cox.zph(coxph_modage1)
 phtestage
 ```
 
 Here we see that the assumption fails. If we plot the results of the models we can also see that we no longer have that horizontal line and in the case of smoking, it deviates from the that line significantly. 
+
 ```{r}
-par(mfrow=c(1,2)) ###graphical parameters to plot two plots side by side (1 row, 2 columns)
+par(mfrow=c(1,2)) # graphical parameters to plot two plots side by side (1 row, 2 columns)
 plot(phtestage)
 ```
-*Note: Variables of interest to continue with: 
-for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi` smoking or not
-for long. analysis, `timemi` and `timestrk` and `hyperten`, exposure: `cigpday`, `sysbp`, `diabp`, `bmi`*
+
+
+<!-- *Note: Variables of interest to continue with:  -->
+<!-- for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi` smoking or not -->
+<!-- for long. analysis, `timemi` and `timestrk` and `hyperten`, exposure: `cigpday`, `sysbp`, `diabp`, `bmi`* -->
 
 
 
