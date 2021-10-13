@@ -28,6 +28,7 @@ readings-3
 attributable-risk-and-attributable-number
 quantifying-potential-health-impacts-under-different-scenarios
 longitudinal-cohort-study-designs
+readings-4
 longitudinal-cohort-data
 coding-a-survival-analysis
 handling-complexity

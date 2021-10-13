@@ -118,7 +118,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-10-12}
+\date{2021-10-13}
 
 \begin{document}
 \maketitle
@@ -6027,17 +6027,20 @@ Finally, when you use the estimate exposure-response functions that are estimate
 \hypertarget{longitudinal-cohort-study-designs}{%
 \chapter{Longitudinal cohort study designs}\label{longitudinal-cohort-study-designs}}
 
-The readings for this chapter are
+\hypertarget{readings-4}{%
+\section{Readings}\label{readings-4}}
+
+The required readings for this chapter are:
 
 \begin{itemize}
 \item
-  \citet{andersson201970}
+  \citet{andersson201970} Provides background on the study we'll use in this chapter for our example data
 \item
-  \citet{wong1989risk}
+  \citet{wong1989risk} An epidemiological study using the study data.
 \end{itemize}
 
-The following are a series of instructional papers on survival analysis, that are
-meant as general background on how to fit survival analysis models.
+There are also some supplemental readings you may find useful. The following are a series of instructional papers on survival analysis, that are
+meant as general background on how to fit survival analysis models:
 
 \begin{itemize}
 \item
@@ -6048,20 +6051,47 @@ meant as general background on how to fit survival analysis models.
   \citet{bradburn2003survival2}
 \end{itemize}
 
-Lastly, this article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves
+This article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves:
 
 \begin{itemize}
 \tightlist
 \item
-  \citet{hernan2010hazards}
+  \citet{hernan2010hazards} (Note that there is an online erratum for this article: ``On page 15, column 1, second full paragraph: `\ldots{} and the average HR is ensured to reach the value 1.' should instead say, `\ldots{} and the risk ratio is ensured to reach the value 1.'\,'')
+\end{itemize}
+
+These articles provide more background on the Framingham Heart Study:
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{dawber1951epidemiological} A paper from the 1950s, this presents the rationale behind the design of the Framingham Heart Study
+\item
+  \citet{dawber2015ii} A reprint of the paper describing the first results to come out of the Framingham Heart Study
+\end{itemize}
+
+These articles provide some general reviews on our current understanding of the epidemiology and etiology of heart disease and its risk factors:
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{wong2014epidemiological} Review of large epidemiological studies on coronary heart disease and key findings
+\item
+  \citet{ziaeian2016epidemiology} Review on the epidemiology and etiology of heart failure
+\item
+  \citet{valenzuela2021lifestyle} Review of risk factors for hypertension
+\item
+  \citet{zhou2021global} Review on global epidemiology of hypertension
 \end{itemize}
 
 \hypertarget{longitudinal-cohort-data}{%
 \section{Longitudinal cohort data}\label{longitudinal-cohort-data}}
 
-Example datasets are available online, but also made available to you on the course
-website. For the Framingham Heart Study the example data are available as the file
-``frmgham2.csv''. It is saved in a csv format, and so they can be read into R using the
+Our example data for this chapter comes from the Framingham Heart Study. This is a cohort study that began in 1948 \citep{andersson201970}. At the time (and continuing today), heart disease was the most common cause of death in the US---a notable shift from earlier times, when infectious diseases played a larger role in mortality. While heart disease was an important cause of death, however, very little was known about risk factors for heart disease, outside of a little concerning the role of some infectious and nutritional diseases that affected the heart \citep{dawber1951epidemiological, andersson201970}. This study was designed to collect a group of people without evident cardiovascular disease (although this restriction was eased in practice) and track them over many years, to try to identify risk factors for developing cardiovascular disease. The study subjects were tracked over time, with data regularly collected on both risk factors and cardiovascular outcomes. The study was revolutionary in identifying some key risk factors for coronary heart disease, including elevated blood pressure, high cholesterol levels, being overweight, and smoking \citep{andersson201970}. It was also revolutionary in identifying high blood pressure as a risk for other cardiovascular outcomes, including stroke and congestive heart failure \citep{andersson201970}.
+
+The original cohort included about 5,200 people from the town of Framingham, MA. The
+example data is a subset of data from this original cohort. You can download the example dataset for this class by clicking \href{https://github.com/geanders/adv_epi_analysis/raw/master/data/frmgham2.csv}{here} and then saving the content of the page as a csv file (we recommend using the original filename of ``frmgham2.csv''). There is also a codebook file that comes with these data, which you can download for this class by clicking \href{https://github.com/geanders/adv_epi_analysis/raw/master/data/Framingham\%20Longitudinal\%20Data\%20Documentation.pdf}{here}. This codebook includes some explanations about the columns in the data, as well as how multiple measurements from a single study subject are included in the data.
+
+The data are saved in a csv format, and so they can be read into R using the
 \texttt{read\_csv} function from the \texttt{readr} package (part of the tidyverse). You can use the following code to read in these data, assuming you have saved them in a ``data'' subdirectory of your current
 working directory:
 
@@ -6096,15 +6126,19 @@ working directory:
 ## #   TIMEDTH <dbl>, TIMEHYP <dbl>
 \end{verbatim}
 
+You can find full details on the structure of this data in the codebook. At a broad scale, note that it includes several health outcomes related to heart disease, which the codebook calls ``events'' (\texttt{DEATH}: indicator of death from any cause; \texttt{ANYCHD}: indicator of one of several types of events related to coronary heart disease; \texttt{HOSPMI}: Hopitalization for myocardial infarction {[}heart attack{]}, etc.). The data also includes a number of risk factors that the study researchers hypothesized might be linked to cardiovascular disease (\texttt{CURSMOKE}: if the study subject is currently a smoker; \texttt{TOTCHOL}: serum total cholesterol; \texttt{SYSBP}, \texttt{DIABP}: measures of the systolic and diastolic blood pressure, respectively; \texttt{BMI}: Body Mass Index; etc.). Finally, there are some characteristics of the study subject, like age (\texttt{AGE}) and sex (\texttt{SEX}), as well as some variables that are connected to either the time of the record or the time of certain events.
+
+As you look through the data, pay attention to some features that are more characteristic of cohort studies, compared to features of the time series data we worked with in earlier chapters:
+
 \begin{itemize}
 \tightlist
 \item
   One important difference compared to a time-series dataset is the \texttt{RANDID} variable. This is the unique identifier for unit for which we have repeated observations for over time.
   In this case the \texttt{RANDID} variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time.
 \item
-  The \texttt{TIME} variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. (\texttt{TIME=0} for the first observation of each participant).
+  The \texttt{TIME} variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. \texttt{TIME} s always 0 for the first observation of each participant, and then for following measurements will track the time since follow-up started for that study participant.
 \item
-  Number of observations varies between participants (typical)
+  The number of observations varies between participants (typical of many cohort studies)
 \item
   The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.
 \item
@@ -6149,6 +6183,7 @@ the \texttt{tidyverse}):
 \end{verbatim}
 
 \emph{Applied exercise: Exploring longitudinal cohort data}
+
 Read the example cohort data in R and explore it to answer the following
 questions:
 
@@ -6160,14 +6195,14 @@ questions:
 \item
   Is there any missingness in the data?
 \item
-  How many participants die? What is the distribution of age at time of death?
+  How many participants died during the observation period? What is the distribution of age at time of death?
 \item
   What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?
 \item
   What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers
 \end{enumerate}
 
-Based on this exploratory exercise in this section, talk about the potential
+Based on this exploratory exercise, talk about the potential
 for confounding when these data are analyzed to estimate the association between
 smoking and risk of incident MI.
 
@@ -6217,7 +6252,7 @@ of function calls, versus \texttt{pull} and piping to do a series of function ca
 You can see you get the same result, so it just comes down to the style that
 you will find easiest to understand when you look at your code later.
 
-The number of person-time observations will actually be equal to the length of the dataset.
+The number of person-time observations will be equal to the length of the dataset, since there's a row for every observation taken.
 The \texttt{dim} function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.
 
 \begin{Shaded}
@@ -6230,7 +6265,7 @@ The \texttt{dim} function gives us the length (number of rows) and width (number
 ## [1] 11627    39
 \end{verbatim}
 
-We see that there is approximately an average of 2 to 3 observations per participants.
+We see that there are 11,626 observations, which is an average of approximately 2 to 3 observations per participant (11,626 / 4,434 = 2.6).
 
 When you know there are repeated measurements, it can be helpful to explore
 how much variation there is in the number of observations per study subject.
@@ -6275,6 +6310,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Shaded}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-169-1.pdf}
+
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
 
@@ -6283,7 +6319,7 @@ subjects (over 3,000) have three measurements recorded in the dataset.
 \setcounter{enumi}{1}
 \tightlist
 \item
-  \emph{Is there any missingness in the data?}
+  \textbf{Is there any missingness in the data?}
 \end{enumerate}
 
 We can check for missingness in a number of ways. There are a couple of great
@@ -6294,7 +6330,7 @@ them using \texttt{install.packages("naniar")} and \texttt{install.packages("vis
 examples}
 that is a nice starting point for working with both packages.
 
-The \texttt{vis\_miss} function shows missingness in a dataset in a way that lets you
+The \texttt{vis\_miss} function from the \texttt{visdat} package shows missingness in a dataset in a way that lets you
 get a top-level snapshot:
 
 \begin{Shaded}
@@ -6305,7 +6341,10 @@ get a top-level snapshot:
 \end{Shaded}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-170-1.pdf}
-Another was to visualize this is with \texttt{gg\_miss\_var}:
+
+This shows you how much data is missing for each column in the data. For a smaller dataset, the design of the plot would also let you see how often missing data line up across several columns for the same observation (in other words, if an observation that's missing one measurement tends to also be missing several other measurements). In this case, however, there are so many rows, it's a bit hard to visually line up missingness by row.
+
+Another was to visualize this is with \texttt{gg\_miss\_var} from the \texttt{naniar} package:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6316,13 +6355,14 @@ Another was to visualize this is with \texttt{gg\_miss\_var}:
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-171-1.pdf}
 
-Many of the variables are available for all observations, with no missingness,
-including records of the subject's ID, measures of death, stroke, CVD, and other
+This output again focuses on missingness by column in the data, helping you identify columns where we might not have many non-missing observations.
+In this case, many of the columns have measurements that are available for all observations, with no missingness,
+including records of the subject's ID, measures of death, stroke, CVD and other
 events, age, sex, and BMI. Some of the measured values from visits are missing
 occasionally, like the total cholesterol, and glucose. Other measures asked of
 the participants (number of cigarettes per day, education) are occasionally
-missing. Two of the variables---\texttt{hdlc} and \texttt{ldlc}---are missing more often than
-they are available.
+missing. Two of the variables---\texttt{hdlc} and \texttt{ldlc} (High Density Lipoprotein Cholesterol and Low Density Lipoprotein Cholesterol, respectively)---are missing more often than
+they are available. If you read the codebook for the data, you'll see that this is because these measurements are only available at time period 3.
 
 You can also do faceting with the \texttt{gg\_miss\_var} function. For
 example, you could see if missingness varies by the period of the observation:
@@ -6367,11 +6407,11 @@ The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
 other (the points in red along the x- and y-axes), it looks like the distribution
 across the non-missing variable is pretty similar to that for observations
-with both measurements avaiable. In other words, \texttt{totchol} has a similar
+with both measurements available. In other words, \texttt{totchol} has a similar
 distribution among observations where \texttt{glucose} is available as observations
-where \texttt{glucose} is missing.
+where \texttt{glucose} is missing, and the same for \texttt{glucose} for observations with and without missingess for \texttt{totchol}.
 
-You can also do things like facet by sex to explore patterns at a finer level:
+Since this function interfaces with \texttt{ggplot}, you can use any usual tricks with ggplot in association with it. For example, you can do things like facet by sex to explore patterns of missingness and codistribution at a finer level:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6389,10 +6429,10 @@ You can also do things like facet by sex to explore patterns at a finer level:
 \setcounter{enumi}{2}
 \tightlist
 \item
-  \emph{How many participants die? What is the distribution of age at time of death?}
+  \textbf{How many participants died during the observation period? What is the distribution of age at time of death?}
 \end{enumerate}
 
-The \texttt{death} variable in the \texttt{fhs} data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
+The \texttt{death} variable in the \texttt{fhs} data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant: that is, it takes the value 1 if a participant died at any point during the follow-up period or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.
 
 If you arrange by the random ID and look at \texttt{period} and \texttt{death} for each subject,
 you can see that the \texttt{death} variable is the same for all periods for each
@@ -6432,45 +6472,93 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 \begin{Highlighting}[]
 \NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{slice}\NormalTok{(1L)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{slice}\NormalTok{(1L) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# The L after the one clarifies that this is an integer}
   \FunctionTok{ungroup}\NormalTok{()}
+\NormalTok{fhs\_first}
 \end{Highlighting}
 \end{Shaded}
 
-Alternatively you can use the \texttt{slice\_head} function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the \texttt{group\_by} function, we will be slicing rows beginning from the first observation for each \texttt{randid}
+\begin{verbatim}
+## # A tibble: 4,434 x 39
+##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
+##     <dbl> <dbl>   <dbl> <dbl> <dbl> <dbl>    <dbl>   <dbl> <dbl>    <dbl>  <dbl>
+##  1   2448     1     195    39  106     70        0       0  27.0        0      0
+##  2   6238     2     250    46  121     81        0       0  28.7        0      0
+##  3   9428     1     245    48  128.    80        1      20  25.3        0      0
+##  4  10552     2     225    61  150     95        1      30  28.6        0      0
+##  5  11252     2     285    46  130     84        1      23  23.1        0      0
+##  6  11263     2     228    43  180    110        0       0  30.3        0      0
+##  7  12629     2     205    63  138     71        0       0  33.1        0      0
+##  8  12806     2     313    45  100     71        1      20  21.7        0      0
+##  9  14367     1     260    52  142.    89        0       0  26.4        0      0
+## 10  16365     1     225    43  162    107        1      30  23.6        0      0
+## # ... with 4,424 more rows, and 28 more variables: heartrte <dbl>,
+## #   glucose <dbl>, educ <dbl>, prevchd <dbl>, prevap <dbl>, prevmi <dbl>,
+## #   prevstrk <dbl>, prevhyp <dbl>, time <dbl>, period <dbl>, hdlc <dbl>,
+## #   ldlc <dbl>, death <dbl>, angina <dbl>, hospmi <dbl>, mi_fchd <dbl>,
+## #   anychd <dbl>, stroke <dbl>, cvd <dbl>, hyperten <dbl>, timeap <dbl>,
+## #   timemi <dbl>, timemifc <dbl>, timechd <dbl>, timestrk <dbl>, timecvd <dbl>,
+## #   timedth <dbl>, timehyp <dbl>
+\end{verbatim}
+
+Alternatively you can use the \texttt{slice\_head} function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the \texttt{group\_by} function, we will be slicing rows beginning from the first observation for each \texttt{randid}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{slice\_head}\NormalTok{(}\AttributeTok{n=}\DecValTok{1}\NormalTok{)}\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{ungroup}\NormalTok{()}
+  \FunctionTok{slice\_head}\NormalTok{(}\AttributeTok{n =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
-We can similarly select the last observation for each participant
+We can similarly select the last observation for each participant:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs\_last }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{slice}\NormalTok{(}\FunctionTok{n}\NormalTok{())}\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{ungroup}\NormalTok{()}
+  \FunctionTok{slice}\NormalTok{(}\FunctionTok{n}\NormalTok{()) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# The \textasciigrave{}n()\textasciigrave{} function gives the count of rows in a group }
+  \FunctionTok{ungroup}\NormalTok{()}
+\NormalTok{fhs\_last}
 \end{Highlighting}
 \end{Shaded}
 
-or using the \texttt{slice\_tail} function
+\begin{verbatim}
+## # A tibble: 4,434 x 39
+##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
+##     <dbl> <dbl>   <dbl> <dbl> <dbl> <dbl>    <dbl>   <dbl> <dbl>    <dbl>  <dbl>
+##  1   2448     1     209    52   121    66        0       0  NA          0      0
+##  2   6238     2     237    58   108    66        0       0  28.5        0      0
+##  3   9428     1     283    54   141    89        1      30  25.3        0      0
+##  4  10552     2     232    67   183   109        1      20  30.2        0      0
+##  5  11252     2      NA    58   155    90        1      30  24.6        0      0
+##  6  11263     2     220    55   180   106        0       0  31.2        1      1
+##  7  12629     2     220    70   149    81        0       0  36.8        0      0
+##  8  12806     2     320    57   110    46        1      30  22.0        0      0
+##  9  14367     1     280    64   168   100        0       0  25.7        0      0
+## 10  16365     1     211    55   173   123        0       0  29.1        0      1
+## # ... with 4,424 more rows, and 28 more variables: heartrte <dbl>,
+## #   glucose <dbl>, educ <dbl>, prevchd <dbl>, prevap <dbl>, prevmi <dbl>,
+## #   prevstrk <dbl>, prevhyp <dbl>, time <dbl>, period <dbl>, hdlc <dbl>,
+## #   ldlc <dbl>, death <dbl>, angina <dbl>, hospmi <dbl>, mi_fchd <dbl>,
+## #   anychd <dbl>, stroke <dbl>, cvd <dbl>, hyperten <dbl>, timeap <dbl>,
+## #   timemi <dbl>, timemifc <dbl>, timechd <dbl>, timestrk <dbl>, timecvd <dbl>,
+## #   timedth <dbl>, timehyp <dbl>
+\end{verbatim}
+
+or using the \texttt{slice\_tail} function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs\_last }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{slice\_tail}\NormalTok{(}\AttributeTok{n=}\DecValTok{1}\NormalTok{)}\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{ungroup}\NormalTok{()}
+  \FunctionTok{slice\_tail}\NormalTok{(}\AttributeTok{n=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
-In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including \texttt{death=1}. For example, we can use the \texttt{sum} function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the \texttt{sum} function will give as the number of deaths in the sample.
+In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including \texttt{death\ =\ 1}. For example, we can use the \texttt{sum} function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1, the \texttt{sum} function will give us the number of deaths in the sample.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6482,12 +6570,12 @@ In this dataset we can extract statistics on baseline covariates on the individu
 ## [1] 1550
 \end{verbatim}
 
-Conversely using \texttt{tidyverse} tools we can extract the number of observations with \texttt{death=1} using the \texttt{count} function
+Conversely using \texttt{tidyverse} tools we can extract the number of observations with \texttt{death\ =\ 1} using the \texttt{count} function
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{count}\NormalTok{(death) }
+  \FunctionTok{count}\NormalTok{(death) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -6499,7 +6587,7 @@ Conversely using \texttt{tidyverse} tools we can extract the number of observati
 ## 2     1  1550
 \end{verbatim}
 
-Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in \texttt{fhs} below.
+Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in \texttt{fhs} below, although with the conventions of this particular dataset, it doesn't matter if we take the first or last observation for each study subject (since they give a time-invariant value for death).
 
 In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The \texttt{age} variable in \texttt{fhs} represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for \texttt{age} would be less than the age at death. We will use the \texttt{timedth} variable to help us determine the actual age at death. The value of \texttt{timedth} is the number of days from beginning of follow-up until death for those with \texttt{death=1}, while it is a fixed value of \texttt{timedth=8766} (the maximum duration of follow-up) for those with \texttt{death=0}.
 

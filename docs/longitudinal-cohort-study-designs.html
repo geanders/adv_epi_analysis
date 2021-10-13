@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-10-12" />
+<meta name="date" content="2021-10-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -201,14 +201,15 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="7" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html"><i class="fa fa-check"></i><b>7</b> Longitudinal cohort study designs</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#longitudinal-cohort-data"><i class="fa fa-check"></i><b>7.1</b> Longitudinal cohort data</a></li>
-<li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.2</b> Coding a survival analysis</a></li>
-<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.3</b> Handling complexity</a>
+<li class="chapter" data-level="7.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#readings-4"><i class="fa fa-check"></i><b>7.1</b> Readings</a></li>
+<li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#longitudinal-cohort-data"><i class="fa fa-check"></i><b>7.2</b> Longitudinal cohort data</a></li>
+<li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.3</b> Coding a survival analysis</a></li>
+<li class="chapter" data-level="7.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.4</b> Handling complexity</a>
 <ul>
-<li class="chapter" data-level="7.3.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.3.1</b> Multi-level exposure</a></li>
-<li class="chapter" data-level="7.3.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.3.2</b> Recurrent outcome</a></li>
-<li class="chapter" data-level="7.3.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.3.3</b> Time-varying coeffificents</a></li>
-<li class="chapter" data-level="7.3.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.3.4</b> Using survey results</a></li>
+<li class="chapter" data-level="7.4.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.4.1</b> Multi-level exposure</a></li>
+<li class="chapter" data-level="7.4.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.4.2</b> Recurrent outcome</a></li>
+<li class="chapter" data-level="7.4.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.4.3</b> Time-varying coeffificents</a></li>
+<li class="chapter" data-level="7.4.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.4.4</b> Using survey results</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a>
@@ -242,27 +243,43 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="longitudinal-cohort-study-designs" class="section level1" number="7">
 <h1><span class="header-section-number">Chapter 7</span> Longitudinal cohort study designs</h1>
-<p>The readings for this chapter are</p>
+<div id="readings-4" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Readings</h2>
+<p>The required readings for this chapter are:</p>
 <ul>
-<li><p><span class="citation"><a href="#ref-andersson201970" role="doc-biblioref">Andersson et al.</a> (<a href="#ref-andersson201970" role="doc-biblioref">2019</a>)</span></p></li>
-<li><p><span class="citation"><a href="#ref-wong1989risk" role="doc-biblioref">Wong et al.</a> (<a href="#ref-wong1989risk" role="doc-biblioref">1989</a>)</span></p></li>
+<li><p><span class="citation"><a href="#ref-andersson201970" role="doc-biblioref">Andersson et al.</a> (<a href="#ref-andersson201970" role="doc-biblioref">2019</a>)</span> Provides background on the study we’ll use in this chapter for our example data</p></li>
+<li><p><span class="citation"><a href="#ref-wong1989risk" role="doc-biblioref">Wong et al.</a> (<a href="#ref-wong1989risk" role="doc-biblioref">1989</a>)</span> An epidemiological study using the study data.</p></li>
 </ul>
-<p>The following are a series of instructional papers on survival analysis, that are
-meant as general background on how to fit survival analysis models.</p>
+<p>There are also some supplemental readings you may find useful. The following are a series of instructional papers on survival analysis, that are
+meant as general background on how to fit survival analysis models:</p>
 <ul>
 <li><p><span class="citation"><a href="#ref-clark2003survival" role="doc-biblioref">Clark et al.</a> (<a href="#ref-clark2003survival" role="doc-biblioref">2003</a>)</span></p></li>
 <li><p><span class="citation"><a href="#ref-bradburn2003survival" role="doc-biblioref">Bradburn et al.</a> (<a href="#ref-bradburn2003survival" role="doc-biblioref">2003a</a>)</span></p></li>
 <li><p><span class="citation"><a href="#ref-bradburn2003survival2" role="doc-biblioref">Bradburn et al.</a> (<a href="#ref-bradburn2003survival2" role="doc-biblioref">2003b</a>)</span></p></li>
 </ul>
-<p>Lastly, this article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves</p>
+<p>This article is a good summary for the limitations of Hazards Ratios and offers an alternative survival analysis approach enabling the plotting of adjusted cumulative incidence (and similarly survival rate) curves:</p>
 <ul>
-<li><span class="citation"><a href="#ref-hernan2010hazards" role="doc-biblioref">Hernán</a> (<a href="#ref-hernan2010hazards" role="doc-biblioref">2010</a>)</span></li>
+<li><span class="citation"><a href="#ref-hernan2010hazards" role="doc-biblioref">Hernán</a> (<a href="#ref-hernan2010hazards" role="doc-biblioref">2010</a>)</span> (Note that there is an online erratum for this article: “On page 15, column 1, second full paragraph: ‘… and the average HR is ensured to reach the value 1.’ should instead say, ‘… and the risk ratio is ensured to reach the value 1.’”)</li>
 </ul>
-<div id="longitudinal-cohort-data" class="section level2" number="7.1">
-<h2><span class="header-section-number">7.1</span> Longitudinal cohort data</h2>
-<p>Example datasets are available online, but also made available to you on the course
-website. For the Framingham Heart Study the example data are available as the file
-“frmgham2.csv.” It is saved in a csv format, and so they can be read into R using the
+<p>These articles provide more background on the Framingham Heart Study:</p>
+<ul>
+<li><span class="citation"><a href="#ref-dawber1951epidemiological" role="doc-biblioref">Dawber, Meadors, and Moore Jr</a> (<a href="#ref-dawber1951epidemiological" role="doc-biblioref">1951</a>)</span> A paper from the 1950s, this presents the rationale behind the design of the Framingham Heart Study</li>
+<li><span class="citation"><a href="#ref-dawber2015ii" role="doc-biblioref">Dawber, Moore, and Mann</a> (<a href="#ref-dawber2015ii" role="doc-biblioref">2015</a>)</span> A reprint of the paper describing the first results to come out of the Framingham Heart Study</li>
+</ul>
+<p>These articles provide some general reviews on our current understanding of the epidemiology and etiology of heart disease and its risk factors:</p>
+<ul>
+<li><span class="citation"><a href="#ref-wong2014epidemiological" role="doc-biblioref">Wong</a> (<a href="#ref-wong2014epidemiological" role="doc-biblioref">2014</a>)</span> Review of large epidemiological studies on coronary heart disease and key findings</li>
+<li><span class="citation"><a href="#ref-ziaeian2016epidemiology" role="doc-biblioref">Ziaeian and Fonarow</a> (<a href="#ref-ziaeian2016epidemiology" role="doc-biblioref">2016</a>)</span> Review on the epidemiology and etiology of heart failure</li>
+<li><span class="citation"><a href="#ref-valenzuela2021lifestyle" role="doc-biblioref">Valenzuela et al.</a> (<a href="#ref-valenzuela2021lifestyle" role="doc-biblioref">2021</a>)</span> Review of risk factors for hypertension</li>
+<li><span class="citation"><a href="#ref-zhou2021global" role="doc-biblioref">Zhou et al.</a> (<a href="#ref-zhou2021global" role="doc-biblioref">2021</a>)</span> Review on global epidemiology of hypertension</li>
+</ul>
+</div>
+<div id="longitudinal-cohort-data" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> Longitudinal cohort data</h2>
+<p>Our example data for this chapter comes from the Framingham Heart Study. This is a cohort study that began in 1948 <span class="citation">(<a href="#ref-andersson201970" role="doc-biblioref">Andersson et al. 2019</a>)</span>. At the time (and continuing today), heart disease was the most common cause of death in the US—a notable shift from earlier times, when infectious diseases played a larger role in mortality. While heart disease was an important cause of death, however, very little was known about risk factors for heart disease, outside of a little concerning the role of some infectious and nutritional diseases that affected the heart <span class="citation">(<a href="#ref-dawber1951epidemiological" role="doc-biblioref">Dawber, Meadors, and Moore Jr 1951</a>; <a href="#ref-andersson201970" role="doc-biblioref">Andersson et al. 2019</a>)</span>. This study was designed to collect a group of people without evident cardiovascular disease (although this restriction was eased in practice) and track them over many years, to try to identify risk factors for developing cardiovascular disease. The study subjects were tracked over time, with data regularly collected on both risk factors and cardiovascular outcomes. The study was revolutionary in identifying some key risk factors for coronary heart disease, including elevated blood pressure, high cholesterol levels, being overweight, and smoking <span class="citation">(<a href="#ref-andersson201970" role="doc-biblioref">Andersson et al. 2019</a>)</span>. It was also revolutionary in identifying high blood pressure as a risk for other cardiovascular outcomes, including stroke and congestive heart failure <span class="citation">(<a href="#ref-andersson201970" role="doc-biblioref">Andersson et al. 2019</a>)</span>.</p>
+<p>The original cohort included about 5,200 people from the town of Framingham, MA. The
+example data is a subset of data from this original cohort. You can download the example dataset for this class by clicking <a href="https://github.com/geanders/adv_epi_analysis/raw/master/data/frmgham2.csv">here</a> and then saving the content of the page as a csv file (we recommend using the original filename of “frmgham2.csv”). There is also a codebook file that comes with these data, which you can download for this class by clicking <a href="https://github.com/geanders/adv_epi_analysis/raw/master/data/Framingham%20Longitudinal%20Data%20Documentation.pdf">here</a>. This codebook includes some explanations about the columns in the data, as well as how multiple measurements from a single study subject are included in the data.</p>
+<p>The data are saved in a csv format, and so they can be read into R using the
 <code>read_csv</code> function from the <code>readr</code> package (part of the tidyverse). You can use the following code to read in these data, assuming you have saved them in a “data” subdirectory of your current
 working directory:</p>
 <div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="longitudinal-cohort-study-designs.html#cb307-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
@@ -288,11 +305,13 @@ working directory:</p>
 ## #   ANYCHD &lt;dbl&gt;, STROKE &lt;dbl&gt;, CVD &lt;dbl&gt;, HYPERTEN &lt;dbl&gt;, TIMEAP &lt;dbl&gt;,
 ## #   TIMEMI &lt;dbl&gt;, TIMEMIFC &lt;dbl&gt;, TIMECHD &lt;dbl&gt;, TIMESTRK &lt;dbl&gt;, TIMECVD &lt;dbl&gt;,
 ## #   TIMEDTH &lt;dbl&gt;, TIMEHYP &lt;dbl&gt;</code></pre>
+<p>You can find full details on the structure of this data in the codebook. At a broad scale, note that it includes several health outcomes related to heart disease, which the codebook calls “events” (<code>DEATH</code>: indicator of death from any cause; <code>ANYCHD</code>: indicator of one of several types of events related to coronary heart disease; <code>HOSPMI</code>: Hopitalization for myocardial infarction [heart attack], etc.). The data also includes a number of risk factors that the study researchers hypothesized might be linked to cardiovascular disease (<code>CURSMOKE</code>: if the study subject is currently a smoker; <code>TOTCHOL</code>: serum total cholesterol; <code>SYSBP</code>, <code>DIABP</code>: measures of the systolic and diastolic blood pressure, respectively; <code>BMI</code>: Body Mass Index; etc.). Finally, there are some characteristics of the study subject, like age (<code>AGE</code>) and sex (<code>SEX</code>), as well as some variables that are connected to either the time of the record or the time of certain events.</p>
+<p>As you look through the data, pay attention to some features that are more characteristic of cohort studies, compared to features of the time series data we worked with in earlier chapters:</p>
 <ul>
 <li>One important difference compared to a time-series dataset is the <code>RANDID</code> variable. This is the unique identifier for unit for which we have repeated observations for over time.
 In this case the <code>RANDID</code> variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time.</li>
-<li>The <code>TIME</code> variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. (<code>TIME=0</code> for the first observation of each participant).</li>
-<li>Number of observations varies between participants (typical)</li>
+<li>The <code>TIME</code> variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. <code>TIME</code> s always 0 for the first observation of each participant, and then for following measurements will track the time since follow-up started for that study participant.</li>
+<li>The number of observations varies between participants (typical of many cohort studies)</li>
 <li>The time spacing between observations is not constant. This is because the repeated observations in the Framingham Heart Study are the result of follow-up exams happening 3 to 5 years apart. Many longitudinal cohorts will instead have observations over a fixed time interval (monthly, annual, biannual etc), resulting in a more balanced dataset.</li>
 <li>Observations are given for various risk factors, covariates and cardiovascular outcomes. Some will be invariant for each participant over time (<code>SEX</code>, <code>educ</code>), while others will vary with each exam.</li>
 </ul>
@@ -324,17 +343,17 @@ the <code>tidyverse</code>):</p>
 ## #   anychd &lt;dbl&gt;, stroke &lt;dbl&gt;, cvd &lt;dbl&gt;, hyperten &lt;dbl&gt;, timeap &lt;dbl&gt;,
 ## #   timemi &lt;dbl&gt;, timemifc &lt;dbl&gt;, timechd &lt;dbl&gt;, timestrk &lt;dbl&gt;, timecvd &lt;dbl&gt;,
 ## #   timedth &lt;dbl&gt;, timehyp &lt;dbl&gt;</code></pre>
-<p><em>Applied exercise: Exploring longitudinal cohort data</em>
-Read the example cohort data in R and explore it to answer the following
+<p><em>Applied exercise: Exploring longitudinal cohort data</em></p>
+<p>Read the example cohort data in R and explore it to answer the following
 questions:</p>
 <ol style="list-style-type: decimal">
 <li>What is the number of participants and number of observations in the <code>fhs</code> dataset?</li>
 <li>Is there any missingness in the data?</li>
-<li>How many participants die? What is the distribution of age at time of death?</li>
+<li>How many participants died during the observation period? What is the distribution of age at time of death?</li>
 <li>What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?</li>
 <li>What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers</li>
 </ol>
-<p>Based on this exploratory exercise in this section, talk about the potential
+<p>Based on this exploratory exercise, talk about the potential
 for confounding when these data are analyzed to estimate the association between
 smoking and risk of incident MI.</p>
 <p><em>Applied exercise: Example code</em></p>
@@ -359,11 +378,11 @@ then pipe that into vector operations:</p>
 of function calls, versus <code>pull</code> and piping to do a series of function calls.
 You can see you get the same result, so it just comes down to the style that
 you will find easiest to understand when you look at your code later.</p>
-<p>The number of person-time observations will actually be equal to the length of the dataset.
+<p>The number of person-time observations will be equal to the length of the dataset, since there’s a row for every observation taken.
 The <code>dim</code> function gives us the length (number of rows) and width (number of columns) for a dataframe or any matrix like object in R.</p>
 <div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="longitudinal-cohort-study-designs.html#cb315-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(fhs)</span></code></pre></div>
 <pre><code>## [1] 11627    39</code></pre>
-<p>We see that there is approximately an average of 2 to 3 observations per participants.</p>
+<p>We see that there are 11,626 observations, which is an average of approximately 2 to 3 observations per participant (11,626 / 4,434 = 2.6).</p>
 <p>When you know there are repeated measurements, it can be helpful to explore
 how much variation there is in the number of observations per study subject.
 You could do that in this dataset with the following code:</p>
@@ -391,11 +410,11 @@ You could do that in this dataset with the following code:</p>
 <span id="cb319-4"><a href="longitudinal-cohort-study-designs.html#cb319-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb319-5"><a href="longitudinal-cohort-study-designs.html#cb319-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> n)) <span class="sc">+</span> </span>
 <span id="cb319-6"><a href="longitudinal-cohort-study-designs.html#cb319-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-169-1.png" width="672" />
-All study subjects have between one and three measurements. Most of the study
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-169-1.png" width="672" /></p>
+<p>All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.</p>
 <ol start="2" style="list-style-type: decimal">
-<li><em>Is there any missingness in the data?</em></li>
+<li><strong>Is there any missingness in the data?</strong></li>
 </ol>
 <p>We can check for missingness in a number of ways. There are a couple of great
 packages, <code>visdat</code> and <code>naniar</code>, that include functions for investigating
@@ -404,22 +423,24 @@ them using <code>install.packages("naniar")</code> and <code>install.packages("v
 <code>naniar</code> package has <a href="https://cran.r-project.org/web/packages/naniar/vignettes/getting-started-w-naniar.html">a vignette with
 examples</a>
 that is a nice starting point for working with both packages.</p>
-<p>The <code>vis_miss</code> function shows missingness in a dataset in a way that lets you
+<p>The <code>vis_miss</code> function from the <code>visdat</code> package shows missingness in a dataset in a way that lets you
 get a top-level snapshot:</p>
 <div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="longitudinal-cohort-study-designs.html#cb320-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
 <span id="cb320-2"><a href="longitudinal-cohort-study-designs.html#cb320-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vis_miss</span>(fhs)</span></code></pre></div>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-170-1.png" width="672" />
-Another was to visualize this is with <code>gg_miss_var</code>:</p>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-170-1.png" width="672" /></p>
+<p>This shows you how much data is missing for each column in the data. For a smaller dataset, the design of the plot would also let you see how often missing data line up across several columns for the same observation (in other words, if an observation that’s missing one measurement tends to also be missing several other measurements). In this case, however, there are so many rows, it’s a bit hard to visually line up missingness by row.</p>
+<p>Another was to visualize this is with <code>gg_miss_var</code> from the <code>naniar</code> package:</p>
 <div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="longitudinal-cohort-study-designs.html#cb321-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
 <span id="cb321-2"><a href="longitudinal-cohort-study-designs.html#cb321-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-171-1.png" width="672" /></p>
-<p>Many of the variables are available for all observations, with no missingness,
-including records of the subject’s ID, measures of death, stroke, CVD, and other
+<p>This output again focuses on missingness by column in the data, helping you identify columns where we might not have many non-missing observations.
+In this case, many of the columns have measurements that are available for all observations, with no missingness,
+including records of the subject’s ID, measures of death, stroke, CVD and other
 events, age, sex, and BMI. Some of the measured values from visits are missing
 occasionally, like the total cholesterol, and glucose. Other measures asked of
 the participants (number of cigarettes per day, education) are occasionally
-missing. Two of the variables—<code>hdlc</code> and <code>ldlc</code>—are missing more often than
-they are available.</p>
+missing. Two of the variables—<code>hdlc</code> and <code>ldlc</code> (High Density Lipoprotein Cholesterol and Low Density Lipoprotein Cholesterol, respectively)—are missing more often than
+they are available. If you read the codebook for the data, you’ll see that this is because these measurements are only available at time period 3.</p>
 <p>You can also do faceting with the <code>gg_miss_var</code> function. For
 example, you could see if missingness varies by the period of the observation:</p>
 <div class="sourceCode" id="cb322"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb322-1"><a href="longitudinal-cohort-study-designs.html#cb322-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(fhs, <span class="at">facet =</span> period)</span></code></pre></div>
@@ -442,19 +463,19 @@ variables:</p>
 looks like there aren’t too many. For observations with one missing but not the
 other (the points in red along the x- and y-axes), it looks like the distribution
 across the non-missing variable is pretty similar to that for observations
-with both measurements avaiable. In other words, <code>totchol</code> has a similar
+with both measurements available. In other words, <code>totchol</code> has a similar
 distribution among observations where <code>glucose</code> is available as observations
-where <code>glucose</code> is missing.</p>
-<p>You can also do things like facet by sex to explore patterns at a finer level:</p>
+where <code>glucose</code> is missing, and the same for <code>glucose</code> for observations with and without missingess for <code>totchol</code>.</p>
+<p>Since this function interfaces with <code>ggplot</code>, you can use any usual tricks with ggplot in association with it. For example, you can do things like facet by sex to explore patterns of missingness and codistribution at a finer level:</p>
 <div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="longitudinal-cohort-study-designs.html#cb325-1" aria-hidden="true" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
 <span id="cb325-2"><a href="longitudinal-cohort-study-designs.html#cb325-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> totchol)) <span class="sc">+</span> </span>
 <span id="cb325-3"><a href="longitudinal-cohort-study-designs.html#cb325-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_miss_point</span>() <span class="sc">+</span> </span>
 <span id="cb325-4"><a href="longitudinal-cohort-study-designs.html#cb325-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sex)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-175-1.png" width="672" /></p>
 <ol start="3" style="list-style-type: decimal">
-<li><em>How many participants die? What is the distribution of age at time of death?</em></li>
+<li><strong>How many participants died during the observation period? What is the distribution of age at time of death?</strong></li>
 </ol>
-<p>The <code>death</code> variable in the <code>fhs</code> data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant taking the value 1 if a participant died at any point or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.</p>
+<p>The <code>death</code> variable in the <code>fhs</code> data is an indicator for mortality if a participant died at any point during follow-up. It is time-invariant: that is, it takes the value 1 if a participant died at any point during the follow-up period or 0 if they were alive at their end of follow-up, so we have to be careful on how to extract the actual number of deaths.</p>
 <p>If you arrange by the random ID and look at <code>period</code> and <code>death</code> for each subject,
 you can see that the <code>death</code> variable is the same for all periods for each
 subject:</p>
@@ -480,55 +501,97 @@ the deaths.</p>
 <p>It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the <code>fhs</code> data using <code>tidyverse</code> tools. The <code>group_by</code> functions groups data by unique values of designated variables (here <code>randid</code>) and the <code>slice</code> function selects rows as designated.</p>
 <div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="longitudinal-cohort-study-designs.html#cb328-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
 <span id="cb328-2"><a href="longitudinal-cohort-study-designs.html#cb328-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb328-3"><a href="longitudinal-cohort-study-designs.html#cb328-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(1L)<span class="sc">%&gt;%</span></span>
-<span id="cb328-4"><a href="longitudinal-cohort-study-designs.html#cb328-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
-<p>Alternatively you can use the <code>slice_head</code> function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the <code>group_by</code> function, we will be slicing rows beginning from the first observation for each <code>randid</code></p>
-<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="longitudinal-cohort-study-designs.html#cb329-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb329-2"><a href="longitudinal-cohort-study-designs.html#cb329-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb329-3"><a href="longitudinal-cohort-study-designs.html#cb329-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n=</span><span class="dv">1</span>)<span class="sc">%&gt;%</span> </span>
-<span id="cb329-4"><a href="longitudinal-cohort-study-designs.html#cb329-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ungroup</span>()</span></code></pre></div>
-<p>We can similarly select the last observation for each participant</p>
-<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="longitudinal-cohort-study-designs.html#cb330-1" aria-hidden="true" tabindex="-1"></a>fhs_last <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb328-3"><a href="longitudinal-cohort-study-designs.html#cb328-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(1L) <span class="sc">%&gt;%</span> <span class="co"># The L after the one clarifies that this is an integer</span></span>
+<span id="cb328-4"><a href="longitudinal-cohort-study-designs.html#cb328-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb328-5"><a href="longitudinal-cohort-study-designs.html#cb328-5" aria-hidden="true" tabindex="-1"></a>fhs_first</span></code></pre></div>
+<pre><code>## # A tibble: 4,434 x 39
+##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
+##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+##  1   2448     1     195    39  106     70        0       0  27.0        0      0
+##  2   6238     2     250    46  121     81        0       0  28.7        0      0
+##  3   9428     1     245    48  128.    80        1      20  25.3        0      0
+##  4  10552     2     225    61  150     95        1      30  28.6        0      0
+##  5  11252     2     285    46  130     84        1      23  23.1        0      0
+##  6  11263     2     228    43  180    110        0       0  30.3        0      0
+##  7  12629     2     205    63  138     71        0       0  33.1        0      0
+##  8  12806     2     313    45  100     71        1      20  21.7        0      0
+##  9  14367     1     260    52  142.    89        0       0  26.4        0      0
+## 10  16365     1     225    43  162    107        1      30  23.6        0      0
+## # … with 4,424 more rows, and 28 more variables: heartrte &lt;dbl&gt;, glucose &lt;dbl&gt;,
+## #   educ &lt;dbl&gt;, prevchd &lt;dbl&gt;, prevap &lt;dbl&gt;, prevmi &lt;dbl&gt;, prevstrk &lt;dbl&gt;,
+## #   prevhyp &lt;dbl&gt;, time &lt;dbl&gt;, period &lt;dbl&gt;, hdlc &lt;dbl&gt;, ldlc &lt;dbl&gt;,
+## #   death &lt;dbl&gt;, angina &lt;dbl&gt;, hospmi &lt;dbl&gt;, mi_fchd &lt;dbl&gt;, anychd &lt;dbl&gt;,
+## #   stroke &lt;dbl&gt;, cvd &lt;dbl&gt;, hyperten &lt;dbl&gt;, timeap &lt;dbl&gt;, timemi &lt;dbl&gt;,
+## #   timemifc &lt;dbl&gt;, timechd &lt;dbl&gt;, timestrk &lt;dbl&gt;, timecvd &lt;dbl&gt;,
+## #   timedth &lt;dbl&gt;, timehyp &lt;dbl&gt;</code></pre>
+<p>Alternatively you can use the <code>slice_head</code> function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the <code>group_by</code> function, we will be slicing rows beginning from the first observation for each <code>randid</code>:</p>
+<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="longitudinal-cohort-study-designs.html#cb330-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
 <span id="cb330-2"><a href="longitudinal-cohort-study-designs.html#cb330-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb330-3"><a href="longitudinal-cohort-study-designs.html#cb330-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">n</span>())<span class="sc">%&gt;%</span> </span>
-<span id="cb330-4"><a href="longitudinal-cohort-study-designs.html#cb330-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ungroup</span>()</span></code></pre></div>
-<p>or using the <code>slice_tail</code> function</p>
+<span id="cb330-3"><a href="longitudinal-cohort-study-designs.html#cb330-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-4"><a href="longitudinal-cohort-study-designs.html#cb330-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
+<p>We can similarly select the last observation for each participant:</p>
 <div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="longitudinal-cohort-study-designs.html#cb331-1" aria-hidden="true" tabindex="-1"></a>fhs_last <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
 <span id="cb331-2"><a href="longitudinal-cohort-study-designs.html#cb331-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb331-3"><a href="longitudinal-cohort-study-designs.html#cb331-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n=</span><span class="dv">1</span>)<span class="sc">%&gt;%</span> </span>
-<span id="cb331-4"><a href="longitudinal-cohort-study-designs.html#cb331-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ungroup</span>()</span></code></pre></div>
-<p>In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including <code>death=1</code>. For example, we can use the <code>sum</code> function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1 the <code>sum</code> function will give as the number of deaths in the sample.</p>
-<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb332-1"><a href="longitudinal-cohort-study-designs.html#cb332-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(fhs_first<span class="sc">$</span>death) </span></code></pre></div>
+<span id="cb331-3"><a href="longitudinal-cohort-study-designs.html#cb331-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">n</span>()) <span class="sc">%&gt;%</span> <span class="co"># The `n()` function gives the count of rows in a group </span></span>
+<span id="cb331-4"><a href="longitudinal-cohort-study-designs.html#cb331-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb331-5"><a href="longitudinal-cohort-study-designs.html#cb331-5" aria-hidden="true" tabindex="-1"></a>fhs_last</span></code></pre></div>
+<pre><code>## # A tibble: 4,434 x 39
+##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
+##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+##  1   2448     1     209    52   121    66        0       0  NA          0      0
+##  2   6238     2     237    58   108    66        0       0  28.5        0      0
+##  3   9428     1     283    54   141    89        1      30  25.3        0      0
+##  4  10552     2     232    67   183   109        1      20  30.2        0      0
+##  5  11252     2      NA    58   155    90        1      30  24.6        0      0
+##  6  11263     2     220    55   180   106        0       0  31.2        1      1
+##  7  12629     2     220    70   149    81        0       0  36.8        0      0
+##  8  12806     2     320    57   110    46        1      30  22.0        0      0
+##  9  14367     1     280    64   168   100        0       0  25.7        0      0
+## 10  16365     1     211    55   173   123        0       0  29.1        0      1
+## # … with 4,424 more rows, and 28 more variables: heartrte &lt;dbl&gt;, glucose &lt;dbl&gt;,
+## #   educ &lt;dbl&gt;, prevchd &lt;dbl&gt;, prevap &lt;dbl&gt;, prevmi &lt;dbl&gt;, prevstrk &lt;dbl&gt;,
+## #   prevhyp &lt;dbl&gt;, time &lt;dbl&gt;, period &lt;dbl&gt;, hdlc &lt;dbl&gt;, ldlc &lt;dbl&gt;,
+## #   death &lt;dbl&gt;, angina &lt;dbl&gt;, hospmi &lt;dbl&gt;, mi_fchd &lt;dbl&gt;, anychd &lt;dbl&gt;,
+## #   stroke &lt;dbl&gt;, cvd &lt;dbl&gt;, hyperten &lt;dbl&gt;, timeap &lt;dbl&gt;, timemi &lt;dbl&gt;,
+## #   timemifc &lt;dbl&gt;, timechd &lt;dbl&gt;, timestrk &lt;dbl&gt;, timecvd &lt;dbl&gt;,
+## #   timedth &lt;dbl&gt;, timehyp &lt;dbl&gt;</code></pre>
+<p>or using the <code>slice_tail</code> function:</p>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="longitudinal-cohort-study-designs.html#cb333-1" aria-hidden="true" tabindex="-1"></a>fhs_last <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb333-2"><a href="longitudinal-cohort-study-designs.html#cb333-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb333-3"><a href="longitudinal-cohort-study-designs.html#cb333-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb333-4"><a href="longitudinal-cohort-study-designs.html#cb333-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
+<p>In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including <code>death = 1</code>. For example, we can use the <code>sum</code> function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1, the <code>sum</code> function will give us the number of deaths in the sample.</p>
+<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="longitudinal-cohort-study-designs.html#cb334-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(fhs_first<span class="sc">$</span>death) </span></code></pre></div>
 <pre><code>## [1] 1550</code></pre>
-<p>Conversely using <code>tidyverse</code> tools we can extract the number of observations with <code>death=1</code> using the <code>count</code> function</p>
-<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="longitudinal-cohort-study-designs.html#cb334-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb334-2"><a href="longitudinal-cohort-study-designs.html#cb334-2" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(death) </span></code></pre></div>
+<p>Conversely using <code>tidyverse</code> tools we can extract the number of observations with <code>death = 1</code> using the <code>count</code> function</p>
+<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb336-1"><a href="longitudinal-cohort-study-designs.html#cb336-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb336-2"><a href="longitudinal-cohort-study-designs.html#cb336-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(death) </span></code></pre></div>
 <pre><code>## # A tibble: 2 x 2
 ##   death     n
 ## * &lt;dbl&gt; &lt;int&gt;
 ## 1     0  2884
 ## 2     1  1550</code></pre>
-<p>Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in <code>fhs</code> below.</p>
+<p>Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in <code>fhs</code> below, although with the conventions of this particular dataset, it doesn’t matter if we take the first or last observation for each study subject (since they give a time-invariant value for death).</p>
 <p>In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The <code>age</code> variable in <code>fhs</code> represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for <code>age</code> would be less than the age at death. We will use the <code>timedth</code> variable to help us determine the actual age at death. The value of <code>timedth</code> is the number of days from beginning of follow-up until death for those with <code>death=1</code>, while it is a fixed value of <code>timedth=8766</code> (the maximum duration of follow-up) for those with <code>death=0</code>.</p>
 <p>We can create a new age at death variable for those with <code>death=1</code> using the <code>age</code> at baseline and <code>timedth</code> values</p>
-<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb336-1"><a href="longitudinal-cohort-study-designs.html#cb336-1" aria-hidden="true" tabindex="-1"></a>fhs_first<span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb336-2"><a href="longitudinal-cohort-study-designs.html#cb336-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">agedth=</span>age<span class="sc">+</span>timedth<span class="sc">/</span><span class="fl">365.25</span>,</span>
-<span id="cb336-3"><a href="longitudinal-cohort-study-designs.html#cb336-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">timedthy=</span>timedth<span class="sc">/</span><span class="fl">365.25</span>) <span class="do">###also creating a year time-to-death variable</span></span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="longitudinal-cohort-study-designs.html#cb338-1" aria-hidden="true" tabindex="-1"></a>fhs_first<span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb338-2"><a href="longitudinal-cohort-study-designs.html#cb338-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">agedth=</span>age<span class="sc">+</span>timedth<span class="sc">/</span><span class="fl">365.25</span>,</span>
+<span id="cb338-3"><a href="longitudinal-cohort-study-designs.html#cb338-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">timedthy=</span>timedth<span class="sc">/</span><span class="fl">365.25</span>) <span class="do">###also creating a year time-to-death variable</span></span></code></pre></div>
 <p>We can then get summary statistics on this new variable</p>
-<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="longitudinal-cohort-study-designs.html#cb337-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb337-2"><a href="longitudinal-cohort-study-designs.html#cb337-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
-<span id="cb337-3"><a href="longitudinal-cohort-study-designs.html#cb337-3" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
-<span id="cb337-4"><a href="longitudinal-cohort-study-designs.html#cb337-4" aria-hidden="true" tabindex="-1"></a><span class="at">max_agedth =</span> <span class="fu">max</span>(agedth))</span></code></pre></div>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="longitudinal-cohort-study-designs.html#cb339-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb339-2"><a href="longitudinal-cohort-study-designs.html#cb339-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
+<span id="cb339-3"><a href="longitudinal-cohort-study-designs.html#cb339-3" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
+<span id="cb339-4"><a href="longitudinal-cohort-study-designs.html#cb339-4" aria-hidden="true" tabindex="-1"></a><span class="at">max_agedth =</span> <span class="fu">max</span>(agedth))</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 3
 ##   min_agedth mean_agedth max_agedth
 ##        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
 ## 1       38.4        70.5         93</code></pre>
 <p>We can also check on these values by groups of interest such as sex</p>
-<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="longitudinal-cohort-study-designs.html#cb339-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb339-2"><a href="longitudinal-cohort-study-designs.html#cb339-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
-<span id="cb339-3"><a href="longitudinal-cohort-study-designs.html#cb339-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
-<span id="cb339-4"><a href="longitudinal-cohort-study-designs.html#cb339-4" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
-<span id="cb339-5"><a href="longitudinal-cohort-study-designs.html#cb339-5" aria-hidden="true" tabindex="-1"></a><span class="at">max_agedth =</span> <span class="fu">max</span>(agedth))</span></code></pre></div>
+<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="longitudinal-cohort-study-designs.html#cb341-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb341-2"><a href="longitudinal-cohort-study-designs.html#cb341-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
+<span id="cb341-3"><a href="longitudinal-cohort-study-designs.html#cb341-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
+<span id="cb341-4"><a href="longitudinal-cohort-study-designs.html#cb341-4" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
+<span id="cb341-5"><a href="longitudinal-cohort-study-designs.html#cb341-5" aria-hidden="true" tabindex="-1"></a><span class="at">max_agedth =</span> <span class="fu">max</span>(agedth))</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 4
 ##     sex min_agedth mean_agedth max_agedth
 ## * &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
@@ -538,45 +601,45 @@ the deaths.</p>
 <li><em>What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?</em></li>
 </ol>
 <p>Similar to the question about death (all-cause mortality) we can look at disease incidence, for example myocardial infarction (MI). The <code>fhs</code> dataset has the <code>hospmi</code> variable as an indicator for any participant who had a hospitalization due to MI and <code>timemi</code> gives the number of days from beginning of follow up to the hospitalization due to MI. We can create an age at incident MI hospitalizaton in a similar fashion as the example for age at death.</p>
-<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="longitudinal-cohort-study-designs.html#cb341-1" aria-hidden="true" tabindex="-1"></a>fhs_first<span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb341-2"><a href="longitudinal-cohort-study-designs.html#cb341-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">agemi=</span>age<span class="sc">+</span>timemi<span class="sc">/</span><span class="fl">365.25</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="longitudinal-cohort-study-designs.html#cb343-1" aria-hidden="true" tabindex="-1"></a>fhs_first<span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb343-2"><a href="longitudinal-cohort-study-designs.html#cb343-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">agemi=</span>age<span class="sc">+</span>timemi<span class="sc">/</span><span class="fl">365.25</span>)</span></code></pre></div>
 <p>We can then get summary statistics on this new <code>agemi</code> variable</p>
-<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="longitudinal-cohort-study-designs.html#cb342-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb342-2"><a href="longitudinal-cohort-study-designs.html#cb342-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agemi =</span> <span class="fu">min</span>(agemi),</span>
-<span id="cb342-3"><a href="longitudinal-cohort-study-designs.html#cb342-3" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agemi =</span> <span class="fu">mean</span>(agemi),</span>
-<span id="cb342-4"><a href="longitudinal-cohort-study-designs.html#cb342-4" aria-hidden="true" tabindex="-1"></a><span class="at">max_agemi =</span> <span class="fu">max</span>(agemi))</span></code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="longitudinal-cohort-study-designs.html#cb344-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb344-2"><a href="longitudinal-cohort-study-designs.html#cb344-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agemi =</span> <span class="fu">min</span>(agemi),</span>
+<span id="cb344-3"><a href="longitudinal-cohort-study-designs.html#cb344-3" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agemi =</span> <span class="fu">mean</span>(agemi),</span>
+<span id="cb344-4"><a href="longitudinal-cohort-study-designs.html#cb344-4" aria-hidden="true" tabindex="-1"></a><span class="at">max_agemi =</span> <span class="fu">max</span>(agemi))</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 3
 ##   min_agemi mean_agemi max_agemi
 ##       &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
 ## 1        37       69.7        93</code></pre>
 <p>And by sex</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="longitudinal-cohort-study-designs.html#cb344-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb344-2"><a href="longitudinal-cohort-study-designs.html#cb344-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(sex)  <span class="sc">%&gt;%</span> </span>
-<span id="cb344-3"><a href="longitudinal-cohort-study-designs.html#cb344-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agemi =</span> <span class="fu">min</span>(agemi),</span>
-<span id="cb344-4"><a href="longitudinal-cohort-study-designs.html#cb344-4" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agemi =</span> <span class="fu">mean</span>(agemi),</span>
-<span id="cb344-5"><a href="longitudinal-cohort-study-designs.html#cb344-5" aria-hidden="true" tabindex="-1"></a><span class="at">max_agemi =</span> <span class="fu">max</span>(agemi))</span></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="longitudinal-cohort-study-designs.html#cb346-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb346-2"><a href="longitudinal-cohort-study-designs.html#cb346-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(sex)  <span class="sc">%&gt;%</span> </span>
+<span id="cb346-3"><a href="longitudinal-cohort-study-designs.html#cb346-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">min_agemi =</span> <span class="fu">min</span>(agemi),</span>
+<span id="cb346-4"><a href="longitudinal-cohort-study-designs.html#cb346-4" aria-hidden="true" tabindex="-1"></a><span class="at">mean_agemi =</span> <span class="fu">mean</span>(agemi),</span>
+<span id="cb346-5"><a href="longitudinal-cohort-study-designs.html#cb346-5" aria-hidden="true" tabindex="-1"></a><span class="at">max_agemi =</span> <span class="fu">max</span>(agemi))</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 4
 ##     sex min_agemi mean_agemi max_agemi
 ## * &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
 ## 1     1      37         68.2      91.1
 ## 2     2      38.4       70.9      93</code></pre>
 <p>We can see that the mean age at incident MI hospitalization among males and females is similar, but with males being somewhat younger on average at the time of incident MI. We can take a closer look at the distibution using boxplots:</p>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="longitudinal-cohort-study-designs.html#cb346-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb346-2"><a href="longitudinal-cohort-study-designs.html#cb346-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># define the axes for the boxplot</span></span>
-<span id="cb346-3"><a href="longitudinal-cohort-study-designs.html#cb346-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y=</span>agemi)) <span class="sc">+</span> </span>
-<span id="cb346-4"><a href="longitudinal-cohort-study-designs.html#cb346-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="longitudinal-cohort-study-designs.html#cb348-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb348-2"><a href="longitudinal-cohort-study-designs.html#cb348-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># define the axes for the boxplot</span></span>
+<span id="cb348-3"><a href="longitudinal-cohort-study-designs.html#cb348-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y=</span>agemi)) <span class="sc">+</span> </span>
+<span id="cb348-4"><a href="longitudinal-cohort-study-designs.html#cb348-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-189-1.png" width="672" />
 We see that R didn’t return two separate boxplots by sex, but rather one centered between the two values of <code>sex=1</code> and <code>sex=2</code> which are the values for males and females respectively. This is an indicator that the sex variable is of class <code>numeric</code> and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:</p>
-<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="longitudinal-cohort-study-designs.html#cb347-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(fhs_first<span class="sc">$</span>sex)</span></code></pre></div>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="longitudinal-cohort-study-designs.html#cb349-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(fhs_first<span class="sc">$</span>sex)</span></code></pre></div>
 <pre><code>## [1] &quot;numeric&quot;</code></pre>
 <p>We can trasform the variable to one of class <code>factor</code> in order for it to be trated as a cateogrical variable</p>
-<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="longitudinal-cohort-study-designs.html#cb349-1" aria-hidden="true" tabindex="-1"></a>fhs_first<span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb349-2"><a href="longitudinal-cohort-study-designs.html#cb349-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">sex=</span><span class="fu">as.factor</span>(sex))</span></code></pre></div>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="longitudinal-cohort-study-designs.html#cb351-1" aria-hidden="true" tabindex="-1"></a>fhs_first<span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb351-2"><a href="longitudinal-cohort-study-designs.html#cb351-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">sex=</span><span class="fu">as.factor</span>(sex))</span></code></pre></div>
 <p>If we repeat the function for the boxplot now we get separate boxplots by sex</p>
-<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb350-1"><a href="longitudinal-cohort-study-designs.html#cb350-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb350-2"><a href="longitudinal-cohort-study-designs.html#cb350-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># define the axes for the boxplot</span></span>
-<span id="cb350-3"><a href="longitudinal-cohort-study-designs.html#cb350-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y=</span>agemi)) <span class="sc">+</span> </span>
-<span id="cb350-4"><a href="longitudinal-cohort-study-designs.html#cb350-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="longitudinal-cohort-study-designs.html#cb352-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb352-2"><a href="longitudinal-cohort-study-designs.html#cb352-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># define the axes for the boxplot</span></span>
+<span id="cb352-3"><a href="longitudinal-cohort-study-designs.html#cb352-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y=</span>agemi)) <span class="sc">+</span> </span>
+<span id="cb352-4"><a href="longitudinal-cohort-study-designs.html#cb352-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-192-1.png" width="672" /></p>
 <p>We can once again see from the the boxplots that females tend to be a little older at incidence of MI.</p>
 <ol start="5" style="list-style-type: decimal">
@@ -584,8 +647,8 @@ We see that R didn’t return two separate boxplots by sex, but rather one cente
 </ol>
 <p>Similar to the exercise above we can compare BMI distributions by MI case status.</p>
 </div>
-<div id="coding-a-survival-analysis" class="section level2" number="7.2">
-<h2><span class="header-section-number">7.2</span> Coding a survival analysis</h2>
+<div id="coding-a-survival-analysis" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Coding a survival analysis</h2>
 <p>[R package <code>survival</code>]</p>
 <p>In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or <code>glm</code> family that model an outcome that may follow a gaussian (linear regression), binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered ‘censored.’ Censoring can occur in three ways:</p>
 <ul>
@@ -609,52 +672,52 @@ If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math i
 <p><strong>1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?</strong></p>
 <p>A very simple way to estimate survival is the non-parametric Kaplan-Meier estimator.</p>
 <p>In R we would estimate Survival <span class="math inline">\(S(t)\)</span> with all-cause mortality representing failure as follows:</p>
-<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="longitudinal-cohort-study-designs.html#cb351-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
-<span id="cb351-2"><a href="longitudinal-cohort-study-designs.html#cb351-2" aria-hidden="true" tabindex="-1"></a> S1<span class="ot">=</span><span class="fu">Surv</span>(fhs_first<span class="sc">$</span>timedth,fhs_first<span class="sc">$</span>death)</span>
-<span id="cb351-3"><a href="longitudinal-cohort-study-designs.html#cb351-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">head</span>(S1)</span></code></pre></div>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="longitudinal-cohort-study-designs.html#cb353-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb353-2"><a href="longitudinal-cohort-study-designs.html#cb353-2" aria-hidden="true" tabindex="-1"></a> S1<span class="ot">=</span><span class="fu">Surv</span>(fhs_first<span class="sc">$</span>timedth,fhs_first<span class="sc">$</span>death)</span>
+<span id="cb353-3"><a href="longitudinal-cohort-study-designs.html#cb353-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">head</span>(S1)</span></code></pre></div>
 <pre><code>## [1] 8766+ 8766+ 8766+ 2956  8766+ 8766+</code></pre>
 <p>The numbers assigned to each individual represent their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven’t failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).</p>
-<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="longitudinal-cohort-study-designs.html#cb353-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survminer) <span class="do">##for plotting survival plots with ggplot2</span></span></code></pre></div>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="longitudinal-cohort-study-designs.html#cb355-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survminer) <span class="do">##for plotting survival plots with ggplot2</span></span></code></pre></div>
 <pre><code>## Loading required package: ggpubr</code></pre>
-<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="longitudinal-cohort-study-designs.html#cb355-1" aria-hidden="true" tabindex="-1"></a>fit_time<span class="ot">&lt;-</span>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>fhs_first)</span>
-<span id="cb355-2"><a href="longitudinal-cohort-study-designs.html#cb355-2" aria-hidden="true" tabindex="-1"></a>fit_time <span class="sc">%&gt;%</span></span>
-<span id="cb355-3"><a href="longitudinal-cohort-study-designs.html#cb355-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Time to death (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="longitudinal-cohort-study-designs.html#cb357-1" aria-hidden="true" tabindex="-1"></a>fit_time<span class="ot">&lt;-</span>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>fhs_first)</span>
+<span id="cb357-2"><a href="longitudinal-cohort-study-designs.html#cb357-2" aria-hidden="true" tabindex="-1"></a>fit_time <span class="sc">%&gt;%</span></span>
+<span id="cb357-3"><a href="longitudinal-cohort-study-designs.html#cb357-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Time to death (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-194-1.png" width="672" />
 We can see that as follow-up time increases survival decreases rather monotonically over time, or in other words the number of people who have died increases. Survival <span class="math inline">\(\hat{S}(t)\)</span> drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.</p>
 <p>We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the <code>Surv</code> function, substituting time of death with respect to follow-up time with age at death.</p>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="longitudinal-cohort-study-designs.html#cb356-1" aria-hidden="true" tabindex="-1"></a>fit_age<span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>fhs_first)</span>
-<span id="cb356-2"><a href="longitudinal-cohort-study-designs.html#cb356-2" aria-hidden="true" tabindex="-1"></a>fit_age <span class="sc">%&gt;%</span></span>
-<span id="cb356-3"><a href="longitudinal-cohort-study-designs.html#cb356-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="longitudinal-cohort-study-designs.html#cb358-1" aria-hidden="true" tabindex="-1"></a>fit_age<span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>fhs_first)</span>
+<span id="cb358-2"><a href="longitudinal-cohort-study-designs.html#cb358-2" aria-hidden="true" tabindex="-1"></a>fit_age <span class="sc">%&gt;%</span></span>
+<span id="cb358-3"><a href="longitudinal-cohort-study-designs.html#cb358-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-195-1.png" width="672" />
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.</p>
 <p><strong>2.How do (survival) curves for mortality compare between males and females? How about for MI?</strong></p>
 <p>Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independet variable. For all cause mortality:</p>
-<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="longitudinal-cohort-study-designs.html#cb357-1" aria-hidden="true" tabindex="-1"></a>fit_bysex<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> sex, <span class="at">data=</span>fhs_first)</span>
-<span id="cb357-2"><a href="longitudinal-cohort-study-designs.html#cb357-2" aria-hidden="true" tabindex="-1"></a>fit_age_bysex<span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> sex, <span class="at">data=</span>fhs_first)</span>
-<span id="cb357-3"><a href="longitudinal-cohort-study-designs.html#cb357-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb357-4"><a href="longitudinal-cohort-study-designs.html#cb357-4" aria-hidden="true" tabindex="-1"></a>fit_bysex<span class="sc">%&gt;%</span></span>
-<span id="cb357-5"><a href="longitudinal-cohort-study-designs.html#cb357-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Time to death (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
-<span id="cb357-6"><a href="longitudinal-cohort-study-designs.html#cb357-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="longitudinal-cohort-study-designs.html#cb359-1" aria-hidden="true" tabindex="-1"></a>fit_bysex<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> sex, <span class="at">data=</span>fhs_first)</span>
+<span id="cb359-2"><a href="longitudinal-cohort-study-designs.html#cb359-2" aria-hidden="true" tabindex="-1"></a>fit_age_bysex<span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> sex, <span class="at">data=</span>fhs_first)</span>
+<span id="cb359-3"><a href="longitudinal-cohort-study-designs.html#cb359-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb359-4"><a href="longitudinal-cohort-study-designs.html#cb359-4" aria-hidden="true" tabindex="-1"></a>fit_bysex<span class="sc">%&gt;%</span></span>
+<span id="cb359-5"><a href="longitudinal-cohort-study-designs.html#cb359-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Time to death (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
+<span id="cb359-6"><a href="longitudinal-cohort-study-designs.html#cb359-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-196-1.png" width="672" /></p>
-<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="longitudinal-cohort-study-designs.html#cb358-1" aria-hidden="true" tabindex="-1"></a>fit_age_bysex<span class="sc">%&gt;%</span></span>
-<span id="cb358-2"><a href="longitudinal-cohort-study-designs.html#cb358-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
-<span id="cb358-3"><a href="longitudinal-cohort-study-designs.html#cb358-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="longitudinal-cohort-study-designs.html#cb360-1" aria-hidden="true" tabindex="-1"></a>fit_age_bysex<span class="sc">%&gt;%</span></span>
+<span id="cb360-2"><a href="longitudinal-cohort-study-designs.html#cb360-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
+<span id="cb360-3"><a href="longitudinal-cohort-study-designs.html#cb360-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-196-2.png" width="672" />
 You can now see that the survival rate for males drops quicker (at a younger age) than for females.
 Similarly if we look at MI as the outcome:</p>
-<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="longitudinal-cohort-study-designs.html#cb359-1" aria-hidden="true" tabindex="-1"></a>fit_age_MIbysex<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(agemi, mi_fchd) <span class="sc">~</span> sex, <span class="at">data=</span>fhs_first )</span>
-<span id="cb359-2"><a href="longitudinal-cohort-study-designs.html#cb359-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb359-3"><a href="longitudinal-cohort-study-designs.html#cb359-3" aria-hidden="true" tabindex="-1"></a>fit_age_MIbysex <span class="sc">%&gt;%</span></span>
-<span id="cb359-4"><a href="longitudinal-cohort-study-designs.html#cb359-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;MI Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
-<span id="cb359-5"><a href="longitudinal-cohort-study-designs.html#cb359-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb361-1"><a href="longitudinal-cohort-study-designs.html#cb361-1" aria-hidden="true" tabindex="-1"></a>fit_age_MIbysex<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(agemi, mi_fchd) <span class="sc">~</span> sex, <span class="at">data=</span>fhs_first )</span>
+<span id="cb361-2"><a href="longitudinal-cohort-study-designs.html#cb361-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb361-3"><a href="longitudinal-cohort-study-designs.html#cb361-3" aria-hidden="true" tabindex="-1"></a>fit_age_MIbysex <span class="sc">%&gt;%</span></span>
+<span id="cb361-4"><a href="longitudinal-cohort-study-designs.html#cb361-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;MI Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),</span>
+<span id="cb361-5"><a href="longitudinal-cohort-study-designs.html#cb361-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Sex&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-197-1.png" width="672" />
 Once again we see a difference in the survival rates with age by sex, which is in line with what we already know from the literature.</p>
 <p>We can actually approach survival rates by smoking status in the same manner:</p>
-<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="longitudinal-cohort-study-designs.html#cb360-1" aria-hidden="true" tabindex="-1"></a>fit_age_MIsmoking<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(agemi, mi_fchd) <span class="sc">~</span> cursmoke, <span class="at">data=</span>fhs_first )</span>
-<span id="cb360-2"><a href="longitudinal-cohort-study-designs.html#cb360-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb360-3"><a href="longitudinal-cohort-study-designs.html#cb360-3" aria-hidden="true" tabindex="-1"></a>fit_age_MIsmoking <span class="sc">%&gt;%</span></span>
-<span id="cb360-4"><a href="longitudinal-cohort-study-designs.html#cb360-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;MI Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Non-smokers&quot;</span>, <span class="st">&quot;Smokers&quot;</span>),</span>
-<span id="cb360-5"><a href="longitudinal-cohort-study-designs.html#cb360-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Smoking status at baseline&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="longitudinal-cohort-study-designs.html#cb362-1" aria-hidden="true" tabindex="-1"></a>fit_age_MIsmoking<span class="ot">&lt;-</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(agemi, mi_fchd) <span class="sc">~</span> cursmoke, <span class="at">data=</span>fhs_first )</span>
+<span id="cb362-2"><a href="longitudinal-cohort-study-designs.html#cb362-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb362-3"><a href="longitudinal-cohort-study-designs.html#cb362-3" aria-hidden="true" tabindex="-1"></a>fit_age_MIsmoking <span class="sc">%&gt;%</span></span>
+<span id="cb362-4"><a href="longitudinal-cohort-study-designs.html#cb362-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(<span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>,<span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;MI Survival Probablity &#39;</span>, <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)), <span class="at">legend.labs=</span><span class="fu">c</span>(<span class="st">&quot;Non-smokers&quot;</span>, <span class="st">&quot;Smokers&quot;</span>),</span>
+<span id="cb362-5"><a href="longitudinal-cohort-study-designs.html#cb362-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="st">&quot;Smoking status at baseline&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-198-1.png" width="672" />
 Once again we can observe that there is a difference in survival rates for MI, by smoking status at baseline.</p>
 <p>The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example we can compare survival rates among smokers and non-smokers, but we can’t really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we’ve been fitting. The <code>survreg</code> function in the <code>survival</code> package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the <em>exponential</em>, <em>Weibull</em>, <em>log-normal (log(T) is normally distributed)</em> or <em>log-logistic</em> distributions.</p>
@@ -666,40 +729,40 @@ The above model can also be writen as</p>
 <p><span class="math inline">\(\lambda(t|X)=\lambda_{0}(t)\times e^{\beta_{1}\times X}\)</span></p>
 <p><span class="math inline">\(e^{\beta_{1}}\)</span> is the hazard ratio comparing those hose with <span class="math inline">\(X=1\)</span> and <span class="math inline">\(X=0\)</span></p>
 <p>Using the <code>fhs</code> data we will fit a simple Cox proportional hazard for the effect of smoking on the hazard for MI.</p>
-<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb361-1"><a href="longitudinal-cohort-study-designs.html#cb361-1" aria-hidden="true" tabindex="-1"></a>coxph_mod1<span class="ot">&lt;-</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke, <span class="at">data=</span>fhs_first)</span></code></pre></div>
+<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb363-1"><a href="longitudinal-cohort-study-designs.html#cb363-1" aria-hidden="true" tabindex="-1"></a>coxph_mod1<span class="ot">&lt;-</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke, <span class="at">data=</span>fhs_first)</span></code></pre></div>
 <p>If we see the estimated parameters of the model, there isn’t an intercept term as we’ve commented above:</p>
-<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="longitudinal-cohort-study-designs.html#cb362-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb362-2"><a href="longitudinal-cohort-study-designs.html#cb362-2" aria-hidden="true" tabindex="-1"></a>coxph_mod1 <span class="sc">%&gt;%</span></span>
-<span id="cb362-3"><a href="longitudinal-cohort-study-designs.html#cb362-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="longitudinal-cohort-study-designs.html#cb364-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb364-2"><a href="longitudinal-cohort-study-designs.html#cb364-2" aria-hidden="true" tabindex="-1"></a>coxph_mod1 <span class="sc">%&gt;%</span></span>
+<span id="cb364-3"><a href="longitudinal-cohort-study-designs.html#cb364-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 5
 ##   term     estimate std.error statistic p.value
 ##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 cursmoke   0.0867    0.0508      1.71  0.0880</code></pre>
 <p>The parameter for the covariate of interest is equivalent to the log of the hazard ratio comparing current smokers at baseline to non-smokers. We can extract the hazard ratio by exponentiating that parameter.</p>
-<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="longitudinal-cohort-study-designs.html#cb364-1" aria-hidden="true" tabindex="-1"></a>coxph_mod1 <span class="sc">%&gt;%</span> </span>
-<span id="cb364-2"><a href="longitudinal-cohort-study-designs.html#cb364-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb364-3"><a href="longitudinal-cohort-study-designs.html#cb364-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-4"><a href="longitudinal-cohort-study-designs.html#cb364-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
-<span id="cb364-5"><a href="longitudinal-cohort-study-designs.html#cb364-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb364-6"><a href="longitudinal-cohort-study-designs.html#cb364-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb364-7"><a href="longitudinal-cohort-study-designs.html#cb364-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
-<span id="cb364-8"><a href="longitudinal-cohort-study-designs.html#cb364-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-9"><a href="longitudinal-cohort-study-designs.html#cb364-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="longitudinal-cohort-study-designs.html#cb366-1" aria-hidden="true" tabindex="-1"></a>coxph_mod1 <span class="sc">%&gt;%</span> </span>
+<span id="cb366-2"><a href="longitudinal-cohort-study-designs.html#cb366-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb366-3"><a href="longitudinal-cohort-study-designs.html#cb366-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb366-4"><a href="longitudinal-cohort-study-designs.html#cb366-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb366-5"><a href="longitudinal-cohort-study-designs.html#cb366-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb366-6"><a href="longitudinal-cohort-study-designs.html#cb366-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb366-7"><a href="longitudinal-cohort-study-designs.html#cb366-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb366-8"><a href="longitudinal-cohort-study-designs.html#cb366-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb366-9"><a href="longitudinal-cohort-study-designs.html#cb366-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 cursmoke  1.09  0.987    1.20</code></pre>
 <p>We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence intervals include the null.</p>
 <p>We have said that the main assumption we need to make here is that of proportional hazards. The <code>survival</code> package actually allows us to check this with the <code>cox.zph</code> function</p>
-<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="longitudinal-cohort-study-designs.html#cb366-1" aria-hidden="true" tabindex="-1"></a>phtest<span class="ot">&lt;-</span><span class="fu">cox.zph</span>(coxph_mod1)</span></code></pre></div>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="longitudinal-cohort-study-designs.html#cb368-1" aria-hidden="true" tabindex="-1"></a>phtest<span class="ot">&lt;-</span><span class="fu">cox.zph</span>(coxph_mod1)</span></code></pre></div>
 <p>The output of this function is the result of a <span class="math inline">\(\chi^2\)</span> test for the proportional hazards assumption. If the p-value here was below 0.05 we would have to reject the null hypothesis that the proportional hazards assumption holds.
 We can also plot the parameter(s) of interest across time from this output. If the proportional hazards assumption holds (constant HR) then the parameter should resemble a horizontal line with respect to time.</p>
-<div class="sourceCode" id="cb367"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb367-1"><a href="longitudinal-cohort-study-designs.html#cb367-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(phtest)</span></code></pre></div>
+<div class="sourceCode" id="cb369"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb369-1"><a href="longitudinal-cohort-study-designs.html#cb369-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(phtest)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-203-1.png" width="672" /></p>
 <p>Here we see that the line is besically horizontal. Now let’s repeat the model adjusting for some covariates, specifically sex and age.</p>
-<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="longitudinal-cohort-study-designs.html#cb368-1" aria-hidden="true" tabindex="-1"></a>coxph_mod2<span class="ot">&lt;-</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke <span class="sc">+</span> sex <span class="sc">+</span> age, <span class="at">data=</span>fhs_first)</span>
-<span id="cb368-2"><a href="longitudinal-cohort-study-designs.html#cb368-2" aria-hidden="true" tabindex="-1"></a>coxph_mod2 <span class="sc">%&gt;%</span></span>
-<span id="cb368-3"><a href="longitudinal-cohort-study-designs.html#cb368-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="longitudinal-cohort-study-designs.html#cb370-1" aria-hidden="true" tabindex="-1"></a>coxph_mod2<span class="ot">&lt;-</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke <span class="sc">+</span> sex <span class="sc">+</span> age, <span class="at">data=</span>fhs_first)</span>
+<span id="cb370-2"><a href="longitudinal-cohort-study-designs.html#cb370-2" aria-hidden="true" tabindex="-1"></a>coxph_mod2 <span class="sc">%&gt;%</span></span>
+<span id="cb370-3"><a href="longitudinal-cohort-study-designs.html#cb370-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 x 5
 ##   term     estimate std.error statistic   p.value
 ##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -707,22 +770,22 @@ We can also plot the parameter(s) of interest across time from this output. If t
 ## 2 sex2      -0.540    0.0525     -10.3  9.35e- 25
 ## 3 age        0.0967   0.00327     29.6  3.79e-192</code></pre>
 <p>We can already see that the parameter for smoking is now quite higher, but let’s estimate the HR and 95% CI:</p>
-<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="longitudinal-cohort-study-designs.html#cb370-1" aria-hidden="true" tabindex="-1"></a>coxph_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb370-2"><a href="longitudinal-cohort-study-designs.html#cb370-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb370-3"><a href="longitudinal-cohort-study-designs.html#cb370-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb370-4"><a href="longitudinal-cohort-study-designs.html#cb370-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
-<span id="cb370-5"><a href="longitudinal-cohort-study-designs.html#cb370-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb370-6"><a href="longitudinal-cohort-study-designs.html#cb370-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb370-7"><a href="longitudinal-cohort-study-designs.html#cb370-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
-<span id="cb370-8"><a href="longitudinal-cohort-study-designs.html#cb370-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
-<span id="cb370-9"><a href="longitudinal-cohort-study-designs.html#cb370-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="longitudinal-cohort-study-designs.html#cb372-1" aria-hidden="true" tabindex="-1"></a>coxph_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb372-2"><a href="longitudinal-cohort-study-designs.html#cb372-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb372-3"><a href="longitudinal-cohort-study-designs.html#cb372-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb372-4"><a href="longitudinal-cohort-study-designs.html#cb372-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb372-5"><a href="longitudinal-cohort-study-designs.html#cb372-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb372-6"><a href="longitudinal-cohort-study-designs.html#cb372-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb372-7"><a href="longitudinal-cohort-study-designs.html#cb372-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb372-8"><a href="longitudinal-cohort-study-designs.html#cb372-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb372-9"><a href="longitudinal-cohort-study-designs.html#cb372-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 cursmoke  1.40   1.26    1.56</code></pre>
 <p>The estimated Hazard Ratio is now 1.40 and the 95% CI does not include the null. We can determine that there was some confounding by these variables leading the estimate from the previous model to be biased towards the null. Let’s test the ph assumption for this model.</p>
-<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="longitudinal-cohort-study-designs.html#cb372-1" aria-hidden="true" tabindex="-1"></a>phtest2<span class="ot">&lt;-</span><span class="fu">cox.zph</span>(coxph_mod2)</span>
-<span id="cb372-2"><a href="longitudinal-cohort-study-designs.html#cb372-2" aria-hidden="true" tabindex="-1"></a>phtest2</span></code></pre></div>
+<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="longitudinal-cohort-study-designs.html#cb374-1" aria-hidden="true" tabindex="-1"></a>phtest2<span class="ot">&lt;-</span><span class="fu">cox.zph</span>(coxph_mod2)</span>
+<span id="cb374-2"><a href="longitudinal-cohort-study-designs.html#cb374-2" aria-hidden="true" tabindex="-1"></a>phtest2</span></code></pre></div>
 <pre><code>##          chisq df     p
 ## cursmoke 0.373  1 0.541
 ## sex      3.776  1 0.052
@@ -730,57 +793,57 @@ We can also plot the parameter(s) of interest across time from this output. If t
 ## GLOBAL   7.747  3 0.052</code></pre>
 <p>We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption.</p>
 <p>Now let’s see what happens if repeat the above model using age as the time-scale of interest in the survival function of the model:</p>
-<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="longitudinal-cohort-study-designs.html#cb374-1" aria-hidden="true" tabindex="-1"></a>coxph_modage1<span class="ot">&lt;-</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> cursmoke <span class="sc">+</span> sex, <span class="at">data=</span>fhs_first)</span>
-<span id="cb374-2"><a href="longitudinal-cohort-study-designs.html#cb374-2" aria-hidden="true" tabindex="-1"></a>coxph_modage1 <span class="sc">%&gt;%</span></span>
-<span id="cb374-3"><a href="longitudinal-cohort-study-designs.html#cb374-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="longitudinal-cohort-study-designs.html#cb376-1" aria-hidden="true" tabindex="-1"></a>coxph_modage1<span class="ot">&lt;-</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> cursmoke <span class="sc">+</span> sex, <span class="at">data=</span>fhs_first)</span>
+<span id="cb376-2"><a href="longitudinal-cohort-study-designs.html#cb376-2" aria-hidden="true" tabindex="-1"></a>coxph_modage1 <span class="sc">%&gt;%</span></span>
+<span id="cb376-3"><a href="longitudinal-cohort-study-designs.html#cb376-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 5
 ##   term     estimate std.error statistic  p.value
 ##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 cursmoke    0.373    0.0529      7.05 1.73e-12
 ## 2 sex2       -0.539    0.0526    -10.2  1.46e-24</code></pre>
 <p>Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it.</p>
-<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="longitudinal-cohort-study-designs.html#cb376-1" aria-hidden="true" tabindex="-1"></a>coxph_modage1 <span class="sc">%&gt;%</span> </span>
-<span id="cb376-2"><a href="longitudinal-cohort-study-designs.html#cb376-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb376-3"><a href="longitudinal-cohort-study-designs.html#cb376-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb376-4"><a href="longitudinal-cohort-study-designs.html#cb376-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
-<span id="cb376-5"><a href="longitudinal-cohort-study-designs.html#cb376-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb376-6"><a href="longitudinal-cohort-study-designs.html#cb376-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb376-7"><a href="longitudinal-cohort-study-designs.html#cb376-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
-<span id="cb376-8"><a href="longitudinal-cohort-study-designs.html#cb376-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
-<span id="cb376-9"><a href="longitudinal-cohort-study-designs.html#cb376-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="longitudinal-cohort-study-designs.html#cb378-1" aria-hidden="true" tabindex="-1"></a>coxph_modage1 <span class="sc">%&gt;%</span> </span>
+<span id="cb378-2"><a href="longitudinal-cohort-study-designs.html#cb378-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb378-3"><a href="longitudinal-cohort-study-designs.html#cb378-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb378-4"><a href="longitudinal-cohort-study-designs.html#cb378-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb378-5"><a href="longitudinal-cohort-study-designs.html#cb378-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb378-6"><a href="longitudinal-cohort-study-designs.html#cb378-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb378-7"><a href="longitudinal-cohort-study-designs.html#cb378-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb378-8"><a href="longitudinal-cohort-study-designs.html#cb378-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb378-9"><a href="longitudinal-cohort-study-designs.html#cb378-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 cursmoke  1.45   1.31    1.61</code></pre>
 <p>We also see that the HR is similar as above (slightly higher).</p>
 <p>Testing for the proportional hazards assumption in this model:</p>
-<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="longitudinal-cohort-study-designs.html#cb378-1" aria-hidden="true" tabindex="-1"></a>phtestage<span class="ot">&lt;-</span><span class="fu">cox.zph</span>(coxph_modage1)</span>
-<span id="cb378-2"><a href="longitudinal-cohort-study-designs.html#cb378-2" aria-hidden="true" tabindex="-1"></a>phtestage</span></code></pre></div>
+<div class="sourceCode" id="cb380"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb380-1"><a href="longitudinal-cohort-study-designs.html#cb380-1" aria-hidden="true" tabindex="-1"></a>phtestage<span class="ot">&lt;-</span><span class="fu">cox.zph</span>(coxph_modage1)</span>
+<span id="cb380-2"><a href="longitudinal-cohort-study-designs.html#cb380-2" aria-hidden="true" tabindex="-1"></a>phtestage</span></code></pre></div>
 <pre><code>##           chisq df       p
 ## cursmoke 11.637  1 0.00065
 ## sex       0.657  1 0.41770
 ## GLOBAL   15.358  2 0.00046</code></pre>
 <p>Here we see that the assumption fails. If we plot the results of the models we can also see that we no longer have that horizontal line and in the case of smoking, it deviates from the that line significantly.</p>
-<div class="sourceCode" id="cb380"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb380-1"><a href="longitudinal-cohort-study-designs.html#cb380-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="do">###graphical parameters to plot two plots side by side (1 row, 2 columns)</span></span>
-<span id="cb380-2"><a href="longitudinal-cohort-study-designs.html#cb380-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(phtestage)</span></code></pre></div>
+<div class="sourceCode" id="cb382"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb382-1"><a href="longitudinal-cohort-study-designs.html#cb382-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="do">###graphical parameters to plot two plots side by side (1 row, 2 columns)</span></span>
+<span id="cb382-2"><a href="longitudinal-cohort-study-designs.html#cb382-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(phtestage)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-210-1.png" width="672" />
 <em>Note: Variables of interest to continue with:
 for mixed models, <code>sysbp</code>, <code>diabp</code>, <code>totchol</code> compared to <code>cigpday</code>, <code>bmi</code> smoking or not
 for long. analysis, <code>timemi</code> and <code>timestrk</code> and <code>hyperten</code>, exposure: <code>cigpday</code>, <code>sysbp</code>, <code>diabp</code>, <code>bmi</code></em></p>
 </div>
-<div id="handling-complexity" class="section level2" number="7.3">
-<h2><span class="header-section-number">7.3</span> Handling complexity</h2>
-<div id="multi-level-exposure" class="section level3" number="7.3.1">
-<h3><span class="header-section-number">7.3.1</span> Multi-level exposure</h3>
+<div id="handling-complexity" class="section level2" number="7.4">
+<h2><span class="header-section-number">7.4</span> Handling complexity</h2>
+<div id="multi-level-exposure" class="section level3" number="7.4.1">
+<h3><span class="header-section-number">7.4.1</span> Multi-level exposure</h3>
 </div>
-<div id="recurrent-outcome" class="section level3" number="7.3.2">
-<h3><span class="header-section-number">7.3.2</span> Recurrent outcome</h3>
+<div id="recurrent-outcome" class="section level3" number="7.4.2">
+<h3><span class="header-section-number">7.4.2</span> Recurrent outcome</h3>
 </div>
-<div id="time-varying-coeffificents" class="section level3" number="7.3.3">
-<h3><span class="header-section-number">7.3.3</span> Time-varying coeffificents</h3>
+<div id="time-varying-coeffificents" class="section level3" number="7.4.3">
+<h3><span class="header-section-number">7.4.3</span> Time-varying coeffificents</h3>
 </div>
-<div id="using-survey-results" class="section level3" number="7.3.4">
-<h3><span class="header-section-number">7.3.4</span> Using survey results</h3>
+<div id="using-survey-results" class="section level3" number="7.4.4">
+<h3><span class="header-section-number">7.4.4</span> Using survey results</h3>
 <p>[e.g., NHANES]</p>
 
 </div>
@@ -800,11 +863,29 @@ Bradburn, Michael J, Taane G Clark, Sharon B Love, and Douglas G Altman. 2003a. 
 <div id="ref-clark2003survival" class="csl-entry">
 Clark, Taane G, Michael J Bradburn, Sharon B Love, and Douglas G Altman. 2003. <span>“Survival Analysis Part i: Basic Concepts and First Analyses.”</span> <em>British Journal of Cancer</em> 89 (2): 232–38.
 </div>
+<div id="ref-dawber1951epidemiological" class="csl-entry">
+Dawber, Thomas R, Gilcin F Meadors, and Felix E Moore Jr. 1951. <span>“Epidemiological Approaches to Heart Disease: The Framingham Study.”</span> <em>American Journal of Public Health and the Nations Health</em> 41 (3): 279–86.
+</div>
+<div id="ref-dawber2015ii" class="csl-entry">
+Dawber, Thomas R, Felix E Moore, and George V Mann. 2015. <span>“II. Coronary Heart Disease in the Framingham Study.”</span> <em>International Journal of Epidemiology</em> 44 (6): 1767–80.
+</div>
 <div id="ref-hernan2010hazards" class="csl-entry">
 Hernán, Miguel A. 2010. <span>“The Hazards of Hazard Ratios.”</span> <em>Epidemiology (Cambridge, Mass.)</em> 21 (1): 13.
 </div>
+<div id="ref-valenzuela2021lifestyle" class="csl-entry">
+Valenzuela, Pedro L, Pedro Carrera-Bastos, Beatriz G Gálvez, Gema Ruiz-Hurtado, José M Ordovas, Luis M Ruilope, and Alejandro Lucia. 2021. <span>“Lifestyle Interventions for the Prevention and Treatment of Hypertension.”</span> <em>Nature Reviews Cardiology</em> 18 (4): 251–75.
+</div>
+<div id="ref-wong2014epidemiological" class="csl-entry">
+Wong, Nathan D. 2014. <span>“Epidemiological Studies of CHD and the Evolution of Preventive Cardiology.”</span> <em>Nature Reviews Cardiology</em> 11 (5): 276–89.
+</div>
 <div id="ref-wong1989risk" class="csl-entry">
 Wong, Nathan D, Adrienne Cupples, Adrian M Ostfeld, Daniel Levy, and William B Kannel. 1989. <span>“Risk Factors for Long-Term Coronary Prognosis After Initial Myocardial Infarction: The Framingham Study.”</span> <em>American Journal of Epidemiology</em> 130 (3): 469–80.
+</div>
+<div id="ref-zhou2021global" class="csl-entry">
+Zhou, Bin, Pablo Perel, George A Mensah, and Majid Ezzati. 2021. <span>“Global Epidemiology, Health Burden and Effective Interventions for Elevated Blood Pressure and Hypertension.”</span> <em>Nature Reviews Cardiology</em>, 1–18.
+</div>
+<div id="ref-ziaeian2016epidemiology" class="csl-entry">
+Ziaeian, Boback, and Gregg C Fonarow. 2016. <span>“Epidemiology and Aetiology of Heart Failure.”</span> <em>Nature Reviews Cardiology</em> 13 (6): 368–78.
 </div>
 </div>
             </section>
