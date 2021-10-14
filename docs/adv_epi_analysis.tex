@@ -6126,7 +6126,7 @@ working directory:
 ## #   TIMEDTH <dbl>, TIMEHYP <dbl>
 \end{verbatim}
 
-You can find full details on the structure of this data in the codebook. At a broad scale, note that it includes several health outcomes related to heart disease, which the codebook calls ``events'' (\texttt{DEATH}: indicator of death from any cause; \texttt{ANYCHD}: indicator of one of several types of events related to coronary heart disease; \texttt{HOSPMI}: Hopitalization for myocardial infarction {[}heart attack{]}, etc.). The data also includes a number of risk factors that the study researchers hypothesized might be linked to cardiovascular disease (\texttt{CURSMOKE}: if the study subject is currently a smoker; \texttt{TOTCHOL}: serum total cholesterol; \texttt{SYSBP}, \texttt{DIABP}: measures of the systolic and diastolic blood pressure, respectively; \texttt{BMI}: Body Mass Index; etc.). Finally, there are some characteristics of the study subject, like age (\texttt{AGE}) and sex (\texttt{SEX}), as well as some variables that are connected to either the time of the record or the time of certain events.
+You can find full details on the structure of this data in the codebook. At a broad scale, note that it includes several health outcomes related to heart disease, which the codebook calls ``events'' (\texttt{DEATH}: indicator of death from any cause; \texttt{ANYCHD}: indicator of one of several types of events related to coronary heart disease; \texttt{HOSPMI}: Hopitalization for myocardial infarction {[}heart attack{]}, etc.). The data also includes a number of risk factors that the study researchers hypothesized might be linked to cardiovascular disease (\texttt{CURSMOKE}: if the study subject is currently a smoker; \texttt{TOTCHOL}: serum total cholesterol; \texttt{SYSBP}, \texttt{DIABP}: measures of the systolic and diastolic blood pressure, respectively; \texttt{BMI}: Body Mass Index; etc.). Finally, there are some characteristics of the study subject, like age (\texttt{AGE}) and sex (\texttt{SEX}), as well as some variables that are connected to either the time of the record or the time of certain events (or of censoring, if the event did not happen during follow-up).
 
 As you look through the data, pay attention to some features that are more characteristic of cohort studies, compared to features of the time series data we worked with in earlier chapters:
 
@@ -6136,7 +6136,7 @@ As you look through the data, pay attention to some features that are more chara
   One important difference compared to a time-series dataset is the \texttt{RANDID} variable. This is the unique identifier for unit for which we have repeated observations for over time.
   In this case the \texttt{RANDID} variable represents a unique identifier for each study participant, with multiple observations (rows) per participant over time.
 \item
-  The \texttt{TIME} variable indicates the number of days that have ellapsed since beginning of follow-up of each observation. \texttt{TIME} s always 0 for the first observation of each participant, and then for following measurements will track the time since follow-up started for that study participant.
+  The \texttt{TIME} variable indicates the number of days that have elapsed since beginning of follow-up of each observation. \texttt{TIME} is always 0 for the first observation of each participant (when \texttt{PERIOD} equals 1, for the first examination), and then for following measurements will track the time since follow-up started for that study participant.
 \item
   The number of observations varies between participants (typical of many cohort studies)
 \item
@@ -6182,6 +6182,81 @@ the \texttt{tidyverse}):
 ## #   timedth <dbl>, timehyp <dbl>
 \end{verbatim}
 
+To look a bit more closely at how this dataset works, let's take a look just at the observations of the oldest study subjects at the first examination, those 69 or older (\texttt{age\ \textgreater{}=\ 69}) at their first examination (\texttt{period\ ==\ 1}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{oldest\_subjects }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(period }\SpecialCharTok{==} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ age }\SpecialCharTok{\textgreater{}=} \DecValTok{69}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{pull}\NormalTok{(randid)}
+\NormalTok{oldest\_subjects}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] 3603542 3762702 4726021 7198139 7351212 7568367 7659676 7695005 8723664
+## [10] 9643995 9686180 9789948
+\end{verbatim}
+
+Once we have the IDs of these study subjects (\texttt{oldest\_subjects}), we can pull out the study data just for them. I'm limiting to a few columns: their ID (\texttt{randid}), the time of each examination (\texttt{time}), the number of each examination (\texttt{period}), whether they died during follow-up (\texttt{died}), and the number of days between the first examination and either death (if they died during follow-up) or censoring (i.e., stopped tracking the subject or lost them to follow-up) (\texttt{timedth}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(randid }\SpecialCharTok{\%in\%}\NormalTok{ oldest\_subjects) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(randid, time, period, death, timedth)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 24 x 5
+##     randid  time period death timedth
+##      <dbl> <dbl>  <dbl> <dbl>   <dbl>
+##  1 3603542     0      1     1    1825
+##  2 3762702     0      1     1    3076
+##  3 3762702  2253      2     1    3076
+##  4 4726021     0      1     1    4275
+##  5 4726021  2134      2     1    4275
+##  6 7198139     0      1     1    5384
+##  7 7351212     0      1     1    4396
+##  8 7351212  2146      2     1    4396
+##  9 7351212  4283      3     1    4396
+## 10 7568367     0      1     1    1563
+## # ... with 14 more rows
+\end{verbatim}
+
+We can explore this subset of the data by plotting, for each of these study subjects, the timing of each of their examination periods, whether they died during follow-up, and the timing of their death or censoring:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(randid }\SpecialCharTok{\%in\%}\NormalTok{ oldest\_subjects) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(randid, time, period, death, timedth) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{randid =} \FunctionTok{as\_factor}\NormalTok{(randid), }
+         \AttributeTok{randid =} \FunctionTok{fct\_reorder}\NormalTok{(randid, timedth),  }\CommentTok{\# Arrange by time to death}
+         \AttributeTok{period =} \FunctionTok{as\_factor}\NormalTok{(period),}
+         \AttributeTok{death =} \FunctionTok{as\_factor}\NormalTok{(death),}
+         \AttributeTok{timey =}\NormalTok{ time }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{,                  }\CommentTok{\# Convert from days to years}
+         \AttributeTok{timedthy =}\NormalTok{ timedth }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \DecValTok{0}\NormalTok{, }\AttributeTok{xend =}\NormalTok{ timedthy, }
+                   \AttributeTok{y =}\NormalTok{ randid, }\AttributeTok{yend =}\NormalTok{ randid), }\AttributeTok{color =} \StringTok{"lightgray"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ timedthy, }\AttributeTok{y =}\NormalTok{ randid, }\AttributeTok{fill =}\NormalTok{ death), }\AttributeTok{shape =} \DecValTok{22}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ timey, }\AttributeTok{y =}\NormalTok{ randid, }\AttributeTok{color =}\NormalTok{ period)) }\SpecialCharTok{+} 
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Time since first examination (years)"}\NormalTok{, }
+       \AttributeTok{y =} \StringTok{"Patient ID"}\NormalTok{, }
+       \AttributeTok{color =} \StringTok{"Examination}\SpecialCharTok{\textbackslash{}n}\StringTok{period"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{name =} \StringTok{""}\NormalTok{, }\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"white"}\NormalTok{, }\StringTok{"black"}\NormalTok{), }
+                    \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Survived}\SpecialCharTok{\textbackslash{}n}\StringTok{follow{-}up"}\NormalTok{, }\StringTok{"Died during}\SpecialCharTok{\textbackslash{}n}\StringTok{follow{-}up"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-167-1.pdf}
+
+You can see that we have at least one examination (period 1) for each of the study subjects, and for some we have as many as three. One of these study subjects was tracked for almost 25 years without a recorded death (subject ID 9789948). All the other subjects in this subset died during follow-up. Some died within a few years of the first examination, and so did not survive to a second or later examination. Others survived longer but missed some later examinations.
+As you work with these data, keep in mind that they have multiple measurements (rows) for some but not all of the study subjects, and that events are recorded both in terms of whether they happened during follow-up (e.g., \texttt{death}) and also how long after the first examination the event occurred or the data for the subject was censored (e.g., \texttt{timedth}).
+
 \emph{Applied exercise: Exploring longitudinal cohort data}
 
 Read the example cohort data in R and explore it to answer the following
@@ -6197,9 +6272,7 @@ questions:
 \item
   How many participants died during the observation period? What is the distribution of age at time of death?
 \item
-  What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?
-\item
-  What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers
+  What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers?
 \end{enumerate}
 
 Based on this exploratory exercise, talk about the potential
@@ -6309,7 +6382,7 @@ You can visualize this, as well. A histogram is one good choice:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-169-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-172-1.pdf}
 
 All study subjects have between one and three measurements. Most of the study
 subjects (over 3,000) have three measurements recorded in the dataset.
@@ -6340,7 +6413,7 @@ get a top-level snapshot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-170-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-173-1.pdf}
 
 This shows you how much data is missing for each column in the data. For a smaller dataset, the design of the plot would also let you see how often missing data line up across several columns for the same observation (in other words, if an observation that's missing one measurement tends to also be missing several other measurements). In this case, however, there are so many rows, it's a bit hard to visually line up missingness by row.
 
@@ -6353,7 +6426,7 @@ Another was to visualize this is with \texttt{gg\_miss\_var} from the \texttt{na
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-171-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-174-1.pdf}
 
 This output again focuses on missingness by column in the data, helping you identify columns where we might not have many non-missing observations.
 In this case, many of the columns have measurements that are available for all observations, with no missingness,
@@ -6373,7 +6446,7 @@ example, you could see if missingness varies by the period of the observation:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-172-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-175-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
 was associated with death of the study subject:
@@ -6384,7 +6457,7 @@ was associated with death of the study subject:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-173-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-176-1.pdf}
 
 There are also functions in these packages that allow you to look at how
 missingness is related across variables. For example, both \texttt{glucose} and
@@ -6401,7 +6474,7 @@ variables:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-174-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-177-1.pdf}
 
 The lower left corner shows the observations where both values are missing---it
 looks like there aren't too many. For observations with one missing but not the
@@ -6422,7 +6495,7 @@ Since this function interfaces with \texttt{ggplot}, you can use any usual trick
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-175-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-178-1.pdf}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -6436,7 +6509,7 @@ The \texttt{death} variable in the \texttt{fhs} data is an indicator for mortali
 
 If you arrange by the random ID and look at \texttt{period} and \texttt{death} for each subject,
 you can see that the \texttt{death} variable is the same for all periods for each
-subject:
+subject (this is what we mean by it being ``time-invariant'' in the data):
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6466,7 +6539,7 @@ subject:
 We need to think some about this convention of recording the data when we count
 the deaths.
 
-It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the \texttt{fhs} data using \texttt{tidyverse} tools. The \texttt{group\_by} functions groups data by unique values of designated variables (here \texttt{randid}) and the \texttt{slice} function selects rows as designated.
+It is often useful to extract the first (and sometimes last) observation, in order to assess certain covariate statistics on the individual level. We can create a dataset including only the first (or last) observation per participant from the \texttt{fhs} data using \texttt{tidyverse} tools. The \texttt{group\_by} functions groups data by unique values of designated variables (here \texttt{randid}) and the \texttt{slice} function selects rows as designated. Here is an example of extracting the first row (\texttt{group\_by(randid)\ \%\textgreater{}\%\ slice(1L)}) for each study subject:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6553,12 +6626,12 @@ or using the \texttt{slice\_tail} function:
 \begin{Highlighting}[]
 \NormalTok{fhs\_last }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{slice\_tail}\NormalTok{(}\AttributeTok{n=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{slice\_tail}\NormalTok{(}\AttributeTok{n =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
-In this dataset we can extract statistics on baseline covariates on the individual level, but also assess the number of participants with specific values, including \texttt{death\ =\ 1}. For example, we can use the \texttt{sum} function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1, the \texttt{sum} function will give us the number of deaths in the sample.
+In this dataset we can extract statistics on baseline covariates (i.e., at the first examination) on the individual level, but also assess the number of participants with specific values, including \texttt{death\ =\ 1}. For example, we can use the \texttt{sum} function in base R, which generates the sum of all values for a given vector. In this case since each death has the value of 1, the \texttt{sum} function will give us the number of deaths in the sample.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6570,7 +6643,7 @@ In this dataset we can extract statistics on baseline covariates on the individu
 ## [1] 1550
 \end{verbatim}
 
-Conversely using \texttt{tidyverse} tools we can extract the number of observations with \texttt{death\ =\ 1} using the \texttt{count} function
+Conversely using \texttt{tidyverse} tools we can extract the number of observations with \texttt{death\ =\ 1} using the \texttt{count} function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6587,47 +6660,80 @@ Conversely using \texttt{tidyverse} tools we can extract the number of observati
 ## 2     1  1550
 \end{verbatim}
 
-Note that survival or time-to-event outcomes in longitudinal cohort data will often be time-varying. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation. We will construct a variable like this in \texttt{fhs} below, although with the conventions of this particular dataset, it doesn't matter if we take the first or last observation for each study subject (since they give a time-invariant value for death).
+Based on this analysis, 1,550 of the study subjects, or about 35\% of them, died during follow-up for this study.
 
-In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. The \texttt{age} variable in \texttt{fhs} represents the participants age at each visit. Typically a death would happen between visits so the last recorded value for \texttt{age} would be less than the age at death. We will use the \texttt{timedth} variable to help us determine the actual age at death. The value of \texttt{timedth} is the number of days from beginning of follow-up until death for those with \texttt{death=1}, while it is a fixed value of \texttt{timedth=8766} (the maximum duration of follow-up) for those with \texttt{death=0}.
+Note that, unlike in this sample data, in many datasets with longitudinal cohort data, survival or time-to-event outcomes will be recorded using time-varying conventions. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation (since the subject won't be tracked after death). In those cases, it will be important to take the last observation for each subject to count the number of deaths; for this dataset, we've got more flexibility since they use time-invariant recording conventions for outcomes like death.
 
-We can create a new age at death variable for those with \texttt{death=1} using the \texttt{age} at baseline and \texttt{timedth} values
+In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. First, we don't know the age at death of any study subjects who died after follow-up (which could be the end of the study or when they were lost to follow-up). Therefore, we should start by filtering the dataset to only include subjects who died during follow-up (\texttt{filter(death\ ==\ 1)} in the next block of code).
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_first}\OtherTok{\textless{}{-}}\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{mutate}\NormalTok{(}\AttributeTok{agedth=}\NormalTok{age}\SpecialCharTok{+}\NormalTok{timedth}\SpecialCharTok{/}\FloatTok{365.25}\NormalTok{,}
-       \AttributeTok{timedthy=}\NormalTok{timedth}\SpecialCharTok{/}\FloatTok{365.25}\NormalTok{) }\DocumentationTok{\#\#\#also creating a year time{-}to{-}death variable}
-\end{Highlighting}
-\end{Shaded}
+Next, we need to use information in the dataset to calculate the age at the time of death for the study subjects who died during follow-up.
+The \texttt{age} variable in \texttt{fhs} represents the participant's age at each visit. Typically a death would happen between visits so the last recorded value for \texttt{age} would be less than the age at death. We will instead use the \texttt{timedth} variable to help us determine the actual age at death. The value of \texttt{timedth} is the number of days from beginning of follow-up until death for those with \texttt{death\ =\ 1}, while it is a fixed value of \texttt{timedth\ =\ 8766} (the maximum duration of follow-up) for those with \texttt{death\ =\ 0} (did not die during follow-up).
 
-We can then get summary statistics on this new variable
+We can create a new age at death variable for those with \texttt{death\ =\ 1} using the \texttt{age} at baseline and \texttt{timedth} values
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{summarize}\NormalTok{(}\AttributeTok{min\_agedth =} \FunctionTok{min}\NormalTok{(agedth),}
-\AttributeTok{mean\_agedth =} \FunctionTok{mean}\NormalTok{(agedth),}
-\AttributeTok{max\_agedth =} \FunctionTok{max}\NormalTok{(agedth))}
+\NormalTok{fhs\_deaths }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(death }\SpecialCharTok{==} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{timedthy =}\NormalTok{ timedth }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{, }\CommentTok{\# time{-}to{-}death in years}
+         \AttributeTok{agedth =}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ timedthy) }
+\NormalTok{fhs\_deaths}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 1 x 3
-##   min_agedth mean_agedth max_agedth
-##        <dbl>       <dbl>      <dbl>
-## 1       38.4        70.5         93
+## # A tibble: 1,550 x 41
+##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
+##     <dbl> <dbl>   <dbl> <dbl> <dbl> <dbl>    <dbl>   <dbl> <dbl>    <dbl>  <dbl>
+##  1  10552     2     225    61   150    95        1      30  28.6        0      0
+##  2  23727     2     332    41   124    88        0       0  31.3        0      1
+##  3  24721     2     226    39   114    64        1       9  22.4        0      0
+##  4  30928     2     221    38   140    90        1      20  21.4        0      0
+##  5  33555     2     291    46   112    78        1      20  23.4        0      0
+##  6  43770     2     234    52   148    78        0       0  34.2        0      0
+##  7  54224     1     294    47   102    68        1      20  24.2        0      0
+##  8  63221     2     272    61   182   121        0       0  32.8        0      0
+##  9  66472     2     247    60   130    88        0       0  30.4        0      0
+## 10  69134     2     209    59   150    85        0       0  20.8        0      0
+## # ... with 1,540 more rows, and 30 more variables: heartrte <dbl>,
+## #   glucose <dbl>, educ <dbl>, prevchd <dbl>, prevap <dbl>, prevmi <dbl>,
+## #   prevstrk <dbl>, prevhyp <dbl>, time <dbl>, period <dbl>, hdlc <dbl>,
+## #   ldlc <dbl>, death <dbl>, angina <dbl>, hospmi <dbl>, mi_fchd <dbl>,
+## #   anychd <dbl>, stroke <dbl>, cvd <dbl>, hyperten <dbl>, timeap <dbl>,
+## #   timemi <dbl>, timemifc <dbl>, timechd <dbl>, timestrk <dbl>, timecvd <dbl>,
+## #   timedth <dbl>, timehyp <dbl>, timedthy <dbl>, agedth <dbl>
 \end{verbatim}
 
-We can also check on these values by groups of interest such as sex
+We can then get summary statistics on this new variable:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{group\_by}\NormalTok{(sex) }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{summarize}\NormalTok{(}\AttributeTok{min\_agedth =} \FunctionTok{min}\NormalTok{(agedth),}
-\AttributeTok{mean\_agedth =} \FunctionTok{mean}\NormalTok{(agedth),}
-\AttributeTok{max\_agedth =} \FunctionTok{max}\NormalTok{(agedth))}
+\NormalTok{fhs\_deaths }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{min\_agedth =} \FunctionTok{min}\NormalTok{(agedth),}
+            \AttributeTok{mean\_agedth =} \FunctionTok{mean}\NormalTok{(agedth),}
+            \AttributeTok{max\_agedth =} \FunctionTok{max}\NormalTok{(agedth),}
+            \AttributeTok{missing\_agedth =} \FunctionTok{sum}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(agedth)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   min_agedth mean_agedth max_agedth missing_agedth
+##        <dbl>       <dbl>      <dbl>          <int>
+## 1       38.4        69.1       91.1              0
+\end{verbatim}
+
+The earliest death was at 38 years and the latest at 91, among deaths that occurred during follow-up. On average, subjects who died during follow-up for this study died when they were about 69 years old. There were no missing ages for study subjects who died during follow-up.
+
+We can also check on these values by groups of interest such as sex:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_deaths }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(sex) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{min\_agedth =} \FunctionTok{min}\NormalTok{(agedth),}
+            \AttributeTok{mean\_agedth =} \FunctionTok{mean}\NormalTok{(agedth),}
+            \AttributeTok{max\_agedth =} \FunctionTok{max}\NormalTok{(agedth))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -6635,129 +6741,194 @@ We can also check on these values by groups of interest such as sex
 ## # A tibble: 2 x 4
 ##     sex min_agedth mean_agedth max_agedth
 ## * <dbl>      <dbl>       <dbl>      <dbl>
-## 1     1       41.6        69.5       91.1
-## 2     2       38.4        71.3       93
+## 1     1       41.6        68.6       91.1
+## 2     2       38.4        69.6       90.0
 \end{verbatim}
+
+Of course, it's important to remember that these are summaries of the age at death \emph{only} for the study subjects who died during follow-up. The mean age at death will be different across all our study subjects, but we don't have the information about age at death for those who died after censoring to include in calculating our summary statistics here. It is likely that they lived to older ages, if the most common reason for censoring is outliving follow-up. However, if they were censored because they dropped out of the cohort, then that might instead be associated with either longer or shorter average lifespans, in which case we don't have a great idea of which direction the average age of death would move if they were included. One thing that you could do is to average the age at either death or loss to follow-up---this would give you a lower bound on the average across the whole population, since you know that those who were censored survived to \emph{at least} the age they were when they were censored.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \setcounter{enumi}{3}
 \tightlist
 \item
-  \emph{What is the distribution of age at time of incident MI? Are there differences between males and females? Are there differences in smoking between males and females?}
+  \textbf{What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers}
 \end{enumerate}
 
-Similar to the question about death (all-cause mortality) we can look at disease incidence, for example myocardial infarction (MI). The \texttt{fhs} dataset has the \texttt{hospmi} variable as an indicator for any participant who had a hospitalization due to MI and \texttt{timemi} gives the number of days from beginning of follow up to the hospitalization due to MI. We can create an age at incident MI hospitalizaton in a similar fashion as the example for age at death.
+Both BMI and smoking are recorded in a time-variant way; that is, their value can differ between different examinations for the same study subject. For example, you can look at a couple of study subjects:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs\_first}\OtherTok{\textless{}{-}}\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{mutate}\NormalTok{(}\AttributeTok{agemi=}\NormalTok{age}\SpecialCharTok{+}\NormalTok{timemi}\SpecialCharTok{/}\FloatTok{365.25}\NormalTok{)}
+\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(randid }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\DecValTok{6238}\NormalTok{, }\DecValTok{16365}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(randid, period, bmi, cursmoke)}
 \end{Highlighting}
 \end{Shaded}
 
-We can then get summary statistics on this new \texttt{agemi} variable
+\begin{verbatim}
+## # A tibble: 6 x 4
+##   randid period   bmi cursmoke
+##    <dbl>  <dbl> <dbl>    <dbl>
+## 1   6238      1  28.7        0
+## 2   6238      2  29.4        0
+## 3   6238      3  28.5        0
+## 4  16365      1  23.6        1
+## 5  16365      2  27.5        0
+## 6  16365      3  29.1        0
+\end{verbatim}
+
+For the study subject with ID 6238, BMI changed a little bit across the three examinations, but not much, and the person remained a non-smoker. For the study subject with ID 16365, BMI increased steady across the examinations, and the person stopped smoking sometime after the first examination.
+
+We will need to think about how to handle these variant values while we compare them to the invariant outcome (whether the subject was hospitalized for MI during follow-up). One thing that we could do is to see the association between average BMI for each study subject and whether they had a hospitalized MI event during follow-up:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{summarize}\NormalTok{(}\AttributeTok{min\_agemi =} \FunctionTok{min}\NormalTok{(agemi),}
-\AttributeTok{mean\_agemi =} \FunctionTok{mean}\NormalTok{(agemi),}
-\AttributeTok{max\_agemi =} \FunctionTok{max}\NormalTok{(agemi))}
+\NormalTok{bmi\_vs\_mi }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{bmi =} \FunctionTok{mean}\NormalTok{(bmi, }\AttributeTok{rm.na =} \ConstantTok{TRUE}\NormalTok{), }
+            \AttributeTok{hospmi =} \FunctionTok{first}\NormalTok{(hospmi))}
+\NormalTok{bmi\_vs\_mi}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4,434 x 3
+##    randid   bmi hospmi
+##  *  <dbl> <dbl>  <dbl>
+##  1   2448  NA        1
+##  2   6238  28.9      0
+##  3   9428  25.3      0
+##  4  10552  29.4      0
+##  5  11252  23.7      0
+##  6  11263  30.9      0
+##  7  12629  34.9      0
+##  8  12806  22.0      0
+##  9  14367  25.8      0
+## 10  16365  26.7      0
+## # ... with 4,424 more rows
+\end{verbatim}
+
+Now we can compare the distribution of these average BMIs among study subjects who did and did not have a hospitalization for MI during follow-up. A simple was is by creating some summaries:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bmi\_vs\_mi }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(hospmi) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{perc\_25 =} \FunctionTok{quantile}\NormalTok{(bmi, }\FloatTok{0.25}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }
+            \AttributeTok{mean =} \FunctionTok{mean}\NormalTok{(bmi, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }
+            \AttributeTok{median =} \FunctionTok{median}\NormalTok{(bmi, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{perc\_75 =} \FunctionTok{quantile}\NormalTok{(bmi, }\FloatTok{0.75}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   hospmi perc_25  mean median perc_75
+## *  <dbl>   <dbl> <dbl>  <dbl>   <dbl>
+## 1      0    23.1  25.8   25.4    28.0
+## 2      1    24.0  26.5   26.2    28.5
+\end{verbatim}
+
+We can also create a plot to help explore this question:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bmi\_vs\_mi }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ bmi)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_histogram}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ hospmi, }\AttributeTok{ncol =} \DecValTok{1}\NormalTok{, }\AttributeTok{scale =} \StringTok{"free\_y"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 44 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-192-1.pdf}
+
+There is not a dramatic difference between the two groups in terms of the distribution of BMI.
+
+We might want to check how stable BMI tends to be within each study subject, and check variation in BMI within subjects (at different timepoints) compared to between subjects, to see if the average might be a reasonable summary of BMI for a study subject. We can check this within just the study subjects with three examinations and without any missing measures of BMI at those examinations. We can check it with a random sample of 20 subjects (since this uses \texttt{sample}, the sample you get, and so the plot, will likely be different):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sample\_check }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{max}\NormalTok{(period }\SpecialCharTok{==} \DecValTok{3}\NormalTok{) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{anyNA}\NormalTok{(bmi)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{pull}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{sample}\NormalTok{(}\AttributeTok{size =} \DecValTok{20}\NormalTok{)}
+
+\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(randid }\SpecialCharTok{\%in\%}\NormalTok{ sample\_check) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{sex =} \FunctionTok{factor}\NormalTok{(sex, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{), }\AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{, }\StringTok{"Female"}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%}  
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ age, }\AttributeTok{y =}\NormalTok{ bmi, }\AttributeTok{color =}\NormalTok{ sex, }\AttributeTok{group =}\NormalTok{ randid)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-193-1.pdf}
+
+While there is some variation within study subjects in BMI, there tends to be more variation when comparing one study subject to another. Average BMI across the three examinations is therefore likely a reasonable measurement to use in exploratory analysis as we did in the previous plot.
+
+We can use a similar approach to compare BMI and smoking. In this case, one way we could summarize smoking for each study subject is to determine if they were a current smoker at any of their examinations. If we do this, we see that there may be a small, but not dramatic, difference in BMI between smokers and non-smokers:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bmi\_vs\_smoke }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{bmi =} \FunctionTok{mean}\NormalTok{(bmi, }\AttributeTok{rm.na =} \ConstantTok{TRUE}\NormalTok{), }
+            \AttributeTok{smoke =} \FunctionTok{max}\NormalTok{(cursmoke))}
+
+\NormalTok{bmi\_vs\_smoke }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(smoke) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{perc\_25 =} \FunctionTok{quantile}\NormalTok{(bmi, }\FloatTok{0.25}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }
+            \AttributeTok{mean =} \FunctionTok{mean}\NormalTok{(bmi, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }
+            \AttributeTok{median =} \FunctionTok{median}\NormalTok{(bmi, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{perc\_75 =} \FunctionTok{quantile}\NormalTok{(bmi, }\FloatTok{0.75}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   smoke perc_25  mean median perc_75
+## * <dbl>   <dbl> <dbl>  <dbl>   <dbl>
+## 1     0    23.8  26.6   26.1    28.8
+## 2     1    22.7  25.3   24.9    27.4
+\end{verbatim}
+
+Again, we might want to check how ``stable'' smoking status is among study subjects, to get a better idea of how reasonable it is to use a single summary of smoking for each subject in this exploratory analysis.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{always\_no =} \FunctionTok{max}\NormalTok{(cursmoke) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }
+            \AttributeTok{always\_yes =} \FunctionTok{min}\NormalTok{(cursmoke) }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, }
+            \AttributeTok{changes =} \SpecialCharTok{!}\NormalTok{((}\FunctionTok{sum}\NormalTok{(cursmoke) }\SpecialCharTok{/} \FunctionTok{n}\NormalTok{()) }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{always\_no =} \FunctionTok{sum}\NormalTok{(always\_no), }
+            \AttributeTok{always\_yes =} \FunctionTok{sum}\NormalTok{(always\_yes), }
+            \AttributeTok{changes =} \FunctionTok{sum}\NormalTok{(changes))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 1 x 3
-##   min_agemi mean_agemi max_agemi
-##       <dbl>      <dbl>     <dbl>
-## 1        37       69.7        93
+##   always_no always_yes changes
+##       <int>      <int>   <int>
+## 1      2100       1585     749
 \end{verbatim}
 
-And by sex
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{group\_by}\NormalTok{(sex)  }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{summarize}\NormalTok{(}\AttributeTok{min\_agemi =} \FunctionTok{min}\NormalTok{(agemi),}
-\AttributeTok{mean\_agemi =} \FunctionTok{mean}\NormalTok{(agemi),}
-\AttributeTok{max\_agemi =} \FunctionTok{max}\NormalTok{(agemi))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 2 x 4
-##     sex min_agemi mean_agemi max_agemi
-## * <dbl>     <dbl>      <dbl>     <dbl>
-## 1     1      37         68.2      91.1
-## 2     2      38.4       70.9      93
-\end{verbatim}
-
-We can see that the mean age at incident MI hospitalization among males and females is similar, but with males being somewhat younger on average at the time of incident MI. We can take a closer look at the distibution using boxplots:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-  \CommentTok{\# define the axes for the boxplot}
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ sex, }\AttributeTok{y=}\NormalTok{agemi)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_boxplot}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-189-1.pdf}
-We see that R didn't return two separate boxplots by sex, but rather one centered between the two values of \texttt{sex=1} and \texttt{sex=2} which are the values for males and females respectively. This is an indicator that the sex variable is of class \texttt{numeric} and is treated as a continuous values rather than categorical. We can verify that this is in fact the case:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{class}\NormalTok{(fhs\_first}\SpecialCharTok{$}\NormalTok{sex)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] "numeric"
-\end{verbatim}
-
-We can trasform the variable to one of class \texttt{factor} in order for it to be trated as a cateogrical variable
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_first}\OtherTok{\textless{}{-}}\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-\FunctionTok{mutate}\NormalTok{(}\AttributeTok{sex=}\FunctionTok{as.factor}\NormalTok{(sex))}
-\end{Highlighting}
-\end{Shaded}
-
-If we repeat the function for the boxplot now we get separate boxplots by sex
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
-  \CommentTok{\# define the axes for the boxplot}
-  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ sex, }\AttributeTok{y=}\NormalTok{agemi)) }\SpecialCharTok{+} 
-  \FunctionTok{geom\_boxplot}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-192-1.pdf}
-
-We can once again see from the the boxplots that females tend to be a little older at incidence of MI.
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{4}
-\tightlist
-\item
-  \emph{What is the distribution of BMI among MI cases and non-cases? How about between smokers and non-smokers}
-\end{enumerate}
-
-Similar to the exercise above we can compare BMI distributions by MI case status.
+Less than 20\% of the study subjects changed their smoking status over the course of the examinations. This isn't negligible, but it also means that for the majority of the study subjects, their smoking status was stable across all study examinations.
 
 \hypertarget{coding-a-survival-analysis}{%
 \section{Coding a survival analysis}\label{coding-a-survival-analysis}}
 
-{[}R package \texttt{survival}{]}
-
-In the context of survival analysis what is modelled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or \texttt{glm} family that model an outcome that may follow a gaussian (linear regression), binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered `censored'. Censoring can occur in three ways:
+In the context of survival analysis, what is modeled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or \texttt{glm} family that model an outcome that may follow a gaussian (linear regression), binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered `censored'. Censoring can occur in three ways:
 
 \begin{itemize}
 \tightlist
@@ -6769,12 +6940,12 @@ In the context of survival analysis what is modelled is time to an event (also r
   the participant experiences a difference event that makes the event of interest impossible (for example if the event of interest is acute MI a participant that dies from a different cause is considered censored)
 \end{itemize}
 
-These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome then adjustment for censoring has to happen.
+These are all types of right censoring and in simple survival analysis they are considered to be uninformative (typically not related to exposure). If the censoring is related to the exposure and the outcome, then you must adjust for censoring or it could confound the estimates from your model.
 
-Let's assume that we are interested in all cause mortality as the event of interest let's denote \(T\) is time to death and \(T\geq 0\). We define the survival function as
-\(S(t)=Pr[T>t]=1-F(t)\), where the survival function \(S(t)\) is the probability that a participant survives past time \(t\) (\(Pr[T>t]=1\)). \(F(t)\) is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, \(R(t)\)) or the probability that that an individual will have a survival time less than or equal to t (\([Pr(T≤t)]\))
+Let's assume that we are interested in all-cause mortality as the event of interest, and let's denote \(T\) as time to death, where we can assume that \(T\geq 0\). We define the survival function as
+\(S(t)=Pr[T>t]=1-F(t)\), where the survival function \(S(t)\) is the probability that a participant survives past time \(t\) (\(Pr[T>t]=1\)). \(F(t)\) is the Probability Density Function, (sometimes also denoted as the the Cumulative Incidence Function, \(R(t)\)) or the probability that that an individual will have a survival time less than or equal to t (\([Pr(T≤t)]\)).
 
-Time to event \(t\) is bounded by \([0,\infty)\) and \(S(t)\) is non-increasing as \(t\) becomes greater. At \(t=0\), \(S(t)=1\) and conversely as \(t\) approaches \(\infty\), \(S(t)=0\). A property of the survival and probabilty density function is \(S(t) = 1 – F(t)\): the survival function and the probability density function (or cumulative incidence function (\(R(t)\)) sum to 1.
+Time to event \(t\) is bounded by \([0,\infty)\) (i.e., the time could be as low as 0, but no lower, and has no upper bound) and \(S(t)\) is non-increasing as \(t\) becomes greater. At \(t=0\), \(S(t)=1\) and conversely as \(t\) approaches \(\infty\), \(S(t)=0\). A property of the survival and probabilty density function is \(S(t) = 1 – F(t)\): the survival function and the probability density function (or cumulative incidence function (\(R(t)\)) sum to 1.
 
 Another useful function is the hazard Function, \(h(t)\), which is the instantaneous potential of experiencing an event at time \(t\), conditional on having survived to that time (\(h(t)=\frac{Pr[t<T\leq t+\Delta t|T>t]}{\Delta t}=\frac{f(t)}{S(t)}\)). The cumulative Hazard Function, \(H(t)\) is defined as the integral of the hazard function from time \(0\) to time \(t\), which equals the area under the curve \(h(t)\) between time \(0\) and time \(t\) (\(H(t)=\int_{0}^{t}h(u)du\)).
 If we know any of \(S(t)\), \(H(t)\) or \(h(t)\), we can derive the rest based on the following relationships:
@@ -6783,11 +6954,20 @@ If we know any of \(S(t)\), \(H(t)\) or \(h(t)\), we can derive the rest based o
 
 \(H(t)=-log(S(t))\) and conversely \(S(t)=exp(-H(t))\)
 
-The \texttt{survival} package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model that was also applied in \citet{wong1989risk}.
+The \texttt{survival} package in R allows us to fit these types of models, including a very popular model in survival analysis, the Cox proportional hazards model. This is the model that was also applied in one of this chapter's required readings, \citet{wong1989risk}. There are also some simple non-parametric ways to explore survival times, which we'll also explore in the exercise.
+
 \emph{Applied exercise: Survival curves and simple survival analysis}
-1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?
-2. How do (survival) curves for mortality compare between males and females? How about for MI?
-3. What is the Hazard Ratio for smoking and the risk of MI, from a Cox Proportional Hazards model?
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?
+\item
+  How do (survival) curves for mortality compare between males and females? How about for MI?
+\item
+  What is the Hazard Ratio for smoking and the risk of MI, from a Cox Proportional Hazards model?
+\end{enumerate}
 
 \textbf{1. What does the survival curve for mortality look like with follow-up time as the time scale of interest? How about with age?}
 
@@ -6798,8 +6978,28 @@ In R we would estimate Survival \(S(t)\) with all-cause mortality representing f
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(survival)}
-\NormalTok{ S1}\OtherTok{=}\FunctionTok{Surv}\NormalTok{(fhs\_first}\SpecialCharTok{$}\NormalTok{timedth,fhs\_first}\SpecialCharTok{$}\NormalTok{death)}
- \FunctionTok{head}\NormalTok{(S1)}
+\NormalTok{S1 }\OtherTok{\textless{}{-}} \FunctionTok{Surv}\NormalTok{(}\AttributeTok{time =}\NormalTok{ fhs\_first}\SpecialCharTok{$}\NormalTok{timedth, }
+           \AttributeTok{event =}\NormalTok{ fhs\_first}\SpecialCharTok{$}\NormalTok{death)}
+\end{Highlighting}
+\end{Shaded}
+
+The \texttt{Surv} function will be key as we look at time-to-event data. This function inputs two vectors: one for the \texttt{time} parameter that gives the follow-up time (either the time to the event, if the event happens during follow-up, or the time to censoring) and one for the \texttt{event} parameter, which gives a status indicator of whether the event happened during follow-up or whether then person was censored before the event happened. For our example data, we can use the column \texttt{timedth} to give the time until either death or censoring, and then the \texttt{death} column as an indicator of whether death happened before censoring.
+
+The output of the \texttt{Surv} function is a special type of object in R with the class ``Surv''. If you look at the first few values, you can see that this object records both the follow-up time and the status at that follow-up time:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{class}\NormalTok{(S1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Surv"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(S1)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -6809,102 +7009,191 @@ In R we would estimate Survival \(S(t)\) with all-cause mortality representing f
 
 The numbers assigned to each individual represent their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven't failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).
 
+We can use the \texttt{Surv} function inside the \texttt{survfit} function to estimate the Kaplan-Meier curve for a set of data. If we aren't considering any covariates, we can include \texttt{\textasciitilde{}\ 1} in the model equation, to estimate with only an intercept, rather than to explore differences in the curve based on covariates (we'll get to that idea later):
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(survminer) }\DocumentationTok{\#\#for plotting survival plots with ggplot2}
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{timedthy =}\NormalTok{ timedth }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{) }\CommentTok{\# Calculate time in years, not days}
+
+\NormalTok{fit\_time }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedthy, death) }\SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
+\end{Highlighting}
+\end{Shaded}
+
+This creates an object of the \texttt{survfit} class, that we can then use in some special plotting functions to look at the curve its estimated. If you print this object, you can see that it gives us some information about the total number of study subjects as well as the total number of events during follow-up (in this case, deaths):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{class}\NormalTok{(fit\_time)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## Loading required package: ggpubr
+## [1] "survfit"
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit\_time}\OtherTok{\textless{}{-}}  \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedthy, death) }\SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }\AttributeTok{data=}\NormalTok{fhs\_first)}
-\NormalTok{fit\_time }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab=}\StringTok{"Time to death (years)"}\NormalTok{,}\AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{, }\FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)))}
+\NormalTok{fit\_time}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-194-1.pdf}
-We can see that as follow-up time increases survival decreases rather monotonically over time, or in other words the number of people who have died increases. Survival \(\hat{S}(t)\) drops to about 0.65 at the end of follow-up, or in other words about 35\% of participants have died, which is what is expected as we already know that 1550 of 4434 participants have died.
+\begin{verbatim}
+## Call: survfit(formula = Surv(timedthy, death) ~ 1, data = fhs_first)
+## 
+##       n  events  median 0.95LCL 0.95UCL 
+##    4434    1550      NA      NA      NA
+\end{verbatim}
 
-We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in Survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the \texttt{Surv} function, substituting time of death with respect to follow-up time with age at death.
+You can also look at the structure of this object with \texttt{str}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit\_age}\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agedth, death) }\SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }\AttributeTok{data=}\NormalTok{fhs\_first)}
-\NormalTok{fit\_age }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{, }\FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)))}
+\NormalTok{fit\_time }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{str}\NormalTok{() }
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-195-1.pdf}
-We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s, and then a sharper drop in survival as age increases.
+\begin{verbatim}
+## List of 16
+##  $ n        : int 4434
+##  $ time     : num [1:1419] 0.0712 0.0931 0.1095 0.1232 0.1259 ...
+##  $ n.risk   : num [1:1419] 4434 4433 4432 4431 4430 ...
+##  $ n.event  : num [1:1419] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ n.censor : num [1:1419] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ surv     : num [1:1419] 1 1 0.999 0.999 0.999 ...
+##  $ std.err  : num [1:1419] 0.000226 0.000319 0.000391 0.000451 0.000505 ...
+##  $ cumhaz   : num [1:1419] 0.000226 0.000451 0.000677 0.000902 0.001128 ...
+##  $ std.chaz : num [1:1419] 0.000226 0.000319 0.000391 0.000451 0.000505 ...
+##  $ type     : chr "right"
+##  $ logse    : logi TRUE
+##  $ conf.int : num 0.95
+##  $ conf.type: chr "log"
+##  $ lower    : num [1:1419] 0.999 0.999 0.999 0.998 0.998 ...
+##  $ upper    : num [1:1419] 1 1 1 1 1 ...
+##  $ call     : language survfit(formula = Surv(timedthy, death) ~ 1, data = fhs_first)
+##  - attr(*, "class")= chr "survfit"
+\end{verbatim}
+
+It's listing many different times during the follow-up. For each, it's determined the number of people in the study at risk at that time (not dead or censored) and the number of events at that time point, as well as some other values. These calculations allow it to estimate the cumulative hazard at each time point during follow-up.
+
+There are a number of ways you can plot this output to get a better idea of patterns in the survival curve estimated from the data. The \texttt{survminer} package allows you to do this in a way that interfaces well with \texttt{ggplot} (note also how you can use \texttt{expression} to include mathematical notation in an axis label):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(survminer) }\CommentTok{\# for plotting survival plots with ggplot2}
+
+\NormalTok{fit\_time }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab =} \StringTok{"Time to death (years)"}\NormalTok{,}
+             \AttributeTok{ylab =} \FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{, }
+                                     \FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-201-1.pdf}
+
+We can see that as follow-up time increases, survival decreases rather monotonically, steadily, and slowly over time. In other words, the number of people who have died increases as the length of follow-up increases, but not very quickly (which makes sense since the study population was largely healthy at the start of the study). Survival \(\hat{S}(t)\) drops to about 0.65 at the end of follow-up, or in other words about 35\% of participants have died, which is what is expected as we already know that 1,550 of 4,434 participants died during follow-up.
+
+We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the \texttt{Surv} function, substituting time of death with respect to follow-up time with age at death.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{agedth =}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ timedthy) }\CommentTok{\# Calculate age at death}
+\NormalTok{fit\_age }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agedth, death) }\SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
+
+\NormalTok{fit\_age }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab =} \StringTok{"Age (years)"}\NormalTok{,}
+             \AttributeTok{ylab =} \FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{,}
+                                     \FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-202-1.pdf}
+
+We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s (part of this is likely because this study focused on subjects in their 30s and older at the baseline examination period), and then a sharper drop in survival as age increases.
 
 \textbf{2.How do (survival) curves for mortality compare between males and females? How about for MI?}
 
-Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independet variable. For all cause mortality:
+Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independent variable. For all-cause mortality, we can run these models both based on follow-up time and on age (in separate models):
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit\_bysex}\OtherTok{\textless{}{-}}\FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedthy, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex, }\AttributeTok{data=}\NormalTok{fhs\_first)}
-\NormalTok{fit\_age\_bysex}\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex, }\AttributeTok{data=}\NormalTok{fhs\_first)}
+\NormalTok{fit\_bysex }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedthy, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
+\NormalTok{fit\_age\_bysex }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
 
-\NormalTok{fit\_bysex}\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab=}\StringTok{"Time to death (years)"}\NormalTok{,}\AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{, }\FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)), }\AttributeTok{legend.labs=}\FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{,}\StringTok{"Female"}\NormalTok{),}
+\NormalTok{fit\_bysex }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab =} \StringTok{"Time to death (years)"}\NormalTok{,}
+             \AttributeTok{ylab =} \FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{,}
+                                     \FunctionTok{hat}\NormalTok{(S) }\SpecialCharTok{*} \StringTok{"(t)"}\NormalTok{)), }
+             \AttributeTok{legend.labs =} \FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{, }\StringTok{"Female"}\NormalTok{),}
   \AttributeTok{legend.title=}\StringTok{"Sex"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-196-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-203-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit\_age\_bysex}\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{, }\FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)), }\AttributeTok{legend.labs=}\FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{,}\StringTok{"Female"}\NormalTok{),}
-  \AttributeTok{legend.title=}\StringTok{"Sex"}\NormalTok{)}
+\NormalTok{fit\_age\_bysex }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab =} \StringTok{"Age (years)"}\NormalTok{,}
+             \AttributeTok{ylab =} \FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{,}
+                                     \FunctionTok{hat}\NormalTok{(S) }\SpecialCharTok{*} \StringTok{"(t)"}\NormalTok{)),}
+             \AttributeTok{legend.labs =} \FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{, }\StringTok{"Female"}\NormalTok{),}
+  \AttributeTok{legend.title =} \StringTok{"Sex"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-196-2.pdf}
-You can now see that the survival rate for males drops quicker (at a younger age) than for females.
-Similarly if we look at MI as the outcome:
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-203-2.pdf}
+
+You can now see that the survival rate for males drops quicker (at a younger age) than for females, and that it also drops more quickly for males if we're looking across follow-up time.
+
+Similarly we can look at MI as the outcome. If we want to compare across age for the x-axis, then we need to calculate the age at the time of the first hospitalization for MI during follow-up. We can then put that variable in as the \texttt{time} parameter in \texttt{Surv} and use the status of whether the subject had an MI hospitalization by the end of follow-up for the \texttt{event} parameter, then plot as before:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit\_age\_MIbysex}\OtherTok{\textless{}{-}}\FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agemi, mi\_fchd) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex, }\AttributeTok{data=}\NormalTok{fhs\_first )}
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{timemiy =}\NormalTok{ timemi }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{, }
+         \AttributeTok{agemi =}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ timemiy) }
+\NormalTok{fit\_age\_MIbysex }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex, }\AttributeTok{data =}\NormalTok{ fhs\_first )}
 
 \NormalTok{fit\_age\_MIbysex }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}MI Survival Probablity \textquotesingle{}}\NormalTok{, }\FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)), }\AttributeTok{legend.labs=}\FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{,}\StringTok{"Female"}\NormalTok{),}
-  \AttributeTok{legend.title=}\StringTok{"Sex"}\NormalTok{)}
+  \FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab =} \StringTok{"Age (years)"}\NormalTok{,}
+             \AttributeTok{ylab =} \FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}MI Survival Probablity \textquotesingle{}}\NormalTok{, }
+                                     \FunctionTok{hat}\NormalTok{(S) }\SpecialCharTok{*} \StringTok{"(t)"}\NormalTok{)),}
+             \AttributeTok{legend.labs=}\FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{,}\StringTok{"Female"}\NormalTok{),}
+             \AttributeTok{legend.title=}\StringTok{"Sex"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-197-1.pdf}
-Once again we see a difference in the survival rates with age by sex, which is in line with what we already know from the literature.
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-204-1.pdf}
 
-We can actually approach survival rates by smoking status in the same manner:
+Once again we see a difference in the survival rates (in this case, ``survival'' until first hospitalized myocardial infarction, even though the subject might survive the event) with age by sex, which is in line with what we already know from the literature.
+
+We can actually approach survival rates by smoking status in the same manner (in this case, we'll use the subject's smoking status at the baseline examination):
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit\_age\_MIsmoking}\OtherTok{\textless{}{-}}\FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agemi, mi\_fchd) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{data=}\NormalTok{fhs\_first )}
+\NormalTok{fit\_age\_MIsmoking }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{data =}\NormalTok{ fhs\_first )}
 
 \NormalTok{fit\_age\_MIsmoking }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab=}\StringTok{"Age (years)"}\NormalTok{,}\AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}MI Survival Probablity \textquotesingle{}}\NormalTok{, }\FunctionTok{hat}\NormalTok{(S)}\SpecialCharTok{*}\StringTok{"(t)"}\NormalTok{)), }\AttributeTok{legend.labs=}\FunctionTok{c}\NormalTok{(}\StringTok{"Non{-}smokers"}\NormalTok{, }\StringTok{"Smokers"}\NormalTok{),}
-  \AttributeTok{legend.title=}\StringTok{"Smoking status at baseline"}\NormalTok{)}
+\FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab =} \StringTok{"Age (years)"}\NormalTok{,}
+           \AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}MI Survival Probablity \textquotesingle{}}\NormalTok{, }
+                                 \FunctionTok{hat}\NormalTok{(S) }\SpecialCharTok{*} \StringTok{"(t)"}\NormalTok{)), }
+           \AttributeTok{legend.labs=}\FunctionTok{c}\NormalTok{(}\StringTok{"Non{-}smokers"}\NormalTok{, }\StringTok{"Smokers"}\NormalTok{),}
+           \AttributeTok{legend.title=}\StringTok{"Smoking status at baseline"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-198-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-205-1.pdf}
+
 Once again we can observe that there is a difference in survival rates for MI, by smoking status at baseline.
 
-The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example we can compare survival rates among smokers and non-smokers, but we can't really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we've been fitting. The \texttt{survreg} function in the \texttt{survival} package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the \emph{exponential}, \emph{Weibull}, \emph{log-normal (log(T) is normally distributed)} or \emph{log-logistic} distributions.
+The advantages of the Kaplan-Meier estimator for the survival function are its simplicity and the fact that it is a non-paramteric estimator. One limitation of Kaplan-Meier curves is that in this simple form of visualizing a survival rate, we cannot adjust for confounding by other variables, as the survival rates we are plotting here are marginal with respect to everything else. For example, we can compare survival rates among smokers and non-smokers, but we can't really simply plot a sex adjusted survival rate for each, as the baseline rate for males and females will differ. What we can estimate while adjusting for other covariates is a survival time ratio, which is actually estimated using the same model we've been fitting. The \texttt{survreg} function in the \texttt{survival} package will fit a failure time model, with time to event as the outcome of interest. Unlike the Kaplan-Meier estimator this will require us to make an assumption about the distribution of time-to-event. Usually time-to-event outcomes are assumed to belong to the \emph{exponential}, \emph{Weibull}, \emph{log-normal (log(T) is normally distributed)} or \emph{log-logistic} distributions.
 
-The majority of survival analyses for longitudinal cohort data, however has been dominated by the Cox proportional hazards model over the past few decades, and this is the type of model we will focus on here. The main advantage of the Cox proportional hazards model is that we don't have to make any distributional assumptions about the outcome or residuals. We simply model the instantaneous hazard of the outcome at specific time intervals as a function of covariates of interest, and the assumptions we have to make is that of `proportional hazards'. This assumptions stipulates that the hazards across levels of covariates of interest are proportional over time. In other words the ratio of the hazards across levels covariates should be constant over time.
+The majority of survival analyses for longitudinal cohort data, however, has been dominated by the Cox proportional hazards model over the past few decades, and this is the type of model we will focus on for the rest of the chapter. The main advantage of the Cox proportional hazards model is that we don't have to make any distributional assumptions about the outcome or residuals. We simply model the instantaneous hazard of the outcome at specific time intervals as a function of covariates of interest, and the assumptions we have to make is that of `proportional hazards'. This assumptions stipulates that the hazards across levels of covariates of interest are proportional over time. In other words the ratio of the hazards across levels of covariates should be constant over time.
 
-The Cox proportional hazards model in a simple form has this form
+The Cox proportional hazards model in a simple form has this form:
 
 \(log(\lambda(t|X))=log(\lambda_{0}(t))+\beta_{1}\times X\)
 
@@ -6919,17 +7208,17 @@ Using the \texttt{fhs} data we will fit a simple Cox proportional hazard for the
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{coxph\_mod1}\OtherTok{\textless{}{-}}\FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{data=}\NormalTok{fhs\_first)}
+\NormalTok{coxph\_mod1 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
 \end{Highlighting}
 \end{Shaded}
 
-If we see the estimated parameters of the model, there isn't an intercept term as we've commented above:
+If we look the estimated parameters of the model (we can use \texttt{broom} to pull out a tidy version of these summaries, just as we did with GLM models), there isn't an intercept term, as noted above, just an estimate for the covariate we included (\texttt{cursmoke} for smoking status at the baseline examination):
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(broom)}
 \NormalTok{coxph\_mod1 }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{tidy}\NormalTok{()}
+  \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -6963,13 +7252,13 @@ The parameter for the covariate of interest is equivalent to the log of the haza
 ## 1 cursmoke  1.09  0.987    1.20
 \end{verbatim}
 
-We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence intervals include the null.
+We see that there is modest suggestive HR elevating the hazard for mortality, but the confidence interval includes the null (hazard ratio of 1).
 
 We have said that the main assumption we need to make here is that of proportional hazards. The \texttt{survival} package actually allows us to check this with the \texttt{cox.zph} function
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{phtest}\OtherTok{\textless{}{-}}\FunctionTok{cox.zph}\NormalTok{(coxph\_mod1)}
+\NormalTok{phtest }\OtherTok{\textless{}{-}} \FunctionTok{cox.zph}\NormalTok{(coxph\_mod1)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -6982,15 +7271,16 @@ We can also plot the parameter(s) of interest across time from this output. If t
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-203-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-210-1.pdf}
 
-Here we see that the line is besically horizontal. Now let's repeat the model adjusting for some covariates, specifically sex and age.
+Here we see that the line is basically horizontal. Now let's repeat the model adjusting for some covariates, specifically sex and age. We can include these in a model equation in \texttt{coxph} in a very similar way to how we built model equations for GLMs. The only difference is that the ``outcome'' part of the formula should be a \texttt{Surv} object, rather than a direct (untransformed) measure from the original data:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{coxph\_mod2}\OtherTok{\textless{}{-}}\FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke }\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ age, }\AttributeTok{data=}\NormalTok{fhs\_first)}
+\NormalTok{coxph\_mod2 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke }\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ age, }
+                    \AttributeTok{data =}\NormalTok{ fhs\_first)}
 \NormalTok{coxph\_mod2 }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{tidy}\NormalTok{()}
+  \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -6999,11 +7289,11 @@ Here we see that the line is besically horizontal. Now let's repeat the model ad
 ##   term     estimate std.error statistic   p.value
 ##   <chr>       <dbl>     <dbl>     <dbl>     <dbl>
 ## 1 cursmoke   0.338    0.0535       6.32 2.64e- 10
-## 2 sex2      -0.540    0.0525     -10.3  9.35e- 25
+## 2 sex       -0.540    0.0525     -10.3  9.35e- 25
 ## 3 age        0.0967   0.00327     29.6  3.79e-192
 \end{verbatim}
 
-We can already see that the parameter for smoking is now quite higher, but let's estimate the HR and 95\% CI:
+We can already see that the parameter for smoking is now quite a bit higher, but let's estimate the HR and 95\% CI:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -7026,11 +7316,11 @@ We can already see that the parameter for smoking is now quite higher, but let's
 ## 1 cursmoke  1.40   1.26    1.56
 \end{verbatim}
 
-The estimated Hazard Ratio is now 1.40 and the 95\% CI does not include the null. We can determine that there was some confounding by these variables leading the estimate from the previous model to be biased towards the null. Let's test the ph assumption for this model.
+The estimated Hazard Ratio is now 1.40 and the 95\% CI does not include the null (in fact, the lower bound of the 95\% CI is 1.26). We can determine that there was some confounding by these variables (sex and age at the baseline examination) leading the estimate from the previous model of the association between smoking and time to death to be biased towards the null. Let's test the proportional hazard assumption for this model:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{phtest2}\OtherTok{\textless{}{-}}\FunctionTok{cox.zph}\NormalTok{(coxph\_mod2)}
+\NormalTok{phtest2 }\OtherTok{\textless{}{-}} \FunctionTok{cox.zph}\NormalTok{(coxph\_mod2)}
 \NormalTok{phtest2}
 \end{Highlighting}
 \end{Shaded}
@@ -7043,15 +7333,15 @@ The estimated Hazard Ratio is now 1.40 and the 95\% CI does not include the null
 ## GLOBAL   7.747  3 0.052
 \end{verbatim}
 
-We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption.
+We see that the assumption holds, though the results for the test for both sex and age is close to rejecting the assumption (p-values close to 0.05---if they were below 0.05, we'd reject the null hypothesis that the assumption holds).
 
-Now let's see what happens if repeat the above model using age as the time-scale of interest in the survival function of the model:
+Now let's see what happens if repeat the above model using age, rather than follow-up time, as the time-scale of interest in the survival function of the model:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{coxph\_modage1}\OtherTok{\textless{}{-}}\FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{data=}\NormalTok{fhs\_first)}
+\NormalTok{coxph\_modage1 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(agedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
 \NormalTok{coxph\_modage1 }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{tidy}\NormalTok{()}
+  \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -7060,10 +7350,10 @@ Now let's see what happens if repeat the above model using age as the time-scale
 ##   term     estimate std.error statistic  p.value
 ##   <chr>       <dbl>     <dbl>     <dbl>    <dbl>
 ## 1 cursmoke    0.373    0.0529      7.05 1.73e-12
-## 2 sex2       -0.539    0.0526    -10.2  1.46e-24
+## 2 sex        -0.539    0.0526    -10.2  1.46e-24
 \end{verbatim}
 
-Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it.
+Notice that we did not also include age as an additional parameter in the model, since using it as the time-scale inherently adjusts for it. We can again convert the output to a hazard ratio and 95\% CIs:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -7086,13 +7376,13 @@ Notice that we did not also include age as an additional parameter in the model,
 ## 1 cursmoke  1.45   1.31    1.61
 \end{verbatim}
 
-We also see that the HR is similar as above (slightly higher).
+We also see that the HR is similar as in the previous model (although slightly higher in this case).
 
 Testing for the proportional hazards assumption in this model:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{phtestage}\OtherTok{\textless{}{-}}\FunctionTok{cox.zph}\NormalTok{(coxph\_modage1)}
+\NormalTok{phtestage }\OtherTok{\textless{}{-}} \FunctionTok{cox.zph}\NormalTok{(coxph\_modage1)}
 \NormalTok{phtestage}
 \end{Highlighting}
 \end{Shaded}
@@ -7108,15 +7398,12 @@ Here we see that the assumption fails. If we plot the results of the models we c
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{)) }\DocumentationTok{\#\#\#graphical parameters to plot two plots side by side (1 row, 2 columns)}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{)) }\CommentTok{\# graphical parameters to plot two plots side by side (1 row, 2 columns)}
 \FunctionTok{plot}\NormalTok{(phtestage)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-210-1.pdf}
-\emph{Note: Variables of interest to continue with:
-for mixed models, \texttt{sysbp}, \texttt{diabp}, \texttt{totchol} compared to \texttt{cigpday}, \texttt{bmi} smoking or not
-for long. analysis, \texttt{timemi} and \texttt{timestrk} and \texttt{hyperten}, exposure: \texttt{cigpday}, \texttt{sysbp}, \texttt{diabp}, \texttt{bmi}}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-217-1.pdf}
 
 \hypertarget{handling-complexity}{%
 \section{Handling complexity}\label{handling-complexity}}
