@@ -350,7 +350,7 @@ Based on this analysis, 1,550 of the study subjects, or about 35% of them, died 
 
 Note that, unlike in this sample data, in many datasets with longitudinal cohort data, survival or time-to-event outcomes will be recorded using time-varying conventions. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation (since the subject won't be tracked after death). In those cases, it will be important to take the last observation for each subject to count the number of deaths; for this dataset, we've got more flexibility since they use time-invariant recording conventions for outcomes like death.
 
-In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. First, we don't know the age at death of any study subjects who died after follow-up (which could be the end of the study or when they were lost to follow-up). Therefore, we should start by filtering the dataset to only include subjects who died during follow-up (`filter(death == 1)` in the next block of code).
+In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. First, we don't know the age at death of any study subjects who died after follow-up (which could be the end of the study or when they were lost to follow-up). Therefore, when we calculate, we should filter the dataset to only include subjects who died during follow-up (`filter(death == 1)` a bit later in the code).
 
 Next, we need to use information in the dataset to calculate the age at the time of death for the study subjects who died during follow-up. 
 The `age` variable in `fhs` represents the participant's age at each visit. Typically a death would happen between visits so the last recorded value for `age` would be less than the age at death. We will instead use the `timedth` variable to help us determine the actual age at death. The value of `timedth` is the number of days from beginning of follow-up until death for those with `death = 1`, while it is a fixed value of `timedth = 8766` (the maximum duration of follow-up) for those with `death = 0` (did not die during follow-up).
@@ -454,7 +454,7 @@ fhs %>%
 
 While there is some variation within study subjects in BMI, there tends to be more variation when comparing one study subject to another. Average BMI across the three examinations is therefore likely a reasonable measurement to use in exploratory analysis as we did in the previous plot.
 
-Another alternative we could have considered is to use the BMI at the first explanation as the measure of the BMI risk factor for each study subject; if you'd like, try that out to see if it changes our main conclusions.
+Another alternative we could have considered is to use the BMI at the first examination as the measure of the BMI risk factor for each study subject; if you'd like, try that out to see if it changes our main conclusions.
 
 We can use a similar approach to compare BMI and smoking. In this case, one way we could summarize smoking for each study subject is to determine if they were a current smoker at any of their examinations. If we do this, we see that there may be a small, but not dramatic, difference in BMI between smokers and non-smokers:
 
@@ -540,7 +540,7 @@ head(S1)
 ```
 
 
-The numbers assigned to each individual represent their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven't failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).
+The numbers assigned to each individual represent their final measured time, with each number with a plus sign indicating that the participant was censored at that time without developing the outcome (haven't failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).
 
 We can use the `Surv` function inside the `survfit` function to estimate the Kaplan-Meier curve for a set of data. If we aren't considering any covariates, we can include `~ 1` in the model equation, to estimate with only an intercept, rather than to explore differences in the curve based on covariates (we'll get to that idea later): 
 
@@ -590,7 +590,7 @@ fit_age %>%
 
 We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s (part of this is likely because this study focused on subjects in their 30s and older at the baseline examination period), and then a sharper drop in survival as age increases. 
 
-**2.How do (survival) curves for mortality compare between males and females? How about for MI?**
+**2. How do (survival) curves for mortality compare between males and females? How about for MI?**
 
 Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independent variable. For all-cause mortality, we can run these models both based on follow-up time and on age (in separate models):
 

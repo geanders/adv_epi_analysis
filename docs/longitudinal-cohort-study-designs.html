@@ -621,52 +621,54 @@ the deaths.</p>
 ## 2     1  1550</code></pre>
 <p>Based on this analysis, 1,550 of the study subjects, or about 35% of them, died during follow-up for this study.</p>
 <p>Note that, unlike in this sample data, in many datasets with longitudinal cohort data, survival or time-to-event outcomes will be recorded using time-varying conventions. For example, a variable for mortality will take the value of zero until the person-time observation that represents the time interval that the outcome actually happens in. For outcomes such as mortality this will typically be the last observation (since the subject won’t be tracked after death). In those cases, it will be important to take the last observation for each subject to count the number of deaths; for this dataset, we’ve got more flexibility since they use time-invariant recording conventions for outcomes like death.</p>
-<p>In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. First, we don’t know the age at death of any study subjects who died after follow-up (which could be the end of the study or when they were lost to follow-up). Therefore, we should start by filtering the dataset to only include subjects who died during follow-up (<code>filter(death == 1)</code> in the next block of code).</p>
+<p>In order to estimate the distribution of age at death among those participants who died during follow-up we need to create a new age at death variable. First, we don’t know the age at death of any study subjects who died after follow-up (which could be the end of the study or when they were lost to follow-up). Therefore, when we calculate, we should filter the dataset to only include subjects who died during follow-up (<code>filter(death == 1)</code> a bit later in the code).</p>
 <p>Next, we need to use information in the dataset to calculate the age at the time of death for the study subjects who died during follow-up.
 The <code>age</code> variable in <code>fhs</code> represents the participant’s age at each visit. Typically a death would happen between visits so the last recorded value for <code>age</code> would be less than the age at death. We will instead use the <code>timedth</code> variable to help us determine the actual age at death. The value of <code>timedth</code> is the number of days from beginning of follow-up until death for those with <code>death = 1</code>, while it is a fixed value of <code>timedth = 8766</code> (the maximum duration of follow-up) for those with <code>death = 0</code> (did not die during follow-up).</p>
-<p>We can create a new age at death variable for those with <code>death = 1</code> using the <code>age</code> at baseline and <code>timedth</code> values</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="longitudinal-cohort-study-designs.html#cb343-1" aria-hidden="true" tabindex="-1"></a>fhs_deaths <span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb343-2"><a href="longitudinal-cohort-study-designs.html#cb343-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(death <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb343-3"><a href="longitudinal-cohort-study-designs.html#cb343-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timedthy =</span> timedth <span class="sc">/</span> <span class="fl">365.25</span>, <span class="co"># time-to-death in years</span></span>
-<span id="cb343-4"><a href="longitudinal-cohort-study-designs.html#cb343-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">agedth =</span> age <span class="sc">+</span> timedthy) </span>
-<span id="cb343-5"><a href="longitudinal-cohort-study-designs.html#cb343-5" aria-hidden="true" tabindex="-1"></a>fhs_deaths</span></code></pre></div>
-<pre><code>## # A tibble: 1,550 x 41
+<p>We can create a new age at death variable for those with <code>death = 1</code> using the <code>age</code> at baseline and <code>timedth</code> values:</p>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="longitudinal-cohort-study-designs.html#cb343-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb343-2"><a href="longitudinal-cohort-study-designs.html#cb343-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timedthy =</span> timedth <span class="sc">/</span> <span class="fl">365.25</span>, <span class="co"># time-to-death in years</span></span>
+<span id="cb343-3"><a href="longitudinal-cohort-study-designs.html#cb343-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">agedth =</span> age <span class="sc">+</span> timedthy) </span>
+<span id="cb343-4"><a href="longitudinal-cohort-study-designs.html#cb343-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb343-5"><a href="longitudinal-cohort-study-designs.html#cb343-5" aria-hidden="true" tabindex="-1"></a>fhs_first </span></code></pre></div>
+<pre><code>## # A tibble: 4,434 x 41
 ##    randid   sex totchol   age sysbp diabp cursmoke cigpday   bmi diabetes bpmeds
 ##     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
-##  1  10552     2     225    61   150    95        1      30  28.6        0      0
-##  2  23727     2     332    41   124    88        0       0  31.3        0      1
-##  3  24721     2     226    39   114    64        1       9  22.4        0      0
-##  4  30928     2     221    38   140    90        1      20  21.4        0      0
-##  5  33555     2     291    46   112    78        1      20  23.4        0      0
-##  6  43770     2     234    52   148    78        0       0  34.2        0      0
-##  7  54224     1     294    47   102    68        1      20  24.2        0      0
-##  8  63221     2     272    61   182   121        0       0  32.8        0      0
-##  9  66472     2     247    60   130    88        0       0  30.4        0      0
-## 10  69134     2     209    59   150    85        0       0  20.8        0      0
-## # … with 1,540 more rows, and 30 more variables: heartrte &lt;dbl&gt;, glucose &lt;dbl&gt;,
+##  1   2448     1     195    39  106     70        0       0  27.0        0      0
+##  2   6238     2     250    46  121     81        0       0  28.7        0      0
+##  3   9428     1     245    48  128.    80        1      20  25.3        0      0
+##  4  10552     2     225    61  150     95        1      30  28.6        0      0
+##  5  11252     2     285    46  130     84        1      23  23.1        0      0
+##  6  11263     2     228    43  180    110        0       0  30.3        0      0
+##  7  12629     2     205    63  138     71        0       0  33.1        0      0
+##  8  12806     2     313    45  100     71        1      20  21.7        0      0
+##  9  14367     1     260    52  142.    89        0       0  26.4        0      0
+## 10  16365     1     225    43  162    107        1      30  23.6        0      0
+## # … with 4,424 more rows, and 30 more variables: heartrte &lt;dbl&gt;, glucose &lt;dbl&gt;,
 ## #   educ &lt;dbl&gt;, prevchd &lt;dbl&gt;, prevap &lt;dbl&gt;, prevmi &lt;dbl&gt;, prevstrk &lt;dbl&gt;,
 ## #   prevhyp &lt;dbl&gt;, time &lt;dbl&gt;, period &lt;dbl&gt;, hdlc &lt;dbl&gt;, ldlc &lt;dbl&gt;,
 ## #   death &lt;dbl&gt;, angina &lt;dbl&gt;, hospmi &lt;dbl&gt;, mi_fchd &lt;dbl&gt;, anychd &lt;dbl&gt;,
 ## #   stroke &lt;dbl&gt;, cvd &lt;dbl&gt;, hyperten &lt;dbl&gt;, timeap &lt;dbl&gt;, timemi &lt;dbl&gt;,
 ## #   timemifc &lt;dbl&gt;, timechd &lt;dbl&gt;, timestrk &lt;dbl&gt;, timecvd &lt;dbl&gt;,
 ## #   timedth &lt;dbl&gt;, timehyp &lt;dbl&gt;, timedthy &lt;dbl&gt;, agedth &lt;dbl&gt;</code></pre>
-<p>We can then get summary statistics on this new variable:</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="longitudinal-cohort-study-designs.html#cb345-1" aria-hidden="true" tabindex="-1"></a>fhs_deaths <span class="sc">%&gt;%</span> </span>
-<span id="cb345-2"><a href="longitudinal-cohort-study-designs.html#cb345-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
-<span id="cb345-3"><a href="longitudinal-cohort-study-designs.html#cb345-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
-<span id="cb345-4"><a href="longitudinal-cohort-study-designs.html#cb345-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_agedth =</span> <span class="fu">max</span>(agedth),</span>
-<span id="cb345-5"><a href="longitudinal-cohort-study-designs.html#cb345-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">missing_agedth =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(agedth)))</span></code></pre></div>
+<p>We can then get summary statistics on this new variable, filtering down to only the observations where death occurs during follow-up (this means that we’re only calculating average age at death among those who died during follow-up—see the note at the end of this section related to that):</p>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="longitudinal-cohort-study-designs.html#cb345-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span> </span>
+<span id="cb345-2"><a href="longitudinal-cohort-study-designs.html#cb345-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(death <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb345-3"><a href="longitudinal-cohort-study-designs.html#cb345-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
+<span id="cb345-4"><a href="longitudinal-cohort-study-designs.html#cb345-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
+<span id="cb345-5"><a href="longitudinal-cohort-study-designs.html#cb345-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_agedth =</span> <span class="fu">max</span>(agedth),</span>
+<span id="cb345-6"><a href="longitudinal-cohort-study-designs.html#cb345-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">missing_agedth =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(agedth)))</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 4
 ##   min_agedth mean_agedth max_agedth missing_agedth
 ##        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;          &lt;int&gt;
 ## 1       38.4        69.1       91.1              0</code></pre>
 <p>The earliest death was at 38 years and the latest at 91, among deaths that occurred during follow-up. On average, subjects who died during follow-up for this study died when they were about 69 years old. There were no missing ages for study subjects who died during follow-up.</p>
 <p>We can also check on these values by groups of interest such as sex:</p>
-<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="longitudinal-cohort-study-designs.html#cb347-1" aria-hidden="true" tabindex="-1"></a>fhs_deaths <span class="sc">%&gt;%</span></span>
-<span id="cb347-2"><a href="longitudinal-cohort-study-designs.html#cb347-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
-<span id="cb347-3"><a href="longitudinal-cohort-study-designs.html#cb347-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
-<span id="cb347-4"><a href="longitudinal-cohort-study-designs.html#cb347-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
-<span id="cb347-5"><a href="longitudinal-cohort-study-designs.html#cb347-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_agedth =</span> <span class="fu">max</span>(agedth))</span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="longitudinal-cohort-study-designs.html#cb347-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb347-2"><a href="longitudinal-cohort-study-designs.html#cb347-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(death <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb347-3"><a href="longitudinal-cohort-study-designs.html#cb347-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
+<span id="cb347-4"><a href="longitudinal-cohort-study-designs.html#cb347-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min_agedth =</span> <span class="fu">min</span>(agedth),</span>
+<span id="cb347-5"><a href="longitudinal-cohort-study-designs.html#cb347-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_agedth =</span> <span class="fu">mean</span>(agedth),</span>
+<span id="cb347-6"><a href="longitudinal-cohort-study-designs.html#cb347-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_agedth =</span> <span class="fu">max</span>(agedth))</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 4
 ##     sex min_agedth mean_agedth max_agedth
 ## * &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
@@ -745,6 +747,7 @@ The <code>age</code> variable in <code>fhs</code> represents the participant’s
 <span id="cb358-11"><a href="longitudinal-cohort-study-designs.html#cb358-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-193-1.png" width="672" /></p>
 <p>While there is some variation within study subjects in BMI, there tends to be more variation when comparing one study subject to another. Average BMI across the three examinations is therefore likely a reasonable measurement to use in exploratory analysis as we did in the previous plot.</p>
+<p>Another alternative we could have considered is to use the BMI at the first examination as the measure of the BMI risk factor for each study subject; if you’d like, try that out to see if it changes our main conclusions.</p>
 <p>We can use a similar approach to compare BMI and smoking. In this case, one way we could summarize smoking for each study subject is to determine if they were a current smoker at any of their examinations. If we do this, we see that there may be a small, but not dramatic, difference in BMI between smokers and non-smokers:</p>
 <div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="longitudinal-cohort-study-designs.html#cb359-1" aria-hidden="true" tabindex="-1"></a>bmi_vs_smoke <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
 <span id="cb359-2"><a href="longitudinal-cohort-study-designs.html#cb359-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
@@ -813,12 +816,9 @@ If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math i
 <pre><code>## [1] &quot;Surv&quot;</code></pre>
 <div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="longitudinal-cohort-study-designs.html#cb366-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(S1)</span></code></pre></div>
 <pre><code>## [1] 8766+ 8766+ 8766+ 2956  8766+ 8766+</code></pre>
-<p>The numbers assigned to each individual represent their censoring times, with each number with a plus sign indicating that the participant was censored at that times without developing the outcome (haven’t failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).</p>
+<p>The numbers assigned to each individual represent their final measured time, with each number with a plus sign indicating that the participant was censored at that time without developing the outcome (haven’t failed/died), while those without the plus sign are the times at which participants developed the outcome (failure/death).</p>
 <p>We can use the <code>Surv</code> function inside the <code>survfit</code> function to estimate the Kaplan-Meier curve for a set of data. If we aren’t considering any covariates, we can include <code>~ 1</code> in the model equation, to estimate with only an intercept, rather than to explore differences in the curve based on covariates (we’ll get to that idea later):</p>
-<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="longitudinal-cohort-study-designs.html#cb368-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb368-2"><a href="longitudinal-cohort-study-designs.html#cb368-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timedthy =</span> timedth <span class="sc">/</span> <span class="fl">365.25</span>) <span class="co"># Calculate time in years, not days</span></span>
-<span id="cb368-3"><a href="longitudinal-cohort-study-designs.html#cb368-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb368-4"><a href="longitudinal-cohort-study-designs.html#cb368-4" aria-hidden="true" tabindex="-1"></a>fit_time <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> fhs_first)</span></code></pre></div>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="longitudinal-cohort-study-designs.html#cb368-1" aria-hidden="true" tabindex="-1"></a>fit_time <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> fhs_first)</span></code></pre></div>
 <p>This creates an object of the <code>survfit</code> class, that we can then use in some special plotting functions to look at the curve its estimated. If you print this object, you can see that it gives us some information about the total number of study subjects as well as the total number of events during follow-up (in this case, deaths):</p>
 <div class="sourceCode" id="cb369"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb369-1"><a href="longitudinal-cohort-study-designs.html#cb369-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(fit_time)</span></code></pre></div>
 <pre><code>## [1] &quot;survfit&quot;</code></pre>
@@ -859,17 +859,15 @@ If we know any of <span class="math inline">\(S(t)\)</span>, <span class="math i
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-201-1.png" width="672" /></p>
 <p>We can see that as follow-up time increases, survival decreases rather monotonically, steadily, and slowly over time. In other words, the number of people who have died increases as the length of follow-up increases, but not very quickly (which makes sense since the study population was largely healthy at the start of the study). Survival <span class="math inline">\(\hat{S}(t)\)</span> drops to about 0.65 at the end of follow-up, or in other words about 35% of participants have died, which is what is expected as we already know that 1,550 of 4,434 participants died during follow-up.</p>
 <p>We can repeat this estimation with a different time-scale of interest. Other that follow-up times we may also be interested in survival and failure (mortality) with respect to age. We repeat the same code only changing the first argument in the <code>Surv</code> function, substituting time of death with respect to follow-up time with age at death.</p>
-<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="longitudinal-cohort-study-designs.html#cb376-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span> </span>
-<span id="cb376-2"><a href="longitudinal-cohort-study-designs.html#cb376-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agedth =</span> age <span class="sc">+</span> timedthy) <span class="co"># Calculate age at death</span></span>
-<span id="cb376-3"><a href="longitudinal-cohort-study-designs.html#cb376-3" aria-hidden="true" tabindex="-1"></a>fit_age <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> fhs_first)</span>
-<span id="cb376-4"><a href="longitudinal-cohort-study-designs.html#cb376-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb376-5"><a href="longitudinal-cohort-study-designs.html#cb376-5" aria-hidden="true" tabindex="-1"></a>fit_age <span class="sc">%&gt;%</span></span>
-<span id="cb376-6"><a href="longitudinal-cohort-study-designs.html#cb376-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsurvplot</span>(<span class="at">xlab =</span> <span class="st">&quot;Age (years)&quot;</span>,</span>
-<span id="cb376-7"><a href="longitudinal-cohort-study-designs.html#cb376-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">ylab =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>,</span>
-<span id="cb376-8"><a href="longitudinal-cohort-study-designs.html#cb376-8" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="longitudinal-cohort-study-designs.html#cb376-1" aria-hidden="true" tabindex="-1"></a>fit_age <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> fhs_first)</span>
+<span id="cb376-2"><a href="longitudinal-cohort-study-designs.html#cb376-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb376-3"><a href="longitudinal-cohort-study-designs.html#cb376-3" aria-hidden="true" tabindex="-1"></a>fit_age <span class="sc">%&gt;%</span></span>
+<span id="cb376-4"><a href="longitudinal-cohort-study-designs.html#cb376-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsurvplot</span>(<span class="at">xlab =</span> <span class="st">&quot;Age (years)&quot;</span>,</span>
+<span id="cb376-5"><a href="longitudinal-cohort-study-designs.html#cb376-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">ylab =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>,</span>
+<span id="cb376-6"><a href="longitudinal-cohort-study-designs.html#cb376-6" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-202-1.png" width="672" /></p>
 <p>We see that the shape of this survival curve is different, with virtually no one dying until they reach their 40s (part of this is likely because this study focused on subjects in their 30s and older at the baseline examination period), and then a sharper drop in survival as age increases.</p>
-<p><strong>2.How do (survival) curves for mortality compare between males and females? How about for MI?</strong></p>
+<p><strong>2. How do (survival) curves for mortality compare between males and females? How about for MI?</strong></p>
 <p>Kaplan-Meir curves like the above are useful in comparing the survival rate between two groups. For example if we wanted to compare the survival rates between males and females we would fit the same model as above with sex as an independent variable. For all-cause mortality, we can run these models both based on follow-up time and on age (in separate models):</p>
 <div class="sourceCode" id="cb377"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb377-1"><a href="longitudinal-cohort-study-designs.html#cb377-1" aria-hidden="true" tabindex="-1"></a>fit_bysex <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> sex, <span class="at">data =</span> fhs_first)</span>
 <span id="cb377-2"><a href="longitudinal-cohort-study-designs.html#cb377-2" aria-hidden="true" tabindex="-1"></a>fit_age_bysex <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(agedth, death) <span class="sc">~</span> sex, <span class="at">data =</span> fhs_first)</span>
