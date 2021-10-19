@@ -7508,19 +7508,19 @@ Here we see that the assumption fails. If we plot the results of the models we c
 \hypertarget{handling-complexity}{%
 \section{Handling complexity}\label{handling-complexity}}
 
-You may have noticed that the models we've been fitting above only use the first observation from the dataset (including death and time of death variables). This would be fine if all covariates of interest were time-invariabt (e.g.~sex: its value at baseline would be representative for the duration of follow-up). However, this is a longitudinal dataset with multiple observations per participant, and as we have seen with BMI, some measurement values change over time. The time-varying nature of these values can be informative whether it has to do with an exposure, covariate or outcome of interest and we will now see how to leverage this extra bit of information in the survival analysis context. We will create a longitudinal dataset appropriate for analysis, and go through steps of dealing with repeated outcome measures, time-varying exposures and covariates, and handling multi-level exposures in this setting.
+You may have noticed that the models we've been fitting above only use the first observation from the dataset (including death and time of death variables). This would be fine if all covariates of interest were time-invariant (e.g.~sex: its value at baseline would be representative for the duration of follow-up). However, this is a longitudinal dataset with multiple observations per participant, and as we have seen with BMI and smoking, some measurement values change over time. The time-varying nature of these values can be informative whether it has to do with an exposure, covariate or outcome of interest and we will now see how to leverage this extra bit of information in the survival analysis context. We will create a longitudinal dataset appropriate for analysis, and go through steps of dealing with repeated outcome measures, time-varying exposures and covariates, and handling multi-level exposures in this setting.
 
 \hypertarget{recurrent-outcome-and-time-varying-exposures}{%
 \subsection{Recurrent outcome and time varying-exposures}\label{recurrent-outcome-and-time-varying-exposures}}
 
-We mentioned earlier how typically in longitudinal studies survival outcomes may be represented in a time-varying fashion. Typically these variables will taked the value of 0 until someone becomes a case in which case the value is 1 (and usually this will be the last observation for a given participant). We will go ahead and create these types of variables for death and incident MI in our logitudinal dataset.
+We mentioned earlier how typically in longitudinal studies survival outcomes may be represented in a time-varying fashion. Typically these variables will taked the value of 0 until someone becomes a case in which case the value is 1 (and usually this will be the last observation for a given participant). We will go ahead and create these types of variables for death and incident MI in our longitudinal dataset.
 
 \emph{Applied exercise: Survival analysis with time-varying values}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovasular outcomes.
+  Construct a longitudinal dataset with repeated (time-varying) values for death and MI hospitalization.
 \item
   Fit a Cox model for the effect of smoking on mortality and MI using this dataset. How do the results compare to the results from the models in 7.3?
 \item
@@ -7529,7 +7529,7 @@ We mentioned earlier how typically in longitudinal studies survival outcomes may
   \textbf{Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovascular outcomes.}
 \end{enumerate}
 
-The original \texttt{fhs} dataset already has multiple observations per participant denoted by the \texttt{period} variable with a range of 1-3. Covariate values can change from period to period as we've already seen, but the variables for death and cardiovascular outcomes were not time-varying, simply an indicator for the even occuring at any point during follow-up. We will create time-varying variables for these events, as well as time variables indicating the beginning and end of follow-up time in each period.
+The original \texttt{fhs} dataset already has multiple observations per participant denoted by the \texttt{period} variable with a range of 1-3. Covariate values can change from period to period as we've already seen, but the variables for death and cardiovascular outcomes were not time-varying, simply an indicator for the event occurring at any point during follow-up. We will create time-varying variables for these events, as well as time variables indicating the beginning and end of follow-up time in each period.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -7540,7 +7540,7 @@ The original \texttt{fhs} dataset already has multiple observations per particip
          \DataTypeTok{deathtv=}\KeywordTok{ifelse}\NormalTok{(death}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{timedth}\OperatorTok{<=}\NormalTok{time2, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
          \DataTypeTok{timemi2=}\KeywordTok{ifelse}\NormalTok{(time2}\OperatorTok{<=}\NormalTok{timemi, time2, timemi),}
          \DataTypeTok{hospmitv=}\KeywordTok{ifelse}\NormalTok{(hospmi}\OperatorTok{==}\DecValTok{1} \OperatorTok{&}\StringTok{ }\NormalTok{timemi}\OperatorTok{<=}\NormalTok{timemi2,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{),}
-         \DataTypeTok{agetv=}\NormalTok{age}\OperatorTok{+}\NormalTok{(time}\OperatorTok{/}\FloatTok{365.25}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }\CommentTok{###create a time-varying age variable for age at beginning of each period}
+         \DataTypeTok{agetv=}\NormalTok{age}\OperatorTok{+}\NormalTok{(time}\OperatorTok{/}\FloatTok{365.25}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }\CommentTok{### also create a time-varying age variable for age at beginning of each period}
 \KeywordTok{ungroup}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
@@ -7555,7 +7555,7 @@ We can check to see if our new variables are in agreement with the totals from a
   \textbf{Fit a Cox model for the effect of smoking on mortality and MI hospitalizations using this dataset. How do the results compare to the results from the models in 7.3}
 \end{enumerate}
 
-Using the dataset with the time-varying outcomes we created above, we will repeat the same model for death (and MI hospitalizations) as a function of smoking and age and sex. However, unlike those models in section 7.3 we are not interested in the hazard occurring between beginning and end of follow-up for each participant, but rather the hazard occurring in each period. In order to address this we will slightly modify the \texttt{Surv} function in our model to accommodate the specific interval for each period, by designating two time variables (\texttt{time} and \texttt{time2}).
+Using the dataset with the time-varying outcomes we created above, we will repeat the same model for death (and MI hospitalizations) as a function of smoking and age and sex. However, unlike those models in section 7.3 we are not interested in the hazard occurring between beginning and end of follow-up for each participant, but rather the hazard occurring during each period. In order to address this we will slightly modify the \texttt{Surv} function in our model to accommodate the specific interval for each period, by designating two time variables (\texttt{time} and \texttt{time2}) instead of one.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -7626,7 +7626,7 @@ We see that our estimates are similar to the ones from the model looking only at
 ## 3 sex       -1.11     0.110      -10.1  6.69e-24
 \end{verbatim}
 
-There is a warning here indicating that not all out time variables in each observation are in agreement with the rule \texttt{time2\textgreater{}time1}. If that is not the case the Cox model cannot assess a hazard for a time interval with length \textless=0. In our dataset we are including periods after a participant has experienced an MI hospitalization. The \texttt{Surv} function will create missing values for the hazard for these observations, so the estimation of model parameters is not affected, however, we should limit the dataset to the person-time actually at risk for incdient MI hospitalization. Luckily the dataset includes a time-varying \texttt{prevmi} variable indicating a prevalent MI, which we can use to subset to the person time that is still at risk for an incident MI hospitalization.
+There is a warning here indicating that not all out time variables in each observation are in agreement with the rule \texttt{time2\textgreater{}time1}. If that is the case, the Cox model cannot assess a hazard for a time interval with length \textless=0. In our dataset we are including periods after a participant has experienced an MI hospitalization. The \texttt{Surv} function will create missing values for the hazard for these observations, so the estimation of model parameters is not affected, however, we should limit the dataset to the person-time actually at risk for incident MI hospitalization. Luckily the dataset includes a time-varying \texttt{prevmi} variable indicating a prevalent MI for each period, which we can use to subset to the person-time that is still at risk for an incident MI hospitalization.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -7688,7 +7688,7 @@ We see that the warning is still there. If we look into our data, as to why this
 ## 2 1338446      2  1902    1902   1902      0        0
 \end{verbatim}
 
-This is probably a single participant that was considered lost to follow-up, right after their second period visit, and was assigned the same time as the beginning of that period for all time to event values (without actually experiencing the outcomes). In other words they were censored at this exact time. The model doesn't include this observation in the estimation as it creates a missing value for the hazard, so we don't have to worry about our results, but it's good to investigate issues like this. We can visualize the model results with a forest plot, we can generate using \texttt{ggforest} from the \texttt{survminer} package we installed above. We also extract the HR and 95\% CI for the variable of interest.
+This is probably a single participant that was considered lost to follow-up, right after their second period visit, and was assigned the same time as the beginning of that period for all time-to-event values (without actually experiencing the outcomes). In other words they were censored at this exact time. Aain, the model doesn't include this observation in the estimation as it creates a missing value for the hazard, so we don't have to worry about our results, but it's good to investigate issues like this. We can visualize the model results with a forest plot, which we can generate using \texttt{ggforest} from the \texttt{survminer} package we installed above. We also extract the HR and 95\% CI for the variable of interest.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -7724,7 +7724,7 @@ This is probably a single participant that was considered lost to follow-up, rig
 ## 1 cursmoke  1.63   1.32    2.01
 \end{verbatim}
 
-We see that the hazard ratio comparing current smokers to current non-smokers is 1.62 with 95\% CI: (1.32 - 2.00) indicating an elevated risk for MI hospitalization associated with current smoking.
+We see that the hazard ratio comparing current smokers to current non-smokers is 1.63 with 95\% CI: (1.32 - 2.01) indicating an elevated risk for MI hospitalization associated with current smoking.
 
 However, the key in that interpretation is the word `current'. In this model for each observation (conditional on sex and age) participants with smoking value of zero are treated equally regardless if they are never smokers or former smokers (the latter would have changed from \texttt{cursmoke=1} to \texttt{cursmoke=0} sometime during follow-up), so based on what we know about smoking history and health, we are probably not making use of all the information we have.
 
@@ -7880,7 +7880,7 @@ If we repeat for MI hospitalization (we should recreate our incident MI dataset 
 ## 1 smokingformer 0.920  0.639    1.32
 \end{verbatim}
 
-We can now see that the parameter for current smokers compared to never smokers is still elevated, with a HR=1., but the hazard associated with a comparison of former smokers compared to never smokers is actually below the null, but the CI is very wide and includes the null.
+We can now see that the parameter for current smokers compared to never smokers is still elevated, with a HR=1.60, but the hazard associated with a comparison of former smokers compared to never smokers is actually below the null, but the CI is very wide and includes the null.
 
 \hypertarget{multi-level-exposure}{%
 \subsection{Multi-level exposure}\label{multi-level-exposure}}
@@ -7942,7 +7942,7 @@ Let's repeat our latest model for smoking and MI hospitalizations including the 
 ## 1 cigpday  1.01  0.998    1.02
 \end{verbatim}
 
-We know see that the parameter coefficient for current smoking is attenuated, while the continuous \texttt{cigpday} variable has a positive parameter coefficient (HR=1.009 with each cigarette per day increase in smoking intensity), but the CI includes the null)
+We now see that the parameter coefficient for current smoking is attenuated, while the continuous \texttt{cigpday} variable has a positive parameter coefficient (HR=1.009 with each cigarette per day increase in smoking intensity), but the CI includes the null)
 
 We can actually combine these effects, so that for the current smokers we only get an effect for continuous cigarettes per day, by transforming our smoking variable into dummy variables for each level:
 
@@ -7990,7 +7990,7 @@ We can actually combine these effects, so that for the current smokers we only g
 ## 1 smokingcurrent:cigpday  1.02   1.01    1.02
 \end{verbatim}
 
-The HR for each additional cigarette per day compared to never smokers is now 1.016 (95\% CI: 1.008 - 1.023). If we want to estimate the effect for a smoker who smokers a pack a day then:
+The HR for each additional cigarette per day compared to never smokers is now 1.016 (95\% CI: 1.008 - 1.023). If we want to estimate the effect for a smoker who smokes a pack of cigarettes a day then:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -8039,25 +8039,6 @@ The model we just fitted however assumes a log-linear exposure-response between 
 ## 6 smokingcurrent:smokingintModerate     0.0593   0.244       0.243  8.08e- 1
 ## 7 smokingcurrent:smokingintHeavy        0.647    0.134       4.84   1.27e- 6
 ## 8 smokingcurrent:smokingintVery Heavy   0.543    0.159       3.41   6.46e- 4
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{coxph_modhospmitv6 }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{tidy}\NormalTok{()}\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{==}\StringTok{ 'smokingcurrent:cigpday'}\NormalTok{) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{hr =} \KeywordTok{exp}\NormalTok{(}\DecValTok{20}\OperatorTok{*}\NormalTok{estimate),}
-         \DataTypeTok{low_ci =} \DecValTok{20}\OperatorTok{*}\NormalTok{(estimate }\OperatorTok{-}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error), }
-         \DataTypeTok{high_ci =} \DecValTok{20}\OperatorTok{*}\NormalTok{(estimate }\OperatorTok{+}\StringTok{ }\FloatTok{1.96} \OperatorTok{*}\StringTok{ }\NormalTok{std.error), }
-         \DataTypeTok{low_hr =} \KeywordTok{exp}\NormalTok{(low_ci), }
-         \DataTypeTok{high_hr =} \KeywordTok{exp}\NormalTok{(high_ci)) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{select}\NormalTok{(term, hr, low_hr, high_hr)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 0 x 4
-## # ... with 4 variables: term <chr>, hr <dbl>, low_hr <dbl>, high_hr <dbl>
 \end{verbatim}
 
 We see that the category for none did not return a paramters, which should be expected as we don't expect any current smokers to be smoking zero cigarettes. We can extract the rest of the parameters and see what the HR is for each category compared to non-smokers.
