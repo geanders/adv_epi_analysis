@@ -787,23 +787,23 @@ plot(phtestage)
 
 ## Handling complexity
 
-You may have noticed that the models we've been fitting above only use the first observation from the dataset (including death and time of death variables). This would be fine if all covariates of interest were time-invariabt (e.g. sex: its value at baseline would be representative for the duration of follow-up). However, this is a longitudinal dataset with multiple observations per participant, and as we have seen with BMI, some measurement values change over time. The time-varying nature of these values can be informative whether it has to do with an exposure, covariate or outcome of interest and we will now see how to leverage this extra bit of information in the survival analysis context. We will create a longitudinal dataset appropriate for analysis, and go through steps of dealing with repeated outcome measures, time-varying exposures and covariates, and handling multi-level exposures in this setting.
+You may have noticed that the models we've been fitting above only use the first observation from the dataset (including death and time of death variables). This would be fine if all covariates of interest were time-invariant (e.g. sex: its value at baseline would be representative for the duration of follow-up). However, this is a longitudinal dataset with multiple observations per participant, and as we have seen with BMI and smoking, some measurement values change over time. The time-varying nature of these values can be informative whether it has to do with an exposure, covariate or outcome of interest and we will now see how to leverage this extra bit of information in the survival analysis context. We will create a longitudinal dataset appropriate for analysis, and go through steps of dealing with repeated outcome measures, time-varying exposures and covariates, and handling multi-level exposures in this setting.
 
 ### Recurrent outcome and time varying-exposures
 
-We mentioned earlier how typically in longitudinal studies survival outcomes may be represented in a time-varying fashion. Typically these variables will taked the value of 0 until someone becomes a case in which case the value is 1 (and usually this will be the last observation for a given participant). We will go ahead and create these types of variables for death and incident MI in our logitudinal dataset. 
+We mentioned earlier how typically in longitudinal studies survival outcomes may be represented in a time-varying fashion. Typically these variables will taked the value of 0 until someone becomes a case in which case the value is 1 (and usually this will be the last observation for a given participant). We will go ahead and create these types of variables for death and incident MI in our longitudinal dataset. 
 
 
 *Applied exercise: Survival analysis with time-varying values*
 
-1. Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovasular outcomes.
+1. Construct a longitudinal dataset with repeated (time-varying) values for death and MI hospitalization.
 2. Fit a Cox model for the effect of smoking on mortality and MI using this dataset. How do the results compare to the results from the models in 7.3?
 3. Construct an exposure variable representing the history of smoking (identify if someone is a current, former and never smoker at each period). Repeat the model from 2, using this exposure instead. What added information does this model give us?
 
 
 1. **Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovascular outcomes.**
 
-The original `fhs` dataset already has multiple observations per participant denoted by the `period` variable with a range of 1-3. Covariate values can change from period to period as we've already seen, but the variables for death and cardiovascular outcomes were not time-varying, simply an indicator for the even occuring at any point during follow-up. We will create time-varying variables for these events, as well as time variables indicating the beginning and end of follow-up time in each period.
+The original `fhs` dataset already has multiple observations per participant denoted by the `period` variable with a range of 1-3. Covariate values can change from period to period as we've already seen, but the variables for death and cardiovascular outcomes were not time-varying, simply an indicator for the event occurring at any point during follow-up. We will create time-varying variables for these events, as well as time variables indicating the beginning and end of follow-up time in each period.
 
 ```{r}
 fhstv<-fhs %>%
@@ -813,7 +813,7 @@ fhstv<-fhs %>%
          deathtv=ifelse(death==1 & timedth<=time2, 1, 0),
          timemi2=ifelse(time2<=timemi, time2, timemi),
          hospmitv=ifelse(hospmi==1 & timemi<=timemi2,1,0),
-         agetv=age+(time/365.25)) %>% ###create a time-varying age variable for age at beginning of each period
+         agetv=age+(time/365.25)) %>% ### also create a time-varying age variable for age at beginning of each period
 ungroup()
 ```
  
@@ -823,7 +823,7 @@ ungroup()
 
 2. **Fit a Cox model for the effect of smoking on mortality and MI hospitalizations using this dataset. How do the results compare to the results from the models in 7.3**
 
-Using the dataset with the time-varying outcomes we created above, we will repeat the same model for death (and MI hospitalizations) as a function of smoking and age and sex. However, unlike those models in section 7.3 we are not interested in the hazard occurring between beginning and end of follow-up for each participant, but rather the hazard occurring in each period. In order to address this we will slightly modify the `Surv` function in our model to accommodate the specific interval for each period, by designating two time variables (`time` and `time2`).
+Using the dataset with the time-varying outcomes we created above, we will repeat the same model for death (and MI hospitalizations) as a function of smoking and age and sex. However, unlike those models in section 7.3 we are not interested in the hazard occurring between beginning and end of follow-up for each participant, but rather the hazard occurring during each period. In order to address this we will slightly modify the `Surv` function in our model to accommodate the specific interval for each period, by designating two time variables (`time` and `time2`) instead of one.
 
 ```{r}
 coxph_modtv1<-coxph(Surv(time, time2, deathtv)~cursmoke+agetv+sex, data=fhstv)
@@ -852,7 +852,7 @@ coxph_modhospmitv1 %>%
   tidy()
 ```
 
-There is a warning here indicating that not all out time variables in each observation are in agreement with the rule `time2>time1`. If that is not the case the Cox model cannot assess a hazard for a time interval with length <=0. In our dataset we are including periods after a participant has experienced an MI hospitalization. The `Surv` function will create missing values for the hazard for these observations, so the estimation of model parameters is not affected, however, we should limit the dataset to the person-time actually at risk for incdient MI hospitalization. Luckily the dataset includes a time-varying `prevmi` variable indicating a prevalent MI, which we can use to subset to the person time that is still at risk for an incident MI hospitalization.
+There is a warning here indicating that not all out time variables in each observation are in agreement with the rule `time2>time1`. If that is the case, the Cox model cannot assess a hazard for a time interval with length <=0. In our dataset we are including periods after a participant has experienced an MI hospitalization. The `Surv` function will create missing values for the hazard for these observations, so the estimation of model parameters is not affected, however, we should limit the dataset to the person-time actually at risk for incident MI hospitalization. Luckily the dataset includes a time-varying `prevmi` variable indicating a prevalent MI for each period, which we can use to subset to the person-time that is still at risk for an incident MI hospitalization.
 
 
 ```{r}
@@ -879,7 +879,7 @@ fhstv_incMI %>%
 
 ```
 
-This is probably a single participant that was considered lost to follow-up, right after their second period visit, and was assigned the same time as the beginning of that period for all time to event values (without actually experiencing the outcomes). In other words they were censored at this exact time. The model doesn't include this observation in the estimation as it creates a missing value for the hazard, so we don't have to worry about our results, but it's good to investigate issues like this. We can visualize the model results with a forest plot, we can generate using `ggforest` from the  `survminer` package we installed above. We also extract the HR and 95% CI for the variable of interest.
+This is probably a single participant that was considered lost to follow-up, right after their second period visit, and was assigned the same time as the beginning of that period for all time-to-event values (without actually experiencing the outcomes). In other words they were censored at this exact time. Aain, the model doesn't include this observation in the estimation as it creates a missing value for the hazard, so we don't have to worry about our results, but it's good to investigate issues like this. We can visualize the model results with a forest plot, which we can generate using `ggforest` from the  `survminer` package we installed above. We also extract the HR and 95% CI for the variable of interest.
 
 ```{r}
 ggforest(coxph_modhospmitv2)
@@ -895,7 +895,7 @@ coxph_modhospmitv2 %>%
   select(term, hr, low_hr, high_hr)
 ```
 
-We see that the hazard ratio comparing current smokers to current non-smokers is 1.62 with 95% CI: (1.32 - 2.00) indicating an elevated risk for MI hospitalization associated with current smoking.
+We see that the hazard ratio comparing current smokers to current non-smokers is 1.63 with 95% CI: (1.32 - 2.01) indicating an elevated risk for MI hospitalization associated with current smoking.
 
 However, the key in that interpretation is the word 'current'. In this model for each observation (conditional on sex and age) participants with smoking value of zero are treated equally regardless if they are never smokers or former smokers (the latter would have changed from `cursmoke=1` to `cursmoke=0` sometime during follow-up), so based on what we know about smoking history and health, we are probably not making use of all the information we have.
 
@@ -941,7 +941,8 @@ coxph_modtv2 %>%
          high_hr = exp(high_ci)) %>% 
   select(term, hr, low_hr, high_hr)
 ```
- We see that the HR for current smokers vs non-smokers remains elevated, but the HR for former smokers is much smaller and the CI includes the null. It seems that the risk of mortality for former smokers compared to non-smokers is quite a bit lower than it is for current smokers.
+
+We see that the HR for current smokers vs non-smokers remains elevated, but the HR for former smokers is much smaller and the CI includes the null. It seems that the risk of mortality for former smokers compared to non-smokers is quite a bit lower than it is for current smokers.
  
  If we repeat for MI hospitalization (we should recreate our incident MI dataset to include the new smoking variable)
 
@@ -977,7 +978,7 @@ coxph_modhospmitv3 %>%
 
 ```
 
-We can now see that the parameter for current smokers compared to never smokers is still elevated, with a HR=1., but the hazard associated with a comparison of former smokers compared to never smokers is actually below the null, but the CI is very wide and includes the null.
+We can now see that the parameter for current smokers compared to never smokers is still elevated, with a HR=1.60, but the hazard associated with a comparison of former smokers compared to never smokers is actually below the null, but the CI is very wide and includes the null.
 
 ### Multi-level exposure
 
@@ -1009,7 +1010,7 @@ coxph_modhospmitv4 %>%
   select(term, hr, low_hr, high_hr)
 
 ```
-We know see that the parameter coefficient for current smoking is attenuated, while the continuous `cigpday` variable has a positive parameter coefficient (HR=1.009 with each cigarette per day increase in smoking intensity), but the CI includes the null)
+We now see that the parameter coefficient for current smoking is attenuated, while the continuous `cigpday` variable has a positive parameter coefficient (HR=1.009 with each cigarette per day increase in smoking intensity), but the CI includes the null)
 
 We can actually combine these effects, so that for the current smokers we only get an effect for continuous cigarettes per day, by transforming our smoking variable into dummy variables for each level:
 
@@ -1034,7 +1035,7 @@ coxph_modhospmitv5 %>%
   select(term, hr, low_hr, high_hr)
 
 ```
-The HR for each additional cigarette per day compared to never smokers is now 1.016 (95% CI: 1.008 - 1.023). If we want to estimate the effect for a smoker who smokers a pack a day then:
+The HR for each additional cigarette per day compared to never smokers is now 1.016 (95% CI: 1.008 - 1.023). If we want to estimate the effect for a smoker who smokes a pack of cigarettes a day then:
 
 ```{r}
 coxph_modhospmitv5 %>% 
@@ -1060,15 +1061,6 @@ coxph_modhospmitv6<-coxph(Surv(time, timemi2, hospmitv)~ smokingformer + smoking
 coxph_modhospmitv6 %>%
   tidy()
 
-coxph_modhospmitv6 %>% 
-  tidy()%>% 
-  filter(term == 'smokingcurrent:cigpday') %>%
-  mutate(hr = exp(20*estimate),
-         low_ci = 20*(estimate - 1.96 * std.error), 
-         high_ci = 20*(estimate + 1.96 * std.error), 
-         low_hr = exp(low_ci), 
-         high_hr = exp(high_ci)) %>% 
-  select(term, hr, low_hr, high_hr)
 ```
 We see that the category for none did not return a paramters, which should be expected as we don't expect any current smokers to be smoking zero cigarettes. We can extract the rest of the parameters and see what the HR is for each category compared to non-smokers.
 

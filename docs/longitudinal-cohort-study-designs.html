@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-10-14" />
+<meta name="date" content="2021-10-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -176,10 +176,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#longitudinal-cohort-data"><i class="fa fa-check"></i><b>7.2</b> Longitudinal cohort data</a></li>
 <li class="chapter" data-level="7.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#coding-a-survival-analysis"><i class="fa fa-check"></i><b>7.3</b> Coding a survival analysis</a></li>
 <li class="chapter" data-level="7.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#handling-complexity"><i class="fa fa-check"></i><b>7.4</b> Handling complexity</a><ul>
-<li class="chapter" data-level="7.4.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.4.1</b> Multi-level exposure</a></li>
-<li class="chapter" data-level="7.4.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome"><i class="fa fa-check"></i><b>7.4.2</b> Recurrent outcome</a></li>
+<li class="chapter" data-level="7.4.1" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#recurrent-outcome-and-time-varying-exposures"><i class="fa fa-check"></i><b>7.4.1</b> Recurrent outcome and time varying-exposures</a></li>
+<li class="chapter" data-level="7.4.2" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#multi-level-exposure"><i class="fa fa-check"></i><b>7.4.2</b> Multi-level exposure</a></li>
 <li class="chapter" data-level="7.4.3" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#time-varying-coeffificents"><i class="fa fa-check"></i><b>7.4.3</b> Time-varying coeffificents</a></li>
-<li class="chapter" data-level="7.4.4" data-path="longitudinal-cohort-study-designs.html"><a href="longitudinal-cohort-study-designs.html#using-survey-results"><i class="fa fa-check"></i><b>7.4.4</b> Using survey results</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="some-approaches-for-confounding.html"><a href="some-approaches-for-confounding.html"><i class="fa fa-check"></i><b>8</b> Some approaches for confounding</a><ul>
@@ -1008,23 +1007,562 @@ We can also plot the parameter(s) of interest across time from this output. If t
 <span id="cb424-2"><a href="longitudinal-cohort-study-designs.html#cb424-2"></a><span class="kw">plot</span>(phtestage)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-217-1.png" width="672" /></p>
 <!-- *Note: Variables of interest to continue with:  -->
-<!-- for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi` smoking or not -->
-<!-- for long. analysis, `timemi` and `timestrk` and `hyperten`, exposure: `cigpday`, `sysbp`, `diabp`, `bmi`* -->
+<!-- for mixed models, `sysbp`, `diabp`, `totchol` compared to `cigpday`, `bmi`, `cursmoke` -->
+<!-- for long. analysis, `timemi` and `timestrk` and `hyperten`, exposure: `cursmoke`, `cigpday`, `sysbp`, `diabp`, `bmi`* -->
 </div>
 <div id="handling-complexity" class="section level2">
 <h2><span class="header-section-number">7.4</span> Handling complexity</h2>
-<div id="multi-level-exposure" class="section level3">
-<h3><span class="header-section-number">7.4.1</span> Multi-level exposure</h3>
+<p>You may have noticed that the models we’ve been fitting above only use the first observation from the dataset (including death and time of death variables). This would be fine if all covariates of interest were time-invariabt (e.g. sex: its value at baseline would be representative for the duration of follow-up). However, this is a longitudinal dataset with multiple observations per participant, and as we have seen with BMI, some measurement values change over time. The time-varying nature of these values can be informative whether it has to do with an exposure, covariate or outcome of interest and we will now see how to leverage this extra bit of information in the survival analysis context. We will create a longitudinal dataset appropriate for analysis, and go through steps of dealing with repeated outcome measures, time-varying exposures and covariates, and handling multi-level exposures in this setting.</p>
+<div id="recurrent-outcome-and-time-varying-exposures" class="section level3">
+<h3><span class="header-section-number">7.4.1</span> Recurrent outcome and time varying-exposures</h3>
+<p>We mentioned earlier how typically in longitudinal studies survival outcomes may be represented in a time-varying fashion. Typically these variables will taked the value of 0 until someone becomes a case in which case the value is 1 (and usually this will be the last observation for a given participant). We will go ahead and create these types of variables for death and incident MI in our logitudinal dataset.</p>
+<p><em>Applied exercise: Survival analysis with time-varying values</em></p>
+<ol style="list-style-type: decimal">
+<li><p>Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovasular outcomes.</p></li>
+<li><p>Fit a Cox model for the effect of smoking on mortality and MI using this dataset. How do the results compare to the results from the models in 7.3?</p></li>
+<li><p>Construct an exposure variable representing the history of smoking (identify if someone is a current, former and never smoker at each period). Repeat the model from 2, using this exposure instead. What added information does this model give us?</p></li>
+<li><p><strong>Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovascular outcomes.</strong></p></li>
+</ol>
+<p>The original <code>fhs</code> dataset already has multiple observations per participant denoted by the <code>period</code> variable with a range of 1-3. Covariate values can change from period to period as we’ve already seen, but the variables for death and cardiovascular outcomes were not time-varying, simply an indicator for the even occuring at any point during follow-up. We will create time-varying variables for these events, as well as time variables indicating the beginning and end of follow-up time in each period.</p>
+<div class="sourceCode" id="cb425"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb425-1"><a href="longitudinal-cohort-study-designs.html#cb425-1"></a>fhstv&lt;-fhs <span class="op">%&gt;%</span></span>
+<span id="cb425-2"><a href="longitudinal-cohort-study-designs.html#cb425-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span></span>
+<span id="cb425-3"><a href="longitudinal-cohort-study-designs.html#cb425-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">time_next=</span><span class="kw">lead</span>(time), <span class="co">### bring forward the time from the next period</span></span>
+<span id="cb425-4"><a href="longitudinal-cohort-study-designs.html#cb425-4"></a>         <span class="dt">time2=</span><span class="kw">ifelse</span>(<span class="kw">is.na</span>(time_next)<span class="op">==</span>F, time_next<span class="dv">-1</span>, timedth), <span class="co">### create a variable indicating the last day of follow-up in a given period</span></span>
+<span id="cb425-5"><a href="longitudinal-cohort-study-designs.html#cb425-5"></a>         <span class="dt">deathtv=</span><span class="kw">ifelse</span>(death<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>timedth<span class="op">&lt;=</span>time2, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb425-6"><a href="longitudinal-cohort-study-designs.html#cb425-6"></a>         <span class="dt">timemi2=</span><span class="kw">ifelse</span>(time2<span class="op">&lt;=</span>timemi, time2, timemi),</span>
+<span id="cb425-7"><a href="longitudinal-cohort-study-designs.html#cb425-7"></a>         <span class="dt">hospmitv=</span><span class="kw">ifelse</span>(hospmi<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>timemi<span class="op">&lt;=</span>timemi2,<span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb425-8"><a href="longitudinal-cohort-study-designs.html#cb425-8"></a>         <span class="dt">agetv=</span>age<span class="op">+</span>(time<span class="op">/</span><span class="fl">365.25</span>)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">###create a time-varying age variable for age at beginning of each period</span></span>
+<span id="cb425-9"><a href="longitudinal-cohort-study-designs.html#cb425-9"></a><span class="kw">ungroup</span>()</span></code></pre></div>
+<p>We can check to see if our new variables are in agreement with the totals from above. Since these variables are created to only take the value of one once for each case, then their cumulative sum in the entire longitudinal dataset should equal our totals from above.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Fit a Cox model for the effect of smoking on mortality and MI hospitalizations using this dataset. How do the results compare to the results from the models in 7.3</strong></li>
+</ol>
+<p>Using the dataset with the time-varying outcomes we created above, we will repeat the same model for death (and MI hospitalizations) as a function of smoking and age and sex. However, unlike those models in section 7.3 we are not interested in the hazard occurring between beginning and end of follow-up for each participant, but rather the hazard occurring in each period. In order to address this we will slightly modify the <code>Surv</code> function in our model to accommodate the specific interval for each period, by designating two time variables (<code>time</code> and <code>time2</code>).</p>
+<div class="sourceCode" id="cb426"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb426-1"><a href="longitudinal-cohort-study-designs.html#cb426-1"></a>coxph_modtv1&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, time2, deathtv)<span class="op">~</span>cursmoke<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv)</span>
+<span id="cb426-2"><a href="longitudinal-cohort-study-designs.html#cb426-2"></a>coxph_modtv1 <span class="op">%&gt;%</span></span>
+<span id="cb426-3"><a href="longitudinal-cohort-study-designs.html#cb426-3"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 5
+##   term     estimate std.error statistic   p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 cursmoke   0.329    0.0544       6.05 1.43e-  9
+## 2 agetv      0.0700   0.00300     23.3  2.07e-120
+## 3 sex       -0.537    0.0517     -10.4  2.52e- 25</code></pre>
+<p>And if we look specifically at the HR for smoking:</p>
+<div class="sourceCode" id="cb428"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb428-1"><a href="longitudinal-cohort-study-designs.html#cb428-1"></a>coxph_modtv1 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb428-2"><a href="longitudinal-cohort-study-designs.html#cb428-2"></a><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb428-3"><a href="longitudinal-cohort-study-designs.html#cb428-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;cursmoke&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb428-4"><a href="longitudinal-cohort-study-designs.html#cb428-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb428-5"><a href="longitudinal-cohort-study-designs.html#cb428-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb428-6"><a href="longitudinal-cohort-study-designs.html#cb428-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb428-7"><a href="longitudinal-cohort-study-designs.html#cb428-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb428-8"><a href="longitudinal-cohort-study-designs.html#cb428-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb428-9"><a href="longitudinal-cohort-study-designs.html#cb428-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.39   1.25    1.55</code></pre>
+<p>We see that our estimates are similar to the ones from the model looking only at baseline values and death, so it doesn’t look like we’ve gained much in terms of information. If we now repeat for MI hospitalization as the outcome:</p>
+<div class="sourceCode" id="cb430"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb430-1"><a href="longitudinal-cohort-study-designs.html#cb430-1"></a>coxph_modhospmitv1&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span>cursmoke<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv)</span></code></pre></div>
+<pre><code>## Warning in Surv(time, timemi2, hospmitv): Stop time must be &gt; start time, NA
+## created</code></pre>
+<div class="sourceCode" id="cb432"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb432-1"><a href="longitudinal-cohort-study-designs.html#cb432-1"></a>coxph_modhospmitv1 <span class="op">%&gt;%</span></span>
+<span id="cb432-2"><a href="longitudinal-cohort-study-designs.html#cb432-2"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 5
+##   term     estimate std.error statistic  p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 cursmoke   0.484    0.107        4.53 5.78e- 6
+## 2 agetv      0.0417   0.00580      7.19 6.59e-13
+## 3 sex       -1.11     0.110      -10.1  6.69e-24</code></pre>
+<p>There is a warning here indicating that not all out time variables in each observation are in agreement with the rule <code>time2&gt;time1</code>. If that is not the case the Cox model cannot assess a hazard for a time interval with length &lt;=0. In our dataset we are including periods after a participant has experienced an MI hospitalization. The <code>Surv</code> function will create missing values for the hazard for these observations, so the estimation of model parameters is not affected, however, we should limit the dataset to the person-time actually at risk for incdient MI hospitalization. Luckily the dataset includes a time-varying <code>prevmi</code> variable indicating a prevalent MI, which we can use to subset to the person time that is still at risk for an incident MI hospitalization.</p>
+<div class="sourceCode" id="cb434"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb434-1"><a href="longitudinal-cohort-study-designs.html#cb434-1"></a>fhstv_incMI&lt;-<span class="st"> </span>fhstv <span class="op">%&gt;%</span></span>
+<span id="cb434-2"><a href="longitudinal-cohort-study-designs.html#cb434-2"></a><span class="st">  </span><span class="kw">filter</span>(prevmi<span class="op">==</span><span class="dv">0</span>) </span>
+<span id="cb434-3"><a href="longitudinal-cohort-study-designs.html#cb434-3"></a></span>
+<span id="cb434-4"><a href="longitudinal-cohort-study-designs.html#cb434-4"></a>coxph_modhospmitv2&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span>cursmoke<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span></code></pre></div>
+<pre><code>## Warning in Surv(time, timemi2, hospmitv): Stop time must be &gt; start time, NA
+## created</code></pre>
+<div class="sourceCode" id="cb436"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb436-1"><a href="longitudinal-cohort-study-designs.html#cb436-1"></a>coxph_modhospmitv2 <span class="op">%&gt;%</span></span>
+<span id="cb436-2"><a href="longitudinal-cohort-study-designs.html#cb436-2"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 5
+##   term     estimate std.error statistic  p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 cursmoke   0.489    0.107        4.58 4.68e- 6
+## 2 agetv      0.0426   0.00581      7.34 2.10e-13
+## 3 sex       -1.11     0.110      -10.1  4.41e-24</code></pre>
+<p>We see that the warning is still there. If we look into our data, as to why this is:</p>
+<div class="sourceCode" id="cb438"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb438-1"><a href="longitudinal-cohort-study-designs.html#cb438-1"></a>fhstv_incMI <span class="op">%&gt;%</span></span>
+<span id="cb438-2"><a href="longitudinal-cohort-study-designs.html#cb438-2"></a><span class="st">  </span><span class="kw">filter</span> (timemi2<span class="op">&lt;=</span>time) <span class="op">%&gt;%</span></span>
+<span id="cb438-3"><a href="longitudinal-cohort-study-designs.html#cb438-3"></a><span class="st">  </span><span class="kw">pull</span>(randid)</span></code></pre></div>
+<pre><code>## [1] 1338446</code></pre>
+<div class="sourceCode" id="cb440"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb440-1"><a href="longitudinal-cohort-study-designs.html#cb440-1"></a>fhstv_incMI <span class="op">%&gt;%</span></span>
+<span id="cb440-2"><a href="longitudinal-cohort-study-designs.html#cb440-2"></a><span class="st">  </span><span class="kw">filter</span>(randid<span class="op">==</span><span class="st">&#39;1338446&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb440-3"><a href="longitudinal-cohort-study-designs.html#cb440-3"></a><span class="st">  </span><span class="kw">select</span> (randid, period, time, timemi2, timemi, hospmi, hospmitv)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 7
+##    randid period  time timemi2 timemi hospmi hospmitv
+##     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1 1338446      1     0    1901   1902      0        0
+## 2 1338446      2  1902    1902   1902      0        0</code></pre>
+<p>This is probably a single participant that was considered lost to follow-up, right after their second period visit, and was assigned the same time as the beginning of that period for all time to event values (without actually experiencing the outcomes). In other words they were censored at this exact time. The model doesn’t include this observation in the estimation as it creates a missing value for the hazard, so we don’t have to worry about our results, but it’s good to investigate issues like this. We can visualize the model results with a forest plot, we can generate using <code>ggforest</code> from the <code>survminer</code> package we installed above. We also extract the HR and 95% CI for the variable of interest.</p>
+<div class="sourceCode" id="cb442"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb442-1"><a href="longitudinal-cohort-study-designs.html#cb442-1"></a><span class="kw">ggforest</span>(coxph_modhospmitv2)</span></code></pre></div>
+<pre><code>## Warning in .get_data(model, data = data): The `data` argument is not provided.
+## Data will be extracted from model fit.</code></pre>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-225-1.png" width="672" /></p>
+<div class="sourceCode" id="cb444"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb444-1"><a href="longitudinal-cohort-study-designs.html#cb444-1"></a>coxph_modhospmitv2 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb444-2"><a href="longitudinal-cohort-study-designs.html#cb444-2"></a><span class="st">  </span><span class="kw">tidy</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb444-3"><a href="longitudinal-cohort-study-designs.html#cb444-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;cursmoke&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb444-4"><a href="longitudinal-cohort-study-designs.html#cb444-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb444-5"><a href="longitudinal-cohort-study-designs.html#cb444-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb444-6"><a href="longitudinal-cohort-study-designs.html#cb444-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb444-7"><a href="longitudinal-cohort-study-designs.html#cb444-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb444-8"><a href="longitudinal-cohort-study-designs.html#cb444-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb444-9"><a href="longitudinal-cohort-study-designs.html#cb444-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.63   1.32    2.01</code></pre>
+<p>We see that the hazard ratio comparing current smokers to current non-smokers is 1.62 with 95% CI: (1.32 - 2.00) indicating an elevated risk for MI hospitalization associated with current smoking.</p>
+<p>However, the key in that interpretation is the word ‘current’. In this model for each observation (conditional on sex and age) participants with smoking value of zero are treated equally regardless if they are never smokers or former smokers (the latter would have changed from <code>cursmoke=1</code> to <code>cursmoke=0</code> sometime during follow-up), so based on what we know about smoking history and health, we are probably not making use of all the information we have.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Construct an exposure variable representing the history of smoking (identify if someone is a current, former and never smoker at each period). Repeat the model from 2, using this exposure instead. What added information does this model give us?</strong></li>
+</ol>
+<p>We can construct a new time-varying exposure variable that allows us to distinguish between those that are never smokers and those who are currently non smoking, but used to at some point in the past. We’ve already identified those people that have had a change in current smoking status during follow-up above, which in theory would include people becoming smokers after starting as non-smokers, but also those who quit smoking and become former smokers.</p>
+<div class="sourceCode" id="cb446"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb446-1"><a href="longitudinal-cohort-study-designs.html#cb446-1"></a>fhstv&lt;-fhstv <span class="op">%&gt;%</span></span>
+<span id="cb446-2"><a href="longitudinal-cohort-study-designs.html#cb446-2"></a><span class="st">  </span><span class="kw">group_by</span>(randid) <span class="op">%&gt;%</span></span>
+<span id="cb446-3"><a href="longitudinal-cohort-study-designs.html#cb446-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">smoking=</span><span class="st">&#39;never&#39;</span>,</span>
+<span id="cb446-4"><a href="longitudinal-cohort-study-designs.html#cb446-4"></a>         <span class="dt">smoking=</span><span class="kw">ifelse</span>(cursmoke<span class="op">==</span><span class="dv">1</span>, <span class="st">&#39;current&#39;</span>, smoking),</span>
+<span id="cb446-5"><a href="longitudinal-cohort-study-designs.html#cb446-5"></a>         <span class="dt">smoking=</span><span class="kw">ifelse</span>(<span class="kw">is.na</span>(<span class="kw">lag</span>(cursmoke))<span class="op">==</span>F <span class="op">&amp;</span><span class="st"> </span><span class="kw">lag</span>(cursmoke)<span class="op">==</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>cursmoke<span class="op">==</span><span class="dv">0</span>, <span class="st">&#39;former&#39;</span>, smoking),</span>
+<span id="cb446-6"><a href="longitudinal-cohort-study-designs.html#cb446-6"></a>         <span class="dt">smoking=</span><span class="kw">ifelse</span>(<span class="kw">is.na</span>(<span class="kw">lag</span>(cursmoke))<span class="op">==</span>F <span class="op">&amp;</span><span class="st"> </span><span class="kw">lag</span>(smoking)<span class="op">==</span><span class="st">&#39;former&#39;</span> <span class="op">&amp;</span><span class="st"> </span>cursmoke<span class="op">==</span><span class="dv">0</span>, <span class="st">&#39;former&#39;</span>, smoking),</span>
+<span id="cb446-7"><a href="longitudinal-cohort-study-designs.html#cb446-7"></a>         <span class="dt">smoking=</span><span class="kw">factor</span>(smoking, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&#39;never&#39;</span>, <span class="st">&#39;current&#39;</span>, <span class="st">&#39;former&#39;</span>))) <span class="op">%&gt;%</span></span>
+<span id="cb446-8"><a href="longitudinal-cohort-study-designs.html#cb446-8"></a><span class="st">  </span><span class="kw">ungroup</span>()</span></code></pre></div>
+<p>Let’s repeat the Cox model for all-cause mortality from above using this exposure</p>
+<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb447-1"><a href="longitudinal-cohort-study-designs.html#cb447-1"></a>coxph_modtv2&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, time2, deathtv)<span class="op">~</span>smoking<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv)</span>
+<span id="cb447-2"><a href="longitudinal-cohort-study-designs.html#cb447-2"></a>coxph_modtv2 <span class="op">%&gt;%</span></span>
+<span id="cb447-3"><a href="longitudinal-cohort-study-designs.html#cb447-3"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 4 x 5
+##   term           estimate std.error statistic   p.value
+##   &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 smokingcurrent   0.349    0.0576       6.06 1.37e-  9
+## 2 smokingformer    0.0899   0.0836       1.08 2.82e-  1
+## 3 agetv            0.0702   0.00301     23.3  1.86e-120
+## 4 sex             -0.528    0.0524     -10.1  7.32e- 24</code></pre>
+<div class="sourceCode" id="cb449"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb449-1"><a href="longitudinal-cohort-study-designs.html#cb449-1"></a>coxph_modtv2 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb449-2"><a href="longitudinal-cohort-study-designs.html#cb449-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb449-3"><a href="longitudinal-cohort-study-designs.html#cb449-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb449-4"><a href="longitudinal-cohort-study-designs.html#cb449-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb449-5"><a href="longitudinal-cohort-study-designs.html#cb449-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb449-6"><a href="longitudinal-cohort-study-designs.html#cb449-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb449-7"><a href="longitudinal-cohort-study-designs.html#cb449-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb449-8"><a href="longitudinal-cohort-study-designs.html#cb449-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb449-9"><a href="longitudinal-cohort-study-designs.html#cb449-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term              hr low_hr high_hr
+##   &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent  1.42   1.27    1.59</code></pre>
+<div class="sourceCode" id="cb451"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb451-1"><a href="longitudinal-cohort-study-designs.html#cb451-1"></a>coxph_modtv2 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb451-2"><a href="longitudinal-cohort-study-designs.html#cb451-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb451-3"><a href="longitudinal-cohort-study-designs.html#cb451-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingformer&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb451-4"><a href="longitudinal-cohort-study-designs.html#cb451-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb451-5"><a href="longitudinal-cohort-study-designs.html#cb451-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb451-6"><a href="longitudinal-cohort-study-designs.html#cb451-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb451-7"><a href="longitudinal-cohort-study-designs.html#cb451-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb451-8"><a href="longitudinal-cohort-study-designs.html#cb451-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb451-9"><a href="longitudinal-cohort-study-designs.html#cb451-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term             hr low_hr high_hr
+##   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingformer  1.09  0.929    1.29</code></pre>
+<p>We see that the HR for current smokers vs non-smokers remains elevated, but the HR for former smokers is much smaller and the CI includes the null. It seems that the risk of mortality for former smokers compared to non-smokers is quite a bit lower than it is for current smokers.</p>
+<p>If we repeat for MI hospitalization (we should recreate our incident MI dataset to include the new smoking variable)</p>
+<div class="sourceCode" id="cb453"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb453-1"><a href="longitudinal-cohort-study-designs.html#cb453-1"></a>fhstv_incMI&lt;-<span class="st"> </span>fhstv <span class="op">%&gt;%</span></span>
+<span id="cb453-2"><a href="longitudinal-cohort-study-designs.html#cb453-2"></a><span class="st">  </span><span class="kw">filter</span>(prevmi<span class="op">==</span><span class="dv">0</span>) </span>
+<span id="cb453-3"><a href="longitudinal-cohort-study-designs.html#cb453-3"></a></span>
+<span id="cb453-4"><a href="longitudinal-cohort-study-designs.html#cb453-4"></a>coxph_modhospmitv3&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span>smoking<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb453-5"><a href="longitudinal-cohort-study-designs.html#cb453-5"></a>coxph_modhospmitv3 <span class="op">%&gt;%</span></span>
+<span id="cb453-6"><a href="longitudinal-cohort-study-designs.html#cb453-6"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 4 x 5
+##   term           estimate std.error statistic  p.value
+##   &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 smokingcurrent   0.471    0.113       4.16  3.24e- 5
+## 2 smokingformer   -0.0833   0.186      -0.448 6.54e- 1
+## 3 agetv            0.0425   0.00581     7.32  2.42e-13
+## 4 sex             -1.12     0.111     -10.1   6.65e-24</code></pre>
+<div class="sourceCode" id="cb455"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb455-1"><a href="longitudinal-cohort-study-designs.html#cb455-1"></a>coxph_modhospmitv3 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb455-2"><a href="longitudinal-cohort-study-designs.html#cb455-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb455-3"><a href="longitudinal-cohort-study-designs.html#cb455-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb455-4"><a href="longitudinal-cohort-study-designs.html#cb455-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb455-5"><a href="longitudinal-cohort-study-designs.html#cb455-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb455-6"><a href="longitudinal-cohort-study-designs.html#cb455-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb455-7"><a href="longitudinal-cohort-study-designs.html#cb455-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb455-8"><a href="longitudinal-cohort-study-designs.html#cb455-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb455-9"><a href="longitudinal-cohort-study-designs.html#cb455-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term              hr low_hr high_hr
+##   &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent  1.60   1.28    2.00</code></pre>
+<div class="sourceCode" id="cb457"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb457-1"><a href="longitudinal-cohort-study-designs.html#cb457-1"></a>coxph_modhospmitv3 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb457-2"><a href="longitudinal-cohort-study-designs.html#cb457-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb457-3"><a href="longitudinal-cohort-study-designs.html#cb457-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingformer&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb457-4"><a href="longitudinal-cohort-study-designs.html#cb457-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb457-5"><a href="longitudinal-cohort-study-designs.html#cb457-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb457-6"><a href="longitudinal-cohort-study-designs.html#cb457-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb457-7"><a href="longitudinal-cohort-study-designs.html#cb457-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb457-8"><a href="longitudinal-cohort-study-designs.html#cb457-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb457-9"><a href="longitudinal-cohort-study-designs.html#cb457-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term             hr low_hr high_hr
+##   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingformer 0.920  0.639    1.32</code></pre>
+<p>We can now see that the parameter for current smokers compared to never smokers is still elevated, with a HR=1., but the hazard associated with a comparison of former smokers compared to never smokers is actually below the null, but the CI is very wide and includes the null.</p>
 </div>
-<div id="recurrent-outcome" class="section level3">
-<h3><span class="header-section-number">7.4.2</span> Recurrent outcome</h3>
+<div id="multi-level-exposure" class="section level3">
+<h3><span class="header-section-number">7.4.2</span> Multi-level exposure</h3>
+<p>We’ve seen that changing smoking from a binary ‘yes/no’ variable to one with three categories representing some history in the exposure has added more information in our assessment for the potential effect of smoking on risk of MI. We actually have even more information on smoking, and specifically smoking intensity through the <code>cigpday</code> variable. We will incorporate this in our model, as well as look at some other continuous exposures with respect to risk of MI.</p>
+<p><em>Applied exercise: Survival analysis with time-varying values</em></p>
+<ol style="list-style-type: decimal">
+<li>Explore the role of smoking intensity on the hazard for MI hospitalizations, using the <code>cigpday</code> variable. What can we infer about the exposure-response?</li>
+<li>Explore the relationship between some of the other predictors in the dataset (specifically <code>bmi</code> and <code>sysbp</code>) and the hazard for MI hospitalization. Investigate whether the exposure response for these variable deviates from (log-)linearity using spline functions.</li>
+</ol>
+<p><strong>Explore the role of smoking intensity on the hazard for MI hospitalizations, using the <code>cigpday</code> variable. What can we infer about the exposure-response?</strong></p>
+<p>Let’s repeat our latest model for smoking and MI hospitalizations including the <code>cigpday</code> variable</p>
+<div class="sourceCode" id="cb459"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb459-1"><a href="longitudinal-cohort-study-designs.html#cb459-1"></a>coxph_modhospmitv4&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span>smoking<span class="op">+</span>cigpday<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb459-2"><a href="longitudinal-cohort-study-designs.html#cb459-2"></a>coxph_modhospmitv4 <span class="op">%&gt;%</span></span>
+<span id="cb459-3"><a href="longitudinal-cohort-study-designs.html#cb459-3"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 5 x 5
+##   term           estimate std.error statistic  p.value
+##   &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 smokingcurrent  0.264     0.166       1.59  1.12e- 1
+## 2 smokingformer  -0.0737    0.186      -0.396 6.92e- 1
+## 3 cigpday         0.00924   0.00579     1.60  1.10e- 1
+## 4 agetv           0.0420    0.00590     7.12  1.05e-12
+## 5 sex            -1.10      0.113      -9.65  4.79e-22</code></pre>
+<div class="sourceCode" id="cb461"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb461-1"><a href="longitudinal-cohort-study-designs.html#cb461-1"></a>coxph_modhospmitv4 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb461-2"><a href="longitudinal-cohort-study-designs.html#cb461-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb461-3"><a href="longitudinal-cohort-study-designs.html#cb461-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;cigpday&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb461-4"><a href="longitudinal-cohort-study-designs.html#cb461-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb461-5"><a href="longitudinal-cohort-study-designs.html#cb461-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb461-6"><a href="longitudinal-cohort-study-designs.html#cb461-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb461-7"><a href="longitudinal-cohort-study-designs.html#cb461-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb461-8"><a href="longitudinal-cohort-study-designs.html#cb461-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb461-9"><a href="longitudinal-cohort-study-designs.html#cb461-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term       hr low_hr high_hr
+##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cigpday  1.01  0.998    1.02</code></pre>
+<p>We know see that the parameter coefficient for current smoking is attenuated, while the continuous <code>cigpday</code> variable has a positive parameter coefficient (HR=1.009 with each cigarette per day increase in smoking intensity), but the CI includes the null)</p>
+<p>We can actually combine these effects, so that for the current smokers we only get an effect for continuous cigarettes per day, by transforming our smoking variable into dummy variables for each level:</p>
+<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb463-1"><a href="longitudinal-cohort-study-designs.html#cb463-1"></a>fhstv_incMI&lt;-fhstv_incMI <span class="op">%&gt;%</span></span>
+<span id="cb463-2"><a href="longitudinal-cohort-study-designs.html#cb463-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">smokingcurrent=</span><span class="kw">ifelse</span>(smoking<span class="op">==</span><span class="st">&#39;current&#39;</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb463-3"><a href="longitudinal-cohort-study-designs.html#cb463-3"></a>         <span class="dt">smokingformer=</span><span class="kw">ifelse</span>(smoking<span class="op">==</span><span class="st">&#39;former&#39;</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb463-4"><a href="longitudinal-cohort-study-designs.html#cb463-4"></a>         <span class="dt">smokingnever=</span><span class="kw">ifelse</span>(smoking<span class="op">==</span><span class="st">&#39;never&#39;</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb463-5"><a href="longitudinal-cohort-study-designs.html#cb463-5"></a></span>
+<span id="cb463-6"><a href="longitudinal-cohort-study-designs.html#cb463-6"></a>coxph_modhospmitv5&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span><span class="st"> </span>smokingformer <span class="op">+</span><span class="st"> </span>smokingcurrent<span class="op">:</span>cigpday<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI) <span class="co">###leaving the dummy variable for &#39;never&#39; out makes this the default comparison group</span></span>
+<span id="cb463-7"><a href="longitudinal-cohort-study-designs.html#cb463-7"></a>coxph_modhospmitv5 <span class="op">%&gt;%</span></span>
+<span id="cb463-8"><a href="longitudinal-cohort-study-designs.html#cb463-8"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 4 x 5
+##   term                   estimate std.error statistic  p.value
+##   &lt;chr&gt;                     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 smokingformer           -0.132    0.182      -0.729 4.66e- 1
+## 2 agetv                    0.0412   0.00587     7.01  2.43e-12
+## 3 sex                     -1.10     0.114      -9.66  4.65e-22
+## 4 smokingcurrent:cigpday   0.0159   0.00385     4.12  3.71e- 5</code></pre>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="longitudinal-cohort-study-designs.html#cb465-1"></a>coxph_modhospmitv5 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb465-2"><a href="longitudinal-cohort-study-designs.html#cb465-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb465-3"><a href="longitudinal-cohort-study-designs.html#cb465-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent:cigpday&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb465-4"><a href="longitudinal-cohort-study-designs.html#cb465-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb465-5"><a href="longitudinal-cohort-study-designs.html#cb465-5"></a>         <span class="dt">low_ci =</span> estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb465-6"><a href="longitudinal-cohort-study-designs.html#cb465-6"></a>         <span class="dt">high_ci =</span> estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error, </span>
+<span id="cb465-7"><a href="longitudinal-cohort-study-designs.html#cb465-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb465-8"><a href="longitudinal-cohort-study-designs.html#cb465-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb465-9"><a href="longitudinal-cohort-study-designs.html#cb465-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term                      hr low_hr high_hr
+##   &lt;chr&gt;                  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent:cigpday  1.02   1.01    1.02</code></pre>
+<p>The HR for each additional cigarette per day compared to never smokers is now 1.016 (95% CI: 1.008 - 1.023). If we want to estimate the effect for a smoker who smokers a pack a day then:</p>
+<div class="sourceCode" id="cb467"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb467-1"><a href="longitudinal-cohort-study-designs.html#cb467-1"></a>coxph_modhospmitv5 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb467-2"><a href="longitudinal-cohort-study-designs.html#cb467-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb467-3"><a href="longitudinal-cohort-study-designs.html#cb467-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent:cigpday&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb467-4"><a href="longitudinal-cohort-study-designs.html#cb467-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(<span class="dv">20</span><span class="op">*</span>estimate),</span>
+<span id="cb467-5"><a href="longitudinal-cohort-study-designs.html#cb467-5"></a>         <span class="dt">low_ci =</span> <span class="dv">20</span><span class="op">*</span>(estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb467-6"><a href="longitudinal-cohort-study-designs.html#cb467-6"></a>         <span class="dt">high_ci =</span> <span class="dv">20</span><span class="op">*</span>(estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb467-7"><a href="longitudinal-cohort-study-designs.html#cb467-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb467-8"><a href="longitudinal-cohort-study-designs.html#cb467-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb467-9"><a href="longitudinal-cohort-study-designs.html#cb467-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term                      hr low_hr high_hr
+##   &lt;chr&gt;                  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent:cigpday  1.37   1.18    1.60</code></pre>
+<p>The model we just fitted however assumes a log-linear exposure-response between smoking intensity and hazard for MI hospitalization. We can exmplore different categories of smoking intesity, by creating a categorical variable, representing different smoking categories.</p>
+<div class="sourceCode" id="cb469"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb469-1"><a href="longitudinal-cohort-study-designs.html#cb469-1"></a>fhstv_incMI&lt;-<span class="st"> </span>fhstv_incMI <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb469-2"><a href="longitudinal-cohort-study-designs.html#cb469-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">smokingint=</span><span class="kw">cut</span>(cigpday, <span class="dt">breaks=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="fl">0.1</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="ot">Inf</span>), <span class="dt">labels=</span><span class="kw">c</span>( <span class="st">&#39;None&#39;</span>, <span class="st">&#39;Light&#39;</span>, <span class="st">&#39;Moderate&#39;</span>, <span class="st">&#39;Heavy&#39;</span>, <span class="st">&#39;Very Heavy&#39;</span>)))</span>
+<span id="cb469-3"><a href="longitudinal-cohort-study-designs.html#cb469-3"></a></span>
+<span id="cb469-4"><a href="longitudinal-cohort-study-designs.html#cb469-4"></a></span>
+<span id="cb469-5"><a href="longitudinal-cohort-study-designs.html#cb469-5"></a>coxph_modhospmitv6&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span><span class="st"> </span>smokingformer <span class="op">+</span><span class="st"> </span>smokingcurrent<span class="op">:</span>smokingint<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb469-6"><a href="longitudinal-cohort-study-designs.html#cb469-6"></a>coxph_modhospmitv6 <span class="op">%&gt;%</span></span>
+<span id="cb469-7"><a href="longitudinal-cohort-study-designs.html#cb469-7"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 8 x 5
+##   term                                estimate std.error statistic   p.value
+##   &lt;chr&gt;                                  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 smokingformer                        -0.0717   0.186      -0.385  7.00e- 1
+## 2 agetv                                 0.0429   0.00591     7.25   4.15e-13
+## 3 sex                                  -1.08     0.113      -9.54   1.39e-21
+## 4 smokingcurrent:smokingintNone        NA        0          NA     NA       
+## 5 smokingcurrent:smokingintLight       -0.247    0.313      -0.791  4.29e- 1
+## 6 smokingcurrent:smokingintModerate     0.0593   0.244       0.243  8.08e- 1
+## 7 smokingcurrent:smokingintHeavy        0.647    0.134       4.84   1.27e- 6
+## 8 smokingcurrent:smokingintVery Heavy   0.543    0.159       3.41   6.46e- 4</code></pre>
+<div class="sourceCode" id="cb471"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb471-1"><a href="longitudinal-cohort-study-designs.html#cb471-1"></a>coxph_modhospmitv6 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb471-2"><a href="longitudinal-cohort-study-designs.html#cb471-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb471-3"><a href="longitudinal-cohort-study-designs.html#cb471-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent:cigpday&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb471-4"><a href="longitudinal-cohort-study-designs.html#cb471-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(<span class="dv">20</span><span class="op">*</span>estimate),</span>
+<span id="cb471-5"><a href="longitudinal-cohort-study-designs.html#cb471-5"></a>         <span class="dt">low_ci =</span> <span class="dv">20</span><span class="op">*</span>(estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb471-6"><a href="longitudinal-cohort-study-designs.html#cb471-6"></a>         <span class="dt">high_ci =</span> <span class="dv">20</span><span class="op">*</span>(estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb471-7"><a href="longitudinal-cohort-study-designs.html#cb471-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb471-8"><a href="longitudinal-cohort-study-designs.html#cb471-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb471-9"><a href="longitudinal-cohort-study-designs.html#cb471-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 0 x 4
+## # … with 4 variables: term &lt;chr&gt;, hr &lt;dbl&gt;, low_hr &lt;dbl&gt;, high_hr &lt;dbl&gt;</code></pre>
+<p>We see that the category for none did not return a paramters, which should be expected as we don’t expect any current smokers to be smoking zero cigarettes. We can extract the rest of the parameters and see what the HR is for each category compared to non-smokers.</p>
+<div class="sourceCode" id="cb473"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb473-1"><a href="longitudinal-cohort-study-designs.html#cb473-1"></a>coxph_modhospmitv6 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb473-2"><a href="longitudinal-cohort-study-designs.html#cb473-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb473-3"><a href="longitudinal-cohort-study-designs.html#cb473-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent:smokingintLight&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb473-4"><a href="longitudinal-cohort-study-designs.html#cb473-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb473-5"><a href="longitudinal-cohort-study-designs.html#cb473-5"></a>         <span class="dt">low_ci =</span> (estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb473-6"><a href="longitudinal-cohort-study-designs.html#cb473-6"></a>         <span class="dt">high_ci =</span> (estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb473-7"><a href="longitudinal-cohort-study-designs.html#cb473-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb473-8"><a href="longitudinal-cohort-study-designs.html#cb473-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb473-9"><a href="longitudinal-cohort-study-designs.html#cb473-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term                              hr low_hr high_hr
+##   &lt;chr&gt;                          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent:smokingintLight 0.781  0.423    1.44</code></pre>
+<div class="sourceCode" id="cb475"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb475-1"><a href="longitudinal-cohort-study-designs.html#cb475-1"></a>coxph_modhospmitv6 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb475-2"><a href="longitudinal-cohort-study-designs.html#cb475-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb475-3"><a href="longitudinal-cohort-study-designs.html#cb475-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent:smokingintModerate&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb475-4"><a href="longitudinal-cohort-study-designs.html#cb475-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb475-5"><a href="longitudinal-cohort-study-designs.html#cb475-5"></a>         <span class="dt">low_ci =</span> (estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb475-6"><a href="longitudinal-cohort-study-designs.html#cb475-6"></a>         <span class="dt">high_ci =</span> (estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb475-7"><a href="longitudinal-cohort-study-designs.html#cb475-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb475-8"><a href="longitudinal-cohort-study-designs.html#cb475-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb475-9"><a href="longitudinal-cohort-study-designs.html#cb475-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term                                 hr low_hr high_hr
+##   &lt;chr&gt;                             &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent:smokingintModerate  1.06  0.658    1.71</code></pre>
+<div class="sourceCode" id="cb477"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb477-1"><a href="longitudinal-cohort-study-designs.html#cb477-1"></a>coxph_modhospmitv6 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb477-2"><a href="longitudinal-cohort-study-designs.html#cb477-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb477-3"><a href="longitudinal-cohort-study-designs.html#cb477-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent:smokingintHeavy&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb477-4"><a href="longitudinal-cohort-study-designs.html#cb477-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb477-5"><a href="longitudinal-cohort-study-designs.html#cb477-5"></a>         <span class="dt">low_ci =</span> (estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb477-6"><a href="longitudinal-cohort-study-designs.html#cb477-6"></a>         <span class="dt">high_ci =</span> (estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb477-7"><a href="longitudinal-cohort-study-designs.html#cb477-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb477-8"><a href="longitudinal-cohort-study-designs.html#cb477-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb477-9"><a href="longitudinal-cohort-study-designs.html#cb477-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term                              hr low_hr high_hr
+##   &lt;chr&gt;                          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent:smokingintHeavy  1.91   1.47    2.48</code></pre>
+<div class="sourceCode" id="cb479"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb479-1"><a href="longitudinal-cohort-study-designs.html#cb479-1"></a>coxph_modhospmitv6 <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb479-2"><a href="longitudinal-cohort-study-designs.html#cb479-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb479-3"><a href="longitudinal-cohort-study-designs.html#cb479-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent:smokingintVery Heavy&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb479-4"><a href="longitudinal-cohort-study-designs.html#cb479-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb479-5"><a href="longitudinal-cohort-study-designs.html#cb479-5"></a>         <span class="dt">low_ci =</span> (estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb479-6"><a href="longitudinal-cohort-study-designs.html#cb479-6"></a>         <span class="dt">high_ci =</span> (estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb479-7"><a href="longitudinal-cohort-study-designs.html#cb479-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb479-8"><a href="longitudinal-cohort-study-designs.html#cb479-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb479-9"><a href="longitudinal-cohort-study-designs.html#cb479-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term                                   hr low_hr high_hr
+##   &lt;chr&gt;                               &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent:smokingintVery Heavy  1.72   1.26    2.35</code></pre>
+<p>We see that only heavy and very heavy smokers have elevated HRs compared to non-smokers, with the estimates for light and moderate yielding CIs including the null.</p>
+<p><strong>Explore the relationship between some of the other predictors in the dataset (specifically <code>bmi</code> and <code>sysbp</code>) and the hazard for MI hospitalization. Investigate whether the exposure response for these variable deviates from (log-)linearity using spline functions.</strong></p>
+<p>We will now turn our attention to some other predictors for cardiovascular disease, namely BMI (<code>bmi</code> in our dataset) and systolic blood pressure (<code>sysbp</code> in out dataset). Below we fit a Cox model for BMI adjusting for age and sex. BMI is a considered a fairly flawed proxy for obesity and/or healthy metabolic profiles, however unlike more accurate or informative exposure measures it is very easy to assess and can still be quite informative.</p>
+<div class="sourceCode" id="cb481"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb481-1"><a href="longitudinal-cohort-study-designs.html#cb481-1"></a>coxph_modhospmitvBMI&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span><span class="st"> </span>bmi<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb481-2"><a href="longitudinal-cohort-study-designs.html#cb481-2"></a>coxph_modhospmitvBMI <span class="op">%&gt;%</span></span>
+<span id="cb481-3"><a href="longitudinal-cohort-study-designs.html#cb481-3"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 5
+##   term  estimate std.error statistic  p.value
+##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 bmi     0.0482   0.0122       3.95 7.74e- 5
+## 2 agetv   0.0364   0.00566      6.43 1.27e-10
+## 3 sex    -1.16     0.109      -10.6  1.75e-26</code></pre>
+<div class="sourceCode" id="cb483"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb483-1"><a href="longitudinal-cohort-study-designs.html#cb483-1"></a>coxph_modhospmitvBMI <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb483-2"><a href="longitudinal-cohort-study-designs.html#cb483-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb483-3"><a href="longitudinal-cohort-study-designs.html#cb483-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;bmi&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb483-4"><a href="longitudinal-cohort-study-designs.html#cb483-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb483-5"><a href="longitudinal-cohort-study-designs.html#cb483-5"></a>         <span class="dt">low_ci =</span> (estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb483-6"><a href="longitudinal-cohort-study-designs.html#cb483-6"></a>         <span class="dt">high_ci =</span> (estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb483-7"><a href="longitudinal-cohort-study-designs.html#cb483-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb483-8"><a href="longitudinal-cohort-study-designs.html#cb483-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb483-9"><a href="longitudinal-cohort-study-designs.html#cb483-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term     hr low_hr high_hr
+##   &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 bmi    1.05   1.02    1.07</code></pre>
+<p>We see that there is an elevated HR for each unit increase in BMI (HR=1.05, 95% CI: 1.02 - 1.07). In order to explore whether the exposure-response relationship deviates from (log-)linearity, we will repeat the same model using a spline term for <code>bmi</code>.</p>
+<div class="sourceCode" id="cb485"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb485-1"><a href="longitudinal-cohort-study-designs.html#cb485-1"></a><span class="kw">library</span>(splines)</span>
+<span id="cb485-2"><a href="longitudinal-cohort-study-designs.html#cb485-2"></a>coxph_modhospmitvBMIsp&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span><span class="st"> </span><span class="kw">ns</span>(bmi, <span class="dt">df=</span><span class="dv">3</span>)<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb485-3"><a href="longitudinal-cohort-study-designs.html#cb485-3"></a>coxph_modhospmitvBMIsp <span class="op">%&gt;%</span></span>
+<span id="cb485-4"><a href="longitudinal-cohort-study-designs.html#cb485-4"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 5 x 5
+##   term             estimate std.error statistic  p.value
+##   &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 ns(bmi, df = 3)1   1.05     0.378       2.79  5.30e- 3
+## 2 ns(bmi, df = 3)2   0.969    1.52        0.638 5.23e- 1
+## 3 ns(bmi, df = 3)3   0.823    1.36        0.606 5.45e- 1
+## 4 agetv              0.0364   0.00566     6.43  1.32e-10
+## 5 sex               -1.15     0.111     -10.4   4.12e-25</code></pre>
+<p>We can better summarize the relationship between BMI and the outcome from the above model by plotting it similar to our approach in the time-series example. We could use similar code as in 4.2, however the <code>termplot</code> functions simplifies some of the steps for us</p>
+<div class="sourceCode" id="cb487"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb487-1"><a href="longitudinal-cohort-study-designs.html#cb487-1"></a>predbmi&lt;-<span class="st"> </span><span class="kw">termplot</span>(coxph_modhospmitvBMIsp, <span class="dt">se=</span><span class="ot">TRUE</span>, <span class="dt">plot=</span><span class="ot">FALSE</span>)<span class="op">$</span>bmi</span>
+<span id="cb487-2"><a href="longitudinal-cohort-study-designs.html#cb487-2"></a>predbmi <span class="op">%&gt;%</span></span>
+<span id="cb487-3"><a href="longitudinal-cohort-study-designs.html#cb487-3"></a><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">exp</span>(y))) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb487-4"><a href="longitudinal-cohort-study-designs.html#cb487-4"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb487-5"><a href="longitudinal-cohort-study-designs.html#cb487-5"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;BMI&quot;</span>, </span>
+<span id="cb487-6"><a href="longitudinal-cohort-study-designs.html#cb487-6"></a>       <span class="dt">y =</span> <span class="st">&quot;Hazard Ratio&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb487-7"><a href="longitudinal-cohort-study-designs.html#cb487-7"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="fl">1.0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">linetype =</span> <span class="dv">2</span>)  </span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-237-1.png" width="672" /></p>
+<p>We see that the relationship is mostly linear between values of about 25 and 40, but deviates from linearity at the lower and higher ends of the range in BMI. We would like to re-center this so that we are looking around a BMI value that is of <strong>lowest</strong> risk. The ‘normal’ range of BMI is 20-25, so let’s center out graph around 22.5. We will also add confidence bands to our plot.</p>
+<div class="sourceCode" id="cb488"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb488-1"><a href="longitudinal-cohort-study-designs.html#cb488-1"></a>predbmi&lt;-<span class="st"> </span>predbmi <span class="op">%&gt;%</span></span>
+<span id="cb488-2"><a href="longitudinal-cohort-study-designs.html#cb488-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">center=</span><span class="kw">with</span>(predbmi, y[x<span class="op">==</span><span class="fl">22.5</span>]),</span>
+<span id="cb488-3"><a href="longitudinal-cohort-study-designs.html#cb488-3"></a>         <span class="dt">ylow=</span>predbmi<span class="op">$</span>y <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span><span class="op">*</span>predbmi<span class="op">$</span>se,</span>
+<span id="cb488-4"><a href="longitudinal-cohort-study-designs.html#cb488-4"></a>         <span class="dt">yhigh=</span>predbmi<span class="op">$</span>y <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span><span class="op">*</span>predbmi<span class="op">$</span>se)</span>
+<span id="cb488-5"><a href="longitudinal-cohort-study-designs.html#cb488-5"></a></span>
+<span id="cb488-6"><a href="longitudinal-cohort-study-designs.html#cb488-6"></a>predbmi <span class="op">%&gt;%</span></span>
+<span id="cb488-7"><a href="longitudinal-cohort-study-designs.html#cb488-7"></a><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">exp</span>(y<span class="op">-</span>center))) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb488-8"><a href="longitudinal-cohort-study-designs.html#cb488-8"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb488-9"><a href="longitudinal-cohort-study-designs.html#cb488-9"></a><span class="st">  </span></span>
+<span id="cb488-10"><a href="longitudinal-cohort-study-designs.html#cb488-10"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;BMI&quot;</span>, </span>
+<span id="cb488-11"><a href="longitudinal-cohort-study-designs.html#cb488-11"></a>       <span class="dt">y =</span> <span class="st">&quot;Hazard Ratio&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb488-12"><a href="longitudinal-cohort-study-designs.html#cb488-12"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="fl">1.0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">linetype =</span> <span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb488-13"><a href="longitudinal-cohort-study-designs.html#cb488-13"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> <span class="kw">exp</span>(ylow<span class="op">-</span>center), <span class="dt">ymax =</span> <span class="kw">exp</span>(yhigh<span class="op">-</span>center)), </span>
+<span id="cb488-14"><a href="longitudinal-cohort-study-designs.html#cb488-14"></a>              <span class="dt">alpha=</span><span class="fl">0.1</span>, </span>
+<span id="cb488-15"><a href="longitudinal-cohort-study-designs.html#cb488-15"></a>              <span class="dt">linetype=</span><span class="st">&quot;dashed&quot;</span>,</span>
+<span id="cb488-16"><a href="longitudinal-cohort-study-designs.html#cb488-16"></a>              <span class="dt">color=</span><span class="st">&quot;grey&quot;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-238-1.png" width="672" />
+We see that the width of the condfidence interval is very large and makes reading the plot quite difficult. We can partially remedy this, by log-transforming the y-axis.</p>
+<div class="sourceCode" id="cb489"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb489-1"><a href="longitudinal-cohort-study-designs.html#cb489-1"></a>predbmi <span class="op">%&gt;%</span></span>
+<span id="cb489-2"><a href="longitudinal-cohort-study-designs.html#cb489-2"></a><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">exp</span>(y<span class="op">-</span>center))) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb489-3"><a href="longitudinal-cohort-study-designs.html#cb489-3"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb489-4"><a href="longitudinal-cohort-study-designs.html#cb489-4"></a><span class="st">  </span></span>
+<span id="cb489-5"><a href="longitudinal-cohort-study-designs.html#cb489-5"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;BMI&quot;</span>, </span>
+<span id="cb489-6"><a href="longitudinal-cohort-study-designs.html#cb489-6"></a>       <span class="dt">y =</span> <span class="st">&quot;Hazard Ratio&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb489-7"><a href="longitudinal-cohort-study-designs.html#cb489-7"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="fl">1.0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">linetype =</span> <span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb489-8"><a href="longitudinal-cohort-study-designs.html#cb489-8"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> <span class="kw">exp</span>(ylow<span class="op">-</span>center), <span class="dt">ymax =</span> <span class="kw">exp</span>(yhigh<span class="op">-</span>center)), </span>
+<span id="cb489-9"><a href="longitudinal-cohort-study-designs.html#cb489-9"></a>              <span class="dt">alpha=</span><span class="fl">0.1</span>, </span>
+<span id="cb489-10"><a href="longitudinal-cohort-study-designs.html#cb489-10"></a>              <span class="dt">linetype=</span><span class="st">&quot;dashed&quot;</span>,</span>
+<span id="cb489-11"><a href="longitudinal-cohort-study-designs.html#cb489-11"></a>              <span class="dt">color=</span><span class="st">&quot;grey&quot;</span>)<span class="op">+</span><span class="kw">scale_y_continuous</span>(<span class="dt">trans=</span><span class="st">&#39;log2&#39;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-239-1.png" width="672" />
+We now see that the HR is elevated as BMI increases until about BMI=40 with the effect estimate plateauing at higher values. The CI bands indicate a significant effect between BMI 25 and 42-43. Let’s repeat the model, but now add a term for <code>sysbp</code>.</p>
+<div class="sourceCode" id="cb490"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb490-1"><a href="longitudinal-cohort-study-designs.html#cb490-1"></a>coxph_modhospmitvBMIBP&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span><span class="st"> </span><span class="kw">ns</span>(bmi, <span class="dt">df=</span><span class="dv">3</span>)<span class="op">+</span>sysbp<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb490-2"><a href="longitudinal-cohort-study-designs.html#cb490-2"></a>coxph_modhospmitvBMIBP <span class="op">%&gt;%</span></span>
+<span id="cb490-3"><a href="longitudinal-cohort-study-designs.html#cb490-3"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 5
+##   term             estimate std.error statistic  p.value
+##   &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 ns(bmi, df = 3)1   0.656    0.381       1.72  8.55e- 2
+## 2 ns(bmi, df = 3)2  -0.373    1.53       -0.244 8.07e- 1
+## 3 ns(bmi, df = 3)3  -0.710    1.38       -0.512 6.08e- 1
+## 4 sysbp              0.0189   0.00215     8.80  1.39e-18
+## 5 agetv              0.0220   0.00596     3.68  2.30e- 4
+## 6 sex               -1.24     0.112     -11.0   3.46e-28</code></pre>
+<div class="sourceCode" id="cb492"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb492-1"><a href="longitudinal-cohort-study-designs.html#cb492-1"></a>coxph_modhospmitvBMIBP <span class="op">%&gt;%</span></span>
+<span id="cb492-2"><a href="longitudinal-cohort-study-designs.html#cb492-2"></a><span class="st">    </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb492-3"><a href="longitudinal-cohort-study-designs.html#cb492-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;sysbp&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb492-4"><a href="longitudinal-cohort-study-designs.html#cb492-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb492-5"><a href="longitudinal-cohort-study-designs.html#cb492-5"></a>         <span class="dt">low_ci =</span> (estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb492-6"><a href="longitudinal-cohort-study-designs.html#cb492-6"></a>         <span class="dt">high_ci =</span> (estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb492-7"><a href="longitudinal-cohort-study-designs.html#cb492-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb492-8"><a href="longitudinal-cohort-study-designs.html#cb492-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb492-9"><a href="longitudinal-cohort-study-designs.html#cb492-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term     hr low_hr high_hr
+##   &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 sysbp  1.02   1.01    1.02</code></pre>
+<p>We see that there is an a HR of 1.019 (95% CI: 1.015 - 1.023) for each unit increase in systolic blood pressure. We can further explore this relationship by trying a spline term for blood pressure as well.</p>
+<div class="sourceCode" id="cb494"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb494-1"><a href="longitudinal-cohort-study-designs.html#cb494-1"></a>coxph_modhospmitvBMIBPsp&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span><span class="st"> </span><span class="kw">ns</span>(bmi, <span class="dt">df=</span><span class="dv">3</span>)<span class="op">+</span><span class="kw">ns</span>(sysbp, <span class="dt">df=</span><span class="dv">3</span>)<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb494-2"><a href="longitudinal-cohort-study-designs.html#cb494-2"></a>coxph_modhospmitvBMIBPsp <span class="op">%&gt;%</span></span>
+<span id="cb494-3"><a href="longitudinal-cohort-study-designs.html#cb494-3"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 8 x 5
+##   term               estimate std.error statistic  p.value
+##   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 ns(bmi, df = 3)1     0.609    0.384       1.58  1.13e- 1
+## 2 ns(bmi, df = 3)2    -0.387    1.53       -0.253 8.00e- 1
+## 3 ns(bmi, df = 3)3    -0.633    1.39       -0.456 6.49e- 1
+## 4 ns(sysbp, df = 3)1   2.05     0.414       4.95  7.35e- 7
+## 5 ns(sysbp, df = 3)2   4.79     1.62        2.95  3.15e- 3
+## 6 ns(sysbp, df = 3)3   3.81     1.04        3.65  2.60e- 4
+## 7 agetv                0.0217   0.00597     3.64  2.72e- 4
+## 8 sex                 -1.23     0.113     -10.9   7.10e-28</code></pre>
+<div class="sourceCode" id="cb496"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb496-1"><a href="longitudinal-cohort-study-designs.html#cb496-1"></a><span class="co">####We will go ahead and plot this as well using 110 as the center</span></span>
+<span id="cb496-2"><a href="longitudinal-cohort-study-designs.html#cb496-2"></a>predsysbp&lt;-<span class="st"> </span><span class="kw">termplot</span>(coxph_modhospmitvBMIBPsp, <span class="dt">se=</span><span class="ot">TRUE</span>, <span class="dt">plot=</span><span class="ot">FALSE</span>)<span class="op">$</span>sysbp </span>
+<span id="cb496-3"><a href="longitudinal-cohort-study-designs.html#cb496-3"></a>predsysbp&lt;-<span class="st"> </span>predsysbp <span class="op">%&gt;%</span><span class="st">  </span></span>
+<span id="cb496-4"><a href="longitudinal-cohort-study-designs.html#cb496-4"></a><span class="kw">mutate</span>(<span class="dt">center=</span><span class="kw">with</span>(predsysbp, y[x<span class="op">==</span><span class="dv">110</span>]),</span>
+<span id="cb496-5"><a href="longitudinal-cohort-study-designs.html#cb496-5"></a>         <span class="dt">ylow=</span>predsysbp<span class="op">$</span>y <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span><span class="op">*</span>predsysbp<span class="op">$</span>se,</span>
+<span id="cb496-6"><a href="longitudinal-cohort-study-designs.html#cb496-6"></a>         <span class="dt">yhigh=</span>predsysbp<span class="op">$</span>y <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span><span class="op">*</span>predsysbp<span class="op">$</span>se)</span>
+<span id="cb496-7"><a href="longitudinal-cohort-study-designs.html#cb496-7"></a></span>
+<span id="cb496-8"><a href="longitudinal-cohort-study-designs.html#cb496-8"></a>predsysbp <span class="op">%&gt;%</span></span>
+<span id="cb496-9"><a href="longitudinal-cohort-study-designs.html#cb496-9"></a><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">exp</span>(y<span class="op">-</span>center))) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb496-10"><a href="longitudinal-cohort-study-designs.html#cb496-10"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb496-11"><a href="longitudinal-cohort-study-designs.html#cb496-11"></a><span class="st">  </span></span>
+<span id="cb496-12"><a href="longitudinal-cohort-study-designs.html#cb496-12"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Systolic Blood Pressure&quot;</span>, </span>
+<span id="cb496-13"><a href="longitudinal-cohort-study-designs.html#cb496-13"></a>       <span class="dt">y =</span> <span class="st">&quot;Hazard Ratio&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb496-14"><a href="longitudinal-cohort-study-designs.html#cb496-14"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="fl">1.0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">linetype =</span> <span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb496-15"><a href="longitudinal-cohort-study-designs.html#cb496-15"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> <span class="kw">exp</span>(ylow<span class="op">-</span>center), <span class="dt">ymax =</span> <span class="kw">exp</span>(yhigh<span class="op">-</span>center)), </span>
+<span id="cb496-16"><a href="longitudinal-cohort-study-designs.html#cb496-16"></a>              <span class="dt">alpha=</span><span class="fl">0.1</span>, </span>
+<span id="cb496-17"><a href="longitudinal-cohort-study-designs.html#cb496-17"></a>              <span class="dt">linetype=</span><span class="st">&quot;dashed&quot;</span>,</span>
+<span id="cb496-18"><a href="longitudinal-cohort-study-designs.html#cb496-18"></a>              <span class="dt">color=</span><span class="st">&quot;grey&quot;</span>)<span class="op">+</span><span class="kw">scale_y_continuous</span>(<span class="dt">trans=</span><span class="st">&#39;log2&#39;</span>)</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-241-1.png" width="672" />
+We see an almost monotonic increase in the HR (keep in mind the log-transformation on the y-axis) as blood pressure increases with the effect being significant for the range of exposure above ~110.</p>
+<p>Both BMI and systolic blood pressure appear significant predictors for the hazard of MI hospitalization. YOu can explore other predicotrs in the dataset (including blood glucose, cholesterol, etc) but keep in mind of the missingness in some of these variables and how might these affect your results.</p>
 </div>
 <div id="time-varying-coeffificents" class="section level3">
 <h3><span class="header-section-number">7.4.3</span> Time-varying coeffificents</h3>
-</div>
-<div id="using-survey-results" class="section level3">
-<h3><span class="header-section-number">7.4.4</span> Using survey results</h3>
-<p>[e.g., NHANES]</p>
+<p>We’ve already shown how some of the covariate values in the dataset change over time. Now consider the following model including smoking, and some of the other predictors from above.</p>
+<div class="sourceCode" id="cb497"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb497-1"><a href="longitudinal-cohort-study-designs.html#cb497-1"></a>coxph_modhospmitvall&lt;-<span class="kw">coxph</span>(<span class="kw">Surv</span>(time, timemi2, hospmitv)<span class="op">~</span><span class="st"> </span>smoking <span class="op">+</span><span class="st"> </span><span class="kw">ns</span>(bmi, <span class="dt">df=</span><span class="dv">3</span>)<span class="op">+</span><span class="kw">ns</span>(sysbp, <span class="dt">df=</span><span class="dv">3</span>)<span class="op">+</span>agetv<span class="op">+</span>sex, <span class="dt">data=</span>fhstv_incMI)</span>
+<span id="cb497-2"><a href="longitudinal-cohort-study-designs.html#cb497-2"></a>coxph_modhospmitvall <span class="op">%&gt;%</span></span>
+<span id="cb497-3"><a href="longitudinal-cohort-study-designs.html#cb497-3"></a><span class="st">  </span><span class="kw">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 10 x 5
+##    term               estimate std.error statistic  p.value
+##    &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 smokingcurrent       0.573    0.116       4.94  7.75e- 7
+##  2 smokingformer       -0.0771   0.187      -0.413 6.79e- 1
+##  3 ns(bmi, df = 3)1     0.938    0.391       2.40  1.64e- 2
+##  4 ns(bmi, df = 3)2     0.227    1.57        0.145 8.85e- 1
+##  5 ns(bmi, df = 3)3    -0.399    1.43       -0.278 7.81e- 1
+##  6 ns(sysbp, df = 3)1   2.08     0.414       5.02  5.22e- 7
+##  7 ns(sysbp, df = 3)2   4.89     1.63        3.01  2.62e- 3
+##  8 ns(sysbp, df = 3)3   3.81     1.05        3.63  2.85e- 4
+##  9 agetv                0.0293   0.00617     4.75  2.06e- 6
+## 10 sex                 -1.15     0.115     -10.0   9.98e-24</code></pre>
+<div class="sourceCode" id="cb499"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb499-1"><a href="longitudinal-cohort-study-designs.html#cb499-1"></a>coxph_modhospmitvall <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb499-2"><a href="longitudinal-cohort-study-designs.html#cb499-2"></a><span class="st">  </span><span class="kw">tidy</span>()<span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb499-3"><a href="longitudinal-cohort-study-designs.html#cb499-3"></a><span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &#39;smokingcurrent&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb499-4"><a href="longitudinal-cohort-study-designs.html#cb499-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">hr =</span> <span class="kw">exp</span>(estimate),</span>
+<span id="cb499-5"><a href="longitudinal-cohort-study-designs.html#cb499-5"></a>         <span class="dt">low_ci =</span> (estimate <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb499-6"><a href="longitudinal-cohort-study-designs.html#cb499-6"></a>         <span class="dt">high_ci =</span> (estimate <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>std.error), </span>
+<span id="cb499-7"><a href="longitudinal-cohort-study-designs.html#cb499-7"></a>         <span class="dt">low_hr =</span> <span class="kw">exp</span>(low_ci), </span>
+<span id="cb499-8"><a href="longitudinal-cohort-study-designs.html#cb499-8"></a>         <span class="dt">high_hr =</span> <span class="kw">exp</span>(high_ci)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb499-9"><a href="longitudinal-cohort-study-designs.html#cb499-9"></a><span class="st">  </span><span class="kw">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term              hr low_hr high_hr
+##   &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 smokingcurrent  1.77   1.41    2.23</code></pre>
+<p>The HR for current smoking appears more elevated than in our simple models with only age and sex adjusted for. What is a possible explanation for this?</p>
+<p>Keeping in mind the dynamic nature of some of these variable over time, what are some other potential explanations for these relationships? How does that affect our potential interpretation of the parameter coefficients for these variables? We will revisit this issue in chapter 8 of the book.</p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+### Using survey data (e.g. NHANES)
+=======
+For this chapter, we’ve used data from the Framingham study as an example. Another very famous public health study in the United States is the National Health and Nutrition Examination study, more commonly known by its acronym of NHANES. We’ll wrap up this chapter by talking a bit about this other famous study, a branch of it that includes longitudinal data appropriate for a survival analysis like that covered in this chapter for Framingham, and how some quirks of the NHANES study design make the analysis of its data a bit more complex.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; adfcbeb91b50102b3398a9ade88a1a9d52dff607</p>
+<p>Just as the original Framingham study has evolved into a whole set of related studies, NHANES also began with one study and has evolved into a collection of studies. All are focused on nuitrition and health among Americans, and an enormous body of epidemiological literature has resulted from the collection of studies, covering a wide range of health outcomes and risk factors.</p>
+<p>The core of the NHANES study collection is a survey study. These surveys are currently run continuously (every year), with around 5,000 participants a year. The surveys collect individual-level data (rather than the county- or city-level aggregated data we used for time series studies) that allow a cross-sectional view of associations between different risk factors and different measures of health.</p>
+<p>These survey data therefore only offer a snapshot in time (the time of the survey). However, the NHANES project has supplemented the survey with some longitudinal data that can be used to study the time to events of interest. Following NHANES I, which was the first run of the survey, the study’s researchers created the NHANES Epidemiologic Followup Study (NHEFS). They found as many people as they could who took the original survey (NHANES I) as adults (between ages 25 and 74) and began tracking their time to several health inputs, including mortality, and also collected updated information on risk factors and health status. The cohort was tracked during the 1980s and into the early 1990s, and follow-up for mortality among the cohort was tracked all the way until 2011. Much more information about this cohort, as well as links to available data, are available <a href="https://wwwn.cdc.gov/nchs/nhanes/nhefs/default.aspx/#dfd">here</a>.</p>
+<p>The NHEFS cohort study from NHANES has been used for a wide variety of epidemiological studies. These include studies with a wide variety, including studies of folate and colon cancer risk <span class="citation">(Su and Arab <a href="#ref-su2001nutritional" role="doc-biblioref">2001</a>)</span>, hypertension and educational attainment <span class="citation">(Vargas, Ingram, and Gillum <a href="#ref-vargas2000incidence" role="doc-biblioref">2000</a>)</span>, chronic musculoskeletal pain and depressive symptoms <span class="citation">(Magni et al. <a href="#ref-magni1993chronic" role="doc-biblioref">1993</a>)</span>, frequency of eating and weight change <span class="citation">(Kant et al. <a href="#ref-kant1995frequency" role="doc-biblioref">1995</a>)</span>, physical activity and breast cancer <span class="citation">(Breslow et al. <a href="#ref-breslow2001long" role="doc-biblioref">2001</a>)</span>, white blood cell counts and stroke <span class="citation">(Gillum, Ingram, and Makuc <a href="#ref-gillum1994white" role="doc-biblioref">1994</a>)</span>, and risk factors for hip fracture <span class="citation">(Mussolino et al. <a href="#ref-mussolino1998risk" role="doc-biblioref">1998</a>)</span>.</p>
+<p>While you can perform survival analysis on the NHEFS data, you have to take some extra steps. This is because the cohort was developed based on participants in a survey (NHANES I), and that survey selected participants in some ways that need to be addressed when you analyze the resulting data.</p>
+<p>First, some groups were oversampled for NHANES I, including older adults, women of childbearing age, and people who lived in poorer areas. This oversampling has implications when it comes to generating estimates that generalize to the full US population, because it means that the study population isn’t representative of the general population. To address this, you can use sampling weights within an analysis, which reweight the data from each study subject to create estimates that are more appropriate to describe trends in the target population. Alternatively, in some cases it may be appropriate to do an unweighted analysis, while include variables related to the weight (e.g., age, gender, socioeconomic status) as covariates in the model <span class="citation">(Korn and Graubard <a href="#ref-korn1991epidemiologic" role="doc-biblioref">1991</a>)</span>.</p>
+<p>Second, NHANES I used a multi-stage sampling design to pick participants. It would have been impractical to randomly sample from everyone in the country, in part because the study included in-person interviews and it would be hard to get the interviewers to people spread around the country. Instead, they designed a strategy where they could send interviewers to fewer places, while still having a sample that could be used to represent the non-institutionalized US population <span class="citation">(Korn and Graubard <a href="#ref-korn1991epidemiologic" role="doc-biblioref">1991</a>)</span>.</p>
+<p>However, when a study population is selected based on this type of complex survey design, you may not be able to assume that observations are independent of each other. Instead, there may be some patterns of clustering in the data you collect—for example, people surveyed from the same sampling unit for a multi-stage sampling design may be more similar than people from different units. While this is unlikely to bias the main effect estimate, it is likely to cause you to estimate too-small standard errors (and so confidence intervals that are too tight), providing an overly optimistic view of the variance in your estimate <span class="citation">(Korn and Graubard <a href="#ref-korn1991epidemiologic" role="doc-biblioref">1991</a>)</span>.</p>
+<p>These characteristics of the NHEFS cohort were necessary to make the original survey practical enough that it could be carried out. While it does make the data more complicated to analyze, there are strategies that can be used to account for oversampling and the multi-stage sampling design. Some papers have described these approaches for the NHEFS cohort and provide a good roadmap if you’d like to explore these data yourself <span class="citation">(Korn and Graubard <a href="#ref-korn1991epidemiologic" role="doc-biblioref">1991</a>; Ingram and Makuc <a href="#ref-ingram1994statistical" role="doc-biblioref">1994</a>)</span>. Further, the <a href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES website</a> includes extensive information about the NHANES series of studies, as well as tools, data, and tutorials, if you would like to try working with the data.</p>
 
 </div>
 </div>
@@ -1040,6 +1578,9 @@ We can also plot the parameter(s) of interest across time from this output. If t
 <div id="ref-bradburn2003survival">
 <p>Bradburn, Michael J, Taane G Clark, Sharon B Love, and Douglas G Altman. 2003b. “Survival Analysis Part Ii: Multivariate Data Analysis–an Introduction to Concepts and Methods.” <em>British Journal of Cancer</em> 89 (3): 431–36.</p>
 </div>
+<div id="ref-breslow2001long">
+<p>Breslow, Rosalind A, Rachel Ballard-Barbash, Kathryn Munoz, and Barry I Graubard. 2001. “Long-Term Recreational Physical Activity and Breast Cancer in the National Health and Nutrition Examination Survey I Epidemiologic Follow-up Study.” <em>Cancer Epidemiology and Prevention Biomarkers</em> 10 (7): 805–8.</p>
+</div>
 <div id="ref-clark2003survival">
 <p>Clark, Taane G, Michael J Bradburn, Sharon B Love, and Douglas G Altman. 2003. “Survival Analysis Part I: Basic Concepts and First Analyses.” <em>British Journal of Cancer</em> 89 (2): 232–38.</p>
 </div>
@@ -1049,11 +1590,35 @@ We can also plot the parameter(s) of interest across time from this output. If t
 <div id="ref-dawber2015ii">
 <p>Dawber, Thomas R, Felix E Moore, and George V Mann. 2015. “II. Coronary Heart Disease in the Framingham Study.” <em>International Journal of Epidemiology</em> 44 (6): 1767–80.</p>
 </div>
+<div id="ref-gillum1994white">
+<p>Gillum, Richard F, Deborah D Ingram, and Diane M Makuc. 1994. “White Blood Cell Count and Stroke Incidence and Death: The Nhanes I Epidemiologic Follow-up Study.” <em>American Journal of Epidemiology</em> 139 (9): 894–902.</p>
+</div>
 <div id="ref-hernan2010hazards">
 <p>Hernán, Miguel A. 2010. “The Hazards of Hazard Ratios.” <em>Epidemiology (Cambridge, Mass.)</em> 21 (1): 13.</p>
 </div>
+<div id="ref-ingram1994statistical">
+<p>Ingram, DD, and DM Makuc. 1994. “Statistical Issues in Analyzing the Nhanes I Epidemiologic Followup Study. Series 2: Data Evaluation and Methods Research.” <em>Vital and Health Statistics. Series 2, Data Evaluation and Methods Research</em>, no. 121: 1–30.</p>
+</div>
+<div id="ref-kant1995frequency">
+<p>Kant, AK, A Schatzkin, BI Graubard, and R Ballard-Barbash. 1995. “Frequency of Eating Occasions and Weight Change in the Nhanes I Epidemiologic Follow-up Study.” <em>International Journal of Obesity and Related Metabolic Disorders: Journal of the International Association for the Study of Obesity</em> 19 (7): 468–74.</p>
+</div>
+<div id="ref-korn1991epidemiologic">
+<p>Korn, Edward L, and Barry I Graubard. 1991. “Epidemiologic Studies Utilizing Surveys: Accounting for the Sampling Design.” <em>American Journal of Public Health</em> 81 (9): 1166–73.</p>
+</div>
+<div id="ref-magni1993chronic">
+<p>Magni, Guido, Maura Marchetti, Claudio Moreschi, Harold Merskey, and Silio Rigatti Luchini. 1993. “Chronic Musculoskeletal Pain and Depressive Symptoms in the National Health and Nutrition Examination I. Epidemiologic Follow-up Study.” <em>Pain</em> 53 (2): 163–68.</p>
+</div>
+<div id="ref-mussolino1998risk">
+<p>Mussolino, Michael E, Anne C Looker, Jennifer H Madans, Jean A Langlois, and Eric S Orwoll. 1998. “Risk Factors for Hip Fracture in White Men: The Nhanes I Epidemiologic Follow-up Study.” <em>Journal of Bone and Mineral Research</em> 13 (6): 918–24.</p>
+</div>
+<div id="ref-su2001nutritional">
+<p>Su, L Joseph, and Lenore Arab. 2001. “Nutritional Status of Folate and Colon Cancer Risk: Evidence from Nhanes I Epidemiologic Follow-up Study.” <em>Annals of Epidemiology</em> 11 (1): 65–72.</p>
+</div>
 <div id="ref-valenzuela2021lifestyle">
 <p>Valenzuela, Pedro L, Pedro Carrera-Bastos, Beatriz G Gálvez, Gema Ruiz-Hurtado, José M Ordovas, Luis M Ruilope, and Alejandro Lucia. 2021. “Lifestyle Interventions for the Prevention and Treatment of Hypertension.” <em>Nature Reviews Cardiology</em> 18 (4): 251–75.</p>
+</div>
+<div id="ref-vargas2000incidence">
+<p>Vargas, Clemencia M, Deborah D Ingram, and Richard F Gillum. 2000. “Incidence of Hypertension and Educational Attainment the Nhanes I Epidemiologic Followup Study.” <em>American Journal of Epidemiology</em> 152 (3): 272–78.</p>
 </div>
 <div id="ref-wong2014epidemiological">
 <p>Wong, Nathan D. 2014. “Epidemiological Studies of Chd and the Evolution of Preventive Cardiology.” <em>Nature Reviews Cardiology</em> 11 (5): 276–89.</p>

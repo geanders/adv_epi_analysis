@@ -32,10 +32,9 @@ readings-4
 longitudinal-cohort-data
 coding-a-survival-analysis
 handling-complexity
+recurrent-outcome-and-time-varying-exposures
 multi-level-exposure
-recurrent-outcome
 time-varying-coeffificents
-using-survey-results
 some-approaches-for-confounding
 inverse-probability-weighting
 propensity-scores
