@@ -7425,15 +7425,16 @@ We mentioned earlier how typically in longitudinal studies survival outcomes may
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
+\tightlist
 \item
   Construct a longitudinal dataset with repeated (time-varying) values for death and MI hospitalization.
 \item
   Fit a Cox model for the effect of smoking on mortality and MI using this dataset. How do the results compare to the results from the models in 7.3?
 \item
   Construct an exposure variable representing the history of smoking (identify if someone is a current, former, or never smoker at each period). Repeat the model from 2, using this exposure instead. What added information does this model give us?
-\item
-  \textbf{Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovascular outcomes.}
 \end{enumerate}
+
+\textbf{1. Construct a longitudinal dataset with repeated (time-varying) values for death and cardiovascular outcomes.}
 
 The original \texttt{fhs} dataset already has multiple observations per participant denoted by the \texttt{period} variable, with a range of 1--3. Covariate values can change from period to period as we've already seen, but the variables for death and cardiovascular outcomes were not time-varying, simply an indicator for the event occurring at any point during follow-up. We will create time-varying variables for these events, as well as time variables indicating the beginning and end of follow-up time in each period.
 
@@ -7560,13 +7561,7 @@ We can check to see if our new variables are in agreement with the totals from a
 ## 1       1550
 \end{verbatim}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  \textbf{Fit a Cox model for the effect of smoking on mortality and MI hospitalizations using this dataset. How do the results compare to the results from the models in 7.3}
-\end{enumerate}
+\textbf{2. Fit a Cox model for the effect of smoking on mortality and MI hospitalizations using this dataset. How do the results compare to the results from the models in 7.3}
 
 Using the dataset with the time-varying outcomes we created above, we will repeat the same model for death (and MI hospitalizations) as a function of smoking and age and sex. However, unlike those models in section 7.3 we are not interested in the hazard occurring between beginning and end of follow-up for each participant, but rather the hazard occurring during each period. In order to address this we will slightly modify the \texttt{Surv} function in our model to accommodate the specific interval for each period, by designating two time variables (\texttt{time} and \texttt{time2}) instead of one. If you look at the results of using \texttt{Surv} with two times, you can see that it now creates a range for each observation, including an indicator of whether the person was still alive at the end of that range (``+'' after the second number in the interval) or whether they died at the end time of the range:
 
@@ -7763,13 +7758,7 @@ We see that the hazard ratio comparing current smokers to current non-smokers is
 
 However, the key in that interpretation is the word `current'. In this model for each observation (conditional on sex and age) participants with smoking value of zero are treated equally regardless of whether they are never smokers or former smokers (the latter would have changed from \texttt{cursmoke=1} to \texttt{cursmoke=0} sometime during follow-up). Based on what we know about smoking history and health, we are therefore probably not making use of all the information we have with this approach.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{2}
-\tightlist
-\item
-  \textbf{Construct an exposure variable representing the history of smoking (identify if someone is a current, former and never smoker at each period). Repeat the model from 2, using this exposure instead. What added information does this model give us?}
-\end{enumerate}
+\textbf{3. Construct an exposure variable representing the history of smoking (identify if someone is a current, former and never smoker at each period). Repeat the model from 2, using this exposure instead. What added information does this model give us?}
 
 We can construct a new time-varying exposure variable that allows us to distinguish between those that are never smokers and those who are currently non-smoking, but used to at some point in the past. We've already identified those people that have had a change in current smoking status during follow-up above, which in theory would include people becoming smokers after starting as non-smokers, but also those who quit smoking and become former smokers.
 
@@ -7952,7 +7941,7 @@ We've seen that changing smoking from a binary `yes/no' variable to one with thr
   Explore the relationship between some of the other predictors in the dataset (specifically \texttt{bmi} and \texttt{sysbp}) and the hazard for MI hospitalization. Investigate whether the exposure response for these variable deviates from (log-)linearity using spline functions.
 \end{enumerate}
 
-\textbf{Explore the role of smoking intensity on the hazard for MI hospitalizations, using the \texttt{cigpday} variable. What can we infer about the exposure-response?}
+\textbf{1. Explore the role of smoking intensity on the hazard for MI hospitalizations, using the \texttt{cigpday} variable. What can we infer about the exposure-response?}
 
 Let's repeat our latest model for smoking and MI hospitalizations, including the \texttt{cigpday} variable
 
@@ -8171,7 +8160,7 @@ We see that the category for ``None'' did not return a parameter, which should b
 
 We see that only heavy and very heavy smokers have elevated HRs compared to non-smokers, with the estimates for light and moderate yielding CIs including the null.
 
-\textbf{Explore the relationship between some of the other predictors in the dataset (specifically \texttt{bmi} and \texttt{sysbp}) and the hazard for MI hospitalization. Investigate whether the exposure response for these variable deviates from (log-)linearity using spline functions.}
+\textbf{2. Explore the relationship between some of the other predictors in the dataset (specifically \texttt{bmi} and \texttt{sysbp}) and the hazard for MI hospitalization. Investigate whether the exposure response for these variable deviates from (log-)linearity using spline functions.}
 
 We will now turn our attention to some other predictors for cardiovascular disease, namely BMI (\texttt{bmi} in our dataset) and systolic blood pressure (\texttt{sysbp} in out dataset). Below we fit a Cox model for BMI, adjusting for age and sex. BMI is a considered a fairly flawed proxy for obesity and/or healthy metabolic profiles, however unlike more accurate or informative exposure measures it is very easy to assess and can still be quite informative.
 
