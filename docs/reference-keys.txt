@@ -34,7 +34,8 @@ coding-a-survival-analysis
 handling-complexity
 recurrent-outcome-and-time-varying-exposures
 multi-level-exposure
-time-varying-coeffificents
+time-varying-coefficients
+using-survey-data-e.g.-nhanes
 some-approaches-for-confounding
 inverse-probability-weighting
 propensity-scores
