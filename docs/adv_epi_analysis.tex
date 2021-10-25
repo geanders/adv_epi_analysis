@@ -8073,8 +8073,8 @@ The model we just fitted, however, assumes a log-linear exposure-response betwee
     \DecValTok{20} \SpecialCharTok{\textless{}}\NormalTok{ cigpday }\SpecialCharTok{\textasciitilde{}} \StringTok{"Very Heavy"}\NormalTok{,}
     \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \ConstantTok{NA\_character\_}
 \NormalTok{                                ),}
-    \AttributeTok{cigpday =} \FunctionTok{as\_factor}\NormalTok{(cigpday), }
-    \AttributeTok{cigpday =} \FunctionTok{fct\_relevel}\NormalTok{(cigpday, }
+    \AttributeTok{smokingint =} \FunctionTok{as\_factor}\NormalTok{(smokingint), }
+    \AttributeTok{smokingint =} \FunctionTok{fct\_relevel}\NormalTok{(smokingint, }
                           \StringTok{"None"}\NormalTok{, }\StringTok{"Light"}\NormalTok{, }\StringTok{"Moderate"}\NormalTok{, }\StringTok{"Heavy"}\NormalTok{, }\StringTok{"Very Heavy"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
@@ -8092,17 +8092,17 @@ You can see that this added variable gives us the desired ordered categories for
 ## # A tibble: 11,253 x 3
 ## # Groups:   randid [4,348]
 ##    randid cigpday smokingint
-##     <dbl> <fct>   <chr>     
-##  1   2448 0       None      
-##  2   2448 0       None      
-##  3   6238 0       None      
-##  4   6238 0       None      
-##  5   6238 0       None      
-##  6   9428 20      Heavy     
-##  7   9428 30      Very Heavy
-##  8  10552 30      Very Heavy
-##  9  10552 20      Heavy     
-## 10  11252 23      Very Heavy
+##     <dbl>   <dbl> <fct>     
+##  1   2448       0 None      
+##  2   2448       0 None      
+##  3   6238       0 None      
+##  4   6238       0 None      
+##  5   6238       0 None      
+##  6   9428      20 Heavy     
+##  7   9428      30 Very Heavy
+##  8  10552      30 Very Heavy
+##  9  10552      20 Heavy     
+## 10  11252      23 Very Heavy
 ## # ... with 11,243 more rows
 \end{verbatim}
 
@@ -8125,10 +8125,10 @@ Now you can use this variable within the regression model:
 ## 1 smokingformer                        -0.0463   0.186      -0.249  8.04e- 1
 ## 2 age                                   0.0471   0.00624     7.56   4.05e-14
 ## 3 sex                                  -1.08     0.113      -9.55   1.36e-21
-## 4 smokingcurrent:smokingintHeavy        0.654    0.134       4.89   1.00e- 6
+## 4 smokingcurrent:smokingintNone        NA        0          NA     NA       
 ## 5 smokingcurrent:smokingintLight       -0.257    0.313      -0.820  4.12e- 1
 ## 6 smokingcurrent:smokingintModerate     0.0545   0.244       0.223  8.23e- 1
-## 7 smokingcurrent:smokingintNone        NA        0          NA     NA       
+## 7 smokingcurrent:smokingintHeavy        0.654    0.134       4.89   1.00e- 6
 ## 8 smokingcurrent:smokingintVery Heavy   0.559    0.159       3.51   4.50e- 4
 \end{verbatim}
 
@@ -8152,9 +8152,9 @@ We see that the category for ``None'' did not return a parameter, which should b
 ## # A tibble: 4 x 4
 ##   term                                   hr low_hr high_hr
 ##   <chr>                               <dbl>  <dbl>   <dbl>
-## 1 smokingcurrent:smokingintHeavy      1.92   1.48     2.50
-## 2 smokingcurrent:smokingintLight      0.774  0.419    1.43
-## 3 smokingcurrent:smokingintModerate   1.06   0.654    1.70
+## 1 smokingcurrent:smokingintLight      0.774  0.419    1.43
+## 2 smokingcurrent:smokingintModerate   1.06   0.654    1.70
+## 3 smokingcurrent:smokingintHeavy      1.92   1.48     2.50
 ## 4 smokingcurrent:smokingintVery Heavy 1.75   1.28     2.39
 \end{verbatim}
 

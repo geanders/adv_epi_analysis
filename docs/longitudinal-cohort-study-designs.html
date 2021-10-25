@@ -1416,8 +1416,8 @@ We can also plot the parameter(s) of interest across time from this output. If t
 <span id="cb457-7"><a href="longitudinal-cohort-study-designs.html#cb457-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">20</span> <span class="sc">&lt;</span> cigpday <span class="sc">~</span> <span class="st">&quot;Very Heavy&quot;</span>,</span>
 <span id="cb457-8"><a href="longitudinal-cohort-study-designs.html#cb457-8" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
 <span id="cb457-9"><a href="longitudinal-cohort-study-designs.html#cb457-9" aria-hidden="true" tabindex="-1"></a>                                ),</span>
-<span id="cb457-10"><a href="longitudinal-cohort-study-designs.html#cb457-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">cigpday =</span> <span class="fu">as_factor</span>(cigpday), </span>
-<span id="cb457-11"><a href="longitudinal-cohort-study-designs.html#cb457-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">cigpday =</span> <span class="fu">fct_relevel</span>(cigpday, </span>
+<span id="cb457-10"><a href="longitudinal-cohort-study-designs.html#cb457-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">smokingint =</span> <span class="fu">as_factor</span>(smokingint), </span>
+<span id="cb457-11"><a href="longitudinal-cohort-study-designs.html#cb457-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">smokingint =</span> <span class="fu">fct_relevel</span>(smokingint, </span>
 <span id="cb457-12"><a href="longitudinal-cohort-study-designs.html#cb457-12" aria-hidden="true" tabindex="-1"></a>                          <span class="st">&quot;None&quot;</span>, <span class="st">&quot;Light&quot;</span>, <span class="st">&quot;Moderate&quot;</span>, <span class="st">&quot;Heavy&quot;</span>, <span class="st">&quot;Very Heavy&quot;</span>))</span></code></pre></div>
 <p>You can see that this added variable gives us the desired ordered categories for smoking:</p>
 <div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="longitudinal-cohort-study-designs.html#cb458-1" aria-hidden="true" tabindex="-1"></a>fhstv_incMI <span class="sc">%&gt;%</span> </span>
@@ -1425,17 +1425,17 @@ We can also plot the parameter(s) of interest across time from this output. If t
 <pre><code>## # A tibble: 11,253 x 3
 ## # Groups:   randid [4,348]
 ##    randid cigpday smokingint
-##     &lt;dbl&gt; &lt;fct&gt;   &lt;chr&gt;     
-##  1   2448 0       None      
-##  2   2448 0       None      
-##  3   6238 0       None      
-##  4   6238 0       None      
-##  5   6238 0       None      
-##  6   9428 20      Heavy     
-##  7   9428 30      Very Heavy
-##  8  10552 30      Very Heavy
-##  9  10552 20      Heavy     
-## 10  11252 23      Very Heavy
+##     &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;     
+##  1   2448       0 None      
+##  2   2448       0 None      
+##  3   6238       0 None      
+##  4   6238       0 None      
+##  5   6238       0 None      
+##  6   9428      20 Heavy     
+##  7   9428      30 Very Heavy
+##  8  10552      30 Very Heavy
+##  9  10552      20 Heavy     
+## 10  11252      23 Very Heavy
 ## # … with 11,243 more rows</code></pre>
 <p>Now you can use this variable within the regression model:</p>
 <div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb460-1"><a href="longitudinal-cohort-study-designs.html#cb460-1" aria-hidden="true" tabindex="-1"></a>coxph_modhospmitv6 <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(time, timemi2, hospmitv) <span class="sc">~</span> </span>
@@ -1449,10 +1449,10 @@ We can also plot the parameter(s) of interest across time from this output. If t
 ## 1 smokingformer                        -0.0463   0.186      -0.249  8.04e- 1
 ## 2 age                                   0.0471   0.00624     7.56   4.05e-14
 ## 3 sex                                  -1.08     0.113      -9.55   1.36e-21
-## 4 smokingcurrent:smokingintHeavy        0.654    0.134       4.89   1.00e- 6
+## 4 smokingcurrent:smokingintNone        NA        0          NA     NA       
 ## 5 smokingcurrent:smokingintLight       -0.257    0.313      -0.820  4.12e- 1
 ## 6 smokingcurrent:smokingintModerate     0.0545   0.244       0.223  8.23e- 1
-## 7 smokingcurrent:smokingintNone        NA        0          NA     NA       
+## 7 smokingcurrent:smokingintHeavy        0.654    0.134       4.89   1.00e- 6
 ## 8 smokingcurrent:smokingintVery Heavy   0.559    0.159       3.51   4.50e- 4</code></pre>
 <p>We see that the category for “None” did not return a parameter, which should be expected as we don’t expect any current smokers to be smoking zero cigarettes. We can extract the rest of the parameters and see what the HR is for each category compared to non-smokers. You can use a regular expression with <code>str_detect</code> to pull out the four parameter estimates we’re interested in, so you can calculate the confidence intervals for all four at once:</p>
 <div class="sourceCode" id="cb462"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb462-1"><a href="longitudinal-cohort-study-designs.html#cb462-1" aria-hidden="true" tabindex="-1"></a>coxph_modhospmitv6 <span class="sc">%&gt;%</span> </span>
@@ -1467,9 +1467,9 @@ We can also plot the parameter(s) of interest across time from this output. If t
 <pre><code>## # A tibble: 4 x 4
 ##   term                                   hr low_hr high_hr
 ##   &lt;chr&gt;                               &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-## 1 smokingcurrent:smokingintHeavy      1.92   1.48     2.50
-## 2 smokingcurrent:smokingintLight      0.774  0.419    1.43
-## 3 smokingcurrent:smokingintModerate   1.06   0.654    1.70
+## 1 smokingcurrent:smokingintLight      0.774  0.419    1.43
+## 2 smokingcurrent:smokingintModerate   1.06   0.654    1.70
+## 3 smokingcurrent:smokingintHeavy      1.92   1.48     2.50
 ## 4 smokingcurrent:smokingintVery Heavy 1.75   1.28     2.39</code></pre>
 <p>We see that only heavy and very heavy smokers have elevated HRs compared to non-smokers, with the estimates for light and moderate yielding CIs including the null.</p>
 <p><strong>2. Explore the relationship between some of the other predictors in the dataset (specifically <code>bmi</code> and <code>sysbp</code>) and the hazard for MI hospitalization. Investigate whether the exposure response for these variable deviates from (log-)linearity using spline functions.</strong></p>

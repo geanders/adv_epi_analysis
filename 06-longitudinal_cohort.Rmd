@@ -1119,8 +1119,8 @@ fhstv_incMI <- fhstv_incMI %>%
     20 < cigpday ~ "Very Heavy",
     TRUE ~ NA_character_
                                 ),
-    cigpday = as_factor(cigpday), 
-    cigpday = fct_relevel(cigpday, 
+    smokingint = as_factor(smokingint), 
+    smokingint = fct_relevel(smokingint, 
                           "None", "Light", "Moderate", "Heavy", "Very Heavy"))
 ```
 
