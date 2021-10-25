@@ -118,7 +118,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-10-20}
+\date{2021-10-25}
 
 \begin{document}
 \maketitle
@@ -8474,8 +8474,194 @@ These characteristics of the NHEFS cohort were necessary to make the original su
 \hypertarget{some-approaches-for-confounding}{%
 \chapter{Some approaches for confounding}\label{some-approaches-for-confounding}}
 
+\hypertarget{readings-5}{%
+\section{Readings}\label{readings-5}}
+
+The required readings for this chapter are:
+
+\begin{itemize}
+\item
+  \citet{hernanch12}: IP weighting for confounding adjustment and the concept of a Marginal Structural Model
+\item
+  \citet{hernanch15}: Propensity scores and outcome regression
+\end{itemize}
+
+There are also some supplemental readings you may find useful:
+The following is an instructional paper on constructing IP weights for regression:
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{cole2008constructing}
+\end{itemize}
+
+This paper describes the use of propensity scores as an umbrella term for these types of approaches for covariate adjustment:
+
+\begin{itemize}
+\tightlist
+\item
+  \citet{brookhart2013propensity}
+\end{itemize}
+
 \hypertarget{inverse-probability-weighting}{%
 \section{Inverse probability weighting}\label{inverse-probability-weighting}}
+
+We've already fit some Cox models with multiple covariates, where the interpretation of each parameter coefficient is \emph{conditional} on the other parameters in the model. Let's look back at our FHS data and reconstruct our simple models for current smoking status first unadjusted and then with age and sex also in the model.
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   <chr>    <dbl>  <dbl>   <dbl>
+## 1 cursmoke  1.40   1.26    1.56
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   <chr>    <dbl>  <dbl>   <dbl>
+## 1 cursmoke  1.40   1.26    1.56
+\end{verbatim}
+
+The first model simply compares current smokers to current non-smokers in the population. It is not conditional on other variables, but also not adjusted for any potential confoudning by them. The interpretation of the (exponentiated) parameter for \texttt{cursmoke} in the adjusted model, is the Hazard Ratio comparing current smokers to current non-smokers \emph{conditional} on age and sex. In other words this is the log-Hazard Ratio comparing currently smoking males of the same age to currently non-smoking males of the same age, and similarly currently smoking females of the same age to currently non-smoking females of the same age. This \emph{conditioning} on other variables by including them in a regression model is often sufficient to adjust for any confounding by these variables and is the most widely used approach to adjust for confounding. In this example we see a much higher HR in the adjusted (conditional) model than the unadjusted.
+
+One alternative approach to this is \emph{inverse probability weighting} or IPW. IPW allows us to adjust for confounding without having to include additional variables in out final outcome model other than the exposure of interest. Instead we weigh each participant by the inverse of the probability that they had the exposure value they indeed had conditional on these other (potentially confounding variables). Typically the weight estimation will involve a model for the exposure conditional on the potential confounders. Let's go ahead and do this weight estimation for the above example using the \texttt{fhs\_first} subset of the data. We will fit a logistic model for \texttt{cursmoke} conditional on age and sex:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model\_IPW}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(cursmoke}\SpecialCharTok{\textasciitilde{}}\NormalTok{age }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{family=}\StringTok{\textquotesingle{}binomial\textquotesingle{}}\NormalTok{, }\AttributeTok{data=}\NormalTok{fhs\_first)}
+\NormalTok{model\_IPW }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{tidy}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 5
+##   term        estimate std.error statistic  p.value
+##   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)   3.84     0.218        17.6 1.37e-69
+## 2 age          -0.0514   0.00370     -13.9 8.06e-44
+## 3 sex          -0.839    0.0634      -13.2 6.04e-40
+\end{verbatim}
+
+We can see that these variables are significantly associated with current smoking status, however we are not going to be interpreting the parameter coefficients from this model. Instead, we will be using predictions based on this model to estimate our inverse probability weights:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{p.smok.obs=}\FunctionTok{ifelse}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{0}\NormalTok{,   }\DocumentationTok{\#\#\#estimate the conditional probability that someone is exposed or unexposed from the model above}
+         \DecValTok{1} \SpecialCharTok{{-}} \FunctionTok{predict}\NormalTok{(model\_IPW, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{),}
+         \FunctionTok{predict}\NormalTok{(model\_IPW, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)),}
+         \AttributeTok{w=}\DecValTok{1}\SpecialCharTok{/}\NormalTok{p.smok.obs)}\DocumentationTok{\#\#\#\# The weights is the inverse of the probability of exposure value}
+
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w=}\FunctionTok{mean}\NormalTok{(w),}
+            \AttributeTok{sum\_w=}\FunctionTok{sum}\NormalTok{(w))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 2
+##   mean_w sum_w
+##    <dbl> <dbl>
+## 1   2.00 8871.
+\end{verbatim}
+
+The mean weight value is 2, so by using the weights we'll on average be using 2 copies of each participant. Accordingly, the total sum of the weights is 8870 which is roughly double the number of participants we started with. This is because what the weights are doing in this example, is basically create a pseudopopulation where we have enough people so that everyone can be both exposed and unexposed while maintaining the distribution of covariates (here age and sex). The latter has to hold, because pseudopopulation has to be representative of the original target population. We can check this by looking at the distributions of age sex in both the weighted and unweighted data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 0
+\end{verbatim}
+
+The great thing about the pseudopopulaton is that the effect of \texttt{cursmoke} in no longer confounded by age and sex.
+We can go ahead and fit a Cox proportional hazards model for \texttt{cursmoke} using our weights, and without including age and sex in the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\#\#Fit Cox weighted model for current smoking status}
+\NormalTok{coxph\_modIPW}\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{weights=}\NormalTok{w,}
+                    \AttributeTok{data =}\NormalTok{ fhs\_first)}
+\NormalTok{coxph\_modIPW }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{tidy}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 6
+##   term     estimate std.error robust.se statistic       p.value
+##   <chr>       <dbl>     <dbl>     <dbl>     <dbl>         <dbl>
+## 1 cursmoke    0.313    0.0363    0.0532      5.88 0.00000000412
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph\_modIPW }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
+         \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
+         \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
+         \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
+         \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   <chr>    <dbl>  <dbl>   <dbl>
+## 1 cursmoke  1.37   1.27    1.47
+\end{verbatim}
+
+We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this later). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (\texttt{randid}). If we repeat the above model with a \texttt{cluster} term for \texttt{randid} this will invoke a robust sandwich variance estimation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph\_modIPW}\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{weights=}\NormalTok{w, }\AttributeTok{cluster =}\NormalTok{ randid,}
+                    \AttributeTok{data =}\NormalTok{ fhs\_first)}
+\NormalTok{coxph\_modIPW }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{tidy}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 6
+##   term     estimate std.error robust.se statistic       p.value
+##   <chr>       <dbl>     <dbl>     <dbl>     <dbl>         <dbl>
+## 1 cursmoke    0.313    0.0363    0.0532      5.88 0.00000000412
+\end{verbatim}
+
+We now have to use the \texttt{robust.se} rather than \texttt{std.error} to cnstuct our CIs:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph\_modIPW }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
+         \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ robust.se, }
+         \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ robust.se, }
+         \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
+         \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   <chr>    <dbl>  <dbl>   <dbl>
+## 1 cursmoke  1.37   1.23    1.52
+\end{verbatim}
+
+The CIs are now wider than before and more akin to the width from the original conditional model. This weighted model is essentially a Marginal Structural Cox Model. Marginal Structural Models (MSMs) refer to models that are \emph{marginal} or \emph{unconditional} with respect to some covariates, as is the case of our model with respect to age and sex. The interpretaton for the Cox MSM hazard ratios is no longer conditional on age and sex or in other words it is simple a comparison between current smokers and non-smokers (not within levels of age and sex).
 
 \hypertarget{propensity-scores}{%
 \section{Propensity scores}\label{propensity-scores}}
