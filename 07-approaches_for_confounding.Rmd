@@ -17,10 +17,38 @@ This paper describes the use of propensity scores as an umbrella term for these 
 
 - @brookhart2013propensity
 
+The following papers comment on the use of machine learning to improve or propensity score/weight estimation
+
+- @lee2010improving
+
+- @westreich2010propensity
+
+while this chapter of the causal inference book explains the problem with traditional regression and exposure-confounder feedback
+
+- @hernanch20
+
 
 ## Inverse probability weighting
 
-We've already fit some Cox models with multiple covariates, where the interpretation of each parameter coefficient is *conditional* on the other parameters in the model. Let's look back at our FHS data and reconstruct our simple models for current smoking status first unadjusted and then with age and sex also in the model.
+We've already fit some Cox models with multiple covariates, where the interpretation of each parameter coefficient is *conditional* on the other parameters in the model, and typically these coefficients are expected to yield effect estimates unconfounded by the other variables in the model. In this section we will explore an alternative approach to confounding adjustment in inverse probability weighting (IPW).
+
+*Applied exercise: IPW for confounding adjustment*
+
+Using the FHS cohort data answer the following questions with repect to confounding of the potential effect of smoking on mortality and incident MI hospitalizations: 
+
+1. Fit a conditional Cox model for the effect of smoking on mortality adjusting for sex and age using the limited (one observation per participant). Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?
+2. Plot survival curves for mortality and smoking status in the unweighted and weighted population. How do those curves compare?
+3. Using the time-varying dataset fit a conditional Cox model for smoking and MI hospitalizations adjusting for age, sex, BMI and blood pressure. Estimate time-varying inverse probability weights for exposure and fit a Marginal Structural Cox Model. How do the results of those two models compare?
+
+
+Based on this exploratory exercise, think about what each approach is doing in terms of adjusting for confounding, and pros and cons for each in each situation.
+
+*Applied exercise: Example code*
+
+1. **Fit a conditional Cox model for the effec of smoking on mortality adjusting for sex and age. Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?**
+
+
+Let's look back at our FHS data and reconstruct our simple models for current smoking status first unadjusted and then with age and sex also in the model.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Load some packages that will likely be useful
@@ -59,9 +87,9 @@ fhstv_incMI <- fhstv %>%
 
 
 ###Fit Cox model for current smoking status unconditional and conditional on age and sex
-coxph_mod1 <- coxph(Surv(timedth, death) ~ cursmoke, 
+coxph_mod1 <- coxph(Surv(timemi, hospmi) ~ cursmoke, 
                     data = fhs_first)
-coxph_mod2 %>% 
+coxph_mod1 %>% 
   tidy() %>% 
   filter(term == "cursmoke") %>% 
   mutate(hr = exp(estimate),
@@ -71,7 +99,7 @@ coxph_mod2 %>%
          high_hr = exp(high_ci)) %>% 
   select(term, hr, low_hr, high_hr)
 
-coxph_mod2 <- coxph(Surv(timedth, death) ~ cursmoke + sex + age, 
+coxph_mod2 <- coxph(Surv(timemi, hospmi) ~ cursmoke + sex + age, 
                     data = fhs_first)
 coxph_mod2 %>% 
   tidy() %>% 
@@ -86,10 +114,15 @@ coxph_mod2 %>%
 
 The first model simply compares current smokers to current non-smokers in the population. It is not conditional on other variables, but also not adjusted for any potential confoudning by them. The interpretation of the (exponentiated) parameter for `cursmoke` in the adjusted model, is the Hazard Ratio comparing current smokers to current non-smokers *conditional* on age and sex. In other words this is the log-Hazard Ratio comparing currently smoking males of the same age to currently non-smoking males of the same age, and similarly currently smoking females of the same age to currently non-smoking females of the same age. This *conditioning* on other variables by including them in a regression model is often sufficient to adjust for any confounding by these variables and is the most widely used approach to adjust for confounding. In this example we see a much higher HR in the adjusted (conditional) model than the unadjusted. 
 
-One alternative approach to this is *inverse probability weighting* or IPW. IPW allows us to adjust for confounding without having to include additional variables in out final outcome model other than the exposure of interest. Instead we weigh each participant by the inverse of the probability that they had the exposure value they indeed had conditional on these other (potentially confounding variables). Typically the weight estimation will involve a model for the exposure conditional on the potential confounders. Let's go ahead and do this weight estimation for the above example using the `fhs_first` subset of the data. We will fit a logistic model for `cursmoke` conditional on age and sex:
+One alternative approach to this is *inverse probability weighting* or IPW. IPW allows us to adjust for confounding without having to include additional variables in out final outcome model other than the exposure of interest. Instead we weigh each participant by the inverse of the probability that they had the exposure value they indeed had conditional on these other (potentially confounding variables). The quantity we are estimating is:
+$$
+W=\frac{1}{f[X|V]}
+$$
+where $X$ is the exposure of interest and $V$ is a vector for baseline confounders in this case age and sex.
+Typically the weight estimation will involve a model for the exposure conditional on the potential confounders. Let's go ahead and do this weight estimation for the above example using the `fhs_first` subset of the data. We will fit a logistic model for `cursmoke` conditional on age and sex which we will use to get predictions for the conditional probabilit of exposure:
 
 ```{r}
-model_IPW<-glm(cursmoke~age + sex, family='binomial', data=fhs_first)
+model_IPW<-glm(cursmoke~+age + sex, family='binomial', data=fhs_first)
 model_IPW %>%
   tidy()
 ```
@@ -98,13 +131,15 @@ We can see that these variables are significantly associated with current smokin
 
 ```{r}
 fhs_first <-fhs_first %>%
-  mutate(p.smok.obs=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is exposed or unexposed from the model above
+  mutate(p.smok.obs=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
          1 - predict(model_IPW, type = "response"),
          predict(model_IPW, type = "response")),
          w=1/p.smok.obs)#### The weights is the inverse of the probability of exposure value
 
 fhs_first %>%
   summarize(mean_w=mean(w),
+            max_w=max(w),
+            min_w=min(w),
             sum_w=sum(w))
 ```
  
@@ -112,10 +147,18 @@ The mean weight value is 2, so by using the weights we'll on average be using 2 
 
 ```{r}
 fhs_first %>%
-  summarize()
+  summarize(mean_age=mean(age),
+            mean_agew=(sum(age*w)/sum(w)))
+
+fhs_first %>%
+  filter(sex==2) %>%
+  summarize(femalecount = n(),
+            femalecountw = sum(w))
 ```
 
-The great thing about the pseudopopulaton is that the effect of `cursmoke` in no longer confounded by age and sex.
+We see that the mean age is very similar in the original sample and in the pseudopopulation, while the number of females roughly doubles (as does the whole population), therefore approximately maintaining the initial proportion of females. 
+
+The great thing about the pseudopopulation is that the effect of `cursmoke` in no longer confounded by age and sex.
 We can go ahead and fit a Cox proportional hazards model for `cursmoke` using our weights, and without including age and sex in the model.  
 
 ```{r}
@@ -134,7 +177,7 @@ coxph_modIPW %>%
          high_hr = exp(high_ci)) %>% 
   select(term, hr, low_hr, high_hr)
 ```
- We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this later). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (`randid`). If we repeat the above model with a `cluster` term for `randid` this will invoke a robust sandwich variance estimation.
+We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this later). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (`randid`). If we repeat the above model with a `cluster` term for `randid` this will invoke a robust sandwich variance estimation.
  
  
 ```{r}
@@ -144,7 +187,7 @@ coxph_modIPW %>%
   tidy()
 ```
 
-We now have to use the `robust.se` rather than `std.error` to cnstuct our CIs:
+We now have to use the `robust.se` rather than `std.error` to construct our CIs:
 
 ```{r}
 coxph_modIPW %>% 
@@ -158,11 +201,186 @@ coxph_modIPW %>%
   select(term, hr, low_hr, high_hr)
 ```
 
-The CIs are now wider than before and more akin to the width from the original conditional model. This weighted model is essentially a Marginal Structural Cox Model. Marginal Structural Models (MSMs) refer to models that are *marginal* or *unconditional* with respect to some covariates, as is the case of our model with respect to age and sex. The interpretaton for the Cox MSM hazard ratios is no longer conditional on age and sex or in other words it is simple a comparison between current smokers and non-smokers (not within levels of age and sex).
+The CIs are now wider than before and more akin to the width of the CIs from the original conditional model. This weighted model is essentially a Marginal Structural Cox Model. Marginal Structural Models (MSMs) refer to models that are *marginal* or *unconditional* with respect to some covariates, as is the case of our model with respect to age and sex. The interpretaton for the Cox MSM hazard ratios is no longer conditional on age and sex or in other words we are not looking for effects within levels of age and sex. We are however still adjusting for confounding by these variables. It is also *structural* because we are essentially modeling counterfactuals (the result of the weights gives us enough participants so that everyone (from the original 4434 participants) can be exposed and unexposed). MSMs are essenctially considered causal models though the causal interpretation relies on several assumptions (exchangeability, consistency, positivity, no information bias, correct model specification). In our case if there exist more confounders other than age and sex (likely) then the exchangeability assumption fails.
+
+The use of weights and introduction of a counterfactual framework also changes the interpretation of the HR from a mere comparison of smokers and non-smokers in the population to a comparison of what would happened if everyone in the population was a smoker to what would have happened if no one was a smoker.
+
+2. **Plot survival curves for mortality and smoking status in the unweighted and weighted population. How do those curves compare?**
+
+Using the weighted pseudopopulation we can also construct survival curves comparing what would happen if everyone had been a smoker and what would happen had no one smoked, that are inherenelty adjusted for any confounding by age and sex. We did fit survival curves comparing smokers and non-smokers in the unweighted data that were unadjusted in 7.3:
+
+```{r}
+fit_smoke <- survfit(Surv(timedthy, death) ~ cursmoke, data = fhs_first)
+fit_smoke %>%
+  ggsurvplot(xlab = "Time to death (years)",
+             ylab = expression(paste('Overall Survival Probablity ', 
+                                     hat(S)*"(t)")))
+```
  
+In the weighted pseudopopulation:
+
+```{r}
+fit_smokeW <- survfit(Surv(timedthy, death) ~ cursmoke, weights=w, data = fhs_first)
+fit_smokeW %>%
+  ggsurvplot(xlab = "Time to death (years)",
+             ylab = expression(paste('Overall Survival Probablity ', 
+                                     hat(S)*"(t)")))
+```
+
+We see that there is a difference in the two plots, with the smokers and non-smokers having quite similar survival curves in the first one, but a separation in the second one that again in inherently adjusted for confounding by sex and age.
+
+
+ 3. **Using the time-varying dataset fit a conditional Cox model for smoking and MI hospitalizations adjusting for age, sex, BMI and blood pressure. Estimate time-varying inverse probability weights for exposure and fit a Marginal Structural Cox Model. How do the results of those two models compare?**
  
- 
- 
+Now let's revisit the time-varying dataset we created and fit a conditional model for time-varying smoking status and MI hospitalization adjusted for age, sex, BMI and systolic blood pressure. 
+
+```{r, warning=F}
+coxph_modtvMI <- coxph(Surv(time, timemi2, hospmitv) ~ 
+                                cursmoke + ns(bmi, df = 3) + ns(sysbp, df = 3) +
+                                age + sex, 
+                              data = fhstv_incMI)
+coxph_modtvMI %>%
+  tidy()
+
+coxph_modtvMI %>% 
+  tidy() %>% 
+  filter(term == 'cursmoke') %>%
+  mutate(hr = exp(estimate),
+         low_ci = (estimate - 1.96 * std.error), 
+         high_ci = (estimate + 1.96 * std.error), 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+```
+
+
+One concern from this model is that BMI and systolic blood pressure maybe mediators for the effect of smoking on MI hospitalizations, in which case we wouldn't want to control for them. However, given the time-varying nature of the exposure, BMI and systolic blood pressure may also be confounders if they have an effect on who changes smoking status in the future. This creates an exposure-confounder feedback, with the confounder causing the exposure and the exposure in turn having an effect on the confounder a later time point. Traditional regression approaches are not adequately equipped to handle this type of confounding, however IPW (and some other approaches) can adjust for confounding without blocking any mediating pathways.
+
+In this time-varying setting the inverse probability weights will also be time-varying and the quantity is 
+$$
+W=\prod_{t}\frac{1}{f[X_{t}|\bar{X}_{t-1},\bar{C}_{t-1},V]}
+$$
+where at each time point (period) the weight is the cumulative product of the inverse of the probability of the exposure value at each time point $X_{t}$ conditional on the history of past exposures $\bar{X}_{t-1}$ and covariates $\bar{C}_{t-1}$ up to the previous period as well as the baseline covariates. In our case the time varying covariates $C_{t}$ are BMI and systolic blood pressure, while baseline covariates $V$ are age and sex.
+
+In order to estimate these weights we would have to lag exposure, BMI and systolic blood pressure in order to predict current exposure $X_{t}$ using past exposure and covariate values $X_{t-1}$ and $C_{t-1}$. We are omitting the overbars denoting history as we will assume the most recent value from the past is adequate to represent exposure and coviariate histories.
+
+```{r}
+fhstv_incMI<-fhstv_incMI %>%
+  group_by(randid) %>%
+  mutate(cursmoke_l1=lag(cursmoke),
+         cursmoke_l1=ifelse(period==1, cursmoke, cursmoke_l1), ###we are setting the lagged smoking status variable to equal the present smoking status value (we are assuming smoking status didn't change right at the beginning of follow-up)
+         bmi_l1=lag(bmi),
+         bmi_l1=ifelse(period==1, 0, bmi_l1),
+         sysbp_l1=lag(sysbp),
+         sysbp_l1=ifelse(period==1, 0, sysbp_l1)) %>%
+  ungroup()
+```
+
+Furthermore as we are assuming an order where smoking is a cause of BMI and systolic blood pressure at each time period, we don't have BMI and blood pressure values to predict exposure at period 1. We have set those to zero above, so we can actually get a prediction for the probability of exposure values at this period based on the baseline variables values. We will also inclue time in the model, as in this time-varying setting it's safe to assume that time-varying variables are a function of time.
+
+```{r}
+mod_tvIPW<-glm(cursmoke~ns(time, df=2)+age+sex+cursmoke_l1 + ns(bmi_l1, df=2)+sysbp_l1, family=binomial, data=fhstv_incMI)
+mod_tvIPW %>%
+  tidy()
+
+```
+
+Most of the above variables look like they are significant predictors of exposure. However, once again we are not interpreting the paramater coefficients of this model, we are only using it for prediction.
+
+```{r}
+fhstv_incMI <-fhstv_incMI %>%
+  group_by(randid) %>%
+  mutate(p.smok.obs=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
+         1 - predict(mod_tvIPW, type = "response"),
+         predict(mod_tvIPW, type = "response")),
+         w_i=1/p.smok.obs,#### This is the first step
+         w=cumprod(w_i)) %>% ### the second step gives us the cumulative product of the inverse probabilities over   time. 
+         ungroup()
+
+fhstv_incMI %>%
+  summarize(mean_w=mean(w),
+            min_w=min(w),
+            max_w=max(w),
+            sum_w=sum(w))
+
+```
+
+Due to the cumulative product nature of these weights, we now see that the mean weight is much higher than before, while the maximum weight value is now over 18,000 meaning that particular observation will count as pver 18,000 observation in our analysis. This creates the possibility for very influential observations, due to weight inflation. One way to remedy this is to use stabilized weights, which involve a numerator that is also a  probability of the actual exposure value at each time period. Unlike the denominator of the weights, the probability in the numerator will be a marginal probability of exposure or simply conditional on past exposure. We can even include our baseline covariates in the numerator model, however we will have to control for them in the final model if we do so. Here we will use probability of exposure values conditional on past exposure only for out numerators.
+
+```{r}
+mod_tvIPWnum<-glm(cursmoke~ns(time, df=2)+cursmoke_l1, family=binomial, data=fhstv_incMI)
+mod_tvIPWnum %>%
+  tidy()
+
+fhstv_incMI <-fhstv_incMI %>%
+  group_by(randid) %>%
+  mutate(p.smok.obsnum=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
+         1 - predict(mod_tvIPWnum, type = "response"),
+         predict(mod_tvIPWnum, type = "response")),
+         w_i=p.smok.obsnum/p.smok.obs,#### This is the first step
+         w=cumprod(w_i)) %>% ### the second step gives us the cumulative product of the inverse probabilities over   time. 
+         ungroup()
+
+
+fhstv_incMI %>%
+  summarize(mean_w=mean(w),
+            min_w=min(w),
+            max_w=max(w),
+            sum_w=sum(w))
+
+```
+
+A good rule of thumb for stabilized weights is that the mean of the weights should be around 1. Here we see that we are fairly lower than this. Including sex and age may improve our numerator model.
+
+```{r}
+mod_tvIPWnum<-glm(cursmoke~ns(time, df=2)+cursmoke_l1 + age + sex, family=binomial, data=fhstv_incMI)
+mod_tvIPWnum %>%
+  tidy()
+
+fhstv_incMI <-fhstv_incMI %>%
+  group_by(randid) %>%
+  mutate(p.smok.obsnum=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
+         1 - predict(mod_tvIPWnum, type = "response"),
+         predict(mod_tvIPWnum, type = "response")),
+         w_i=p.smok.obsnum/p.smok.obs,#### This is the first step
+         w=cumprod(w_i)) %>% ### the second step gives us the cumulative product of the inverse probabilities over   time. 
+         ungroup()
+
+
+fhstv_incMI %>%
+  summarize(mean_w=mean(w),
+            min_w=min(w),
+            max_w=max(w),
+            sum_w=sum(w))
+
+
+```
+
+We now see we are much closer to a mean weight of one and the weight range is quite narrow, meaning the chance for influential observations is not high. We now git our Marginal Structural Cox model for MI hospitalizations. Note that because we included age and sex in our weights numerator model we have to adjust for them in this outcome model, therefore it is not Marginal with respect to them, only with respect to BMI and systolic blood pressure
+
+
+```{r, warning=F}
+coxph_modtvMIipw <- coxph(Surv(time, timemi2, hospmitv) ~ 
+                                cursmoke +
+                                age + sex, weights=w, cluster=randid,
+                              data = fhstv_incMI)
+coxph_modtvMIipw %>%
+  tidy()
+
+coxph_modtvMIipw %>% 
+  tidy() %>% 
+  filter(term == 'cursmoke') %>%
+  mutate(hr = exp(estimate),
+         low_ci = (estimate - 1.96 * robust.se), 
+         high_ci = (estimate + 1.96 * robust.se), 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+```
+Based on the results of this model and using the correct interpretation we can deduce that the HR comparing what would have happened if everybody was always continuously a smoker (for the duration of follow-up), to what would have happened if no one was ever a smoker is 1.62 (95% CI: 1.32 - 2.00).
+
+The HR is now lower that the conditional model, and although they are not directly comparable, the difference could be explained by the fact that we are no longer blocking a potentially negative effect of smoking on risk of MI hospitalization mediated through BMI (smoking usually has a negative association with BMI overall). Another potential explanation is that the conditional Cox model adjusting for BMI and blood pressure, also induced collider bias through unmeasured common causes between BMI and systolic blood pressure and the outcome, leading to bias away from the null. These are all issues we have to take in mind when choosing the estimation approach we think is more likely to lead to unbiased results. IPW is advantageous compared to traditional regression approaches to control for confounding in the presence of exposure-confounder feedback, however it comes at the cost of additional model(s). Misspecifying any of the models involved could also lead to bias, and as we have seen in the complex time-varying setting, weights may not always behave well. We could improve our weight estimation using machine learning algorithms that make fewer to no distributional and parametric assumptions, thus minimizing the potential for misspecification of weight models. 
+
 
 
 ## Propensity scores
