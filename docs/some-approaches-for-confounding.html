@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-10-25" />
+<meta name="date" content="2021-10-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -248,11 +248,11 @@ div.csl-indent {
 <h2><span class="header-section-number">8.1</span> Readings</h2>
 <p>The required readings for this chapter are:</p>
 <ul>
-<li><p><span class="citation"><a href="#ref-hernanch12" role="doc-biblioref">Hernán and M</a> (<a href="#ref-hernanch12" role="doc-biblioref">2020a</a>)</span>: IP weighting for confounding adjustment and the concept of a Marginal Structural Model</p></li>
-<li><p><span class="citation"><a href="#ref-hernanch15" role="doc-biblioref">Hernán and M</a> (<a href="#ref-hernanch15" role="doc-biblioref">2020b</a>)</span>: Propensity scores and outcome regression</p></li>
+<li><p><span class="citation"><a href="#ref-hernanch12" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch12" role="doc-biblioref">2020a</a>)</span>: IP weighting for confounding adjustment and the concept of a Marginal Structural Model</p></li>
+<li><p><span class="citation"><a href="#ref-hernanch15" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch15" role="doc-biblioref">2020b</a>)</span>: Propensity scores and outcome regression</p></li>
 </ul>
 <p>There are also some supplemental readings you may find useful:
-The following is an instructional paper on constructing IP weights for regression:</p>
+The following is an instructional paper on constructing IP weights for marginal structural models:</p>
 <ul>
 <li><span class="citation"><a href="#ref-cole2008constructing" role="doc-biblioref">Cole and Hernán</a> (<a href="#ref-cole2008constructing" role="doc-biblioref">2008</a>)</span></li>
 </ul>
@@ -260,21 +260,52 @@ The following is an instructional paper on constructing IP weights for regressio
 <ul>
 <li><span class="citation"><a href="#ref-brookhart2013propensity" role="doc-biblioref">Brookhart et al.</a> (<a href="#ref-brookhart2013propensity" role="doc-biblioref">2013</a>)</span></li>
 </ul>
+<p>The following papers comment on the use of machine learning to improve or propensity score/weight estimation</p>
+<ul>
+<li><p><span class="citation"><a href="#ref-lee2010improving" role="doc-biblioref">B. K. Lee, Lessler, and Stuart</a> (<a href="#ref-lee2010improving" role="doc-biblioref">2010</a>)</span></p></li>
+<li><p><span class="citation"><a href="#ref-westreich2010propensity" role="doc-biblioref">Westreich, Lessler, and Funk</a> (<a href="#ref-westreich2010propensity" role="doc-biblioref">2010</a>)</span></p></li>
+</ul>
+<p>while this chapter of the causal inference book explains the problem with traditional regression and exposure-confounder feedback</p>
+<ul>
+<li><span class="citation"><a href="#ref-hernanch20" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch20" role="doc-biblioref">2020c</a>)</span></li>
+</ul>
+<p>Lastly this paper offers a very good explanation on (non-)collapsibility:</p>
+<ul>
+<li><span class="citation"><a href="#ref-greenland1999confounding" role="doc-biblioref">Greenland, Pearl, and Robins</a> (<a href="#ref-greenland1999confounding" role="doc-biblioref">1999</a>)</span></li>
+</ul>
 </div>
 <div id="inverse-probability-weighting" class="section level2" number="8.2">
 <h2><span class="header-section-number">8.2</span> Inverse probability weighting</h2>
-<p>We’ve already fit some Cox models with multiple covariates, where the interpretation of each parameter coefficient is <em>conditional</em> on the other parameters in the model. Let’s look back at our FHS data and reconstruct our simple models for current smoking status first unadjusted and then with age and sex also in the model.</p>
+<p>We’ve already fit some Cox models with multiple covariates, where the interpretation of each parameter coefficient is <em>conditional</em> on the other parameters in the model, and typically these coefficients are expected to yield effect estimates unconfounded by the other variables in the model. In this section we will explore an alternative approach to confounding adjustment in inverse probability weighting (IPW).</p>
+<p><em>Applied exercise: IPW for confounding adjustment</em></p>
+<p>Using the FHS cohort data answer the following questions with repect to confounding of the potential effect of smoking on mortality and incident MI hospitalizations:</p>
+<ol style="list-style-type: decimal">
+<li>Fit a conditional Cox model for the effect of smoking on mortality adjusting for sex and age using the limited (one observation per participant). Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?</li>
+<li>Plot survival curves for mortality and smoking status in the unweighted and weighted population. How do those curves compare?</li>
+<li>Using the time-varying dataset fit a conditional Cox model for smoking and MI hospitalizations adjusting for age, sex, BMI and blood pressure. Estimate time-varying inverse probability weights for exposure and fit a Marginal Structural Cox Model. How do the results of those two models compare?</li>
+</ol>
+<p>Based on this exploratory exercise, think about what each approach is doing in terms of adjusting for confounding, and pros and cons for each in each situation.</p>
+<p><em>Applied exercise: Example code</em></p>
+<ol style="list-style-type: decimal">
+<li><strong>Fit a conditional Cox model for the effec of smoking on mortality adjusting for sex and age. Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?</strong></li>
+</ol>
+<p>Let’s look back at our FHS data and reconstruct our simple models for current smoking status first unadjusted and then with age and sex also in the model.</p>
 <pre><code>## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-## 1 cursmoke  1.40   1.26    1.56</code></pre>
+## 1 cursmoke  1.43   1.19    1.73</code></pre>
 <pre><code>## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-## 1 cursmoke  1.40   1.26    1.56</code></pre>
+## 1 cursmoke  1.35   1.11    1.64</code></pre>
 <p>The first model simply compares current smokers to current non-smokers in the population. It is not conditional on other variables, but also not adjusted for any potential confoudning by them. The interpretation of the (exponentiated) parameter for <code>cursmoke</code> in the adjusted model, is the Hazard Ratio comparing current smokers to current non-smokers <em>conditional</em> on age and sex. In other words this is the log-Hazard Ratio comparing currently smoking males of the same age to currently non-smoking males of the same age, and similarly currently smoking females of the same age to currently non-smoking females of the same age. This <em>conditioning</em> on other variables by including them in a regression model is often sufficient to adjust for any confounding by these variables and is the most widely used approach to adjust for confounding. In this example we see a much higher HR in the adjusted (conditional) model than the unadjusted.</p>
-<p>One alternative approach to this is <em>inverse probability weighting</em> or IPW. IPW allows us to adjust for confounding without having to include additional variables in out final outcome model other than the exposure of interest. Instead we weigh each participant by the inverse of the probability that they had the exposure value they indeed had conditional on these other (potentially confounding variables). Typically the weight estimation will involve a model for the exposure conditional on the potential confounders. Let’s go ahead and do this weight estimation for the above example using the <code>fhs_first</code> subset of the data. We will fit a logistic model for <code>cursmoke</code> conditional on age and sex:</p>
-<div class="sourceCode" id="cb486"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb486-1"><a href="some-approaches-for-confounding.html#cb486-1" aria-hidden="true" tabindex="-1"></a>model_IPW<span class="ot">&lt;-</span><span class="fu">glm</span>(cursmoke<span class="sc">~</span>age <span class="sc">+</span> sex, <span class="at">family=</span><span class="st">&#39;binomial&#39;</span>, <span class="at">data=</span>fhs_first)</span>
+<p>One alternative approach to this is <em>inverse probability weighting</em> or IPW. IPW allows us to adjust for confounding without having to include additional variables in out final outcome model other than the exposure of interest. Instead we weigh each participant by the inverse of the probability that they had the exposure value they indeed had conditional on these other (potentially confounding variables). The quantity we are estimating is:
+<span class="math display">\[
+W=\frac{1}{f[X|V]}
+\]</span>
+where <span class="math inline">\(X\)</span> is the exposure of interest and <span class="math inline">\(V\)</span> is a vector for baseline confounders in this case age and sex.
+Typically the weight estimation will involve a model for the exposure conditional on the potential confounders. Let’s go ahead and do this weight estimation for the above example using the <code>fhs_first</code> subset of the data. We will fit a logistic model for <code>cursmoke</code> conditional on age and sex which we will use to get predictions for the conditional probabilit of exposure:</p>
+<div class="sourceCode" id="cb486"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb486-1"><a href="some-approaches-for-confounding.html#cb486-1" aria-hidden="true" tabindex="-1"></a>model_IPW<span class="ot">&lt;-</span><span class="fu">glm</span>(cursmoke<span class="sc">~+</span>age <span class="sc">+</span> sex, <span class="at">family=</span><span class="st">&#39;binomial&#39;</span>, <span class="at">data=</span>fhs_first)</span>
 <span id="cb486-2"><a href="some-approaches-for-confounding.html#cb486-2" aria-hidden="true" tabindex="-1"></a>model_IPW <span class="sc">%&gt;%</span></span>
 <span id="cb486-3"><a href="some-approaches-for-confounding.html#cb486-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 x 5
@@ -285,74 +316,428 @@ The following is an instructional paper on constructing IP weights for regressio
 ## 3 sex          -0.839    0.0634      -13.2 6.04e-40</code></pre>
 <p>We can see that these variables are significantly associated with current smoking status, however we are not going to be interpreting the parameter coefficients from this model. Instead, we will be using predictions based on this model to estimate our inverse probability weights:</p>
 <div class="sourceCode" id="cb488"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb488-1"><a href="some-approaches-for-confounding.html#cb488-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span></span>
-<span id="cb488-2"><a href="some-approaches-for-confounding.html#cb488-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p.smok.obs=</span><span class="fu">ifelse</span>(cursmoke <span class="sc">==</span> <span class="dv">0</span>,   <span class="do">###estimate the conditional probability that someone is exposed or unexposed from the model above</span></span>
+<span id="cb488-2"><a href="some-approaches-for-confounding.html#cb488-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p_smokobs=</span><span class="fu">ifelse</span>(cursmoke <span class="sc">==</span> <span class="dv">0</span>,   <span class="do">###estimate the conditional probability that someone is unexposed or exposed from the model above</span></span>
 <span id="cb488-3"><a href="some-approaches-for-confounding.html#cb488-3" aria-hidden="true" tabindex="-1"></a>         <span class="dv">1</span> <span class="sc">-</span> <span class="fu">predict</span>(model_IPW, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>),</span>
 <span id="cb488-4"><a href="some-approaches-for-confounding.html#cb488-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">predict</span>(model_IPW, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)),</span>
-<span id="cb488-5"><a href="some-approaches-for-confounding.html#cb488-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">w=</span><span class="dv">1</span><span class="sc">/</span>p.smok.obs)<span class="do">#### The weights is the inverse of the probability of exposure value</span></span>
+<span id="cb488-5"><a href="some-approaches-for-confounding.html#cb488-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">w=</span><span class="dv">1</span><span class="sc">/</span>p_smokobs)<span class="do">#### The weights is the inverse of the probability of exposure value</span></span>
 <span id="cb488-6"><a href="some-approaches-for-confounding.html#cb488-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb488-7"><a href="some-approaches-for-confounding.html#cb488-7" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span></span>
 <span id="cb488-8"><a href="some-approaches-for-confounding.html#cb488-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_w=</span><span class="fu">mean</span>(w),</span>
-<span id="cb488-9"><a href="some-approaches-for-confounding.html#cb488-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">sum_w=</span><span class="fu">sum</span>(w))</span></code></pre></div>
-<pre><code>## # A tibble: 1 x 2
-##   mean_w sum_w
-##    &lt;dbl&gt; &lt;dbl&gt;
-## 1   2.00 8871.</code></pre>
-<p>The mean weight value is 2, so by using the weights we’ll on average be using 2 copies of each participant. Accordingly, the total sum of the weights is 8870 which is roughly double the number of participants we started with. This is because what the weights are doing in this example, is basically create a pseudopopulation where we have enough people so that everyone can be both exposed and unexposed while maintaining the distribution of covariates (here age and sex). The latter has to hold, because pseudopopulation has to be representative of the original target population. We can check this by looking at the distributions of age sex in both the weighted and unweighted data.</p>
+<span id="cb488-9"><a href="some-approaches-for-confounding.html#cb488-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_w=</span><span class="fu">max</span>(w),</span>
+<span id="cb488-10"><a href="some-approaches-for-confounding.html#cb488-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">min_w=</span><span class="fu">min</span>(w),</span>
+<span id="cb488-11"><a href="some-approaches-for-confounding.html#cb488-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">sum_w=</span><span class="fu">sum</span>(w))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   mean_w max_w min_w sum_w
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1   2.00  4.79  1.24 8871.</code></pre>
+<p>The mean weight value is 2, so by using the weights we’ll on average be using 2 copies of each participant. Accordingly, the total sum of the weights is 8870 which is roughly double the number of participants we started with. This is because what the weights are doing in this example, is basically create a pseudopopulation where we have enough people so that everyone can be both exposed and unexposed while maintaining the distribution of covariates (here age and sex). The latter has to hold, because the pseudopopulation has to be representative of the original target population. We can check this by looking at the distributions of age sex in both the weighted and unweighted data.</p>
 <div class="sourceCode" id="cb490"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb490-1"><a href="some-approaches-for-confounding.html#cb490-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span></span>
-<span id="cb490-2"><a href="some-approaches-for-confounding.html#cb490-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>()</span></code></pre></div>
-<pre><code>## # A tibble: 1 x 0</code></pre>
-<p>The great thing about the pseudopopulaton is that the effect of <code>cursmoke</code> in no longer confounded by age and sex.
+<span id="cb490-2"><a href="some-approaches-for-confounding.html#cb490-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_age=</span><span class="fu">mean</span>(age),</span>
+<span id="cb490-3"><a href="some-approaches-for-confounding.html#cb490-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_agew=</span>(<span class="fu">sum</span>(age<span class="sc">*</span>w)<span class="sc">/</span><span class="fu">sum</span>(w)))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 2
+##   mean_age mean_agew
+##      &lt;dbl&gt;     &lt;dbl&gt;
+## 1     49.9      49.7</code></pre>
+<div class="sourceCode" id="cb492"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb492-1"><a href="some-approaches-for-confounding.html#cb492-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb492-2"><a href="some-approaches-for-confounding.html#cb492-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex<span class="sc">==</span><span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb492-3"><a href="some-approaches-for-confounding.html#cb492-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">femalecount =</span> <span class="fu">n</span>(),</span>
+<span id="cb492-4"><a href="some-approaches-for-confounding.html#cb492-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">femalecountw =</span> <span class="fu">sum</span>(w))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 2
+##   femalecount femalecountw
+##         &lt;int&gt;        &lt;dbl&gt;
+## 1        2490        4918.</code></pre>
+<p>We see that the mean age is very similar in the original sample and in the pseudopopulation, while the number of females roughly doubles (as does the whole population), therefore approximately maintaining the initial proportion of females.</p>
+<p>The great thing about the pseudopopulation is that the effect of <code>cursmoke</code> in no longer confounded by age and sex.
 We can go ahead and fit a Cox proportional hazards model for <code>cursmoke</code> using our weights, and without including age and sex in the model.</p>
-<div class="sourceCode" id="cb492"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb492-1"><a href="some-approaches-for-confounding.html#cb492-1" aria-hidden="true" tabindex="-1"></a><span class="do">###Fit Cox weighted model for current smoking status</span></span>
-<span id="cb492-2"><a href="some-approaches-for-confounding.html#cb492-2" aria-hidden="true" tabindex="-1"></a>coxph_modIPW<span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke, <span class="at">weights=</span>w,</span>
-<span id="cb492-3"><a href="some-approaches-for-confounding.html#cb492-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_first)</span>
-<span id="cb492-4"><a href="some-approaches-for-confounding.html#cb492-4" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span></span>
-<span id="cb492-5"><a href="some-approaches-for-confounding.html#cb492-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb494"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb494-1"><a href="some-approaches-for-confounding.html#cb494-1" aria-hidden="true" tabindex="-1"></a><span class="do">###Fit Cox weighted model for current smoking status</span></span>
+<span id="cb494-2"><a href="some-approaches-for-confounding.html#cb494-2" aria-hidden="true" tabindex="-1"></a>coxph_modIPW<span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke, <span class="at">weights=</span>w,</span>
+<span id="cb494-3"><a href="some-approaches-for-confounding.html#cb494-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_first)</span>
+<span id="cb494-4"><a href="some-approaches-for-confounding.html#cb494-4" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span></span>
+<span id="cb494-5"><a href="some-approaches-for-confounding.html#cb494-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 6
 ##   term     estimate std.error robust.se statistic       p.value
 ##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
 ## 1 cursmoke    0.313    0.0363    0.0532      5.88 0.00000000412</code></pre>
-<div class="sourceCode" id="cb494"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb494-1"><a href="some-approaches-for-confounding.html#cb494-1" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span> </span>
-<span id="cb494-2"><a href="some-approaches-for-confounding.html#cb494-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb494-3"><a href="some-approaches-for-confounding.html#cb494-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb494-4"><a href="some-approaches-for-confounding.html#cb494-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
-<span id="cb494-5"><a href="some-approaches-for-confounding.html#cb494-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb494-6"><a href="some-approaches-for-confounding.html#cb494-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb494-7"><a href="some-approaches-for-confounding.html#cb494-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
-<span id="cb494-8"><a href="some-approaches-for-confounding.html#cb494-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
-<span id="cb494-9"><a href="some-approaches-for-confounding.html#cb494-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<div class="sourceCode" id="cb496"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb496-1"><a href="some-approaches-for-confounding.html#cb496-1" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span> </span>
+<span id="cb496-2"><a href="some-approaches-for-confounding.html#cb496-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb496-3"><a href="some-approaches-for-confounding.html#cb496-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb496-4"><a href="some-approaches-for-confounding.html#cb496-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb496-5"><a href="some-approaches-for-confounding.html#cb496-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb496-6"><a href="some-approaches-for-confounding.html#cb496-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb496-7"><a href="some-approaches-for-confounding.html#cb496-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb496-8"><a href="some-approaches-for-confounding.html#cb496-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb496-9"><a href="some-approaches-for-confounding.html#cb496-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 cursmoke  1.37   1.27    1.47</code></pre>
-<p>We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this later). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (<code>randid</code>). If we repeat the above model with a <code>cluster</code> term for <code>randid</code> this will invoke a robust sandwich variance estimation.</p>
-<div class="sourceCode" id="cb496"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb496-1"><a href="some-approaches-for-confounding.html#cb496-1" aria-hidden="true" tabindex="-1"></a>coxph_modIPW<span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke, <span class="at">weights=</span>w, <span class="at">cluster =</span> randid,</span>
-<span id="cb496-2"><a href="some-approaches-for-confounding.html#cb496-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_first)</span>
-<span id="cb496-3"><a href="some-approaches-for-confounding.html#cb496-3" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span></span>
-<span id="cb496-4"><a href="some-approaches-for-confounding.html#cb496-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<p>We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this below). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (<code>randid</code>). If we repeat the above model with a <code>cluster</code> term for <code>randid</code> this will invoke a robust sandwich variance estimation.</p>
+<p>We mentioned that the HR is non-collapsible. What this means is that a conditional estimate of the HR for an exposure of interes within levels of another predictor of the outcome is not collapsible as a marginal estimate (over all levels of the predictors) even in the absence of confoudning. In other words if age was a predictor of the outcome (mortality increases with increasing age), but was not associated with the smoking, we would still expect the HR for smoking to change after adjusting for age (here it would be higher). Therefore in our example where age is in fact a confounder, even if we assume that our MSM based HR takes care of all confounding by age, we still don’t necessarily expect it to be the same as the conditional HR from the model controlling for age due to non-collapsibility of the HR. Non-collapsibility is a property of parameters based on the hazard, rate and odds, but not the risk. See the paper by <span class="citation">(<a href="#ref-greenland1999confounding" role="doc-biblioref">Greenland, Pearl, and Robins 1999</a>)</span> for more on collapsibility.</p>
+<div class="sourceCode" id="cb498"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb498-1"><a href="some-approaches-for-confounding.html#cb498-1" aria-hidden="true" tabindex="-1"></a>coxph_modIPW<span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timedth, death) <span class="sc">~</span> cursmoke, <span class="at">weights=</span>w, <span class="at">cluster =</span> randid,</span>
+<span id="cb498-2"><a href="some-approaches-for-confounding.html#cb498-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_first)</span>
+<span id="cb498-3"><a href="some-approaches-for-confounding.html#cb498-3" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span></span>
+<span id="cb498-4"><a href="some-approaches-for-confounding.html#cb498-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 6
 ##   term     estimate std.error robust.se statistic       p.value
 ##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
 ## 1 cursmoke    0.313    0.0363    0.0532      5.88 0.00000000412</code></pre>
-<p>We now have to use the <code>robust.se</code> rather than <code>std.error</code> to cnstuct our CIs:</p>
-<div class="sourceCode" id="cb498"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb498-1"><a href="some-approaches-for-confounding.html#cb498-1" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span> </span>
-<span id="cb498-2"><a href="some-approaches-for-confounding.html#cb498-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb498-3"><a href="some-approaches-for-confounding.html#cb498-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb498-4"><a href="some-approaches-for-confounding.html#cb498-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
-<span id="cb498-5"><a href="some-approaches-for-confounding.html#cb498-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> robust.se, </span>
-<span id="cb498-6"><a href="some-approaches-for-confounding.html#cb498-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> robust.se, </span>
-<span id="cb498-7"><a href="some-approaches-for-confounding.html#cb498-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
-<span id="cb498-8"><a href="some-approaches-for-confounding.html#cb498-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
-<span id="cb498-9"><a href="some-approaches-for-confounding.html#cb498-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<p>We now have to use the <code>robust.se</code> rather than <code>std.error</code> to construct our CIs:</p>
+<div class="sourceCode" id="cb500"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb500-1"><a href="some-approaches-for-confounding.html#cb500-1" aria-hidden="true" tabindex="-1"></a>coxph_modIPW <span class="sc">%&gt;%</span> </span>
+<span id="cb500-2"><a href="some-approaches-for-confounding.html#cb500-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb500-3"><a href="some-approaches-for-confounding.html#cb500-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb500-4"><a href="some-approaches-for-confounding.html#cb500-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb500-5"><a href="some-approaches-for-confounding.html#cb500-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> robust.se, </span>
+<span id="cb500-6"><a href="some-approaches-for-confounding.html#cb500-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> robust.se, </span>
+<span id="cb500-7"><a href="some-approaches-for-confounding.html#cb500-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb500-8"><a href="some-approaches-for-confounding.html#cb500-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb500-9"><a href="some-approaches-for-confounding.html#cb500-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 cursmoke  1.37   1.23    1.52</code></pre>
-<p>The CIs are now wider than before and more akin to the width from the original conditional model. This weighted model is essentially a Marginal Structural Cox Model. Marginal Structural Models (MSMs) refer to models that are <em>marginal</em> or <em>unconditional</em> with respect to some covariates, as is the case of our model with respect to age and sex. The interpretaton for the Cox MSM hazard ratios is no longer conditional on age and sex or in other words it is simple a comparison between current smokers and non-smokers (not within levels of age and sex).</p>
+<p>The CIs are now wider than before and more akin to the width of the CIs from the original conditional model. This weighted model is essentially a Marginal Structural Cox Model. Marginal Structural Models (MSMs) refer to models that are <em>marginal</em> or <em>unconditional</em> with respect to some covariates, as is the case of our model with respect to age and sex. The interpretaton for the Cox MSM hazard ratios is no longer conditional on age and sex or in other words we are not looking for effects within levels of age and sex. We are however still adjusting for confounding by these variables. It is also <em>structural</em> because we are essentially modeling counterfactuals (the result of the weights gives us enough participants so that everyone (from the original 4434 participants) can be exposed and unexposed). MSMs are essenctially considered causal models though the causal interpretation relies on several assumptions (exchangeability, consistency, positivity, no information bias, correct model specification). In our case if there exist more confounders other than age and sex (likely) then the exchangeability assumption fails.</p>
+<p>The use of weights and introduction of a counterfactual framework also changes the interpretation of the HR from a mere comparison of smokers and non-smokers in the population to a comparison of what would happened if everyone in the population was a smoker to what would have happened if no one was a smoker.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Plot survival curves for mortality and smoking status in the unweighted and weighted population. How do those curves compare?</strong></li>
+</ol>
+<p>Using the weighted pseudopopulation we can also construct survival curves comparing what would happen if everyone had been a smoker and what would happen had no one smoked, that are inherenelty adjusted for any confounding by age and sex. We did fit survival curves comparing smokers and non-smokers in the unweighted data that were unadjusted in 7.3:</p>
+<div class="sourceCode" id="cb502"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb502-1"><a href="some-approaches-for-confounding.html#cb502-1" aria-hidden="true" tabindex="-1"></a>fit_smoke <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> cursmoke, <span class="at">data =</span> fhs_first)</span>
+<span id="cb502-2"><a href="some-approaches-for-confounding.html#cb502-2" aria-hidden="true" tabindex="-1"></a>fit_smoke <span class="sc">%&gt;%</span></span>
+<span id="cb502-3"><a href="some-approaches-for-confounding.html#cb502-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsurvplot</span>(<span class="at">xlab =</span> <span class="st">&quot;Time to death (years)&quot;</span>,</span>
+<span id="cb502-4"><a href="some-approaches-for-confounding.html#cb502-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">ylab =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, </span>
+<span id="cb502-5"><a href="some-approaches-for-confounding.html#cb502-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-257-1.png" width="672" /></p>
+<p>In the weighted pseudopopulation:</p>
+<div class="sourceCode" id="cb503"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb503-1"><a href="some-approaches-for-confounding.html#cb503-1" aria-hidden="true" tabindex="-1"></a>fit_smokeW <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(timedthy, death) <span class="sc">~</span> cursmoke, <span class="at">weights=</span>w, <span class="at">data =</span> fhs_first)</span>
+<span id="cb503-2"><a href="some-approaches-for-confounding.html#cb503-2" aria-hidden="true" tabindex="-1"></a>fit_smokeW <span class="sc">%&gt;%</span></span>
+<span id="cb503-3"><a href="some-approaches-for-confounding.html#cb503-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsurvplot</span>(<span class="at">xlab =</span> <span class="st">&quot;Time to death (years)&quot;</span>,</span>
+<span id="cb503-4"><a href="some-approaches-for-confounding.html#cb503-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">ylab =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">&#39;Overall Survival Probablity &#39;</span>, </span>
+<span id="cb503-5"><a href="some-approaches-for-confounding.html#cb503-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">hat</span>(S)<span class="sc">*</span><span class="st">&quot;(t)&quot;</span>)))</span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-258-1.png" width="672" /></p>
+<p>We see that there is a difference in the two plots, with the smokers and non-smokers having quite similar survival curves in the first one, but a separation in the second one that again in inherently adjusted for confounding by sex and age.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Using the time-varying dataset fit a conditional Cox model for smoking and MI hospitalizations adjusting for age, sex, BMI and blood pressure. Estimate time-varying inverse probability weights for exposure and fit a Marginal Structural Cox Model. How do the results of those two models compare?</strong></li>
+</ol>
+<p>Now let’s revisit the time-varying dataset we created and fit a conditional model for time-varying smoking status and MI hospitalization adjusted for age, sex, BMI and systolic blood pressure.</p>
+<div class="sourceCode" id="cb504"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb504-1"><a href="some-approaches-for-confounding.html#cb504-1" aria-hidden="true" tabindex="-1"></a>coxph_modtvMI <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(time, timemi2, hospmitv) <span class="sc">~</span> </span>
+<span id="cb504-2"><a href="some-approaches-for-confounding.html#cb504-2" aria-hidden="true" tabindex="-1"></a>                                cursmoke <span class="sc">+</span> <span class="fu">ns</span>(bmi, <span class="at">df =</span> <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">ns</span>(sysbp, <span class="at">df =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb504-3"><a href="some-approaches-for-confounding.html#cb504-3" aria-hidden="true" tabindex="-1"></a>                                age <span class="sc">+</span> sex, </span>
+<span id="cb504-4"><a href="some-approaches-for-confounding.html#cb504-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">data =</span> fhstv_incMI)</span>
+<span id="cb504-5"><a href="some-approaches-for-confounding.html#cb504-5" aria-hidden="true" tabindex="-1"></a>coxph_modtvMI <span class="sc">%&gt;%</span></span>
+<span id="cb504-6"><a href="some-approaches-for-confounding.html#cb504-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 9 x 5
+##   term               estimate std.error statistic  p.value
+##   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 cursmoke             0.588    0.109       5.40  6.77e- 8
+## 2 ns(bmi, df = 3)1     0.942    0.391       2.41  1.59e- 2
+## 3 ns(bmi, df = 3)2     0.241    1.57        0.154 8.78e- 1
+## 4 ns(bmi, df = 3)3    -0.377    1.43       -0.263 7.92e- 1
+## 5 ns(sysbp, df = 3)1   2.06     0.414       4.97  6.67e- 7
+## 6 ns(sysbp, df = 3)2   4.85     1.62        2.98  2.84e- 3
+## 7 ns(sysbp, df = 3)3   3.77     1.05        3.59  3.30e- 4
+## 8 age                  0.0322   0.00655     4.92  8.60e- 7
+## 9 sex                 -1.15     0.114     -10.1   3.43e-24</code></pre>
+<div class="sourceCode" id="cb506"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb506-1"><a href="some-approaches-for-confounding.html#cb506-1" aria-hidden="true" tabindex="-1"></a>coxph_modtvMI <span class="sc">%&gt;%</span> </span>
+<span id="cb506-2"><a href="some-approaches-for-confounding.html#cb506-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb506-3"><a href="some-approaches-for-confounding.html#cb506-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;cursmoke&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb506-4"><a href="some-approaches-for-confounding.html#cb506-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb506-5"><a href="some-approaches-for-confounding.html#cb506-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> (estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error), </span>
+<span id="cb506-6"><a href="some-approaches-for-confounding.html#cb506-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> (estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error), </span>
+<span id="cb506-7"><a href="some-approaches-for-confounding.html#cb506-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb506-8"><a href="some-approaches-for-confounding.html#cb506-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb506-9"><a href="some-approaches-for-confounding.html#cb506-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.80   1.45    2.23</code></pre>
+<p>One concern from this model is that BMI and systolic blood pressure maybe mediators for the effect of smoking on MI hospitalizations, in which case we wouldn’t want to control for them. However, given the time-varying nature of the exposure, BMI and systolic blood pressure may also be confounders if they have an effect on who changes smoking status in the future. This creates an exposure-confounder feedback, with the confounder causing the exposure and the exposure in turn having an effect on the confounder a later time point. Traditional regression approaches are not adequately equipped to handle this type of confounding, however IPW (and some other approaches) can adjust for confounding without blocking any mediating pathways.</p>
+<p>In this time-varying setting the inverse probability weights will also be time-varying and the quantity is
+<span class="math display">\[
+W=\prod_{t}\frac{1}{f[X_{t}|\bar{X}_{t-1},\bar{C}_{t-1},V]}
+\]</span>
+where at each time point (period) the weight is the cumulative product of the inverse of the probability of the exposure value at each time point <span class="math inline">\(X_{t}\)</span> conditional on the history of past exposures <span class="math inline">\(\bar{X}_{t-1}\)</span> and covariates <span class="math inline">\(\bar{C}_{t-1}\)</span> up to the previous period as well as the baseline covariates. In our case the time varying covariates <span class="math inline">\(C_{t}\)</span> are BMI and systolic blood pressure, while baseline covariates <span class="math inline">\(V\)</span> are age and sex.</p>
+<p>In order to estimate these weights we would have to lag exposure, BMI and systolic blood pressure in order to predict current exposure <span class="math inline">\(X_{t}\)</span> using past exposure and covariate values <span class="math inline">\(X_{t-1}\)</span> and <span class="math inline">\(C_{t-1}\)</span>. We are omitting the overbars denoting history as we will assume the most recent value from the past is adequate to represent exposure and coviariate histories.</p>
+<div class="sourceCode" id="cb508"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb508-1"><a href="some-approaches-for-confounding.html#cb508-1" aria-hidden="true" tabindex="-1"></a>fhstv_incMI<span class="ot">&lt;-</span>fhstv_incMI <span class="sc">%&gt;%</span></span>
+<span id="cb508-2"><a href="some-approaches-for-confounding.html#cb508-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span></span>
+<span id="cb508-3"><a href="some-approaches-for-confounding.html#cb508-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cursmoke_l1=</span><span class="fu">lag</span>(cursmoke),</span>
+<span id="cb508-4"><a href="some-approaches-for-confounding.html#cb508-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">cursmoke_l1=</span><span class="fu">ifelse</span>(period<span class="sc">==</span><span class="dv">1</span>, cursmoke, cursmoke_l1), <span class="do">###we are setting the lagged smoking status variable to equal the present smoking status value (we are assuming smoking status didn&#39;t change right at the beginning of follow-up)</span></span>
+<span id="cb508-5"><a href="some-approaches-for-confounding.html#cb508-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">bmi_l1=</span><span class="fu">lag</span>(bmi),</span>
+<span id="cb508-6"><a href="some-approaches-for-confounding.html#cb508-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">bmi_l1=</span><span class="fu">ifelse</span>(period<span class="sc">==</span><span class="dv">1</span>, <span class="dv">0</span>, bmi_l1),</span>
+<span id="cb508-7"><a href="some-approaches-for-confounding.html#cb508-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">sysbp_l1=</span><span class="fu">lag</span>(sysbp),</span>
+<span id="cb508-8"><a href="some-approaches-for-confounding.html#cb508-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">sysbp_l1=</span><span class="fu">ifelse</span>(period<span class="sc">==</span><span class="dv">1</span>, <span class="dv">0</span>, sysbp_l1)) <span class="sc">%&gt;%</span></span>
+<span id="cb508-9"><a href="some-approaches-for-confounding.html#cb508-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
+<p>Furthermore as we are assuming an order where smoking is a cause of BMI and systolic blood pressure at each time period, we don’t have BMI and blood pressure values to predict exposure at period 1. We have set those to zero above, so we can actually get a prediction for the probability of exposure values at this period based on the baseline variables values. We will also inclue time in the model, as in this time-varying setting it’s safe to assume that time-varying variables are a function of time.</p>
+<div class="sourceCode" id="cb509"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb509-1"><a href="some-approaches-for-confounding.html#cb509-1" aria-hidden="true" tabindex="-1"></a>mod_tvIPW<span class="ot">&lt;-</span><span class="fu">glm</span>(cursmoke<span class="sc">~</span><span class="fu">ns</span>(time, <span class="at">df=</span><span class="dv">2</span>)<span class="sc">+</span>age<span class="sc">+</span>sex<span class="sc">+</span>cursmoke_l1 <span class="sc">+</span> <span class="fu">ns</span>(bmi_l1, <span class="at">df=</span><span class="dv">2</span>)<span class="sc">+</span>sysbp_l1, <span class="at">family=</span>binomial, <span class="at">data=</span>fhstv_incMI)</span>
+<span id="cb509-2"><a href="some-approaches-for-confounding.html#cb509-2" aria-hidden="true" tabindex="-1"></a>mod_tvIPW <span class="sc">%&gt;%</span></span>
+<span id="cb509-3"><a href="some-approaches-for-confounding.html#cb509-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 9 x 5
+##   term                estimate std.error statistic  p.value
+##   &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)         -1.09      0.288      -3.80  1.47e- 4
+## 2 ns(time, df = 2)1    1.14      2.22        0.515 6.06e- 1
+## 3 ns(time, df = 2)2   -0.690     0.421      -1.64  1.01e- 1
+## 4 age                 -0.0368    0.00484    -7.62  2.59e-14
+## 5 sex                  0.0273    0.0791      0.346 7.30e- 1
+## 6 cursmoke_l1          5.72      0.0979     58.4   0.      
+## 7 ns(bmi_l1, df = 2)1 -2.97      1.88       -1.58  1.13e- 1
+## 8 ns(bmi_l1, df = 2)2 -2.22      0.868      -2.56  1.06e- 2
+## 9 sysbp_l1            -0.00117   0.00239    -0.491 6.23e- 1</code></pre>
+<p>Most of the above variables look like they are significant predictors of exposure. However, once again we are not interpreting the paramater coefficients of this model, we are only using it for prediction.</p>
+<div class="sourceCode" id="cb511"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb511-1"><a href="some-approaches-for-confounding.html#cb511-1" aria-hidden="true" tabindex="-1"></a>fhstv_incMI <span class="ot">&lt;-</span>fhstv_incMI <span class="sc">%&gt;%</span></span>
+<span id="cb511-2"><a href="some-approaches-for-confounding.html#cb511-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span></span>
+<span id="cb511-3"><a href="some-approaches-for-confounding.html#cb511-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p_smokobs=</span><span class="fu">ifelse</span>(cursmoke <span class="sc">==</span> <span class="dv">0</span>,   <span class="do">###estimate the conditional probability that someone is unexposed or exposed from the model above</span></span>
+<span id="cb511-4"><a href="some-approaches-for-confounding.html#cb511-4" aria-hidden="true" tabindex="-1"></a>         <span class="dv">1</span> <span class="sc">-</span> <span class="fu">predict</span>(mod_tvIPW, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>),</span>
+<span id="cb511-5"><a href="some-approaches-for-confounding.html#cb511-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">predict</span>(mod_tvIPW, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)),</span>
+<span id="cb511-6"><a href="some-approaches-for-confounding.html#cb511-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">w_i=</span><span class="dv">1</span><span class="sc">/</span>p_smokobs,<span class="do">#### This is the first step</span></span>
+<span id="cb511-7"><a href="some-approaches-for-confounding.html#cb511-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">w=</span><span class="fu">cumprod</span>(w_i)) <span class="sc">%&gt;%</span> <span class="do">### the second step gives us the cumulative product of the inverse probabilities over   time. </span></span>
+<span id="cb511-8"><a href="some-approaches-for-confounding.html#cb511-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ungroup</span>()</span>
+<span id="cb511-9"><a href="some-approaches-for-confounding.html#cb511-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb511-10"><a href="some-approaches-for-confounding.html#cb511-10" aria-hidden="true" tabindex="-1"></a>fhstv_incMI <span class="sc">%&gt;%</span></span>
+<span id="cb511-11"><a href="some-approaches-for-confounding.html#cb511-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_w=</span><span class="fu">mean</span>(w),</span>
+<span id="cb511-12"><a href="some-approaches-for-confounding.html#cb511-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">min_w=</span><span class="fu">min</span>(w),</span>
+<span id="cb511-13"><a href="some-approaches-for-confounding.html#cb511-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_w=</span><span class="fu">max</span>(w),</span>
+<span id="cb511-14"><a href="some-approaches-for-confounding.html#cb511-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">sum_w=</span><span class="fu">sum</span>(w))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   mean_w min_w  max_w     sum_w
+##    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+## 1  1742.  1.08 18233. 19600277.</code></pre>
+<p>Due to the cumulative product nature of these weights, we now see that the mean weight is much higher than before, while the maximum weight value is now over 18,000 meaning that particular observation will count as pver 18,000 observation in our analysis. This creates the possibility for very influential observations, due to weight inflation. One way to remedy this is to use stabilized weights, which involve a numerator that is also a probability of the actual exposure value at each time period. Unlike the denominator of the weights, the probability in the numerator will be a marginal probability of exposure or simply conditional on past exposure. We can even include our baseline covariates in the numerator model, however we will have to control for them in the final model if we do so. Here we will use probability of exposure values conditional on past exposure only for out numerators.</p>
+<div class="sourceCode" id="cb513"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb513-1"><a href="some-approaches-for-confounding.html#cb513-1" aria-hidden="true" tabindex="-1"></a>mod_tvIPWnum<span class="ot">&lt;-</span><span class="fu">glm</span>(cursmoke<span class="sc">~</span><span class="fu">ns</span>(time, <span class="at">df=</span><span class="dv">2</span>)<span class="sc">+</span>cursmoke_l1, <span class="at">family=</span>binomial, <span class="at">data=</span>fhstv_incMI)</span>
+<span id="cb513-2"><a href="some-approaches-for-confounding.html#cb513-2" aria-hidden="true" tabindex="-1"></a>mod_tvIPWnum <span class="sc">%&gt;%</span></span>
+<span id="cb513-3"><a href="some-approaches-for-confounding.html#cb513-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 4 x 5
+##   term              estimate std.error statistic   p.value
+##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)          -2.91    0.0830     -35.0 6.46e-269
+## 2 ns(time, df = 2)1    -2.00    0.176      -11.3 7.94e- 30
+## 3 ns(time, df = 2)2    -1.46    0.119      -12.2 2.36e- 34
+## 4 cursmoke_l1           5.77    0.0958      60.3 0.</code></pre>
+<div class="sourceCode" id="cb515"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb515-1"><a href="some-approaches-for-confounding.html#cb515-1" aria-hidden="true" tabindex="-1"></a>fhstv_incMI <span class="ot">&lt;-</span>fhstv_incMI <span class="sc">%&gt;%</span></span>
+<span id="cb515-2"><a href="some-approaches-for-confounding.html#cb515-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span></span>
+<span id="cb515-3"><a href="some-approaches-for-confounding.html#cb515-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p_smokobsnum=</span><span class="fu">ifelse</span>(cursmoke <span class="sc">==</span> <span class="dv">0</span>,   <span class="do">###estimate the conditional probability that someone is unexposed or exposed from the model above</span></span>
+<span id="cb515-4"><a href="some-approaches-for-confounding.html#cb515-4" aria-hidden="true" tabindex="-1"></a>         <span class="dv">1</span> <span class="sc">-</span> <span class="fu">predict</span>(mod_tvIPWnum, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>),</span>
+<span id="cb515-5"><a href="some-approaches-for-confounding.html#cb515-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">predict</span>(mod_tvIPWnum, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)),</span>
+<span id="cb515-6"><a href="some-approaches-for-confounding.html#cb515-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">w_i=</span>p_smokobsnum<span class="sc">/</span>p_smokobs,<span class="do">#### This is the first step</span></span>
+<span id="cb515-7"><a href="some-approaches-for-confounding.html#cb515-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">w=</span><span class="fu">cumprod</span>(w_i)) <span class="sc">%&gt;%</span> <span class="do">### the second step gives us the cumulative product of the inverse probabilities over   time. </span></span>
+<span id="cb515-8"><a href="some-approaches-for-confounding.html#cb515-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ungroup</span>()</span>
+<span id="cb515-9"><a href="some-approaches-for-confounding.html#cb515-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb515-10"><a href="some-approaches-for-confounding.html#cb515-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb515-11"><a href="some-approaches-for-confounding.html#cb515-11" aria-hidden="true" tabindex="-1"></a>fhstv_incMI <span class="sc">%&gt;%</span></span>
+<span id="cb515-12"><a href="some-approaches-for-confounding.html#cb515-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_w=</span><span class="fu">mean</span>(w),</span>
+<span id="cb515-13"><a href="some-approaches-for-confounding.html#cb515-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">min_w=</span><span class="fu">min</span>(w),</span>
+<span id="cb515-14"><a href="some-approaches-for-confounding.html#cb515-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_w=</span><span class="fu">max</span>(w),</span>
+<span id="cb515-15"><a href="some-approaches-for-confounding.html#cb515-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">sum_w=</span><span class="fu">sum</span>(w))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   mean_w min_w max_w sum_w
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  0.820 0.473  1.04 9230.</code></pre>
+<p>A good rule of thumb for stabilized weights is that the mean of the weights should be around 1. Here we see that we are fairly lower than this. Including sex and age may improve our numerator model.</p>
+<div class="sourceCode" id="cb517"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb517-1"><a href="some-approaches-for-confounding.html#cb517-1" aria-hidden="true" tabindex="-1"></a>mod_tvIPWnum<span class="ot">&lt;-</span><span class="fu">glm</span>(cursmoke<span class="sc">~</span><span class="fu">ns</span>(time, <span class="at">df=</span><span class="dv">2</span>)<span class="sc">+</span>cursmoke_l1 <span class="sc">+</span> age <span class="sc">+</span> sex, <span class="at">family=</span>binomial, <span class="at">data=</span>fhstv_incMI)</span>
+<span id="cb517-2"><a href="some-approaches-for-confounding.html#cb517-2" aria-hidden="true" tabindex="-1"></a>mod_tvIPWnum <span class="sc">%&gt;%</span></span>
+<span id="cb517-3"><a href="some-approaches-for-confounding.html#cb517-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 5
+##   term              estimate std.error statistic  p.value
+##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)        -1.09     0.279      -3.91  9.30e- 5
+## 2 ns(time, df = 2)1  -1.50     0.186      -8.09  5.99e-16
+## 3 ns(time, df = 2)2  -1.14     0.126      -9.05  1.49e-19
+## 4 cursmoke_l1         5.73     0.0975     58.8   0.      
+## 5 age                -0.0381   0.00466    -8.18  2.88e-16
+## 6 sex                 0.0636   0.0775      0.820 4.12e- 1</code></pre>
+<div class="sourceCode" id="cb519"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb519-1"><a href="some-approaches-for-confounding.html#cb519-1" aria-hidden="true" tabindex="-1"></a>fhstv_incMI <span class="ot">&lt;-</span>fhstv_incMI <span class="sc">%&gt;%</span></span>
+<span id="cb519-2"><a href="some-approaches-for-confounding.html#cb519-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span></span>
+<span id="cb519-3"><a href="some-approaches-for-confounding.html#cb519-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p_smokobsnum=</span><span class="fu">ifelse</span>(cursmoke <span class="sc">==</span> <span class="dv">0</span>,   <span class="do">###estimate the conditional probability that someone is unexposed or exposed from the model above</span></span>
+<span id="cb519-4"><a href="some-approaches-for-confounding.html#cb519-4" aria-hidden="true" tabindex="-1"></a>         <span class="dv">1</span> <span class="sc">-</span> <span class="fu">predict</span>(mod_tvIPWnum, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>),</span>
+<span id="cb519-5"><a href="some-approaches-for-confounding.html#cb519-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">predict</span>(mod_tvIPWnum, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)),</span>
+<span id="cb519-6"><a href="some-approaches-for-confounding.html#cb519-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">w_i=</span>p_smokobsnum<span class="sc">/</span>p_smokobs,<span class="do">#### This is the first step</span></span>
+<span id="cb519-7"><a href="some-approaches-for-confounding.html#cb519-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">w=</span><span class="fu">cumprod</span>(w_i)) <span class="sc">%&gt;%</span> <span class="do">### the second step gives us the cumulative product of the inverse probabilities over   time. </span></span>
+<span id="cb519-8"><a href="some-approaches-for-confounding.html#cb519-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ungroup</span>()</span>
+<span id="cb519-9"><a href="some-approaches-for-confounding.html#cb519-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb519-10"><a href="some-approaches-for-confounding.html#cb519-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb519-11"><a href="some-approaches-for-confounding.html#cb519-11" aria-hidden="true" tabindex="-1"></a>fhstv_incMI <span class="sc">%&gt;%</span></span>
+<span id="cb519-12"><a href="some-approaches-for-confounding.html#cb519-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_w=</span><span class="fu">mean</span>(w),</span>
+<span id="cb519-13"><a href="some-approaches-for-confounding.html#cb519-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">min_w=</span><span class="fu">min</span>(w),</span>
+<span id="cb519-14"><a href="some-approaches-for-confounding.html#cb519-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_w=</span><span class="fu">max</span>(w),</span>
+<span id="cb519-15"><a href="some-approaches-for-confounding.html#cb519-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">sum_w=</span><span class="fu">sum</span>(w))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   mean_w min_w max_w  sum_w
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1   1.02 0.986  1.11 11488.</code></pre>
+<p>We now see we are much closer to a mean weight of one and the weight range is quite narrow, meaning the chance for influential observations is not high. We now git our Marginal Structural Cox model for MI hospitalizations. Note that because we included age and sex in our weights numerator model we have to adjust for them in this outcome model, therefore it is not Marginal with respect to them, only with respect to BMI and systolic blood pressure</p>
+<div class="sourceCode" id="cb521"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb521-1"><a href="some-approaches-for-confounding.html#cb521-1" aria-hidden="true" tabindex="-1"></a>coxph_modtvMIipw <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(time, timemi2, hospmitv) <span class="sc">~</span> </span>
+<span id="cb521-2"><a href="some-approaches-for-confounding.html#cb521-2" aria-hidden="true" tabindex="-1"></a>                                cursmoke <span class="sc">+</span></span>
+<span id="cb521-3"><a href="some-approaches-for-confounding.html#cb521-3" aria-hidden="true" tabindex="-1"></a>                                age <span class="sc">+</span> sex, <span class="at">weights=</span>w, <span class="at">cluster=</span>randid,</span>
+<span id="cb521-4"><a href="some-approaches-for-confounding.html#cb521-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">data =</span> fhstv_incMI)</span>
+<span id="cb521-5"><a href="some-approaches-for-confounding.html#cb521-5" aria-hidden="true" tabindex="-1"></a>coxph_modtvMIipw <span class="sc">%&gt;%</span></span>
+<span id="cb521-6"><a href="some-approaches-for-confounding.html#cb521-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 6
+##   term     estimate std.error robust.se statistic  p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 cursmoke   0.485    0.105     0.105        4.59 4.37e- 6
+## 2 age        0.0460   0.00601   0.00617      7.45 9.28e-14
+## 3 sex       -1.11     0.108     0.109      -10.1  4.58e-24</code></pre>
+<div class="sourceCode" id="cb523"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb523-1"><a href="some-approaches-for-confounding.html#cb523-1" aria-hidden="true" tabindex="-1"></a>coxph_modtvMIipw <span class="sc">%&gt;%</span> </span>
+<span id="cb523-2"><a href="some-approaches-for-confounding.html#cb523-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb523-3"><a href="some-approaches-for-confounding.html#cb523-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;cursmoke&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb523-4"><a href="some-approaches-for-confounding.html#cb523-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb523-5"><a href="some-approaches-for-confounding.html#cb523-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> (estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> robust.se), </span>
+<span id="cb523-6"><a href="some-approaches-for-confounding.html#cb523-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> (estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> robust.se), </span>
+<span id="cb523-7"><a href="some-approaches-for-confounding.html#cb523-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb523-8"><a href="some-approaches-for-confounding.html#cb523-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb523-9"><a href="some-approaches-for-confounding.html#cb523-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.62   1.32    2.00</code></pre>
+<p>Based on the results of this model and using the correct interpretation we can deduce that the HR comparing what would have happened if everybody was always continuously a smoker (for the duration of follow-up), to what would have happened if no one was ever a smoker is 1.62 (95% CI: 1.32 - 2.00).</p>
+<p>The HR is now lower that the conditional model, and although they are not directly comparable, the difference could be explained by the fact that we are no longer blocking a potentially negative effect of smoking on risk of MI hospitalization mediated through BMI (smoking usually has a negative association with BMI overall). Another potential explanation is that the conditional Cox model adjusting for BMI and blood pressure, also induced collider bias through unmeasured common causes between BMI and systolic blood pressure and the outcome, leading to bias away from the null. These are all issues we have to take in mind when choosing the estimation approach we think is more likely to lead to unbiased results. IPW is advantageous compared to traditional regression approaches to control for confounding in the presence of exposure-confounder feedback, however it comes at the cost of additional model(s). Misspecifying any of the models involved could also lead to bias, and as we have seen in the complex time-varying setting, weights may not always behave well. We could improve our weight estimation using machine learning algorithms that make fewer to no distributional and parametric assumptions, thus minimizing the potential for misspecification of weight models.</p>
 </div>
 <div id="propensity-scores" class="section level2" number="8.3">
 <h2><span class="header-section-number">8.3</span> Propensity scores</h2>
-<p>[Modeling for weights/propensity scores, involves machine learning]</p>
+<p>IPW is technically part of a general approach to adjust for confounding relying on measures for the probability of exposure known as propensity scores. In other words rather than adjusting for potential confounders directly, we adjust for the propensity of exposure given observed values of those potential confounders. Propensity scores can be used as weights (like in ipw), can be stratified upon, entered as a covariate in a model, or can be used as a matching variable for covariate adjustment. Each participant (or onbservation in the data) essentially receives a <em>score</em> for their propensity to be exposed given their covariate values. This score is equal to the probability of exposure given covariate values <span class="math inline">\(Pr[X=1|C]\)</span> where <span class="math inline">\(X\)</span> is the exposure of interest (<span class="math inline">\(X=1\)</span> for exposed and <span class="math inline">\(X=0\)</span> for unexposed), and <span class="math inline">\(C\)</span> is a vector of covariates (potential confounders).</p>
+<p><em>Applied exercise: Propensity scores for confounding adjustment</em></p>
+<p>Using the FHS cohort data answer the following questions with respect to confounding of the potential effect of smoking on mortality:</p>
+<ol style="list-style-type: decimal">
+<li>Estimate the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking and baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?</li>
+<li>Fit a Cox model with the propensity score in the model. How do these results compare to the ones above?</li>
+</ol>
+<p><em>Applied exercise: Example code</em></p>
+<ol style="list-style-type: decimal">
+<li><strong>Estimate the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking at baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?</strong></li>
+</ol>
+<p>Estimating the propensity score is actually very similar to what we did above to estimate IP weights. We will fit a logistic model for the probability of exposure and use it to generate predictions for the propensity score:</p>
+<div class="sourceCode" id="cb525"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb525-1"><a href="some-approaches-for-confounding.html#cb525-1" aria-hidden="true" tabindex="-1"></a>model_PS<span class="ot">&lt;-</span><span class="fu">glm</span>(cursmoke<span class="sc">~+</span>age <span class="sc">+</span> sex, <span class="at">family=</span><span class="st">&#39;binomial&#39;</span>, <span class="at">data=</span>fhs_first)</span>
+<span id="cb525-2"><a href="some-approaches-for-confounding.html#cb525-2" aria-hidden="true" tabindex="-1"></a>model_PS <span class="sc">%&gt;%</span></span>
+<span id="cb525-3"><a href="some-approaches-for-confounding.html#cb525-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   3.84     0.218        17.6 1.37e-69
+## 2 age          -0.0514   0.00370     -13.9 8.06e-44
+## 3 sex          -0.839    0.0634      -13.2 6.04e-40</code></pre>
+<div class="sourceCode" id="cb527"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb527-1"><a href="some-approaches-for-confounding.html#cb527-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="ot">&lt;-</span>fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb527-2"><a href="some-approaches-for-confounding.html#cb527-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ps_smok=</span><span class="fu">predict</span>(model_PS, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>))</span>
+<span id="cb527-3"><a href="some-approaches-for-confounding.html#cb527-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb527-4"><a href="some-approaches-for-confounding.html#cb527-4" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb527-5"><a href="some-approaches-for-confounding.html#cb527-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_ps=</span><span class="fu">mean</span>(ps_smok),</span>
+<span id="cb527-6"><a href="some-approaches-for-confounding.html#cb527-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_ps=</span><span class="fu">max</span>(ps_smok),</span>
+<span id="cb527-7"><a href="some-approaches-for-confounding.html#cb527-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">min_ps=</span><span class="fu">min</span>(ps_smok),</span>
+<span id="cb527-8"><a href="some-approaches-for-confounding.html#cb527-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">sum_ps=</span><span class="fu">sum</span>(ps_smok))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   mean_ps max_ps min_ps sum_ps
+##     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1   0.492  0.787  0.192  2181.</code></pre>
+<p>You may have noticed that unlike in IPW where we wanted to conditional probability of the value of exposure each participant had (i.e the probability that they were exposed if exposed and the probability that they were unexposed if unexposed) here we want the probability of exposure for everyone. This slight difference has a consequence in the interpretation of our findings later. Therefore the PS is a continuous variable with a possible range of 0 to 1 and the sum of the propensity score should equal the number of exposed individuals in the dataset. Given the continuous nature of the PS it is difficult to stratify on it, as any given exact value may only have one participant with that value. In our case, since we are only predicting based on age and sex, participants with the same age and sex will have the same value, however those may still be small counts in each possible stratum.</p>
+<div class="sourceCode" id="cb529"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb529-1"><a href="some-approaches-for-confounding.html#cb529-1" aria-hidden="true" tabindex="-1"></a>fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb529-2"><a href="some-approaches-for-confounding.html#cb529-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ps_smok) <span class="sc">%&gt;%</span></span>
+<span id="cb529-3"><a href="some-approaches-for-confounding.html#cb529-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 1
+##   ps_smok
+##     &lt;dbl&gt;
+## 1   0.731
+## 2   0.450
+## 3   0.631
+## 4   0.274
+## 5   0.450
+## 6   0.488</code></pre>
+<p>We will therefore limit the possible number of strata and hopefuly increase the counts in each stratum by creating quartiles for the PS:</p>
+<div class="sourceCode" id="cb531"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb531-1"><a href="some-approaches-for-confounding.html#cb531-1" aria-hidden="true" tabindex="-1"></a>fhs_first<span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb531-2"><a href="some-approaches-for-confounding.html#cb531-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ps_smokq=</span><span class="fu">cut</span>(ps_smok, <span class="at">breaks=</span><span class="fu">c</span>(<span class="fu">quantile</span>(ps_smok, <span class="at">probs =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.25</span>))), </span>
+<span id="cb531-3"><a href="some-approaches-for-confounding.html#cb531-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;Q1&quot;</span>,<span class="st">&quot;Q2&quot;</span>,<span class="st">&quot;Q3&quot;</span>,<span class="st">&quot;Q4&quot;</span>), <span class="at">include.lowest=</span><span class="cn">TRUE</span>))</span></code></pre></div>
+<p>If we now fit our models in each of the strate defined by the quartiles:</p>
+<div class="sourceCode" id="cb532"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb532-1"><a href="some-approaches-for-confounding.html#cb532-1" aria-hidden="true" tabindex="-1"></a>fhs_firstPSQ1<span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb532-2"><a href="some-approaches-for-confounding.html#cb532-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ps_smokq<span class="sc">==</span><span class="st">&#39;Q1&#39;</span>)</span>
+<span id="cb532-3"><a href="some-approaches-for-confounding.html#cb532-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb532-4"><a href="some-approaches-for-confounding.html#cb532-4" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ1 <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timemi, hospmi) <span class="sc">~</span> cursmoke, </span>
+<span id="cb532-5"><a href="some-approaches-for-confounding.html#cb532-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_firstPSQ1)</span>
+<span id="cb532-6"><a href="some-approaches-for-confounding.html#cb532-6" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ1 <span class="sc">%&gt;%</span> </span>
+<span id="cb532-7"><a href="some-approaches-for-confounding.html#cb532-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb532-8"><a href="some-approaches-for-confounding.html#cb532-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb532-9"><a href="some-approaches-for-confounding.html#cb532-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb532-10"><a href="some-approaches-for-confounding.html#cb532-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb532-11"><a href="some-approaches-for-confounding.html#cb532-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb532-12"><a href="some-approaches-for-confounding.html#cb532-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb532-13"><a href="some-approaches-for-confounding.html#cb532-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb532-14"><a href="some-approaches-for-confounding.html#cb532-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.21  0.784    1.88</code></pre>
+<div class="sourceCode" id="cb534"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb534-1"><a href="some-approaches-for-confounding.html#cb534-1" aria-hidden="true" tabindex="-1"></a>fhs_firstPSQ2<span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb534-2"><a href="some-approaches-for-confounding.html#cb534-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ps_smokq<span class="sc">==</span><span class="st">&#39;Q2&#39;</span>)</span>
+<span id="cb534-3"><a href="some-approaches-for-confounding.html#cb534-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb534-4"><a href="some-approaches-for-confounding.html#cb534-4" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ2 <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timemi, hospmi) <span class="sc">~</span> cursmoke, </span>
+<span id="cb534-5"><a href="some-approaches-for-confounding.html#cb534-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_firstPSQ2)</span>
+<span id="cb534-6"><a href="some-approaches-for-confounding.html#cb534-6" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ2 <span class="sc">%&gt;%</span> </span>
+<span id="cb534-7"><a href="some-approaches-for-confounding.html#cb534-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb534-8"><a href="some-approaches-for-confounding.html#cb534-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb534-9"><a href="some-approaches-for-confounding.html#cb534-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb534-10"><a href="some-approaches-for-confounding.html#cb534-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb534-11"><a href="some-approaches-for-confounding.html#cb534-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb534-12"><a href="some-approaches-for-confounding.html#cb534-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb534-13"><a href="some-approaches-for-confounding.html#cb534-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb534-14"><a href="some-approaches-for-confounding.html#cb534-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.35  0.902    2.02</code></pre>
+<div class="sourceCode" id="cb536"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb536-1"><a href="some-approaches-for-confounding.html#cb536-1" aria-hidden="true" tabindex="-1"></a>fhs_firstPSQ3<span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb536-2"><a href="some-approaches-for-confounding.html#cb536-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ps_smokq<span class="sc">==</span><span class="st">&#39;Q3&#39;</span>)</span>
+<span id="cb536-3"><a href="some-approaches-for-confounding.html#cb536-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb536-4"><a href="some-approaches-for-confounding.html#cb536-4" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ3 <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timemi, hospmi) <span class="sc">~</span> cursmoke, </span>
+<span id="cb536-5"><a href="some-approaches-for-confounding.html#cb536-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_firstPSQ3)</span>
+<span id="cb536-6"><a href="some-approaches-for-confounding.html#cb536-6" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ3 <span class="sc">%&gt;%</span> </span>
+<span id="cb536-7"><a href="some-approaches-for-confounding.html#cb536-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb536-8"><a href="some-approaches-for-confounding.html#cb536-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb536-9"><a href="some-approaches-for-confounding.html#cb536-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb536-10"><a href="some-approaches-for-confounding.html#cb536-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb536-11"><a href="some-approaches-for-confounding.html#cb536-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb536-12"><a href="some-approaches-for-confounding.html#cb536-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb536-13"><a href="some-approaches-for-confounding.html#cb536-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb536-14"><a href="some-approaches-for-confounding.html#cb536-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.38  0.922    2.05</code></pre>
+<div class="sourceCode" id="cb538"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb538-1"><a href="some-approaches-for-confounding.html#cb538-1" aria-hidden="true" tabindex="-1"></a>fhs_firstPSQ4<span class="ot">&lt;-</span> fhs_first <span class="sc">%&gt;%</span></span>
+<span id="cb538-2"><a href="some-approaches-for-confounding.html#cb538-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ps_smokq<span class="sc">==</span><span class="st">&#39;Q4&#39;</span>)</span>
+<span id="cb538-3"><a href="some-approaches-for-confounding.html#cb538-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb538-4"><a href="some-approaches-for-confounding.html#cb538-4" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ4 <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timemi, hospmi) <span class="sc">~</span> cursmoke, </span>
+<span id="cb538-5"><a href="some-approaches-for-confounding.html#cb538-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_firstPSQ4)</span>
+<span id="cb538-6"><a href="some-approaches-for-confounding.html#cb538-6" aria-hidden="true" tabindex="-1"></a>coxph_modPSQ4<span class="sc">%&gt;%</span> </span>
+<span id="cb538-7"><a href="some-approaches-for-confounding.html#cb538-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb538-8"><a href="some-approaches-for-confounding.html#cb538-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb538-9"><a href="some-approaches-for-confounding.html#cb538-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb538-10"><a href="some-approaches-for-confounding.html#cb538-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb538-11"><a href="some-approaches-for-confounding.html#cb538-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb538-12"><a href="some-approaches-for-confounding.html#cb538-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb538-13"><a href="some-approaches-for-confounding.html#cb538-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb538-14"><a href="some-approaches-for-confounding.html#cb538-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.31  0.930    1.83</code></pre>
+<p>The individual HR from each stratum are all higher than the original unadjusted, but not quite as high as the overall adjusted model. Furthermore, we see that CIs are wider (all include the null) as we lose power when looking in each individual stratum. Expanding the number of categories for the PS (e.g. deciles) may improve our control for confoudning, but it will come at the cost of additional loss of power</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Fit a Cox model with the propensity score in the model. How do these results compare to the ones above?</strong></li>
+</ol>
+<p>We can instead fit a model including the original continuous PS as a covariate in the model and maintain our original power:</p>
+<div class="sourceCode" id="cb540"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb540-1"><a href="some-approaches-for-confounding.html#cb540-1" aria-hidden="true" tabindex="-1"></a>coxph_modPS <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(timemi, hospmi) <span class="sc">~</span> cursmoke <span class="sc">+</span> ps_smok, </span>
+<span id="cb540-2"><a href="some-approaches-for-confounding.html#cb540-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> fhs_first)</span>
+<span id="cb540-3"><a href="some-approaches-for-confounding.html#cb540-3" aria-hidden="true" tabindex="-1"></a>coxph_modPS <span class="sc">%&gt;%</span> </span>
+<span id="cb540-4"><a href="some-approaches-for-confounding.html#cb540-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb540-5"><a href="some-approaches-for-confounding.html#cb540-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;cursmoke&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb540-6"><a href="some-approaches-for-confounding.html#cb540-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hr =</span> <span class="fu">exp</span>(estimate),</span>
+<span id="cb540-7"><a href="some-approaches-for-confounding.html#cb540-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_ci =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb540-8"><a href="some-approaches-for-confounding.html#cb540-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_ci =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb540-9"><a href="some-approaches-for-confounding.html#cb540-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_hr =</span> <span class="fu">exp</span>(low_ci), </span>
+<span id="cb540-10"><a href="some-approaches-for-confounding.html#cb540-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_hr =</span> <span class="fu">exp</span>(high_ci)) <span class="sc">%&gt;%</span> </span>
+<span id="cb540-11"><a href="some-approaches-for-confounding.html#cb540-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, hr, low_hr, high_hr)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 4
+##   term        hr low_hr high_hr
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 cursmoke  1.34   1.10    1.62</code></pre>
+<p>We see that our CIs are now less wide, however our estimate (though similar) does not exactly match the one from the original adjusted model, nor the IP weighted model. Again the interpretation of the HR from this model is different from those two and in the case of IPW it has to do with the nuanced difference of focusing on the probability of being exposed, rather than the probability of having the exposure value each one had (i.e. exposed or unexposed). The correct interpretation of this HR is as the effect of exposure in the exposed. In other words it is the HR comparing what would have happened if the exposed were exposed (what actually happened) to what would have happened if the exposed were unexposed. By contrast remember that the interpreataion of the HR in the case of IPW was the HR comparing what would have happened if everyone was exposed to what would have happened if nobody was exposed.</p>
 
 </div>
 </div>
@@ -364,11 +749,23 @@ Brookhart, M Alan, Richard Wyss, J Bradley Layton, and Til Stürmer. 2013. <span
 <div id="ref-cole2008constructing" class="csl-entry">
 Cole, Stephen R, and Miguel A Hernán. 2008. <span>“Constructing Inverse Probability Weights for Marginal Structural Models.”</span> <em>American Journal of Epidemiology</em> 168 (6): 656–64.
 </div>
+<div id="ref-greenland1999confounding" class="csl-entry">
+Greenland, Sander, Judea Pearl, and James M Robins. 1999. <span>“Confounding and Collapsibility in Causal Inference.”</span> <em>Statistical Science</em> 14 (1): 29–46.
+</div>
 <div id="ref-hernanch12" class="csl-entry">
-Hernán, Miguel A, and Robins James M. 2020a. <span>“IP Weighting and Marginal Structural Models.”</span> In. Boca Raton: Chapman &amp; Hall/CRC.
+Hernán, Miguel A, and James M Robins. 2020a. <span>“IP Weighting and Marginal Structural Models.”</span> In. Boca Raton: Chapman &amp; Hall/CRC.
 </div>
 <div id="ref-hernanch15" class="csl-entry">
 ———. 2020b. <span>“Outcome Regression and Propensity Scores.”</span> In. Boca Raton: Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-hernanch20" class="csl-entry">
+———. 2020c. <span>“Treatment-Confounder Feedback.”</span> In. Boca Raton: Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-lee2010improving" class="csl-entry">
+Lee, Brian K, Justin Lessler, and Elizabeth A Stuart. 2010. <span>“Improving Propensity Score Weighting Using Machine Learning.”</span> <em>Statistics in Medicine</em> 29 (3): 337–46.
+</div>
+<div id="ref-westreich2010propensity" class="csl-entry">
+Westreich, Daniel, Justin Lessler, and Michele Jonsson Funk. 2010. <span>“Propensity Score Estimation: Machine Learning and Classification Methods as Alternatives to Logistic Regression.”</span> <em>Journal of Clinical Epidemiology</em> 63 (8): 826.
 </div>
 </div>
             </section>
