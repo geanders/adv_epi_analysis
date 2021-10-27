@@ -9,7 +9,7 @@ The required readings for this chapter are:
 - @hernanch15: Propensity scores and outcome regression
 
 There are also some supplemental readings you may find useful:
-The following is an instructional paper on constructing IP weights for regression:
+The following is an instructional paper on constructing IP weights for marginal structural models:
 
 - @cole2008constructing
 
@@ -27,6 +27,9 @@ while this chapter of the causal inference book explains the problem with tradit
 
 - @hernanch20
 
+Lastly this paper offers a very good explanation on (non-)collapsibility:
+
+- @greenland1999confounding
 
 ## Inverse probability weighting
 
@@ -131,10 +134,10 @@ We can see that these variables are significantly associated with current smokin
 
 ```{r}
 fhs_first <-fhs_first %>%
-  mutate(p.smok.obs=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
+  mutate(p_smokobs=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
          1 - predict(model_IPW, type = "response"),
          predict(model_IPW, type = "response")),
-         w=1/p.smok.obs)#### The weights is the inverse of the probability of exposure value
+         w=1/p_smokobs)#### The weights is the inverse of the probability of exposure value
 
 fhs_first %>%
   summarize(mean_w=mean(w),
@@ -143,7 +146,7 @@ fhs_first %>%
             sum_w=sum(w))
 ```
  
-The mean weight value is 2, so by using the weights we'll on average be using 2 copies of each participant. Accordingly, the total sum of the weights is 8870 which is roughly double the number of participants we started with. This is because what the weights are doing in this example, is basically create a pseudopopulation where we have enough people so that everyone can be both exposed and unexposed while maintaining the distribution of covariates (here age and sex). The latter has to hold, because pseudopopulation has to be representative of the original target population. We can check this by looking at the distributions of age sex in both the weighted and unweighted data.
+The mean weight value is 2, so by using the weights we'll on average be using 2 copies of each participant. Accordingly, the total sum of the weights is 8870 which is roughly double the number of participants we started with. This is because what the weights are doing in this example, is basically create a pseudopopulation where we have enough people so that everyone can be both exposed and unexposed while maintaining the distribution of covariates (here age and sex). The latter has to hold, because the pseudopopulation has to be representative of the original target population. We can check this by looking at the distributions of age sex in both the weighted and unweighted data.
 
 ```{r}
 fhs_first %>%
@@ -177,8 +180,9 @@ coxph_modIPW %>%
          high_hr = exp(high_ci)) %>% 
   select(term, hr, low_hr, high_hr)
 ```
-We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this later). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (`randid`). If we repeat the above model with a `cluster` term for `randid` this will invoke a robust sandwich variance estimation.
- 
+We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this below). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (`randid`). If we repeat the above model with a `cluster` term for `randid` this will invoke a robust sandwich variance estimation.
+
+We mentioned that the HR is non-collapsible. What this means is that a conditional estimate of the HR for an exposure of interes within levels of another predictor of the outcome is not collapsible as a marginal estimate (over all levels of the predictors) even in the absence of confoudning. In other words if age was a predictor of the outcome (mortality increases with increasing age), but was not associated with the smoking, we would still expect the HR for smoking to change after adjusting for age (here it would be higher). Therefore in our example where age is in fact a confounder, even if we assume that our MSM based HR takes care of all confounding by age, we still don't necessarily expect it to be the same as the conditional HR from the model controlling for age due to non-collapsibility of the HR. Non-collapsibility is a property of parameters based on the hazard, rate and odds, but not the risk. See the paper by [@greenland1999confounding] for more on collapsibility. 
  
 ```{r}
 coxph_modIPW<- coxph(Surv(timedth, death) ~ cursmoke, weights=w, cluster = randid,
@@ -290,10 +294,10 @@ Most of the above variables look like they are significant predictors of exposur
 ```{r}
 fhstv_incMI <-fhstv_incMI %>%
   group_by(randid) %>%
-  mutate(p.smok.obs=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
+  mutate(p_smokobs=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
          1 - predict(mod_tvIPW, type = "response"),
          predict(mod_tvIPW, type = "response")),
-         w_i=1/p.smok.obs,#### This is the first step
+         w_i=1/p_smokobs,#### This is the first step
          w=cumprod(w_i)) %>% ### the second step gives us the cumulative product of the inverse probabilities over   time. 
          ungroup()
 
@@ -314,10 +318,10 @@ mod_tvIPWnum %>%
 
 fhstv_incMI <-fhstv_incMI %>%
   group_by(randid) %>%
-  mutate(p.smok.obsnum=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
+  mutate(p_smokobsnum=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
          1 - predict(mod_tvIPWnum, type = "response"),
          predict(mod_tvIPWnum, type = "response")),
-         w_i=p.smok.obsnum/p.smok.obs,#### This is the first step
+         w_i=p_smokobsnum/p_smokobs,#### This is the first step
          w=cumprod(w_i)) %>% ### the second step gives us the cumulative product of the inverse probabilities over   time. 
          ungroup()
 
@@ -339,10 +343,10 @@ mod_tvIPWnum %>%
 
 fhstv_incMI <-fhstv_incMI %>%
   group_by(randid) %>%
-  mutate(p.smok.obsnum=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
+  mutate(p_smokobsnum=ifelse(cursmoke == 0,   ###estimate the conditional probability that someone is unexposed or exposed from the model above
          1 - predict(mod_tvIPWnum, type = "response"),
          predict(mod_tvIPWnum, type = "response")),
-         w_i=p.smok.obsnum/p.smok.obs,#### This is the first step
+         w_i=p_smokobsnum/p_smokobs,#### This is the first step
          w=cumprod(w_i)) %>% ### the second step gives us the cumulative product of the inverse probabilities over   time. 
          ungroup()
 
@@ -385,4 +389,142 @@ The HR is now lower that the conditional model, and although they are not direct
 
 ## Propensity scores
 
-[Modeling for weights/propensity scores, involves machine learning]
+IPW is technically part of a general approach to adjust for confounding relying on measures for the probability of exposure known as  propensity scores. In other words rather than adjusting for potential confounders directly, we adjust for the propensity of exposure given observed values of those potential confounders. Propensity scores can be used as weights (like in ipw), can be stratified upon, entered as a covariate in a model, or can be used as a matching variable for covariate adjustment. Each participant (or onbservation in the data) essentially receives a *score* for their propensity to be exposed given their covariate values. This score is equal to the probability of exposure given covariate values $Pr[X=1|C]$ where $X$ is the exposure of interest ($X=1$ for exposed and $X=0$ for unexposed), and $C$ is a vector of covariates (potential confounders). 
+
+*Applied exercise: Propensity scores for confounding adjustment*
+
+Using the FHS cohort data answer the following questions with respect to confounding of the potential effect of smoking on mortality: 
+
+1. Estimate the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking and baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?
+2. Fit a Cox model with the propensity score in the model. How do these results compare to the ones above?
+
+
+*Applied exercise: Example code*
+
+1. **Estimate the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking at baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?**
+
+Estimating the propensity score is actually very similar to what we did above to estimate IP weights. We will fit a  logistic model for the probability of exposure and use it to generate predictions for the propensity score:
+
+```{r}
+model_PS<-glm(cursmoke~+age + sex, family='binomial', data=fhs_first)
+model_PS %>%
+  tidy()
+
+
+fhs_first <-fhs_first %>%
+  mutate(ps_smok=predict(model_PS, type = "response"))
+
+fhs_first %>%
+  summarize(mean_ps=mean(ps_smok),
+            max_ps=max(ps_smok),
+            min_ps=min(ps_smok),
+            sum_ps=sum(ps_smok))
+```
+
+
+You may have noticed that unlike in IPW where we wanted to conditional probability of the value of exposure each participant had (i.e the probability that they were exposed if exposed and the probability that they were unexposed if unexposed) here we want the probability of exposure for everyone. This slight difference has a consequence in the interpretation of our findings later. Therefore the PS is a continuous variable with a possible range of 0 to 1 and the sum of the propensity score should equal the number of exposed individuals in the dataset. Given the continuous nature of the PS it is difficult to stratify on it, as any given exact value may only have one participant with that value. In our case, since we are only predicting based on age and sex, participants with the same age and sex will have the same value, however those may still be small counts in each possible stratum. 
+
+```{r}
+fhs_first %>%
+  select(ps_smok) %>%
+  head()
+```
+
+We will therefore limit the possible number of strata and hopefuly increase the counts in each stratum by creating quartiles for the PS:
+
+```{r}
+fhs_first<- fhs_first %>%
+  mutate(ps_smokq=cut(ps_smok, breaks=c(quantile(ps_smok, probs = seq(0, 1, by = 0.25))), 
+      labels=c("Q1","Q2","Q3","Q4"), include.lowest=TRUE))
+  
+```
+
+If we now fit our models in each of the strate defined by the quartiles:
+
+```{r}
+fhs_firstPSQ1<- fhs_first %>%
+  filter(ps_smokq=='Q1')
+
+coxph_modPSQ1 <- coxph(Surv(timemi, hospmi) ~ cursmoke, 
+                    data = fhs_firstPSQ1)
+coxph_modPSQ1 %>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+
+fhs_firstPSQ2<- fhs_first %>%
+  filter(ps_smokq=='Q2')
+
+coxph_modPSQ2 <- coxph(Surv(timemi, hospmi) ~ cursmoke, 
+                    data = fhs_firstPSQ2)
+coxph_modPSQ2 %>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+
+fhs_firstPSQ3<- fhs_first %>%
+  filter(ps_smokq=='Q3')
+
+coxph_modPSQ3 <- coxph(Surv(timemi, hospmi) ~ cursmoke, 
+                    data = fhs_firstPSQ3)
+coxph_modPSQ3 %>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+
+fhs_firstPSQ4<- fhs_first %>%
+  filter(ps_smokq=='Q4')
+
+coxph_modPSQ4 <- coxph(Surv(timemi, hospmi) ~ cursmoke, 
+                    data = fhs_firstPSQ4)
+coxph_modPSQ4%>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+
+  
+```
+
+The individual HR from each stratum are all higher than the original unadjusted, but not quite as high as the overall adjusted model. Furthermore, we see that CIs are wider (all include the null) as we lose power when looking in each individual stratum. Expanding the number of categories for the PS (e.g. deciles) may improve our control for confoudning, but it will come at the cost of additional loss of power
+
+
+2. **Fit a Cox model with the propensity score in the model. How do these results compare to the ones above?**
+
+We can instead fit a model including the original continuous PS as a covariate in the model and maintain our original power:
+
+```{r}
+coxph_modPS <- coxph(Surv(timemi, hospmi) ~ cursmoke + ps_smok, 
+                    data = fhs_first)
+coxph_modPS %>% 
+  tidy() %>% 
+  filter(term == "cursmoke") %>% 
+  mutate(hr = exp(estimate),
+         low_ci = estimate - 1.96 * std.error, 
+         high_ci = estimate + 1.96 * std.error, 
+         low_hr = exp(low_ci), 
+         high_hr = exp(high_ci)) %>% 
+  select(term, hr, low_hr, high_hr)
+```
+
+We see that our CIs are now less wide, however our estimate (though similar) does not exactly match the one from the original adjusted model, nor the IP weighted model. Again the interpretation of the HR from this model is different from those two and in the case of IPW it has to do with the nuanced difference of focusing on the probability of being exposed, rather than the probability of having the exposure value each one had (i.e. exposed or unexposed). The correct interpretation of this HR is as the effect of exposure in the exposed. In other words it is the HR comparing what would have happened if the exposed were exposed (what actually happened) to what would have happened if the exposed were unexposed. By contrast remember that the interpreataion of the HR in the case of IPW was the HR comparing what would have happened if everyone was exposed to what would have happened if nobody was exposed. 
+
