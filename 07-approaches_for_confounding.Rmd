@@ -415,7 +415,10 @@ fhstv_incMI <- fhstv_incMI %>%
          sysbp_l1 = lag(sysbp),
          sysbp_l1 = ifelse(period == 1, 0, sysbp_l1)) %>%
   ungroup() %>% 
-  filter(!is.na(cursmoke_l1) & !is.na(bmi_l1) & !is.na(sysbp_l1)) ### removing missing values for exposure and covariates. When fitting the conditional model these values are just dropped anyway, but in the weight estimation the missing values create a problem in the cumulative product part of the weight estimation so we are dropping them here
+  filter(!is.na(cursmoke_l1) & !is.na(bmi_l1) & !is.na(sysbp_l1)) ### removing missing values for exposure and 
+## covariates. When fitting the conditional model these values are just dropped anyway, but in the weight estimation
+## the missing values create a problem in the cumulative product part of the weight estimation so we are dropping 
+## them here
 ```
 
 Furthermore, as we are assuming an order where smoking is a cause of BMI and systolic blood pressure at each time period, we don't have BMI and blood pressure values to predict exposure at period 1. We have set those to zero above, so we can actually get a prediction for the probability of exposure values at this period based only on the baseline variables values (age and sex). We will also include time in the model, as in this time-varying setting it's safe to assume that time-varying variables are a function of time.
