@@ -8486,8 +8486,7 @@ The required readings for this chapter are:
   \citet{hernanch15}: Propensity scores and outcome regression
 \end{itemize}
 
-There are also some supplemental readings you may find useful:
-The following is an instructional paper on constructing IP weights for marginal structural models:
+There are also some supplemental readings you may find useful. First, the following is an instructional paper on constructing IP weights for marginal structural models:
 
 \begin{itemize}
 \tightlist
@@ -8528,8 +8527,8 @@ Lastly this paper offers a very good explanation on (non-)collapsibility:
   \citet{greenland1999confounding}
 \end{itemize}
 
-\hypertarget{inverse-probability-weighting}{%
-\section{Inverse probability weighting}\label{inverse-probability-weighting}}
+\hypertarget{propensity-scores-and-inverse-probability-weighting}{%
+\section{Propensity scores and inverse probability weighting}\label{propensity-scores-and-inverse-probability-weighting}}
 
 We've already fit some Cox models with multiple covariates, where the interpretation of each parameter coefficient is \emph{conditional} on the other parameters in the model, and typically these coefficients are expected to yield effect estimates unconfounded by the other variables in the model. In this section we will explore an alternative approach to confounding adjustment in inverse probability weighting (IPW).
 
@@ -8541,7 +8540,7 @@ Using the FHS cohort data answer the following questions with repect to confound
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Fit a conditional Cox model for the effect of smoking on mortality adjusting for sex and age using the limited (one observation per participant). Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?
+  Fit a conditional Cox model for the effect of smoking on mortality adjusting for sex and age using the limited dataset we created in the previous chapter (one observation per participant, \texttt{fhs\_first}). Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?
 \item
   Plot survival curves for mortality and smoking status in the unweighted and weighted population. How do those curves compare?
 \item
@@ -8556,10 +8555,55 @@ Based on this exploratory exercise, think about what each approach is doing in t
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Fit a conditional Cox model for the effec of smoking on mortality adjusting for sex and age. Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?}
+  \textbf{Fit a conditional Cox model for the effect of smoking on mortality adjusting for sex and age using the limited dataset we created in the previous chapter (one observation per participant, \texttt{fhs\_first}). Estimate inverse probability weights for smoking exposure and fit a Marginal Structural Cox model using the weighted population. How do the results of the two models compare?}
 \end{enumerate}
 
-Let's look back at our FHS data and reconstruct our simple models for current smoking status first unadjusted and then with age and sex also in the model.
+Let's look back at our FHS data and reconstruct our simple models for current smoking status, first unadjusted, and then with age and sex also in the model.
+
+First, you will want to recreate the \texttt{fhs\_first} dataset if you don't have it handy from the last chapter:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load some packages that will likely be useful}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(broom)}
+\FunctionTok{library}\NormalTok{(gridExtra)}
+\FunctionTok{library}\NormalTok{(survival)}
+\FunctionTok{library}\NormalTok{(survminer)}
+\FunctionTok{library}\NormalTok{(splines)}
+
+\CommentTok{\# Load and clean the data}
+\NormalTok{fhs }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/frmgham2.csv"}\NormalTok{)}
+\NormalTok{fhs }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{rename\_all}\NormalTok{(}\AttributeTok{.funs =}\NormalTok{ str\_to\_lower)}
+
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{slice}\NormalTok{(1L) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{timedthy =}\NormalTok{ timedth }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{,}
+         \AttributeTok{agedth =}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ timedthy) }
+\end{Highlighting}
+\end{Shaded}
+
+Next, you can refit some simple models to estimate the association between smoking status at the time of the baseline exam and time until the first hospitalization for myocardial infarction. You can start with fitting an unadjusted model (\texttt{coxph\_mod1}), and then fit a model that also includes age and sex to control for those covariates (\texttt{coxph\_mod2}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\#\#Fit Cox model for current smoking status unconditional and conditional on age and sex}
+\NormalTok{coxph\_mod1 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }
+                    \AttributeTok{data =}\NormalTok{ fhs\_first)}
+\NormalTok{coxph\_mod1 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
+         \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
+         \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
+         \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
+         \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 1 x 4
@@ -8568,6 +8612,22 @@ Let's look back at our FHS data and reconstruct our simple models for current sm
 ## 1 cursmoke  1.43   1.19    1.73
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coxph\_mod2 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke }\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ age, }
+                    \AttributeTok{data =}\NormalTok{ fhs\_first)}
+\NormalTok{coxph\_mod2 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
+         \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
+         \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
+         \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
+         \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
@@ -8575,19 +8635,108 @@ Let's look back at our FHS data and reconstruct our simple models for current sm
 ## 1 cursmoke  1.35   1.11    1.64
 \end{verbatim}
 
-The first model simply compares current smokers to current non-smokers in the population. It is not conditional on other variables, but also not adjusted for any potential confoudning by them. The interpretation of the (exponentiated) parameter for \texttt{cursmoke} in the adjusted model, is the Hazard Ratio comparing current smokers to current non-smokers \emph{conditional} on age and sex. In other words this is the log-Hazard Ratio comparing currently smoking males of the same age to currently non-smoking males of the same age, and similarly currently smoking females of the same age to currently non-smoking females of the same age. This \emph{conditioning} on other variables by including them in a regression model is often sufficient to adjust for any confounding by these variables and is the most widely used approach to adjust for confounding. In this example we see a much higher HR in the adjusted (conditional) model than the unadjusted.
+The first model (\texttt{coxph\_mod1}) simply compares current smokers to current non-smokers in the population. It is not conditional on other variables, but also not adjusted for any potential confounding by them. The interpretation of the (exponentiated) parameter for \texttt{cursmoke} in the adjusted model (\texttt{coxph\_mod2}) is, on the other hand, the Hazard Ratio comparing current smokers to current non-smokers \emph{conditional} on age and sex. In other words this is the log-Hazard Ratio comparing currently smoking males of the same age to currently non-smoking males of the same age, and similarly currently smoking females of the same age to currently non-smoking females of the same age. This \emph{conditioning} on other variables by including them in a regression model is often sufficient to adjust for any confounding by these variables and is the most widely used approach to adjust for confounding. In this example we see a lower HR in the adjusted (conditional) model than the unadjusted model.
 
-One alternative approach to this is \emph{inverse probability weighting} or IPW. IPW allows us to adjust for confounding without having to include additional variables in out final outcome model other than the exposure of interest. Instead we weigh each participant by the inverse of the probability that they had the exposure value they indeed had conditional on these other (potentially confounding variables). The quantity we are estimating is:
-\[
-W=\frac{1}{f[X|V]}
-\]
-where \(X\) is the exposure of interest and \(V\) is a vector for baseline confounders in this case age and sex.
-Typically the weight estimation will involve a model for the exposure conditional on the potential confounders. Let's go ahead and do this weight estimation for the above example using the \texttt{fhs\_first} subset of the data. We will fit a logistic model for \texttt{cursmoke} conditional on age and sex which we will use to get predictions for the conditional probabilit of exposure:
+This is a good point to revisit how a factor can confound an estimate of an effect in an epidemiological study. A confounder is something that can change the probability of the outcome (e.g., make it more likely that you die during follow-up, or making your expected time until death shorter). It also must be associated with the exposure you're interested in. In this chapter, we'll explore ways to remove this second condition---in other words, to try to make it so that potential confounders are no longer associated with exposure by the time we fit a regression model.
+
+Let's start by checking whether age and sex are, in fact, associated with exposure (smoking at the baseline examination) in our sample data. Since sex is a binary variable in the data, we can check this by counting up the number of men and women, as well as the proportion of men (or women), in each of the exposure groups (people who smoked at baseline and those who did not):
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{model\_IPW}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(cursmoke}\SpecialCharTok{\textasciitilde{}+}\NormalTok{age }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{family=}\StringTok{\textquotesingle{}binomial\textquotesingle{}}\NormalTok{, }\AttributeTok{data=}\NormalTok{fhs\_first)}
-\NormalTok{model\_IPW }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(cursmoke) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{n\_male =} \FunctionTok{sum}\NormalTok{(sex }\SpecialCharTok{==} \DecValTok{1}\NormalTok{), }
+            \AttributeTok{n\_female =} \FunctionTok{sum}\NormalTok{(sex }\SpecialCharTok{==} \DecValTok{2}\NormalTok{), }
+            \AttributeTok{perc\_male =}\NormalTok{ n\_male }\SpecialCharTok{/} \FunctionTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 4
+##   cursmoke n_male n_female perc_male
+## *    <dbl>  <int>    <int>     <dbl>
+## 1        0    769     1484     0.341
+## 2        1   1175     1006     0.539
+\end{verbatim}
+
+We can see that a much higher percent of smokers were male, compared to the percent of non-smokers who were male. In this data, then, sex is clearly associated with exposure.
+
+Age is continuous rather than binary. One way we can quickly check for an association between age and exposure is with histograms of age for each exposure category:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ age)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_histogram}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{ncol =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-253-1.pdf}
+
+We could also calculate some metrics like quartiles and mean values of age within each group of exposure:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(cursmoke) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_age =} \FunctionTok{mean}\NormalTok{(age), }
+            \AttributeTok{median\_age =} \FunctionTok{median}\NormalTok{(age),}
+            \AttributeTok{perc25\_age =} \FunctionTok{quantile}\NormalTok{(age, }\FloatTok{0.25}\NormalTok{), }
+            \AttributeTok{perc75\_age =} \FunctionTok{quantile}\NormalTok{(age, }\FloatTok{0.75}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   cursmoke mean_age median_age perc25_age perc75_age
+## *    <dbl>    <dbl>      <dbl>      <dbl>      <dbl>
+## 1        0     51.7         52         44         59
+## 2        1     48.1         47         41         54
+\end{verbatim}
+
+We can even quantify differences in the covariates across the two exposure groups (smoking and non-smoking) using something called the \emph{standardized mean difference}. This is calculated as the absolute difference between the mean values of the covariate in the two exposure groups, divided by the standard deviation of the covariate when both groups are pooled. For example, you can calculate this for age in our data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_age\_smoker =} \FunctionTok{mean}\NormalTok{(age[cursmoke }\SpecialCharTok{==} \DecValTok{1}\NormalTok{]), }
+            \AttributeTok{mean\_age\_nonsmoker =} \FunctionTok{mean}\NormalTok{(age[cursmoke }\SpecialCharTok{==} \DecValTok{0}\NormalTok{]), }
+            \AttributeTok{sd\_age =} \FunctionTok{sd}\NormalTok{(age)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{stand\_diff\_age =} \FunctionTok{abs}\NormalTok{(mean\_age\_smoker }\SpecialCharTok{{-}}\NormalTok{ mean\_age\_nonsmoker) }\SpecialCharTok{/}\NormalTok{ sd\_age) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{pivot\_longer}\NormalTok{(}\FunctionTok{everything}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 2
+##   name                value
+##   <chr>               <dbl>
+## 1 mean_age_smoker    48.1  
+## 2 mean_age_nonsmoker 51.7  
+## 3 sd_age              8.68 
+## 4 stand_diff_age      0.421
+\end{verbatim}
+
+A higher standardized mean different indicates more imbalance in the covariate across the exposure groups. Many studies look for a value below 0.1 as an indicator of reasonable balance in a covariate across the two exposure groups. We're well above that here (0.42).
+
+We can see that the study participants who were not smokers at baseline tend to be older than those who smoke. As with sex, it is clear that age is associated with the exposure for our research question. We know from biomedical knowledge (and some common sense, in the case of age) that both age and sex would also likely change the expected time until death after the baseline exam. Therefore, we should consider both as likely confounders, and we must do something to address this if we want to avoid biased estimates of the effect of smoking on survival time.
+
+We have seen that we can fit a model where we control for these potential confounders in the regression model. For two covariates, this will usually work fine. However, often we might have a large number of potential confounders. Regression models can struggle as you add more (and more complex functions of) covariates. One way we can address this is by, essentially, splitting up the process of accounting for the association between potential confounders and probability of exposure from the process of modeling the association between the exposure and outcome. We will explore this idea in this chapter, focusing on methods that derive from the idea of \emph{propensity scores}. In this section, we'll introduce propensity scores, as well as one way to estimate them, and also use these scores to calculate and apply inverse probability weights. In the next section, we'll look at a few other ways we can use propensity scores.
+
+One of the easiest ways to think about propensity scores is to take a step back and think about a randomized control study, and how it would link probability of a certain level of exposure (or, more frequently, treatment, as in treatment with a certain drug) with covariates like age and sex. For a randomized control trial, you take a set of study subjects, and you randomly assign each of them to a level of treatment. This randomization \emph{completely} breaks any association between any characteristics (like age and sex) and the probability of being assigned to treatment versus being assigned to the control group in a study. Of course, if the study population isn't very big, there's always a chance that the average characteristics of the treated and control groups end up being a little different---for example, by chance the people in the control group could have a higher average age. (This is why most studies of randomized control trials will still include tables that show the distribution of age, sex, etc., by treatment/control as part of their results, to help prove that the randomization ``worked'' in practice in terms of removing an association between these factors and treatment status.) However, as your study population gets relatively large, it should become very unlikely that there's a difference between the two treatment groups in a randomized trial. By contrast, with observational studies, we don't randomize the treatment (or, in our case, exposure).
+
+The idea of a propensity score is to try to give each person in a study a score that represents their probability of having the exposure. In a randomized control trial that evenly divided the participants into treated and control, each study subject's propensity score would be 0.5 (i.e., a 50/50 chance of being assigned to the treatment or control group). For observational studies, these propensity scores will be different for different people in the study, based on the levels of their covariates. For example, if a younger man was more likely than an older woman to be a smoker when entering the study (in our case, at the baseline examination), then the younger man would have a higher propensity score for the exposure of smoking compared to the older woman.
+
+You can estimate these propensity scores by building a model that predicts exposure based on your different covariates, and then predict this model for each study subject to get their individual propensity score estimates. You can then use these propensity scores in a number of ways. For example, you can use them to create a matched dataset, creating pairs in your data where each person in the pair had the same propensity score for smoking (i.e., was equally likely to be a smoker at baseline based on potential confounders like their age and sex), but in real life had different exposure status (i.e., one was a smoker and one was not). You can then analyze these matched data as you would for any matched (paired) data set. You can also use the propensity scores to create stratums in the data, where the people within each stratum have similar propensity for the exposure, and then estimate results within each stratum and combine those for an overall estimate (we'll look at this in the next section). You can also directly control for the propensity score in the regression model (again, we'll look at this in the next section). Finally, you can use propensity scores to create something called inverse probability weights, which we'll look at later in this section.
+
+Let's start, then, by estimating the propensity scores for everyone in our study population. We can do this by building a model that aims to predict the probability of exposure (smoking at baseline, in our case) based on potential confounders. All the potential confounders should be things that really could change the chance of someone being a smoker at baseline, so they should all be things that happen or are in play before the baseline exam. Here, we'll include age and sex, the two potential confounders we looked at earlier. There are many ways to build a predictive model, but one that you have already used a lot is a generalized linear model, so we'll use that method. Since smoking is a binary variable (at least how we're using it here, considering smokers versus non-smokers at time of the baseline exam), we'll use a logistic regression model:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model\_ps }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(cursmoke }\SpecialCharTok{\textasciitilde{}}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ sex, }
+                \AttributeTok{family =} \StringTok{"binomial"}\NormalTok{, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
+\NormalTok{model\_ps }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
@@ -8601,21 +8750,126 @@ Typically the weight estimation will involve a model for the exposure conditiona
 ## 3 sex          -0.839    0.0634      -13.2 6.04e-40
 \end{verbatim}
 
-We can see that these variables are significantly associated with current smoking status, however we are not going to be interpreting the parameter coefficients from this model. Instead, we will be using predictions based on this model to estimate our inverse probability weights:
+We can see that these variables are significantly associated with current smoking status, however we are not going to be interpreting the parameter coefficients from this model. Instead, we will be using predictions based on this model to estimate our propensity score for each person in the study. We can do that using the \texttt{predict} function, applied to the GLM model object. By using \texttt{type\ =\ "response"}, we can get those predictions in terms of a probability (the probability of the dependent variable in the regression, smoking status). We'll add these propensity score estimates in as a new column in the data:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{p\_smokobs=}\FunctionTok{ifelse}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{0}\NormalTok{,   }\DocumentationTok{\#\#\#estimate the conditional probability that someone is unexposed or exposed from the model above}
-         \DecValTok{1} \SpecialCharTok{{-}} \FunctionTok{predict}\NormalTok{(model\_IPW, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{),}
-         \FunctionTok{predict}\NormalTok{(model\_IPW, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)),}
-         \AttributeTok{w=}\DecValTok{1}\SpecialCharTok{/}\NormalTok{p\_smokobs)}\DocumentationTok{\#\#\#\# The weights is the inverse of the probability of exposure value}
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ps =} \FunctionTok{predict}\NormalTok{(model\_ps, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{))}
 
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(randid, sex, age, ps) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 4
+##   randid   sex   age    ps
+##    <dbl> <dbl> <dbl> <dbl>
+## 1   2448     1    39 0.731
+## 2   6238     2    46 0.450
+## 3   9428     1    48 0.631
+## 4  10552     2    61 0.274
+## 5  11252     2    46 0.450
+## 6  11263     2    43 0.488
+\end{verbatim}
+
+We can see that the propensity scores tend to be pretty similar for people who are similar in terms of age and sex---for example, study subjects 6238 and 11252 are both women who are 46, so they have identical propensity scores, and the score of study subject 11263, who is also a women but a few years younger, is similar but not identical.
+
+Now, let's look at how these propensity scores vary across the two exposure groups:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ ps)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_histogram}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{ncol =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-258-1.pdf}
+
+You can see that our estimate of the propensity of being a smoker tends to be higher among those who actually were smokers, and lower among those who weren't. However, you can still see there's a lot of overlap. In other words, there are a lot of people that we would have guessed were likely to be smokers based on their age and sex, but who actually weren't, and also a lot of people that we would have guessed would not be smokers, but who actually were.
+
+If we re-do our analysis to focus on comparing smokers and non-smokers in terms of survival time, but change our approach to only compare people with similar propensity scores, or to reweight the populations of smokers and non-smokers to essentially even out propensity scores in the two groups, we'll should remove the association between the covariates we used to estimate propensity scores (age and sex) and so remove the chance of these factors confounding our estimate. We'll start with the idea of weighting our analysis, and then in the next section we'll look at how we can change our analysis to compare people with similar propensity scores.
+
+One way we can use these propensity scores is through \emph{inverse probability weighting} or IPW. IPW allows us to adjust for confounding without having to include additional variables in our final outcome model other than the exposure of interest. Instead, we weight each participant by the inverse of the probability that they had the exposure value they indeed had conditional on these other (potentially confounding) variables. The quantity we are estimating is:
+
+\[
+W=\frac{1}{f[X|V]}
+\]
+
+where \(X\) is the exposure of interest and \(V\) is a vector for baseline confounders, in this case age and sex. We will estimate this value in the following way:
+
+\[
+W = \begin{cases}
+\frac{1}{PS} &\mbox{ if the subject was exposed},\\
+\frac{1}{1-PS} &\mbox{ if the subject was unexposed.}
+\end{cases}
+\]
+
+where \(PS\) is the propensity score we just estimated. The \(W\) therefore gives the inverse of the probability of the observed exposure level (probability of being exposed for those who were exposed, probability of being unexposed for those who were unexposed) for each person in the study, conditional on the covariates we used to estimate the propensity scores (age and sex).
+
+We can add this inverse probability weight as a column in our data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{w =} \FunctionTok{if\_else}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, }\DecValTok{1} \SpecialCharTok{/}\NormalTok{ ps, }\DecValTok{1} \SpecialCharTok{/}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{{-}}\NormalTok{ ps)))}
+
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(randid, age, sex, cursmoke, ps, w) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 6
+##   randid   age   sex cursmoke    ps     w
+##    <dbl> <dbl> <dbl>    <dbl> <dbl> <dbl>
+## 1   2448    39     1        0 0.731  3.71
+## 2   6238    46     2        0 0.450  1.82
+## 3   9428    48     1        1 0.631  1.59
+## 4  10552    61     2        1 0.274  3.64
+## 5  11252    46     2        1 0.450  2.22
+## 6  11263    43     2        0 0.488  1.95
+\end{verbatim}
+
+Now we can see that, while study subjects 6238 and 11252 had the same propensity score (because they were the same age and sex, and those are the only factors we used to determine their propensity to be in the exposed group), they have different inverse probability weights (\texttt{w}). This is because one of them is a smoker, so her inverse probability weight gives the inverse of her propensity score (i.e., her propensity to be a smoker), while the other is a non-smoker, so her inverse probability weight gives the inverse of one minus her propensity score (i.e., her propensity to \emph{not} be a smoker).
+
+One cool thing is that, if we look again at the means for age and sex in the study population, we can see that if we weight them by these inverse probability weights, we remove almost all of the difference between the exposure groups in these two covariates:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(cursmoke) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_age =} \FunctionTok{mean}\NormalTok{(age), }
+            \AttributeTok{wt\_mean\_age =} \FunctionTok{weighted.mean}\NormalTok{(age, }\AttributeTok{w =}\NormalTok{ w), }
+            \AttributeTok{mean\_sex =} \FunctionTok{mean}\NormalTok{(sex),}
+            \AttributeTok{wt\_mean\_sex =} \FunctionTok{weighted.mean}\NormalTok{(sex, }\AttributeTok{w =}\NormalTok{ w))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   cursmoke mean_age wt_mean_age mean_sex wt_mean_sex
+## *    <dbl>    <dbl>       <dbl>    <dbl>       <dbl>
+## 1        0     51.7        49.7     1.66        1.55
+## 2        1     48.1        49.8     1.46        1.55
+\end{verbatim}
+
+These weights therefore can help to \emph{balance} the exposed and unexposed parts of the study population, to remove differences in age and sex between the two groups, through weighting when we fit the regression.
+
+Next, let's look at the distribution of these inverse probability weights:
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w=}\FunctionTok{mean}\NormalTok{(w),}
-            \AttributeTok{max\_w=}\FunctionTok{max}\NormalTok{(w),}
-            \AttributeTok{min\_w=}\FunctionTok{min}\NormalTok{(w),}
-            \AttributeTok{sum\_w=}\FunctionTok{sum}\NormalTok{(w))}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w =} \FunctionTok{mean}\NormalTok{(w),}
+            \AttributeTok{max\_w =} \FunctionTok{max}\NormalTok{(w),}
+            \AttributeTok{min\_w =} \FunctionTok{min}\NormalTok{(w),}
+            \AttributeTok{sum\_w =} \FunctionTok{sum}\NormalTok{(w))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -8626,13 +8880,13 @@ We can see that these variables are significantly associated with current smokin
 ## 1   2.00  4.79  1.24 8871.
 \end{verbatim}
 
-The mean weight value is 2, so by using the weights we'll on average be using 2 copies of each participant. Accordingly, the total sum of the weights is 8870 which is roughly double the number of participants we started with. This is because what the weights are doing in this example, is basically create a pseudopopulation where we have enough people so that everyone can be both exposed and unexposed while maintaining the distribution of covariates (here age and sex). The latter has to hold, because the pseudopopulation has to be representative of the original target population. We can check this by looking at the distributions of age sex in both the weighted and unweighted data.
+The mean weight value is 2, so by using the weights we'll on average be counting 2 copies of each participant. Accordingly, the total sum of the weights is 8,870, which is roughly double the number of participants we started with. This is because what the weights are doing in this example, is basically create a pseudopopulation where we have enough people so that everyone can be both exposed and unexposed while maintaining the distribution of covariates (here age and sex). The latter has to hold, because the pseudopopulation has to be representative of the original target population. We can check this by looking at the distributions of age sex in both the weighted and unweighted data.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_age=}\FunctionTok{mean}\NormalTok{(age),}
-            \AttributeTok{mean\_agew=}\NormalTok{(}\FunctionTok{sum}\NormalTok{(age}\SpecialCharTok{*}\NormalTok{w)}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(w)))}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_age =} \FunctionTok{mean}\NormalTok{(age),}
+            \AttributeTok{mean\_agew =}\NormalTok{ (}\FunctionTok{sum}\NormalTok{(age }\SpecialCharTok{*}\NormalTok{ w) }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(w)))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -8646,7 +8900,7 @@ The mean weight value is 2, so by using the weights we'll on average be using 2 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{filter}\NormalTok{(sex}\SpecialCharTok{==}\DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(sex }\SpecialCharTok{==} \DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{summarize}\NormalTok{(}\AttributeTok{femalecount =} \FunctionTok{n}\NormalTok{(),}
             \AttributeTok{femalecountw =} \FunctionTok{sum}\NormalTok{(w))}
 \end{Highlighting}
@@ -8662,12 +8916,12 @@ The mean weight value is 2, so by using the weights we'll on average be using 2 
 We see that the mean age is very similar in the original sample and in the pseudopopulation, while the number of females roughly doubles (as does the whole population), therefore approximately maintaining the initial proportion of females.
 
 The great thing about the pseudopopulation is that the effect of \texttt{cursmoke} in no longer confounded by age and sex.
-We can go ahead and fit a Cox proportional hazards model for \texttt{cursmoke} using our weights, and without including age and sex in the model.
+We can go ahead and fit a Cox proportional hazards model for \texttt{cursmoke} using our weights (we can use the \texttt{weights} parameter to add them in), and without including age and sex in the model.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \DocumentationTok{\#\#\#Fit Cox weighted model for current smoking status}
-\NormalTok{coxph\_modIPW}\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{weights=}\NormalTok{w,}
+\NormalTok{coxph\_modIPW }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{weights=}\NormalTok{w,}
                     \AttributeTok{data =}\NormalTok{ fhs\_first)}
 \NormalTok{coxph\_modIPW }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
@@ -8702,13 +8956,16 @@ We can go ahead and fit a Cox proportional hazards model for \texttt{cursmoke} u
 ## 1 cursmoke  1.37   1.27    1.47
 \end{verbatim}
 
-We see that the HR is very similar to before (they are not exaclty the same because of the non-collapsibility of the HR, more on this below). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real and our CIs are misleadingly narrow. Rather than rely on the stanard erros from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (\texttt{randid}). If we repeat the above model with a \texttt{cluster} term for \texttt{randid} this will invoke a robust sandwich variance estimation.
+We see that the HR is very similar to before when we controlled for age and sex (\texttt{coxph\_mod2}) (they are not exactly the same because of the non-collapsibility of the HR, more on this below). We also see that the CIs are actually narrower. This is because we are now using the pseudopopulation, which is twice the number of the original population. A larger sample size means more power and by extension smaller standard errors, but in our case this larger sample size is artificial, not real, and our CIs are misleadingly narrow. Rather than rely on the standard errors from the model, we instead have to rely on robust variance estimators that counteract our artificially inflated sample size. We can do this, by using generalized estimation equations for clustered (correlated data). Our data are considered clustered, because of the multiple copies for each participant (\texttt{randid}). If we repeat the above model with a \texttt{cluster} term for \texttt{randid}, this will invoke a robust sandwich variance estimation.
 
-We mentioned that the HR is non-collapsible. What this means is that a conditional estimate of the HR for an exposure of interes within levels of another predictor of the outcome is not collapsible as a marginal estimate (over all levels of the predictors) even in the absence of confoudning. In other words if age was a predictor of the outcome (mortality increases with increasing age), but was not associated with the smoking, we would still expect the HR for smoking to change after adjusting for age (here it would be higher). Therefore in our example where age is in fact a confounder, even if we assume that our MSM based HR takes care of all confounding by age, we still don't necessarily expect it to be the same as the conditional HR from the model controlling for age due to non-collapsibility of the HR. Non-collapsibility is a property of parameters based on the hazard, rate and odds, but not the risk. See the paper by \citep{greenland1999confounding} for more on collapsibility.
+We mentioned that the HR is non-collapsible. What this means is that a conditional estimate of the HR for an exposure of interest within levels of another predictor of the outcome is not collapsible as a marginal estimate (over all levels of the predictors) even in the absence of confounding. In other words if age was a predictor of the outcome (mortality increases with increasing age), but was not associated with the smoking, we would still expect the HR for smoking to change after adjusting for age (here it would be higher). Therefore in our example where age is in fact a confounder, even if we assume that our estimated HR from this model takes care of all confounding by age, we still don't necessarily expect it to be the same as the conditional HR from the model controlling for age due to non-collapsibility of the HR. Non-collapsibility is a property of parameters based on the hazard, rate, and odds, but not the risk. See the paper by \citet{greenland1999confounding} for more on collapsibility.
+
+Here is the model where we include \texttt{randid} through the \texttt{cluster} parameter, to improve our estimate of the confidence intervals:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{coxph\_modIPW}\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{weights=}\NormalTok{w, }\AttributeTok{cluster =}\NormalTok{ randid,}
+\NormalTok{coxph\_modIPW }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedth, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }
+                     \AttributeTok{weights =}\NormalTok{ w, }\AttributeTok{cluster =}\NormalTok{ randid,}
                     \AttributeTok{data =}\NormalTok{ fhs\_first)}
 \NormalTok{coxph\_modIPW }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
@@ -8745,7 +9002,7 @@ We now have to use the \texttt{robust.se} rather than \texttt{std.error} to cons
 ## 1 cursmoke  1.37   1.23    1.52
 \end{verbatim}
 
-The CIs are now wider than before and more akin to the width of the CIs from the original conditional model. This weighted model is essentially a Marginal Structural Cox Model. Marginal Structural Models (MSMs) refer to models that are \emph{marginal} or \emph{unconditional} with respect to some covariates, as is the case of our model with respect to age and sex. The interpretaton for the Cox MSM hazard ratios is no longer conditional on age and sex or in other words we are not looking for effects within levels of age and sex. We are however still adjusting for confounding by these variables. It is also \emph{structural} because we are essentially modeling counterfactuals (the result of the weights gives us enough participants so that everyone (from the original 4434 participants) can be exposed and unexposed). MSMs are essenctially considered causal models though the causal interpretation relies on several assumptions (exchangeability, consistency, positivity, no information bias, correct model specification). In our case if there exist more confounders other than age and sex (likely) then the exchangeability assumption fails.
+The CIs are now wider than before and more akin to the width of the CIs from the original conditional model. This weighted model is essentially a Marginal Structural Cox Model. Marginal Structural Models (MSMs) refer to models that are \emph{marginal} or \emph{unconditional} with respect to some covariates, as is the case of our model with respect to age and sex. The interpretaton for the Cox MSM hazard ratios is no longer conditional on age and sex or, in other words, we are not looking for effects within levels of age and sex. We are however still adjusting for confounding by these variables. It is also \emph{structural} because we are essentially modeling counterfactuals (the result of the weights gives us enough participants so that everyone (from the original 4434 participants) can be exposed and unexposed). MSMs are essentially considered causal models though the causal interpretation relies on several assumptions (exchangeability, consistency, positivity, no information bias, correct model specification). In our case if there exist more confounders other than age and sex (likely) then the exchangeability assumption fails.
 
 The use of weights and introduction of a counterfactual framework also changes the interpretation of the HR from a mere comparison of smokers and non-smokers in the population to a comparison of what would happened if everyone in the population was a smoker to what would have happened if no one was a smoker.
 
@@ -8754,10 +9011,10 @@ The use of weights and introduction of a counterfactual framework also changes t
 \setcounter{enumi}{1}
 \tightlist
 \item
-  \textbf{Plot survival curves for mortality and smoking status in the unweighted and weighted population. How do those curves compare?}
+  \textbf{Plot survival curves for mortality and smoking status in the unweighted and inverse probability--weighted population. How do those curves compare?}
 \end{enumerate}
 
-Using the weighted pseudopopulation we can also construct survival curves comparing what would happen if everyone had been a smoker and what would happen had no one smoked, that are inherenelty adjusted for any confounding by age and sex. We did fit survival curves comparing smokers and non-smokers in the unweighted data that were unadjusted in 7.3:
+Using the inverse probability--weighted pseudopopulation we can also construct survival curves comparing what would happen if everyone had been a smoker and what would happen had no one smoked that are inherently adjusted for any confounding by age and sex. We did fit survival curves comparing smokers and non-smokers in the unweighted data that were unadjusted in section 7.3:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -8769,13 +9026,14 @@ Using the weighted pseudopopulation we can also construct survival curves compar
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-257-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-266-1.pdf}
 
 In the weighted pseudopopulation:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit\_smokeW }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedthy, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }\AttributeTok{weights=}\NormalTok{w, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
+\NormalTok{fit\_smokeW }\OtherTok{\textless{}{-}} \FunctionTok{survfit}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timedthy, death) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }
+                      \AttributeTok{weights =}\NormalTok{ w, }\AttributeTok{data =}\NormalTok{ fhs\_first)}
 \NormalTok{fit\_smokeW }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{ggsurvplot}\NormalTok{(}\AttributeTok{xlab =} \StringTok{"Time to death (years)"}\NormalTok{,}
              \AttributeTok{ylab =} \FunctionTok{expression}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{\textquotesingle{}Overall Survival Probablity \textquotesingle{}}\NormalTok{, }
@@ -8783,7 +9041,7 @@ In the weighted pseudopopulation:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-258-1.pdf}
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-267-1.pdf}
 
 We see that there is a difference in the two plots, with the smokers and non-smokers having quite similar survival curves in the first one, but a separation in the second one that again in inherently adjusted for confounding by sex and age.
 
@@ -8797,11 +9055,33 @@ We see that there is a difference in the two plots, with the smokers and non-smo
 
 Now let's revisit the time-varying dataset we created and fit a conditional model for time-varying smoking status and MI hospitalization adjusted for age, sex, BMI and systolic blood pressure.
 
+We'll be using the \texttt{fhstv\_incMI} dataset we created in the last chapter. You can recreate that with the following code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fhstv }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{time\_next =} \FunctionTok{lead}\NormalTok{(time), }\DocumentationTok{\#\#\# bring forward the time from the next period}
+         \AttributeTok{time2 =} \FunctionTok{ifelse}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(time\_next) }\SpecialCharTok{==} \ConstantTok{FALSE}\NormalTok{,}
+\NormalTok{                        time\_next }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{,}
+\NormalTok{                        timedth), }\DocumentationTok{\#\#\# create a variable indicating the last day of follow{-}up in a given period}
+         \AttributeTok{deathtv =} \FunctionTok{ifelse}\NormalTok{(death }\SpecialCharTok{==} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ timedth }\SpecialCharTok{\textless{}=}\NormalTok{ time2, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+         \AttributeTok{timemi2 =} \FunctionTok{ifelse}\NormalTok{(time2 }\SpecialCharTok{\textless{}=}\NormalTok{ timemi, time2, timemi),}
+         \AttributeTok{hospmitv =} \FunctionTok{ifelse}\NormalTok{(hospmi }\SpecialCharTok{==} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ timemi }\SpecialCharTok{\textless{}=}\NormalTok{ timemi2, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{()}
+
+\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{ fhstv }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(prevmi }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+Next, we can fit our original model, from the last chapter:
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{coxph\_modtvMI }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(time, timemi2, hospmitv) }\SpecialCharTok{\textasciitilde{}} 
-\NormalTok{                                cursmoke }\SpecialCharTok{+} \FunctionTok{ns}\NormalTok{(bmi, }\AttributeTok{df =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{ns}\NormalTok{(sysbp, }\AttributeTok{df =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
-\NormalTok{                                age }\SpecialCharTok{+}\NormalTok{ sex, }
+\NormalTok{                         cursmoke }\SpecialCharTok{+} \FunctionTok{ns}\NormalTok{(bmi, }\AttributeTok{df =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+} 
+                         \FunctionTok{ns}\NormalTok{(sysbp, }\AttributeTok{df =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ sex, }
                               \AttributeTok{data =}\NormalTok{ fhstv\_incMI)}
 \NormalTok{coxph\_modtvMI }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
@@ -8844,35 +9124,45 @@ Now let's revisit the time-varying dataset we created and fit a conditional mode
 ## 1 cursmoke  1.80   1.45    2.23
 \end{verbatim}
 
-One concern from this model is that BMI and systolic blood pressure maybe mediators for the effect of smoking on MI hospitalizations, in which case we wouldn't want to control for them. However, given the time-varying nature of the exposure, BMI and systolic blood pressure may also be confounders if they have an effect on who changes smoking status in the future. This creates an exposure-confounder feedback, with the confounder causing the exposure and the exposure in turn having an effect on the confounder a later time point. Traditional regression approaches are not adequately equipped to handle this type of confounding, however IPW (and some other approaches) can adjust for confounding without blocking any mediating pathways.
+One concern from this model is that BMI and systolic blood pressure maybe mediators for the effect of smoking on MI hospitalizations, in which case we wouldn't want to control for them. However, given the time-varying nature of the exposure, BMI and systolic blood pressure may also be confounders if they have an effect on who changes smoking status in the future. This creates an exposure-confounder feedback, with the confounder causing the exposure and the exposure in turn having an effect on the confounder a later time point. Traditional regression approaches are not adequately equipped to handle this type of confounding. However, IPW (and some other approaches) can adjust for confounding without blocking any mediating pathways.
 
-In this time-varying setting the inverse probability weights will also be time-varying and the quantity is
+In this time-varying setting the inverse probability weights will also be time-varying and the quantity is:
+
 \[
 W=\prod_{t}\frac{1}{f[X_{t}|\bar{X}_{t-1},\bar{C}_{t-1},V]}
 \]
-where at each time point (period) the weight is the cumulative product of the inverse of the probability of the exposure value at each time point \(X_{t}\) conditional on the history of past exposures \(\bar{X}_{t-1}\) and covariates \(\bar{C}_{t-1}\) up to the previous period as well as the baseline covariates. In our case the time varying covariates \(C_{t}\) are BMI and systolic blood pressure, while baseline covariates \(V\) are age and sex.
 
-In order to estimate these weights we would have to lag exposure, BMI and systolic blood pressure in order to predict current exposure \(X_{t}\) using past exposure and covariate values \(X_{t-1}\) and \(C_{t-1}\). We are omitting the overbars denoting history as we will assume the most recent value from the past is adequate to represent exposure and coviariate histories.
+where at each time point (period) the weight is the cumulative product of the inverse of the probability of the exposure value at each time point \(X_{t}\) conditional on the history of past exposures \(\bar{X}_{t-1}\) and covariates \(\bar{C}_{t-1}\) up to the previous period as well as the baseline covariates. In our case, the time varying covariates \(C_{t}\) are BMI and systolic blood pressure, while baseline covariates \(V\) are age and sex.
+
+In order to estimate these weights we would have to lag exposure, BMI, and systolic blood pressure in order to predict current exposure \(X_{t}\) using past exposure and covariate values \(X_{t-1}\) and \(C_{t-1}\). We are omitting the overbars denoting history as we will assume the most recent value from the past is adequate to represent exposure and coviariate histories. We'll also filter out any rows with missing values for the predictors---this will make it easier to join the predictions from the model up with this dataset in a minute.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhstv\_incMI}\OtherTok{\textless{}{-}}\NormalTok{fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{ fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{cursmoke\_l1=}\FunctionTok{lag}\NormalTok{(cursmoke),}
-         \AttributeTok{cursmoke\_l1=}\FunctionTok{ifelse}\NormalTok{(period}\SpecialCharTok{==}\DecValTok{1}\NormalTok{, cursmoke, cursmoke\_l1), }\DocumentationTok{\#\#\#we are setting the lagged smoking status variable to equal the present smoking status value (we are assuming smoking status didn\textquotesingle{}t change right at the beginning of follow{-}up)}
-         \AttributeTok{bmi\_l1=}\FunctionTok{lag}\NormalTok{(bmi),}
-         \AttributeTok{bmi\_l1=}\FunctionTok{ifelse}\NormalTok{(period}\SpecialCharTok{==}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, bmi\_l1),}
-         \AttributeTok{sysbp\_l1=}\FunctionTok{lag}\NormalTok{(sysbp),}
-         \AttributeTok{sysbp\_l1=}\FunctionTok{ifelse}\NormalTok{(period}\SpecialCharTok{==}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, sysbp\_l1)) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{ungroup}\NormalTok{()}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{cursmoke\_l1 =} \FunctionTok{lag}\NormalTok{(cursmoke),}
+         \DocumentationTok{\#\# We will set the lagged smoking status variable to equal the present}
+         \DocumentationTok{\#\# smoking status for the first period (we are assuming smoking status}
+         \DocumentationTok{\#\# didn\textquotesingle{}t change right at the beginning of follow{-}up, and we don\textquotesingle{}t }
+         \DocumentationTok{\#\# have any information about smoking before the first exam)}
+         \AttributeTok{cursmoke\_l1 =} \FunctionTok{if\_else}\NormalTok{(period }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, cursmoke, cursmoke\_l1), }
+         \AttributeTok{bmi\_l1 =} \FunctionTok{lag}\NormalTok{(bmi),}
+         \AttributeTok{bmi\_l1 =} \FunctionTok{ifelse}\NormalTok{(period }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, bmi\_l1),}
+         \AttributeTok{sysbp\_l1 =} \FunctionTok{lag}\NormalTok{(sysbp),}
+         \AttributeTok{sysbp\_l1 =} \FunctionTok{ifelse}\NormalTok{(period }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, sysbp\_l1)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(cursmoke\_l1) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(bmi\_l1) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(sysbp\_l1))}
 \end{Highlighting}
 \end{Shaded}
 
-Furthermore as we are assuming an order where smoking is a cause of BMI and systolic blood pressure at each time period, we don't have BMI and blood pressure values to predict exposure at period 1. We have set those to zero above, so we can actually get a prediction for the probability of exposure values at this period based on the baseline variables values. We will also inclue time in the model, as in this time-varying setting it's safe to assume that time-varying variables are a function of time.
+Furthermore, as we are assuming an order where smoking is a cause of BMI and systolic blood pressure at each time period, we don't have BMI and blood pressure values to predict exposure at period 1. We have set those to zero above, so we can actually get a prediction for the probability of exposure values at this period based on the baseline variables values. We will also include time in the model, as in this time-varying setting it's safe to assume that time-varying variables are a function of time.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_tvIPW}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(cursmoke}\SpecialCharTok{\textasciitilde{}}\FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df=}\DecValTok{2}\NormalTok{)}\SpecialCharTok{+}\NormalTok{age}\SpecialCharTok{+}\NormalTok{sex}\SpecialCharTok{+}\NormalTok{cursmoke\_l1 }\SpecialCharTok{+} \FunctionTok{ns}\NormalTok{(bmi\_l1, }\AttributeTok{df=}\DecValTok{2}\NormalTok{)}\SpecialCharTok{+}\NormalTok{sysbp\_l1, }\AttributeTok{family=}\NormalTok{binomial, }\AttributeTok{data=}\NormalTok{fhstv\_incMI)}
+\NormalTok{mod\_tvIPW }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(cursmoke }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+} 
+\NormalTok{                   sex }\SpecialCharTok{+}\NormalTok{ cursmoke\_l1 }\SpecialCharTok{+} \FunctionTok{ns}\NormalTok{(bmi\_l1, }\AttributeTok{df =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+\NormalTok{                   sysbp\_l1, }\AttributeTok{family =}\NormalTok{ binomial, }\AttributeTok{data =}\NormalTok{ fhstv\_incMI)}
+
 \NormalTok{mod\_tvIPW }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
@@ -8893,39 +9183,46 @@ Furthermore as we are assuming an order where smoking is a cause of BMI and syst
 ## 9 sysbp_l1            -0.00117   0.00239    -0.491 6.23e- 1
 \end{verbatim}
 
-Most of the above variables look like they are significant predictors of exposure. However, once again we are not interpreting the paramater coefficients of this model, we are only using it for prediction.
+Most of the above variables look like they are significant predictors of exposure, especially previous smoking (which makes sense!). However, once again, we are not interpreting the parameter coefficients of this model, we are only using it for prediction of the propensity scores and from those the inverse probability weights.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{ fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Estimate the propensity scores}
+    \AttributeTok{ps =} \FunctionTok{predict}\NormalTok{(mod\_tvIPW, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{), }
+    \CommentTok{\# Estimate the inverse probability weights from the propensity scores and}
+    \CommentTok{\# the actual exposure level for each study subject at each time point}
+    \AttributeTok{w\_i =} \FunctionTok{if\_else}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, }\DecValTok{1} \SpecialCharTok{/}\NormalTok{ ps, }\DecValTok{1} \SpecialCharTok{/}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{{-}}\NormalTok{ ps))) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{p\_smokobs=}\FunctionTok{ifelse}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{0}\NormalTok{,   }\DocumentationTok{\#\#\#estimate the conditional probability that someone is unexposed or exposed from the model above}
-         \DecValTok{1} \SpecialCharTok{{-}} \FunctionTok{predict}\NormalTok{(mod\_tvIPW, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{),}
-         \FunctionTok{predict}\NormalTok{(mod\_tvIPW, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)),}
-         \AttributeTok{w\_i=}\DecValTok{1}\SpecialCharTok{/}\NormalTok{p\_smokobs,}\DocumentationTok{\#\#\#\# This is the first step}
-         \AttributeTok{w=}\FunctionTok{cumprod}\NormalTok{(w\_i)) }\SpecialCharTok{\%\textgreater{}\%} \DocumentationTok{\#\#\# the second step gives us the cumulative product of the inverse probabilities over   time. }
-         \FunctionTok{ungroup}\NormalTok{()}
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Get the cumulative product of the inverse probabilities over time}
+    \CommentTok{\# for each study subject}
+    \AttributeTok{w =} \FunctionTok{cumprod}\NormalTok{(w\_i)}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{()}
 
 \NormalTok{fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w=}\FunctionTok{mean}\NormalTok{(w),}
-            \AttributeTok{min\_w=}\FunctionTok{min}\NormalTok{(w),}
-            \AttributeTok{max\_w=}\FunctionTok{max}\NormalTok{(w),}
-            \AttributeTok{sum\_w=}\FunctionTok{sum}\NormalTok{(w))}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w =} \FunctionTok{mean}\NormalTok{(w),}
+            \AttributeTok{min\_w =} \FunctionTok{min}\NormalTok{(w),}
+            \AttributeTok{max\_w =} \FunctionTok{max}\NormalTok{(w),}
+            \AttributeTok{sum\_w =} \FunctionTok{sum}\NormalTok{(w))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 1 x 4
-##   mean_w min_w  max_w     sum_w
-##    <dbl> <dbl>  <dbl>     <dbl>
-## 1  1742.  1.08 18233. 19600277.
+##   mean_w min_w max_w  sum_w
+##    <dbl> <dbl> <dbl>  <dbl>
+## 1   6.07  1.03 1126. 68159.
 \end{verbatim}
 
-Due to the cumulative product nature of these weights, we now see that the mean weight is much higher than before, while the maximum weight value is now over 18,000 meaning that particular observation will count as pver 18,000 observation in our analysis. This creates the possibility for very influential observations, due to weight inflation. One way to remedy this is to use stabilized weights, which involve a numerator that is also a probability of the actual exposure value at each time period. Unlike the denominator of the weights, the probability in the numerator will be a marginal probability of exposure or simply conditional on past exposure. We can even include our baseline covariates in the numerator model, however we will have to control for them in the final model if we do so. Here we will use probability of exposure values conditional on past exposure only for out numerators.
+Due to the cumulative product nature of these weights, we now see that the mean weight is much higher than before, while the maximum weight value is now over 1,100, meaning that particular observation will count as over 1,100 observation in our analysis. This creates the possibility for very influential observations, due to weight inflation. One way to remedy this is to use stabilized weights, which involve a numerator that is also a probability of the actual exposure value at each time period. Unlike the denominator of the weights, the probability in the numerator will be a marginal probability of exposure or simply conditional on past exposure. We can even include our baseline covariates in the numerator model, however we will have to control for them in the final model if we do so. Here we will use probability of exposure values conditional on past exposure only for our numerators.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_tvIPWnum}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(cursmoke}\SpecialCharTok{\textasciitilde{}}\FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df=}\DecValTok{2}\NormalTok{)}\SpecialCharTok{+}\NormalTok{cursmoke\_l1, }\AttributeTok{family=}\NormalTok{binomial, }\AttributeTok{data=}\NormalTok{fhstv\_incMI)}
+\NormalTok{mod\_tvIPWnum }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(cursmoke }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ cursmoke\_l1, }
+                    \AttributeTok{family =}\NormalTok{ binomial, }\AttributeTok{data =}\NormalTok{ fhstv\_incMI)}
 \NormalTok{mod\_tvIPWnum }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
@@ -8935,44 +9232,52 @@ Due to the cumulative product nature of these weights, we now see that the mean 
 ## # A tibble: 4 x 5
 ##   term              estimate std.error statistic   p.value
 ##   <chr>                <dbl>     <dbl>     <dbl>     <dbl>
-## 1 (Intercept)          -2.91    0.0830     -35.0 6.46e-269
-## 2 ns(time, df = 2)1    -2.00    0.176      -11.3 7.94e- 30
-## 3 ns(time, df = 2)2    -1.46    0.119      -12.2 2.36e- 34
-## 4 cursmoke_l1           5.77    0.0958      60.3 0.
+## 1 (Intercept)          -2.91    0.0832     -35.0 1.84e-268
+## 2 ns(time, df = 2)1    -2.00    0.177      -11.3 1.13e- 29
+## 3 ns(time, df = 2)2    -1.48    0.120      -12.4 4.66e- 35
+## 4 cursmoke_l1           5.78    0.0961      60.2 0.
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{ fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Estimate the new propensity scores}
+    \AttributeTok{ps\_new =} \FunctionTok{predict}\NormalTok{(mod\_tvIPWnum, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{), }
+    \CommentTok{\# Estimate the new inverse probability weights from the old and new }
+    \CommentTok{\# propensity scores}
+    \AttributeTok{w\_i\_new =} \FunctionTok{if\_else}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, ps\_new }\SpecialCharTok{/}\NormalTok{ ps, (}\DecValTok{1} \SpecialCharTok{{-}}\NormalTok{ ps\_new) }\SpecialCharTok{/}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{{-}}\NormalTok{ ps))) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{p\_smokobsnum=}\FunctionTok{ifelse}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{0}\NormalTok{,   }\DocumentationTok{\#\#\#estimate the conditional probability that someone is unexposed or exposed from the model above}
-         \DecValTok{1} \SpecialCharTok{{-}} \FunctionTok{predict}\NormalTok{(mod\_tvIPWnum, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{),}
-         \FunctionTok{predict}\NormalTok{(mod\_tvIPWnum, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)),}
-         \AttributeTok{w\_i=}\NormalTok{p\_smokobsnum}\SpecialCharTok{/}\NormalTok{p\_smokobs,}\DocumentationTok{\#\#\#\# This is the first step}
-         \AttributeTok{w=}\FunctionTok{cumprod}\NormalTok{(w\_i)) }\SpecialCharTok{\%\textgreater{}\%} \DocumentationTok{\#\#\# the second step gives us the cumulative product of the inverse probabilities over   time. }
-         \FunctionTok{ungroup}\NormalTok{()}
-
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Get the cumulative product of the inverse probabilities over time}
+    \CommentTok{\# for each study subject based on these weighted scores}
+    \AttributeTok{w\_new =} \FunctionTok{cumprod}\NormalTok{(w\_i\_new)}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{()}
 
 \NormalTok{fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w=}\FunctionTok{mean}\NormalTok{(w),}
-            \AttributeTok{min\_w=}\FunctionTok{min}\NormalTok{(w),}
-            \AttributeTok{max\_w=}\FunctionTok{max}\NormalTok{(w),}
-            \AttributeTok{sum\_w=}\FunctionTok{sum}\NormalTok{(w))}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w\_new =} \FunctionTok{mean}\NormalTok{(w\_new),}
+            \AttributeTok{min\_w\_new =} \FunctionTok{min}\NormalTok{(w\_new),}
+            \AttributeTok{max\_w\_new =} \FunctionTok{max}\NormalTok{(w\_new),}
+            \AttributeTok{sum\_w\_new =} \FunctionTok{sum}\NormalTok{(w\_new))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 1 x 4
-##   mean_w min_w max_w sum_w
-##    <dbl> <dbl> <dbl> <dbl>
-## 1  0.820 0.473  1.04 9230.
+##   mean_w_new min_w_new max_w_new sum_w_new
+##        <dbl>     <dbl>     <dbl>     <dbl>
+## 1       1.00     0.339      2.95    11240.
 \end{verbatim}
 
-A good rule of thumb for stabilized weights is that the mean of the weights should be around 1. Here we see that we are fairly lower than this. Including sex and age may improve our numerator model.
+A good rule of thumb for stabilized weights is that the mean of the weights should be around 1. Here we see that we are fairly close. If we want, we can try including sex and age to further improve our numerator model, and especially to tighten the range.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{mod\_tvIPWnum}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(cursmoke}\SpecialCharTok{\textasciitilde{}}\FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df=}\DecValTok{2}\NormalTok{)}\SpecialCharTok{+}\NormalTok{cursmoke\_l1 }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{family=}\NormalTok{binomial, }\AttributeTok{data=}\NormalTok{fhstv\_incMI)}
+\NormalTok{mod\_tvIPWnum }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(cursmoke }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ns}\NormalTok{(time, }\AttributeTok{df =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ cursmoke\_l1 }\SpecialCharTok{+} 
+\NormalTok{                      age }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{family =}\NormalTok{ binomial, }
+                    \AttributeTok{data =}\NormalTok{ fhstv\_incMI)}
+
 \NormalTok{mod\_tvIPWnum }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
@@ -8982,49 +9287,55 @@ A good rule of thumb for stabilized weights is that the mean of the weights shou
 ## # A tibble: 6 x 5
 ##   term              estimate std.error statistic  p.value
 ##   <chr>                <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)        -1.09     0.279      -3.91  9.30e- 5
-## 2 ns(time, df = 2)1  -1.50     0.186      -8.09  5.99e-16
-## 3 ns(time, df = 2)2  -1.14     0.126      -9.05  1.49e-19
-## 4 cursmoke_l1         5.73     0.0975     58.8   0.      
-## 5 age                -0.0381   0.00466    -8.18  2.88e-16
-## 6 sex                 0.0636   0.0775      0.820 4.12e- 1
+## 1 (Intercept)        -1.10     0.280      -3.93  8.64e- 5
+## 2 ns(time, df = 2)1  -1.51     0.186      -8.07  6.98e-16
+## 3 ns(time, df = 2)2  -1.16     0.126      -9.18  4.35e-20
+## 4 cursmoke_l1         5.74     0.0978     58.7   0.      
+## 5 age                -0.0380   0.00467    -8.14  3.90e-16
+## 6 sex                 0.0632   0.0777      0.813 4.16e- 1
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{fhstv\_incMI }\OtherTok{\textless{}{-}}\NormalTok{ fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Estimate the new propensity scores}
+    \AttributeTok{ps\_new =} \FunctionTok{predict}\NormalTok{(mod\_tvIPWnum, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{), }
+    \CommentTok{\# Estimate the new inverse probability weights from the old and new }
+    \CommentTok{\# propensity scores}
+    \AttributeTok{w\_i\_new =} \FunctionTok{if\_else}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{1}\NormalTok{, ps\_new }\SpecialCharTok{/}\NormalTok{ ps, (}\DecValTok{1} \SpecialCharTok{{-}}\NormalTok{ ps\_new) }\SpecialCharTok{/}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{{-}}\NormalTok{ ps))) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{p\_smokobsnum=}\FunctionTok{ifelse}\NormalTok{(cursmoke }\SpecialCharTok{==} \DecValTok{0}\NormalTok{,   }\DocumentationTok{\#\#\#estimate the conditional probability that someone is unexposed or exposed from the model above}
-         \DecValTok{1} \SpecialCharTok{{-}} \FunctionTok{predict}\NormalTok{(mod\_tvIPWnum, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{),}
-         \FunctionTok{predict}\NormalTok{(mod\_tvIPWnum, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)),}
-         \AttributeTok{w\_i=}\NormalTok{p\_smokobsnum}\SpecialCharTok{/}\NormalTok{p\_smokobs,}\DocumentationTok{\#\#\#\# This is the first step}
-         \AttributeTok{w=}\FunctionTok{cumprod}\NormalTok{(w\_i)) }\SpecialCharTok{\%\textgreater{}\%} \DocumentationTok{\#\#\# the second step gives us the cumulative product of the inverse probabilities over   time. }
-         \FunctionTok{ungroup}\NormalTok{()}
-
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Get the cumulative product of the inverse probabilities over time}
+    \CommentTok{\# for each study subject based on these weighted scores}
+    \AttributeTok{w\_new =} \FunctionTok{cumprod}\NormalTok{(w\_i\_new)}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{()}
 
 \NormalTok{fhstv\_incMI }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w=}\FunctionTok{mean}\NormalTok{(w),}
-            \AttributeTok{min\_w=}\FunctionTok{min}\NormalTok{(w),}
-            \AttributeTok{max\_w=}\FunctionTok{max}\NormalTok{(w),}
-            \AttributeTok{sum\_w=}\FunctionTok{sum}\NormalTok{(w))}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_w\_new =} \FunctionTok{mean}\NormalTok{(w\_new),}
+            \AttributeTok{min\_w\_new =} \FunctionTok{min}\NormalTok{(w\_new),}
+            \AttributeTok{max\_w\_new =} \FunctionTok{max}\NormalTok{(w\_new),}
+            \AttributeTok{sum\_w\_new =} \FunctionTok{sum}\NormalTok{(w\_new))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 1 x 4
-##   mean_w min_w max_w  sum_w
-##    <dbl> <dbl> <dbl>  <dbl>
-## 1   1.02 0.986  1.11 11488.
+##   mean_w_new min_w_new max_w_new sum_w_new
+##        <dbl>     <dbl>     <dbl>     <dbl>
+## 1       1.00     0.470      1.91    11243.
 \end{verbatim}
 
-We now see we are much closer to a mean weight of one and the weight range is quite narrow, meaning the chance for influential observations is not high. We now git our Marginal Structural Cox model for MI hospitalizations. Note that because we included age and sex in our weights numerator model we have to adjust for them in this outcome model, therefore it is not Marginal with respect to them, only with respect to BMI and systolic blood pressure
+We now see we are much closer to a mean weight of one and the weight range is narrower, meaning the chance for influential observations is not high. We now get our Marginal Structural Cox model for MI hospitalizations. Note that because we included age and sex in our weights numerator model we have to adjust for them in this outcome model, therefore it is not marginal with respect to them, only with respect to BMI and systolic blood pressure
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{coxph\_modtvMIipw }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(time, timemi2, hospmitv) }\SpecialCharTok{\textasciitilde{}} 
-\NormalTok{                                cursmoke }\SpecialCharTok{+}
-\NormalTok{                                age }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{weights=}\NormalTok{w, }\AttributeTok{cluster=}\NormalTok{randid,}
-                              \AttributeTok{data =}\NormalTok{ fhstv\_incMI)}
+\NormalTok{                                cursmoke }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ sex, }
+                          \AttributeTok{weights =}\NormalTok{ w\_new, }\AttributeTok{cluster =}\NormalTok{ randid,}
+                          \AttributeTok{data =}\NormalTok{ fhstv\_incMI)}
+
 \NormalTok{coxph\_modtvMIipw }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
@@ -9034,9 +9345,9 @@ We now see we are much closer to a mean weight of one and the weight range is qu
 ## # A tibble: 3 x 6
 ##   term     estimate std.error robust.se statistic  p.value
 ##   <chr>       <dbl>     <dbl>     <dbl>     <dbl>    <dbl>
-## 1 cursmoke   0.485    0.105     0.105        4.59 4.37e- 6
-## 2 age        0.0460   0.00601   0.00617      7.45 9.28e-14
-## 3 sex       -1.11     0.108     0.109      -10.1  4.58e-24
+## 1 cursmoke   0.508    0.107     0.106        4.80 1.58e- 6
+## 2 age        0.0481   0.00613   0.00615      7.82 5.09e-15
+## 3 sex       -1.10     0.110     0.110      -10.0  1.06e-23
 \end{verbatim}
 
 \begin{Shaded}
@@ -9057,17 +9368,17 @@ We now see we are much closer to a mean weight of one and the weight range is qu
 ## # A tibble: 1 x 4
 ##   term        hr low_hr high_hr
 ##   <chr>    <dbl>  <dbl>   <dbl>
-## 1 cursmoke  1.62   1.32    2.00
+## 1 cursmoke  1.66   1.35    2.05
 \end{verbatim}
 
-Based on the results of this model and using the correct interpretation we can deduce that the HR comparing what would have happened if everybody was always continuously a smoker (for the duration of follow-up), to what would have happened if no one was ever a smoker is 1.62 (95\% CI: 1.32 - 2.00).
+Based on the results of this model and using the correct interpretation we can deduce that the HR comparing what would have happened if everybody was always continuously a smoker (for the duration of follow-up), to what would have happened if no one was ever a smoker is 1.66 (95\% CI: 1.35--2.05).
 
-The HR is now lower that the conditional model, and although they are not directly comparable, the difference could be explained by the fact that we are no longer blocking a potentially negative effect of smoking on risk of MI hospitalization mediated through BMI (smoking usually has a negative association with BMI overall). Another potential explanation is that the conditional Cox model adjusting for BMI and blood pressure, also induced collider bias through unmeasured common causes between BMI and systolic blood pressure and the outcome, leading to bias away from the null. These are all issues we have to take in mind when choosing the estimation approach we think is more likely to lead to unbiased results. IPW is advantageous compared to traditional regression approaches to control for confounding in the presence of exposure-confounder feedback, however it comes at the cost of additional model(s). Misspecifying any of the models involved could also lead to bias, and as we have seen in the complex time-varying setting, weights may not always behave well. We could improve our weight estimation using machine learning algorithms that make fewer to no distributional and parametric assumptions, thus minimizing the potential for misspecification of weight models.
+The HR is now lower {[}BA: is this right? Looks like it's higher.{]} that the conditional model, and although they are not directly comparable, the difference could be explained by the fact that we are no longer blocking a potentially negative effect of smoking on risk of MI hospitalization mediated through BMI (smoking usually has a negative association with BMI overall). Another potential explanation is that the conditional Cox model adjusting for BMI and blood pressure, also induced collider bias through unmeasured common causes between BMI and systolic blood pressure and the outcome, leading to bias away from the null. These are all issues we have to take in mind when choosing the estimation approach we think is more likely to lead to unbiased results. IPW is advantageous compared to traditional regression approaches to control for confounding in the presence of exposure-confounder feedback, however it comes at the cost of additional model(s). Misspecifying any of the models involved could also lead to bias, and as we have seen in the complex time-varying setting, weights may not always behave well. We could improve our weight estimation using machine learning algorithms that make fewer to no distributional and parametric assumptions, thus minimizing the potential for misspecification of weight models.
 
-\hypertarget{propensity-scores}{%
-\section{Propensity scores}\label{propensity-scores}}
+\hypertarget{more-ways-to-use-propensity-scores}{%
+\section{More ways to use propensity scores}\label{more-ways-to-use-propensity-scores}}
 
-IPW is technically part of a general approach to adjust for confounding relying on measures for the probability of exposure known as propensity scores. In other words rather than adjusting for potential confounders directly, we adjust for the propensity of exposure given observed values of those potential confounders. Propensity scores can be used as weights (like in ipw), can be stratified upon, entered as a covariate in a model, or can be used as a matching variable for covariate adjustment. Each participant (or onbservation in the data) essentially receives a \emph{score} for their propensity to be exposed given their covariate values. This score is equal to the probability of exposure given covariate values \(Pr[X=1|C]\) where \(X\) is the exposure of interest (\(X=1\) for exposed and \(X=0\) for unexposed), and \(C\) is a vector of covariates (potential confounders).
+As we mentioned earlier, IPW is technically part of a general approach to adjust for confounding relying on measures for the probability of exposure, known as propensity scores. In other words rather than adjusting for potential confounders directly, we adjust for the propensity of exposure given observed values of those potential confounders. Propensity scores can be used as weights (like in IPW), can be stratified upon, entered as a covariate in a model, or can be used as a matching variable for covariate adjustment. Each participant (or observation in the data) essentially receives a \emph{score} for their propensity to be exposed given their covariate values. This score is equal to the probability of exposure given covariate values \(Pr[X=1|C]\) where \(X\) is the exposure of interest (\(X=1\) for exposed and \(X=0\) for unexposed), and \(C\) is a vector of covariates (potential confounders).
 
 \emph{Applied exercise: Propensity scores for confounding adjustment}
 
@@ -9077,7 +9388,7 @@ Using the FHS cohort data answer the following questions with respect to confoun
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Estimate the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking and baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?
+  In the last section, you estimated the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking and baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?
 \item
   Fit a Cox model with the propensity score in the model. How do these results compare to the ones above?
 \end{enumerate}
@@ -9088,38 +9399,18 @@ Using the FHS cohort data answer the following questions with respect to confoun
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Estimate the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking at baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?}
+  \textbf{In the last section, you estimated the propensity score for exposure based on age and sex in the time-invariant dataset. Create quartiles for the propensity score and stratify on it. What is the relationship between smoking at baseline and hazard of mortality within these strata? How does it compare to the conditional Cox model adjusting for age and sex?}
 \end{enumerate}
 
-Estimating the propensity score is actually very similar to what we did above to estimate IP weights. We will fit a logistic model for the probability of exposure and use it to generate predictions for the propensity score:
+In the previous section, we estimated propensity scores for smoking in the study population along the way to estimating the IPWs. We saved these propensity scores in the column named \texttt{ps}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{model\_PS}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(cursmoke}\SpecialCharTok{\textasciitilde{}+}\NormalTok{age }\SpecialCharTok{+}\NormalTok{ sex, }\AttributeTok{family=}\StringTok{\textquotesingle{}binomial\textquotesingle{}}\NormalTok{, }\AttributeTok{data=}\NormalTok{fhs\_first)}
-\NormalTok{model\_PS }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{tidy}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 3 x 5
-##   term        estimate std.error statistic  p.value
-##   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)   3.84     0.218        17.6 1.37e-69
-## 2 age          -0.0514   0.00370     -13.9 8.06e-44
-## 3 sex          -0.839    0.0634      -13.2 6.04e-40
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ps\_smok=}\FunctionTok{predict}\NormalTok{(model\_PS, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{))}
-
 \NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_ps=}\FunctionTok{mean}\NormalTok{(ps\_smok),}
-            \AttributeTok{max\_ps=}\FunctionTok{max}\NormalTok{(ps\_smok),}
-            \AttributeTok{min\_ps=}\FunctionTok{min}\NormalTok{(ps\_smok),}
-            \AttributeTok{sum\_ps=}\FunctionTok{sum}\NormalTok{(ps\_smok))}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{mean\_ps =} \FunctionTok{mean}\NormalTok{(ps),}
+            \AttributeTok{max\_ps =} \FunctionTok{max}\NormalTok{(ps),}
+            \AttributeTok{min\_ps =} \FunctionTok{min}\NormalTok{(ps),}
+            \AttributeTok{sum\_ps =} \FunctionTok{sum}\NormalTok{(ps))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -9130,145 +9421,119 @@ Estimating the propensity score is actually very similar to what we did above to
 ## 1   0.492  0.787  0.192  2181.
 \end{verbatim}
 
-You may have noticed that unlike in IPW where we wanted to conditional probability of the value of exposure each participant had (i.e the probability that they were exposed if exposed and the probability that they were unexposed if unexposed) here we want the probability of exposure for everyone. This slight difference has a consequence in the interpretation of our findings later. Therefore the PS is a continuous variable with a possible range of 0 to 1 and the sum of the propensity score should equal the number of exposed individuals in the dataset. Given the continuous nature of the PS it is difficult to stratify on it, as any given exact value may only have one participant with that value. In our case, since we are only predicting based on age and sex, participants with the same age and sex will have the same value, however those may still be small counts in each possible stratum.
+You may have noticed that, while in IPW we wanted to conditional probability of the value of exposure each participant had (i.e the probability that they were exposed if exposed and the probability that they were unexposed if unexposed), here we want the probability of exposure for everyone. In other words, the person's actual exposure doesn't make a difference in these estimated propensity scores. This slight difference has a consequence in the interpretation of our findings later. Therefore the PS is a continuous variable with a possible range of 0 to 1 and the sum of the propensity score should equal the number of exposed individuals in the dataset. Given the continuous nature of the PS it is difficult to stratify on it, as any given exact value may only have one participant with that value. In our case, since we are only predicting based on age and sex, participants with the same age and sex will have the same value, however those may still be small counts in each possible stratum.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{select}\NormalTok{(ps\_smok) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(ps) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{head}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 6 x 1
-##   ps_smok
-##     <dbl>
-## 1   0.731
-## 2   0.450
-## 3   0.631
-## 4   0.274
-## 5   0.450
-## 6   0.488
+##      ps
+##   <dbl>
+## 1 0.731
+## 2 0.450
+## 3 0.631
+## 4 0.274
+## 5 0.450
+## 6 0.488
 \end{verbatim}
 
 We will therefore limit the possible number of strata and hopefuly increase the counts in each stratum by creating quartiles for the PS:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs\_first}\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ps\_smokq=}\FunctionTok{cut}\NormalTok{(ps\_smok, }\AttributeTok{breaks=}\FunctionTok{c}\NormalTok{(}\FunctionTok{quantile}\NormalTok{(ps\_smok, }\AttributeTok{probs =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.25}\NormalTok{))), }
-      \AttributeTok{labels=}\FunctionTok{c}\NormalTok{(}\StringTok{"Q1"}\NormalTok{,}\StringTok{"Q2"}\NormalTok{,}\StringTok{"Q3"}\NormalTok{,}\StringTok{"Q4"}\NormalTok{), }\AttributeTok{include.lowest=}\ConstantTok{TRUE}\NormalTok{))}
+\NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ps\_smokq =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{    ps }\SpecialCharTok{\textless{}=} \FunctionTok{quantile}\NormalTok{(ps, }\FloatTok{0.25}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Q1"}\NormalTok{, }
+\NormalTok{    ps }\SpecialCharTok{\textless{}=} \FunctionTok{quantile}\NormalTok{(ps, }\FloatTok{0.5}\NormalTok{)  }\SpecialCharTok{\textasciitilde{}} \StringTok{"Q2"}\NormalTok{, }
+\NormalTok{    ps }\SpecialCharTok{\textless{}=} \FunctionTok{quantile}\NormalTok{(ps, }\FloatTok{0.75}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Q3"}\NormalTok{, }
+\NormalTok{    ps }\SpecialCharTok{\textless{}=} \FunctionTok{max}\NormalTok{(ps)            }\SpecialCharTok{\textasciitilde{}} \StringTok{"Q4"}\NormalTok{, }
+    \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \ConstantTok{NA\_character\_}
+\NormalTok{  )) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ps\_smokq =} \FunctionTok{as\_factor}\NormalTok{(ps\_smokq), }
+         \AttributeTok{ps\_smokq =} \FunctionTok{fct\_relevel}\NormalTok{(ps\_smokq, }\StringTok{"Q1"}\NormalTok{, }\StringTok{"Q2"}\NormalTok{, }\StringTok{"Q3"}\NormalTok{, }\StringTok{"Q4"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
-If we now fit our models in each of the strate defined by the quartiles:
+We can check the first few rows of the new variable, as well as use a histogram to see how the \texttt{ps\_smokq} variable divides the propensity scores into quartiles:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fhs\_firstPSQ1}\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{filter}\NormalTok{(ps\_smokq}\SpecialCharTok{==}\StringTok{\textquotesingle{}Q1\textquotesingle{}}\NormalTok{)}
+\NormalTok{fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(ps, ps\_smokq)}
+\end{Highlighting}
+\end{Shaded}
 
-\NormalTok{coxph\_modPSQ1 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }
-                    \AttributeTok{data =}\NormalTok{ fhs\_firstPSQ1)}
-\NormalTok{coxph\_modPSQ1 }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+\begin{verbatim}
+## # A tibble: 4,434 x 2
+##       ps ps_smokq
+##    <dbl> <fct>   
+##  1 0.731 Q4      
+##  2 0.450 Q2      
+##  3 0.631 Q4      
+##  4 0.274 Q1      
+##  5 0.450 Q2      
+##  6 0.488 Q2      
+##  7 0.254 Q1      
+##  8 0.463 Q2      
+##  9 0.582 Q3      
+## 10 0.688 Q4      
+## # ... with 4,424 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(fhs\_first) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ ps, }\AttributeTok{fill =}\NormalTok{ ps\_smokq))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-279-1.pdf}
+
+If we now fit our models in each of the strata defined by the quartiles. Anytime you need to apply the same model to several subsets of your data, it can save you time (and code) to nest the data to create the subsets, then use \texttt{map} from \texttt{purrr} to map that function across all your subsets of data and use the \texttt{tidy} function to pull out the tidy coefficient estimates from the model. In this case, we only have four subsets, so we could have instead filtered to each subset and run the model several times, but this trick becomes especially useful if you want to run the same model on tens or even a hundred or more different subsets, so it's worth checking out.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(purrr)}
+\NormalTok{cox\_ps\_quantiles }\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(ps\_smokq) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{nest}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{cox\_mod\_quartile =} \FunctionTok{map}\NormalTok{(data, }
+                                \AttributeTok{.f =} \SpecialCharTok{\textasciitilde{}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}} 
+\NormalTok{                                               cursmoke, }
+                                             \AttributeTok{data =}\NormalTok{ .x)),}
+         \AttributeTok{tidy\_coxph =} \FunctionTok{map}\NormalTok{(cox\_mod\_quartile, }\AttributeTok{.f =}\NormalTok{ tidy)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(data, cox\_mod\_quartile)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{unnest}\NormalTok{(}\AttributeTok{cols =}\NormalTok{ tidy\_coxph) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(ps\_smokq) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
          \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
          \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
          \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
          \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
+  \FunctionTok{select}\NormalTok{(ps\_smokq, hr, low\_hr, high\_hr)}
+
+\NormalTok{cox\_ps\_quantiles}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 1 x 4
-##   term        hr low_hr high_hr
-##   <chr>    <dbl>  <dbl>   <dbl>
-## 1 cursmoke  1.21  0.784    1.88
+## # A tibble: 4 x 4
+##   ps_smokq    hr low_hr high_hr
+##   <fct>    <dbl>  <dbl>   <dbl>
+## 1 Q1        1.21  0.784    1.88
+## 2 Q2        1.35  0.902    2.02
+## 3 Q3        1.38  0.922    2.05
+## 4 Q4        1.31  0.930    1.83
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_firstPSQ2}\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{filter}\NormalTok{(ps\_smokq}\SpecialCharTok{==}\StringTok{\textquotesingle{}Q2\textquotesingle{}}\NormalTok{)}
-
-\NormalTok{coxph\_modPSQ2 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }
-                    \AttributeTok{data =}\NormalTok{ fhs\_firstPSQ2)}
-\NormalTok{coxph\_modPSQ2 }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
-         \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
-         \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
-         \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
-         \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 1 x 4
-##   term        hr low_hr high_hr
-##   <chr>    <dbl>  <dbl>   <dbl>
-## 1 cursmoke  1.35  0.902    2.02
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_firstPSQ3}\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{filter}\NormalTok{(ps\_smokq}\SpecialCharTok{==}\StringTok{\textquotesingle{}Q3\textquotesingle{}}\NormalTok{)}
-
-\NormalTok{coxph\_modPSQ3 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }
-                    \AttributeTok{data =}\NormalTok{ fhs\_firstPSQ3)}
-\NormalTok{coxph\_modPSQ3 }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
-         \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
-         \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
-         \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
-         \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 1 x 4
-##   term        hr low_hr high_hr
-##   <chr>    <dbl>  <dbl>   <dbl>
-## 1 cursmoke  1.38  0.922    2.05
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{fhs\_firstPSQ4}\OtherTok{\textless{}{-}}\NormalTok{ fhs\_first }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{filter}\NormalTok{(ps\_smokq}\SpecialCharTok{==}\StringTok{\textquotesingle{}Q4\textquotesingle{}}\NormalTok{)}
-
-\NormalTok{coxph\_modPSQ4 }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke, }
-                    \AttributeTok{data =}\NormalTok{ fhs\_firstPSQ4)}
-\NormalTok{coxph\_modPSQ4}\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"cursmoke"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr =} \FunctionTok{exp}\NormalTok{(estimate),}
-         \AttributeTok{low\_ci =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
-         \AttributeTok{high\_ci =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
-         \AttributeTok{low\_hr =} \FunctionTok{exp}\NormalTok{(low\_ci), }
-         \AttributeTok{high\_hr =} \FunctionTok{exp}\NormalTok{(high\_ci)) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{select}\NormalTok{(term, hr, low\_hr, high\_hr)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 1 x 4
-##   term        hr low_hr high_hr
-##   <chr>    <dbl>  <dbl>   <dbl>
-## 1 cursmoke  1.31  0.930    1.83
-\end{verbatim}
-
-The individual HR from each stratum are all higher than the original unadjusted, but not quite as high as the overall adjusted model. Furthermore, we see that CIs are wider (all include the null) as we lose power when looking in each individual stratum. Expanding the number of categories for the PS (e.g.~deciles) may improve our control for confoudning, but it will come at the cost of additional loss of power
+The individual HR from each stratum are all higher than those from the original unadjusted model (\texttt{coxph\_mod1}), but not quite as high as the overall adjusted model (with the exception of the third quantile). Furthermore, we see that CIs are wider (all include the null) as we lose power when looking in each individual stratum. Expanding the number of categories for the PS (e.g., to deciles) may improve our control for confounding, but it will come at the cost of additional loss of power (because the number of study subjects in each subset will continue to decrease as we increase the number of subsets).
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -9282,7 +9547,7 @@ We can instead fit a model including the original continuous PS as a covariate i
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{coxph\_modPS }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke }\SpecialCharTok{+}\NormalTok{ ps\_smok, }
+\NormalTok{coxph\_modPS }\OtherTok{\textless{}{-}} \FunctionTok{coxph}\NormalTok{(}\FunctionTok{Surv}\NormalTok{(timemi, hospmi) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cursmoke }\SpecialCharTok{+}\NormalTok{ ps, }
                     \AttributeTok{data =}\NormalTok{ fhs\_first)}
 \NormalTok{coxph\_modPS }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
@@ -9303,7 +9568,11 @@ We can instead fit a model including the original continuous PS as a covariate i
 ## 1 cursmoke  1.34   1.10    1.62
 \end{verbatim}
 
-We see that our CIs are now less wide, however our estimate (though similar) does not exactly match the one from the original adjusted model, nor the IP weighted model. Again the interpretation of the HR from this model is different from those two and in the case of IPW it has to do with the nuanced difference of focusing on the probability of being exposed, rather than the probability of having the exposure value each one had (i.e.~exposed or unexposed). The correct interpretation of this HR is as the effect of exposure in the exposed. In other words it is the HR comparing what would have happened if the exposed were exposed (what actually happened) to what would have happened if the exposed were unexposed. By contrast remember that the interpreataion of the HR in the case of IPW was the HR comparing what would have happened if everyone was exposed to what would have happened if nobody was exposed.
+We see that our CIs are now less wide, however our estimate (though similar) does not exactly match the one from the original adjusted model, nor the IP weighted model. Again the interpretation of the HR from this model is different from those two, and in the case of IPW it has to do with the nuanced difference of focusing on the probability of being exposed, rather than the probability of having the exposure value each one had (i.e., exposed or unexposed). The correct interpretation of this HR is as the effect of exposure in the exposed. In other words it is the HR comparing what would have happened if the exposed were exposed (what actually happened) to what would have happened if the exposed were unexposed. By contrast remember that the interpretation of the HR in the case of IPW was the HR comparing what would have happened if everyone was exposed to what would have happened if nobody was exposed.
+
+To wrap up, there are a few additional points we should bring up. The first is about how this analysis compares to the results from a randomized control trail. We mentioned earlier that the propensity score approaches help to break the association between potential confounders and exposure. This is true, but can only be done for potential confounders that are \emph{measured}---you have to build a model with the values to predict propensity scores, so you can't include any confounders that haven't been measured, and certainly not things that you haven't even thought might be confounders. By contrast, the randomization in a randomized control trail can, if the study population is large enough, effectively break the association between exposure (or, more often, treatment) and \emph{any} possible confounder, whether you've measured (or even thought about) it or not. Propensity score methods do not do this.
+
+The other point we want to bring up is about the propensity score model. We used a pretty simple one (at least in terms of you having seen it before)---a logistic regression model. However, you can use any format of predictive model that you think might work. This is one area in epidemiology where you see some machine learning methods---some people have tried using things like random forests, ridge or lasso regression, and neural networks to improve their propensity score model. This is at heart a predictive model, rather than one built for inference. In other words, you're aiming for a model that performs well in predicting the outcome, rather than in estimating the relationship between a particular independent variable and the outcome (as we've done for most of our earlier models). Some of the other types of models might be particularly helpful if you have loads of potential confounders that you want to include, especially if some of them are strongly correlated, because some of these other types of models handle large numbers of (potentially collinear) independent variables better than classic regression models do. These other types of models might be useful if you have a case where you think there's a lot of non-linearity in the relationship between your confounders and your exposure, or if you think that there might be a lot of interactions between different confounders in predicting the outcome (this could certainly be the case in the example used here---age might have different influences on the chance of smoking for males versus females). If you are using propensity scores in your own research, you could explore some of these other types of models for building your predictive model of the propensity of being exposed versus unexposed.
 
 \hypertarget{mixed-models}{%
 \chapter{Mixed models}\label{mixed-models}}

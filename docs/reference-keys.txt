@@ -38,8 +38,8 @@ time-varying-coefficients
 using-survey-data-e.g.-nhanes
 some-approaches-for-confounding
 readings-5
-inverse-probability-weighting
-propensity-scores
+propensity-scores-and-inverse-probability-weighting
+more-ways-to-use-propensity-scores
 mixed-models
 instrumental-variables
 causal-inference
