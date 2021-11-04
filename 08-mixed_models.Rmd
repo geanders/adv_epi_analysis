@@ -1,4 +1,715 @@
 # Mixed models
 
-[Using a mixed modeling framework to help analyze repeated measures]
+## Readings
 
+The required readings for this chapter are:
+
+- @loucks2011associations Uses mixed models to explore the relationship between
+education level and blood pressure in the Framingham Offspring Study
+
+There are also some supplemental readings you may find useful.
+
+- @block2011proximity Another study that used mixed models to handle a repeated
+measures outcome in the Framingham Offspring study (in this case, BMI, in 
+relation to proximity to food establishments)
+- @rice2013short Another study that used mixed models to handle a repeated
+measures outcome in the Framingham family of studues (in this case, lung
+function, in relation to air pollution levels right before the exam) 
+- @gibbons2010advances A review of methodological approaches for repeated 
+measures data
+- @gelman2006data A classic textbook on the topic (with examples in R), if you
+want a deeper dive
+
+## Introduction to mixed models
+
+In all our previous models, we've been assuming that the observations are 
+independent of each other, at least after accounting for the role of any 
+of the covariates that were used in the model. However, this won't always
+be a safe assumption to make. Many types of data have a type of inherent 
+grouping, and in these cases observations are typically likely to be more
+similar within a group that between different groups. 
+
+One example, which we'll explore in this module, is when you have more than one
+measurement on each study subject. These could be multiple measurements of the
+same person (othen called *repeated measures*), as we'll see in the case of some
+outcomes in the Framingham Heart Study data. It could also be multiple
+measurements within families (i.e., one data point per family member, grouped in
+families), or multiple measurements per doctor (i.e., one data point per
+patient, grouped by the patients' doctors). In all these cases, observations
+are likely more similar within a group than across groups, and as a result, 
+once you fit a model, the errors are likely to be correlated---for example, 
+if one measurement for a person has negative residual from the model prediction, 
+then it's likely that the person's other measurements, on average, are also 
+lower than their model predictions.
+
+One way to address this type of data is to use a type of model called *mixed 
+models*. These can handle this clustering in the observations, while still 
+allowing you to model effects of different risk factors using a very similar
+process to the one you've used in earlier models (a regression-based approach).
+
+In this module, we'll explore how you can understand, use, and code mixed
+models. We'll use the Framingham Heart Study data. Before, we looked at 
+outcomes in this dataset for which there was only one observation per study 
+subject. For example, we looked at the time from the baseline examination until
+death, and there can only be one measurement (or censoring) for each person 
+for that outcome. Here, we'll look at a value that is measured at each 
+examination---blood pressure. We have repeated measures of blood pressure
+for each study subject, and we'll investigate how those are associated with 
+one time-invariant variable (education level, which never changes for any 
+of the study subjects over examination periods) and several time-variant
+variables (for example, BMI, which is recorded at all examinations). 
+
+We'll start by creating a subset of just a few of the study subjects, so we can
+get a close look at what happens with mixed models, especially the *random
+effects* component that makes them different from the GLMs we've used in earlier
+modules. We'll start by creating our sample of subjects and do some exploratory
+analysis of systolic blood pressure and some of its potential risk factors. In
+the next section, we'll build models that include random effects intercepts in
+the next section of the chapter, starting with intercept-only models, and then
+moving to models that estimate the effects of risk factors like education level
+and BMI. In section after that, we'll explore models that have random effects
+for both the intercept and the slope term for age (i.e., for how blood pressure
+evolves as people age).
+
+*Applied exercise: Creating a subset of subjects and performing exploratory analysis*
+
+Read the example cohort data in R and explore it to answer the following
+question: 
+
+1. In a subset of fifteen subjects from the Framingham Heart Study (be sure
+to select only subjects with three examinations, so we can explore variation
+across repeated measures), how does systolic blood pressure relate to the 
+potential risk factors of sex, age, smoking status, BMI, and education level?
+
+*Applied exercise: Example code*
+
+1. **In a subset of fifteen subjects from the Framingham Heart Study (be sure
+to select only subjects with three examinations, so we can explore variation
+across repeated measures), how does systolic blood pressure relate to the 
+potential risk factors of sex, age, smoking status, BMI, and education level?**
+
+Let's start by looking at a subset of the Framingham Heart Study data. We'll 
+randomly pick a few of the study subjects who had three examinations, and 
+we'll use this subset to explore the idea of using a mixed model to account
+for the inherent grouping in the data (three measurements for each study 
+subject). Later, we'll expand these ideas to look at the full study population, 
+but it can be helpful to start by seeing what's going on for just a few subjects
+first, to understand the idea of random versus fixed effects. 
+
+First, you'll want to re-load the study data, if you don't have it handy in 
+your R session:
+
+```{r message = FALSE, warning = FALSE}
+library(tidyverse) # Loads all the tidyverse packages, including readr
+fhs <- read_csv("data/frmgham2.csv") %>% 
+  rename_all(str_to_lower)
+```
+
+Next, let's create a sample of a few of the study subjects. We can use the
+`slice_sample` function from the `dplyr` package to get a sample of rows from a
+dataframe. Since we want to make sure that we sample at the level of study
+subject, rather than measurement (otherwise, we'd probably only get one
+measurement per sampled subject), we can nest the data first. This will reshape
+the dataframe so that there's one row per study subject (nesting by random ID)
+rather than one per measurement. Once we've sampled, we can unnest to get back
+to the original dimensions, with one row per measurement. We'll also do a couple
+of steps before sampling: we'll create a new column that gives the number of
+observations per person (which we'll use when we create the sample to make sure
+we're sampling subjects with three examinations---we're doing this to guarantee
+we have multiple measurements for each subject in our small sample, but we'll
+take out this step when we move later to using the whole dataset). To make sure
+that you get the same sample that we show here, you can set the seed to the same
+number.
+
+```{r}
+set.seed(416)
+fhs_sample <- fhs %>% 
+  # Relabel factor levels
+  mutate(sex = as_factor(sex),
+         sex = fct_recode(sex, 
+                          male = "1", 
+                          female = "2")) %>% 
+  group_by(randid) %>% 
+  # Calculate baseline age and number of observations for each study subject
+  mutate(n = n()) %>% 
+  ungroup() %>% 
+  # Filter to only subjects with three examinations
+  filter(n == 3) %>% 
+  # Limit to just the columns we'll use (to make the dataset simpler)
+  select(randid, sex, age, sysbp,cursmoke, bmi, educ, time) %>% 
+  # Nest the data, so there's one row per study subject, so we can sample 
+  # by subject
+  nest(cols = -randid) %>% 
+  # Sample a few study subjects
+  slice_sample(n = 15) %>% 
+  # Unnest, to get back to one row per measurement
+  unnest(cols = cols)
+
+fhs_sample
+```
+
+This code results in a dataset of a few study subjects, with three measurements
+for each study subject. In this module, we'll be looking at some risk factors
+for high blood pressure (hypertension). Blood pressure is measured through
+measurements of both systolic blood pressure, which is the pressure on your
+arteries during a heart beat, and diabolic blood pressure, which is the pressure
+on your arteries between heart beats. We'll focus on systolic blood 
+pressure, which is included in the data in the column `sysbp`. 
+
+Let's make a plot of how systolic blood pressure varies across each of our 
+study subjects, looking at their measurements at different ages: 
+
+```{r}
+fhs_sample %>% 
+  ggplot(aes(x = age, y = sysbp, group = randid, 
+             color = sex)) + 
+  geom_line() + 
+  ylab("Systolic blood pressure (mmHg)")
+```
+
+Within this sample, we see that there's a lot of variation across the study
+subjects in systolic blood pressure. Some of this variation is explained by age,
+both within and between subjects---for example, someone who is younger at the
+baseline examination tends to have lower measurements of blood pressure at all
+examinations compared to someone who is older at the baseline examination, and
+most subjects' systolic blood pressure tends to increase as they age across
+their three examinations. In this sample, there doesn't seem to be a clear
+pattern by sex (although it's a bit hard to be definitive with this small
+sample).
+
+Let's start by looking at some variables in the data that might be correlated
+with systolic blood pressure. In this section, we're aiming to build up to a
+model that will let us explore the association between education level (`educ`)
+and systolic blood pressure. We'll also explore the association with some other
+potential risk factors, including BMI, which we'll also include as potential
+confounders when we investiate the association with education level. For this,
+we've picked a few factors, based on prior knowledge, that might be associated
+with systolic blood pressure---sex, age, smoking status, and BMI We can start
+with some exploratory analysis to see how they're linked in this sample of
+subjects.
+
+First, the `GGally` package can produce a nice exploratory graph that includes
+the univariate distribution of each column, plus correlations and scatterplots
+to show the relationship between each pair of columns:
+
+```{r message = FALSE, warning = FALSE}
+library(GGally)
+fhs_sample %>% 
+  select(sex, age, cursmoke, bmi, educ, sysbp) %>% 
+  ggpairs()
+```
+
+Based on this, age is clearly correlated with systolic blood pressure, with
+blood pressure tending to be higher at higher ages. BMI also seems to be
+associated, with blood pressure tending to be higher at higher BMI. There are
+also some smaller associations between smoking status (blood pressure tends to
+be lower for current smokers, although keep in mind that smoking status looks
+like it's correlated with age, with current smokers tending to be younger) and
+education level (blood pressure tends to be lower for higher education levels).
+
+For a simpler graphic of these correlations, we can use the package
+`ggcorrplot`, which can create a correlation plot. You first use `cor` (in base
+R) to calculate the correlation matrix and then pass this to the `ggcorrplot`
+function. Since only numeric values can be included when calculating the
+correlation matrix, we'll level sex out this time. This function shows only
+correlations, but would be nice with larger datasets, which the `ggpairs`
+function might struggle to fit quickly (because there are so many observations):
+
+```{r message = FALSE, warning = FALSE}
+library(ggcorrplot)
+fhs_sample %>% 
+  select(age, cursmoke, bmi, educ, sysbp) %>% 
+  cor() %>% 
+  ggcorrplot(method = "circle", type = "lower")
+```
+
+We could also use beeswarm plots in our original data to explore how 
+education levels are associated with systolic blood pressure in that full 
+dataset: 
+
+```{r message = FALSE, warning = FALSE}
+library(ggbeeswarm)
+fhs %>% 
+  group_by(randid) %>% 
+  summarize(educ = first(educ), 
+            sysbp = mean(sysbp, na.rm = TRUE)) %>% 
+  ggplot(aes(x = educ, y = sysbp, group = educ)) + 
+  geom_violin() + 
+  geom_boxplot(width=0.1)
+```
+
+## Mixed models with random intercepts 
+
+*Applied exercise: Mixed models with random intercepts*
+
+Explore models with a random effect intercept for each study subject:
+
+1. Fit an intercept-only fixed effects model to the sample of study subjects. Do errors tend to be correlated within each study subject from this model?
+2. Next, try fitting a random effects intercept-only model to the same data. Has this resolved any issues with correlated errors within study subjects in the fixed effects model?
+3. Now expand the mixed effects model that you just fit. First, just add a term for 
+age, then build one that includes terms for age, sex, BMI, smoking status, and
+education. What do you conclude from these models? Focus particularly on how 
+systolic blood pressure is associated with two of the time-variant measures
+(age and BMI) and on the time-invariant measure (education level). 
+4. Try fitting the final model (with a random effect intercept for each study 
+subject and terms for age, sex, BMI, smoking status, and education) to the 
+full dataset, rather than the sample of a few subjects. What can you conclude?
+
+*Applied exercise: Example code*
+
+1. **Fit an intercept-only fixed effects model to the sample of study subjects. Do errors tend to be correlated within each study subject from this model?**
+
+If we fit a model with nothing but a fixed effect intercept, our predicted systolic 
+blood pressure would be the same for everyone. This is a very simple model to 
+specify---you can use the `glm` functionm since we're using only a fixed effect
+(more later on what that is, but essentially it's the type of effect we've 
+been fitting in all the previous models), and in the model formula, we only 
+need to specify `1` for an intercept:
+
+```{r}
+int_only_fe_mod <- fhs_sample %>% 
+  glm(sysbp ~ 1, data = .) 
+```
+
+Let's take a look at how predictions for this model compare to the observed data
+for each study subject. One nice way to do that is to used faceting in ggplot to
+create a small plot for each study subject, so we can focus on each individual's
+set of repeated measures:
+
+```{r}
+library(broom)
+int_only_fe_mod %>% 
+  augment(data = fhs_sample) %>% 
+  ggplot(aes(x = age, color = sex)) + 
+  geom_line(aes(y = sysbp), linetype = 1) + 
+  geom_line(aes(y = .fitted), linetype = 2) + 
+  ylab("Systolic blood pressure (mmHg)") + 
+  facet_wrap(~ randid, ncol = 3)
+```
+
+In this plot, the solid lines show the observed data for each person in the
+sample (again, each person's data is shown in one small plot). The dotted line
+shows the predicted value based on the (intercept-only) model. You can see that
+*everyone* has the same predicted systolic blood pressure---it's just the
+estimated coefficient for the intercept from the model. But some people tend to
+have higher-than-average blood pressure, regardless of their age, and some tend
+to have lower-than-average blood pressure. For these people, the error in the
+model (the residual between the fitted and predicted values) is always in the
+same direction. For example, if someone tends to have blood pressure that's
+higher than their predicted value in their first examination, they also tend to
+have blood pressure that's higher than their predicted value for all other
+examinations, and vice-versa for people with lower-than-average blood pressure.
+In other words, the model errors are *correlated* within each study subject, and
+so if we fit the model to all the data without accounting for this, we'll have
+issues with the assumption that observations are independent. Instead, they're
+clustered by study subject, with measurements tending to be more similar when
+you compare different examinations within the same subject than when you compare
+measurements from different subjects.
+
+We can account for this clustering in the data by using a type of model called a
+mixed model. (There are lots of different names for this type of model that you
+might see, including random effects models and mixed effects models.) These are
+called mixed models because they mix two types of effects: fixed effects (which
+are what we've been fitting in all our models so far) and something called
+*random effects*. A random effect allows for some variation in an effect across
+some grouping factor in the data---in our case, the study subjects. It's
+constrained to follow some distribution---in other words, we might assume that
+intercepts are different across each study subject, but come from a normal
+distribution centered at the overall intercept.
+
+This constraint creates the difference between fitting a random effect intercept
+model (where a random effect for the intercept allows the intercept to be
+different for each study subject) and just including a fixed effect for the
+study subject ID (which would create a completely different intercept for each
+study subject, without any constraints on those intercept estimates). This
+constraint also helps us if we want to infer or predict to units that weren't in
+the study---in other words, to people who weren't study subjects. If we fit a
+separate fixed effect intercept for each person in the study, we wouldn't be
+able to predict for new people, because we wouldn't have an intercept estimate
+for them. The random effects model assumes (through this constraint on the
+random effect) that the average difference between each study subject's
+intercept and the overall intercept is zero, and that those differences are
+normally distributed, so you can build on these assumptions to predict outcomes
+for people not included in the original analysis.
+
+2. **Next, try fitting a random effects intercept-only model to the same data. Has this resolved any issues with correlated errors within study subjects in the fixed effects model?**
+
+Let's try fitting a random effects intercept model to the data and see how our
+predictions differ compared to the intercept-only fixed effects model we just fit. 
+We can use the `lmer` function from the `lme4` package in R to do this. Within
+this function, we will specify the *systematic* part of the model the same as 
+we did with `lm` or `glm`---this is the part with the fixed effects for the model, 
+which in this case is only an intercept (`1`). We can then fit the random 
+effect for the grouping variable (study subject) by adding it to the model formula
+inside parentheses, with the elements we want to include first (`1` for only 
+an intercept random effect), and then a bar, and then the column that gives 
+the grouping variable (`randid` for the study subject): `(1 | randid)`. 
+
+```{r message = FALSE, warning = FALSE}
+library(lme4)
+int_only_mm_mod <- fhs_sample %>% 
+  lmer(sysbp ~ 1 + (1 | randid), data = .) 
+```
+
+Now we can look at the fitted values for each study subject again. To do this, 
+we can use an `augment` function (as we did when using `broom` functions with
+`glm` objects), but we'll need to load a new library (`broom.mixed`) that defines
+those `broom` methods for the model output from these mixed models. 
+
+```{r message = FALSE, warning = FALSE}
+library(broom.mixed)
+int_only_mm_mod %>% 
+  augment(data = fhs_sample) %>% 
+  ggplot(aes(x = age, color = sex)) + 
+  geom_line(aes(y = sysbp), linetype = 1) + 
+  geom_line(aes(y = .fitted), linetype = 2) + 
+  ylab("Systolic blood pressure (mmHg)") + 
+  facet_wrap(~ randid, ncol = 3)
+```
+
+You can see that this has really reduced our prediction errors---the predicted
+values are now much closer to the observed values for each study subject,
+because now each person has their own intercept. Further, it's eliminated the
+correlation in errors. Each study subject now tends to have an equal number of
+measurements that are over- versus under-predicted, since we've allowed the
+estimated intercept to be subject-specific.
+
+Let's take a look at the output of this model a bit more. First, we can use 
+`coef` to pull out the coefficients for each unit for which we fit a random 
+effect---in this case, for each study subject:
+
+```{r}
+int_only_mm_mod %>%
+  coef() 
+```
+
+The `(Intercept)` column is the only one here, since we only fit an intercept. 
+This is incorporating, for each study subject, both the overall (fixed effect)
+intercept that we fit in the model, as well as how that subject's intercept
+randomly varies from the overall one. We can see that these subject-specific
+intercepts range from the 120s through the 180s.
+
+Next, we can look at a summary of the model as a whole: 
+
+```{r}
+int_only_mm_mod %>%
+  summary()
+```
+
+This give some information about both the fixed and random effects (again, in 
+this case, just an intercept for each). The fixed effect intercept is 
+143.833---this is around the average blood pressure for all measurements in this
+sample. The section on the random effects gives some information about 
+how variation from this intercept can be divided into variation based on the 
+grouping unit (study subject) or other variation, not explained by differences
+between people (this could include variation from other
+factors that we haven't included in our model yet, like age or BMI). 
+
+You can see from this section that the total variance is 333.2 + 151.8 = 485. 
+A lot of this (333.2 / 485 = 0.69, or about 69%) results from variation between
+subjects, but there's still some variance that comes from within-subject
+variation (variation in blood pressure measurements from one examination to 
+another for the same person).
+
+The `tidy` method for this class will pull out information on both the random
+and fixed effect, including a column named `effect` that lets you extract only
+fixed or only random estimates by filtering. The `estimate` that it's giving for
+the two random effect components (that from variation between study subjects,
+"randid", and that from remaining variation in the data, "Residual") is the
+standard deviation column given in the summary output for the model; if you want
+to get the variances, you could just square these values.
+
+```{r}
+int_only_mm_mod %>%
+  tidy()
+```
+
+The `augment` method will give results from the model at the level of each of your
+original observations. For these models, it's helpful to clarify that you want
+to augment the original data (`fhs_sample`), rather than basing it on the model
+matrix that's the default. This will ensure that you can maintain information about
+the `randid` for each row of the augmented data.
+
+```{r}
+int_only_mm_mod %>% 
+  augment(data = fhs_sample)
+```
+
+In this output, it's taken the original `fhs_sample` data and added columns
+based on the model, including columns with the estimated systolic blood pressure
+for each observation (`.fitted`) and the fixed effect estimate (i.e., removing
+the contribution from any random effects, so in this case the fixed effect
+intercept; `.fixed`).
+
+There are other specialized functions in `lme4` that you can use to extract
+specific elements from the model object. For example, `fixef` will pull out only
+the central estimates for the fixed effects, while `ranef` will pull out only 
+the random effect component (in this case, the difference for each subject
+between the overall, fixed effect intercept estimate and their personal intercept
+estimate). If you wanted, you could use these elements to add up to the 
+subject-specific estimates we got using `coef`. 
+
+3. **Now expand the mixed effects model that you just fit. First, just add a
+term for age, then build one that includes terms for age, sex, BMI, smoking
+status, and education. What do you conclude from these models? Focus
+particularly on how systolic blood pressure is associated with two of the
+time-variant measures (age and BMI) and on the time-invariant measure (education
+level).**
+
+The intercept-only mixed effects model helps us see how the idea of a random 
+effect works, but it's often not particularly interesting, as we often are
+more interested in how some risk factor is associated with an outcome, rather
+than just how that outcome varies across measurements and study subjects. 
+In this section, we'll build on the intercept-only model to include some 
+covariates. 
+
+Let's start with age, since that was clearly linked with systolic blood pressure
+in our exploratory analysis. There are a couple ways we could include
+age---either using the age at each examination, or using a combination of the
+age at baseline examine and the time since the baseline exam. We'll do the
+first, since conceptually it's a bit simpler. We'll therefore include age and an
+intercept in the fixed part (which we can specify just as `age`---we don't need
+to add `1` for intercept since it's the default if you put in any other
+covariates). For the random effect, we'll continue to only add a random
+intercept for each study subject (`(1 | randid)`).
+
+```{r}
+age_mm_mod <- fhs_sample %>% 
+  lmer(sysbp ~ age + (1 | randid), data = .) 
+```
+
+Again, we can see how our predictions have changed in our set of sample 
+subjects: 
+
+```{r}
+age_mm_mod %>% 
+  augment(data = fhs_sample) %>% 
+  ggplot(aes(x = age, color = sex)) + 
+  geom_line(aes(y = sysbp), linetype = 1) + 
+  geom_line(aes(y = .fitted), linetype = 2) + 
+  geom_line(aes(y = .fixed), linetype = 3) +
+  ylab("Systolic blood pressure (mmHg)") + 
+  facet_wrap(~ randid, ncol = 3)
+```
+
+In this case, we're showing three different lines, which help tease apart the
+different components of the model. First, the solid line shows the observed data
+at each examination. The dotted line (with the smallest dots) shows the
+prediction for each study subject based only on the fixed effects estimates.
+Since our model only includes an intercept and age for the fixed effects, you
+can see that this line changes by age, but otherwise is at the same spot for
+everyone. (To help see this, pick out two study subjects with examinations at
+around the same ages, and this dotted line should look the same for both.)
+Finally, the dashed line includes the random intercept for each study subject.
+The slope of this line is the same as for the fixed effects estimate, but that
+random, subject-specific intercept is allowing the line to move up or down to
+fit the study subject's data more closely. Again, we see that we would have 
+had correlated errors if we'd only used fixed effects, even with the term for
+age, but that the random effects intercept seems to remove most of this issue.
+
+We can look at the summary for this model:
+
+```{r}
+age_mm_mod %>% 
+  summary()
+```
+
+Now you can see that there are fixed effects estimates for both the intercept
+(the overall intercept) and for age. The age fixed effect gives the estimated
+slope of the dotted and dashed lines we saw in the previous figure---that is, 
+the expected increase in systolic blood pressure for every extra year of age. 
+
+We can look at the random effects, as well. Again, we have estimates of the
+variance components from both the between-subject variation ("randid") and from
+"left over" variation after accounting for study subject ("Residual"). If you 
+compare these values to the intercept-only mixed model, you can see that the 
+variance associated with the study subject is now lower. This is because some 
+of the original variation in blood pressure from one study subject to another
+was related to variation in age among study subjects. Now that we have a fixed
+term for age, we've managed to use that to explain some of the variation 
+in blood pressure when comparing different study subjects (although there's 
+still plenty variation that's explained by other subject-specific factors
+that we haven't included as fixed effects or maybe haven't even measured, 
+as the estimate here for "randid" is still pretty high). 
+
+Let's build the model up now to test one of our risk factors of interest, education. 
+Let's also include model control for smoking, sex, and BMI. For all of these, 
+we have measures that span the range we might expect in our target population, 
+so we'll include these using fixed effects terms: 
+
+```{r}
+full_mm_mod <- fhs_sample %>% 
+  lmer(sysbp ~ age + sex + bmi + cursmoke + educ + (1 | randid), 
+       data = .) 
+
+full_mm_mod %>% 
+  summary()
+```
+
+Since part of our aim is to explore the role of education, let's look at the
+`educ` fixed effect term. Based on the estimate, it looks like systolic blood
+pressure tends to be lower for people with higher levels of education.
+
+We can't directly calculate our confidence interval for this coefficient estimate
+from the standard error, as we would for a GLM. Instead, we can use the
+`confint.merMod` function that comes with the `lme4` package:
+
+```{r}
+full_mm_mod %>% 
+  confint.merMod()
+```
+
+Based on this output, the relationship between education level and systolic
+blood pressure is not statistically significant in our sample of study subjects,
+as the estimated confidence intervals for the fixed effect of education include
+zero. By contrast, age and BMI both seem to have a statistically significant
+association with systolic blood pressure. 
+
+4. **Try fitting the final model (with a random effect intercept for each study 
+subject and terms for age, sex, BMI, smoking status, and education) to the 
+full dataset, rather than the sample of a few subjects. What can you conclude?**
+
+We can expand this model to include all the study subjects now, to see if 
+something is detectable once we have that increased power:
+
+```{r}
+full_mm_mod_alldata <- fhs %>% 
+  lmer(sysbp ~ age + sex + bmi + cursmoke + educ + (1 | randid), 
+       data = .) 
+
+full_mm_mod_alldata %>% 
+  summary()
+
+full_mm_mod_alldata %>% 
+  confint.merMod()
+```
+
+Based on this assessment, there's a small but statistically significant
+association between education level at the baseline examination and 
+systolic blood pressure during the study. We can also see that systolic 
+blood pressure is significantly associated with age, sex, and BMI, so 
+these all may be risk factors for high blood pressure. 
+
+At this stage, you could explore more complex models. For example, there 
+may be an interaction between age and sex, where the evolution of blood pressure
+during aging tends to be different for males versus females. We could add 
+an interaction term to the model to explore this:
+
+```{r}
+full_mm_mod_alldata2 <- fhs %>% 
+  lmer(sysbp ~ age * sex + bmi + cursmoke + educ + (1 | randid), 
+       data = .) 
+
+full_mm_mod_alldata2 %>% 
+  summary()
+
+full_mm_mod_alldata2 %>% 
+  confint.merMod()
+```
+
+There does seem to be a statistically significant interaction, although 
+accounting for it hasn't made a big shift in our estimate of the fixed effect
+of education level on systolic blood pressure. 
+
+We could also treat each level of education as a separate category, in case
+there's non-linearity between these four different designations of education
+level and the association with systolic blood pressure:
+
+```{r}
+full_mm_mod_alldata3 <- fhs %>% 
+  mutate(educ = as_factor(educ),
+         educ = fct_recode(educ, 
+                           lowest = "1", 
+                           middle_low = "2", 
+                           middle_high = "3", 
+                           highest = "4")) %>% 
+  lmer(sysbp ~ age*sex + bmi + cursmoke + educ + (1 | randid), 
+       data = .) 
+
+full_mm_mod_alldata3 %>% 
+  summary()
+
+full_mm_mod_alldata3 %>% 
+  confint.merMod()
+```
+
+The decrease in expected blood pressure is most notable when you compare the
+highest education group to the lowest education risk. 
+
+## Adding random effect slopes
+
+We can also add other random effects to our models. For example, if we think that
+each of the people has a different evolution of blood pressure as they age, then
+we could include a random effect for age. This will allow the slope fit for 
+age to vary across each person in the study. Again, this random effect estimate
+will be constrained---it will have an average difference of 0 from the fixed
+effect for age, and there will typically be a constraint on how these differences
+from the fixed effect are distributed. This usually means that these estimates
+will be a little more similar across people than if we fitted a fixed effect 
+estimate that allowed a separate slope by age for each person (which you could
+do in a fixed effect by taking the interaction between subject ID and age). 
+
+*Applied exercise: Mixed models with random intercepts*
+
+Explore models with a random effect intercept and random effect for age for each study subject:
+
+1. Fit a model with a fixed effect for age, as well as random effects for both
+age and sex, using the sample of a few study subjects. How do your predicts
+change from the mixed model you fit in the previous section that had a fixed
+effect term for age, but no random effect?
+
+*Applied exercise: Example code*
+
+1. **Fit a model with a fixed effect for age, as well as random effects for both
+age and sex. How do your predicts change from the mixed model you fit in the
+previous section that had a fixed effect term for age, but no random effect?**
+
+We can fit a very similar model, but now in the random effects, we'll include
+a term for age, writing `(1 + age | randid)` for that component. (As a note, you 
+may get a warning when you fit this---since there are so few repeated measures
+for each person, we're probably pushing the model a bit to include a fixed 
+effect for age in this case, but it's useful to know how to do this if you 
+have a larger set of repeated measures for each person, so we'd like to 
+cover the principle.)
+
+```{r warning = FALSE, message = FALSE}
+age_mm_mod2 <- fhs_sample %>% 
+  lmer(sysbp ~ age + (1 + age | randid), data = .) 
+```
+
+We can take a look again at the predictions from this model:
+
+```{r}
+age_mm_mod2 %>% 
+  augment(data = fhs_sample) %>% 
+  ggplot(aes(x = age, color = sex)) + 
+  geom_line(aes(y = sysbp), linetype = 1) + 
+  geom_line(aes(y = .fitted), linetype = 2) + 
+  geom_line(aes(y = .fixed), linetype = 3) +
+  ylab("Systolic blood pressure (mmHg)") + 
+  facet_wrap(~ randid, ncol = 3)
+```
+
+It's a bit subtle to see here, but unlike in our earlier model, now each 
+prediction (dashed line) has a slope that can vary between study subjects. 
+We can check this as well by running `coef`:
+
+```{r}
+age_mm_mod2 %>% 
+  coef()
+```
+
+When we ran this function on the earlier model, we only got estimates for an 
+intercept for each study subject. Now we get subject-specific intercepts and
+slopes for how blood pressure changes with age. You can see that, for some 
+study subjects, this slope is very close to zero (i.e., blood pressure stays
+similar with age), while for others, it's much higher than the fixed effects 
+estimate for the age slope of 0.72 from our earlier model.
+
+Some final points on mixed effects models: 
+
+- Fitting multiple levels of nesting (e.g., measures within people within families)
+- Other forms of GLMs as mixed models (logistic, Poisson)
+- Other R packages for fitting mixed models (including Bayesian approaches)
+- Correlation structures that take account of time (for example, AR(1))
+- GEEs as an alternative to mixed models
