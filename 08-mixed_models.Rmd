@@ -13,7 +13,7 @@ There are also some supplemental readings you may find useful.
 measures outcome in the Framingham Offspring study (in this case, BMI, in 
 relation to proximity to food establishments)
 - @rice2013short Another study that used mixed models to handle a repeated
-measures outcome in the Framingham family of studues (in this case, lung
+measures outcome in the Framingham family of studies (in this case, lung
 function, in relation to air pollution levels right before the exam) 
 - @gibbons2010advances A review of methodological approaches for repeated 
 measures data
@@ -26,7 +26,7 @@ In all our previous models, we've been assuming that the observations are
 independent of each other, at least after accounting for the role of any 
 of the covariates that were used in the model. However, this won't always
 be a safe assumption to make. Many types of data have a type of inherent 
-grouping, and in these cases observations are typically likely to be more
+grouping (clustering), and in these cases observations are typically likely to be more
 similar within a group that between different groups. 
 
 One example, which we'll explore in this module, is when you have more than one
@@ -48,13 +48,16 @@ allowing you to model effects of different risk factors using a very similar
 process to the one you've used in earlier models (a regression-based approach).
 
 In this module, we'll explore how you can understand, use, and code mixed
-models. We'll use the Framingham Heart Study data. Before, we looked at 
-outcomes in this dataset for which there was only one observation per study 
-subject. For example, we looked at the time from the baseline examination until
+models. We'll use the Framingham Heart Study data. Before, we looked at survival
+outcomes in this dataset. We started with analysis with one observation per participant - 
+for example, we looked at the time from the baseline examination until
 death, and there can only be one measurement (or censoring) for each person 
-for that outcome. Here, we'll look at a value that is measured at each 
-examination---blood pressure. We have repeated measures of blood pressure
-for each study subject, and we'll investigate how those are associated with 
+for that outcome. Even in the time-varying setting survival outcomes have a certain 
+structure by definition where we don't have to worry about correlation. A participant 
+will begin free of the outcome until they experience it, which can only occur once,or until 
+censored and this is true for every participant. Here, we'll look at a value that 
+is measured at each examination---blood pressure. We have repeated measures of blood 
+pressure for each study subject, and we'll investigate how those are associated with 
 one time-invariant variable (education level, which never changes for any 
 of the study subjects over examination periods) and several time-variant
 variables (for example, BMI, which is recorded at all examinations). 
@@ -136,7 +139,7 @@ fhs_sample <- fhs %>%
   # Filter to only subjects with three examinations
   filter(n == 3) %>% 
   # Limit to just the columns we'll use (to make the dataset simpler)
-  select(randid, sex, age, sysbp,cursmoke, bmi, educ, time) %>% 
+  select(randid, period, sex, age, sysbp,cursmoke, bmi, educ, time) %>% 
   # Nest the data, so there's one row per study subject, so we can sample 
   # by subject
   nest(cols = -randid) %>% 
@@ -261,15 +264,27 @@ full dataset, rather than the sample of a few subjects. What can you conclude?
 
 If we fit a model with nothing but a fixed effect intercept, our predicted systolic 
 blood pressure would be the same for everyone. This is a very simple model to 
-specify---you can use the `glm` functionm since we're using only a fixed effect
-(more later on what that is, but essentially it's the type of effect we've 
-been fitting in all the previous models), and in the model formula, we only 
-need to specify `1` for an intercept:
+specify---you can use the `glm` (or in this case `lm` since we are fitting a linear 
+model) function since we're using only a fixed effect (more later on what that is, 
+but essentially it's the type of effect we've been fitting in all the previous models), 
+and in the model formula, we only need to specify `1` for an intercept:
 
 ```{r}
 int_only_fe_mod <- fhs_sample %>% 
   glm(sysbp ~ 1, data = .) 
 ```
+
+The model we are fitting here is the following:
+$$
+Y_{ti} = \beta_{0} + \epsilon_{ti}
+$$
+
+where systolic blood pressure $Y_{ti}$ varies by participant $i$ and time-period 
+$t$ (3 time-periods for each of the 15 participants totaling 45 combinations 
+for $Y_{ti}$), $\beta_{0}$ is the MLE (OLS) estimate for the intercept (essentially 
+the mean of all 45 observations) and $\epsilon_{ti}$ is the model residual for each 
+participant-specific time-period (each observation). We are assuming that 
+$\epsilon_{ti} \sim N(0,\sigma^2)$, but also that they are all independent.
 
 Let's take a look at how predictions for this model compare to the observed data
 for each study subject. One nice way to do that is to used faceting in ggplot to
@@ -351,6 +366,16 @@ int_only_mm_mod <- fhs_sample %>%
   lmer(sysbp ~ 1 + (1 | randid), data = .) 
 ```
 
+The model we are fitting here is
+$$
+Y_{ti} = \beta_{0} + b_{i} + \epsilon_{ti}
+$$
+where we have now added the random intercept term $b{i}$ that varies by participant
+$i$, but is constant over time for each participant. We are also assuming that 
+$b_{i} \sim N(0,\sigma_{b}^2)$ and $\epsilon_{ti} \sim N(0,\sigma^2)$ and that $b_{i}$
+and $\epsilon_{ti}$ are mutually independent. The overall variance of $Y_{ti}$ is
+the sum of $\sigma_{b}^2$ and $\sigma^2$.
+
 Now we can look at the fitted values for each study subject again. To do this, 
 we can use an `augment` function (as we did when using `broom` functions with
 `glm` objects), but we'll need to load a new library (`broom.mixed`) that defines
@@ -386,8 +411,9 @@ int_only_mm_mod %>%
 The `(Intercept)` column is the only one here, since we only fit an intercept. 
 This is incorporating, for each study subject, both the overall (fixed effect)
 intercept that we fit in the model, as well as how that subject's intercept
-randomly varies from the overall one. We can see that these subject-specific
-intercepts range from the 120s through the 180s.
+randomly varies from the overall one, or in other words the $\beta_{0} + \b_{i}$ 
+for each participant $i$. We can see that these subject-specific intercepts 
+range from the 120s through the 180s.
 
 Next, we can look at a summary of the model as a whole: 
 
@@ -405,19 +431,20 @@ grouping unit (study subject) or other variation, not explained by differences
 between people (this could include variation from other
 factors that we haven't included in our model yet, like age or BMI). 
 
-You can see from this section that the total variance is 333.2 + 151.8 = 485. 
-A lot of this (333.2 / 485 = 0.69, or about 69%) results from variation between
-subjects, but there's still some variance that comes from within-subject
-variation (variation in blood pressure measurements from one examination to 
-another for the same person).
+You can see from this section that the total variance (\sigma_{b}^2 + \sigma^2) 
+is 333.2 + 151.8 = 485. A lot of this (333.2 / 485 = 0.69, or about 69%) results 
+from variation between subjects ($\sigma_{b}^2$), but there's still some variance 
+that comes from within-subject variation (variation in blood pressure measurements 
+from one examination to another for the same person, \sigma^2).
 
 The `tidy` method for this class will pull out information on both the random
 and fixed effect, including a column named `effect` that lets you extract only
 fixed or only random estimates by filtering. The `estimate` that it's giving for
 the two random effect components (that from variation between study subjects,
 "randid", and that from remaining variation in the data, "Residual") is the
-standard deviation column given in the summary output for the model; if you want
-to get the variances, you could just square these values.
+standard deviation column given in the summary output for the model; these values 
+are $\sigma_{b}$ and $\sigma$ resepctively and if you want to get the variances, 
+you could just square these values.
 
 ```{r}
 int_only_mm_mod %>%
@@ -478,6 +505,14 @@ age_mm_mod <- fhs_sample %>%
   lmer(sysbp ~ age + (1 | randid), data = .) 
 ```
 
+Here we fit a similar model to the random intercept one, by simply addig the fixed 
+effect for age:
+$$
+Y_{ti} = \beta_{0} + \beta_{1}X_{ti1} + b_{i} + \epsilon_{ti}
+$$
+
+Note that age $X_{ti1}$ also varies by participant and time-period.
+
 Again, we can see how our predictions have changed in our set of sample 
 subjects: 
 
@@ -520,14 +555,14 @@ slope of the dotted and dashed lines we saw in the previous figure---that is,
 the expected increase in systolic blood pressure for every extra year of age. 
 
 We can look at the random effects, as well. Again, we have estimates of the
-variance components from both the between-subject variation ("randid") and from
-"left over" variation after accounting for study subject ("Residual"). If you 
-compare these values to the intercept-only mixed model, you can see that the 
-variance associated with the study subject is now lower. This is because some 
-of the original variation in blood pressure from one study subject to another
-was related to variation in age among study subjects. Now that we have a fixed
-term for age, we've managed to use that to explain some of the variation 
-in blood pressure when comparing different study subjects (although there's 
+variance components from both the between-subject variation ("randid", $\sigma_{b}^2$) 
+and from "left over" variation after accounting for study subject ("Residual", 
+$\sigma^2$). If you compare these values to the intercept-only mixed model, you 
+can see that the  variance associated with the study subject is now lower ($\sigma_{b}^2$). 
+This is because some of the original variation in blood pressure from one study 
+subject to another was related to variation in age among study subjects. Now that 
+we have a fixed term for age, we've managed to use that to explain some of the 
+variation in blood pressure when comparing different study subjects (although there's 
 still plenty variation that's explained by other subject-specific factors
 that we haven't included as fixed effects or maybe haven't even measured, 
 as the estimate here for "randid" is still pretty high). 
@@ -546,8 +581,18 @@ full_mm_mod %>%
   summary()
 ```
 
+The model now is 
+
+$$
+Y_{ti} = \beta_{0} + \beta_{1}X_{ti1} + \beta_{2}X_{i2} + \beta_{3}X_{ti3} + \beta_{4}X_{ti4} + \beta_{5}X_{i5} + b_{i} + \epsilon_{ti}
+$$
+
+where age ($X_{ti1}$), BMI ($X_{ti3}$) and smoking ($X_{ti4}$) vary by participant 
+and time period, whereas sex ($X_{i2}$) and education level ($X_{i5}$) only vary by 
+participant.
+
 Since part of our aim is to explore the role of education, let's look at the
-`educ` fixed effect term. Based on the estimate, it looks like systolic blood
+`educ` fixed effect term ($\beta_{5}$). Based on the estimate, it looks like systolic blood
 pressure tends to be lower for people with higher levels of education.
 
 We can't directly calculate our confidence interval for this coefficient estimate
@@ -677,6 +722,14 @@ age_mm_mod2 <- fhs_sample %>%
   lmer(sysbp ~ age + (1 + age | randid), data = .) 
 ```
 
+The model fitted here is
+$$
+Y_{ti} = \beta_{0} + \beta_{1}X_{ti1} + b_{0i} + b_{1i}X_{ti1} + \epsilon_{ti}
+$$
+with $b_{1i}$ being the added slope term for age and with the added assumption 
+that $b_{1i} \sim N(0,\sigma_{b1}^2)$ in addition to $b_{0i} \sim N(0,\sigma_{b0}^2)$
+and $\epsilon_{ti} \sim N(0,\sigma^2)$
+
 We can take a look again at the predictions from this model:
 
 ```{r}
@@ -701,15 +754,66 @@ age_mm_mod2 %>%
 
 When we ran this function on the earlier model, we only got estimates for an 
 intercept for each study subject. Now we get subject-specific intercepts and
-slopes for how blood pressure changes with age. You can see that, for some 
-study subjects, this slope is very close to zero (i.e., blood pressure stays
-similar with age), while for others, it's much higher than the fixed effects 
-estimate for the age slope of 0.72 from our earlier model.
+slopes for how blood pressure changes with age (or $\beta_{1} + b_{1i}$). You 
+can see that, for some  study subjects, this slope is very close to zero (i.e., 
+blood pressure stays similar with age), while for others, it's much higher than 
+the fixed effects estimate for the age slope of 0.72 from our earlier model.
 
-Some final points on mixed effects models: 
+## Some final points on mixed effects models: 
 
 - Fitting multiple levels of nesting (e.g., measures within people within families)
+
+As we've noted earlier clusters can be nested within other clusrters. For example
+if we have repeated observations over time for participant $i$ and several participants 
+per family $j$, then we expect to have correlation within person, as well as within
+family. These type of data are also considered multi-level or hierarchical due to 
+the levels of correlation and the hierarchy in these levels. The lowest level (participant)
+is nested within a higher level (family). We can account for this type of correlation 
+structure by fitting a multilevel or hierarchical model. For a similar estimation 
+as above (assume we have repeated blood pressure measurements at time-periods $t$ 
+for each participant $i$ and multiple participants within each family $j$) this 
+would look something like
+
+$$
+Y_{tij} = \beta_{0} + b_{ij} + b_{j} + \epsilon_{tij} 
+$$
+
+where we now hove two random intercepts, one for each participant $i$ in the $j^th$
+family ($b_{ij}$) and one for each family $j$ ($b_{ij}$).
+
+Another important level of clustering especially in environmental epidemiology is 
+space, where a lot of observations on exposure and outcomes are spatially correlated.
+A hierarchical model in this situation could be one applying to data with multiple 
+observations (time-periods $t$) per participant $i$ and multiple participants per 
+zip code $j$. We have multiple observations over time nested within participant, 
+and participants nested within zip code.
+
+
 - Other forms of GLMs as mixed models (logistic, Poisson)
-- Other R packages for fitting mixed models (including Bayesian approaches)
-- Correlation structures that take account of time (for example, AR(1))
+
+The examples above have been dealing with a continuous outcome and the models we 
+were fitting were mixed effects linear models, however the mixed effects models 
+framework extends to the generilized linear model framework (generilized linear 
+mixed models). The `glmer` package in R allows for fitting of such models (e.g. 
+Poisson, logistic etc) in a similar fashion to `lme4`. An intercept only + random 
+intercept per participant logistic model for repeated measures of a binary obesity variable (BMI>30) would look like
+$$
+logit(Pr[Y_{ti}=1]) = \beta_{0} + b_{i} 
+$$
+
+
 - GEEs as an alternative to mixed models
+
+Generalized estimating equations (GEEs) are an alternative approach to mixed models 
+in the case of repeated measures (or any clustered data). The GEE framework is a 
+population average model that avoids making any distributional assumptions on the 
+outcome, or specifying any particular covariance structure which makes GEEs an attractive 
+option. However, the interpetation of the findings from such models does not extend 
+to the individual level (again these are population average models), whereas we 
+saw how we got varying individual level predictions from our mixed models above (albeit 
+at the expense of further assumptions). The `geepack` package in R allows for fitting 
+of GEEs for clustered continuous and categorical data.
+
+#Other R packages for fitting mixed models (including Bayesian approaches)
+#Correlation structures that take account of time (for example, AR(1))
+

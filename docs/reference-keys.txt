@@ -45,5 +45,6 @@ readings-6
 introduction-to-mixed-models
 mixed-models-with-random-intercepts
 adding-random-effect-slopes
+some-final-points-on-mixed-effects-models
 instrumental-variables
 causal-inference
