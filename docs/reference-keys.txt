@@ -41,5 +41,9 @@ readings-5
 propensity-scores-and-inverse-probability-weighting
 more-ways-to-use-propensity-scores
 mixed-models
+readings-6
+introduction-to-mixed-models
+mixed-models-with-random-intercepts
+adding-random-effect-slopes
 instrumental-variables
 causal-inference
