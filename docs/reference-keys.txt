@@ -47,4 +47,11 @@ mixed-models-with-random-intercepts
 adding-random-effect-slopes
 some-final-points-on-mixed-effects-models
 instrumental-variables
+readings-7
+introduction-to-instrumental-variables
+the-nhefs-data
+identifying-an-instrumental-variable-checking-the-iv-conditions-and-the-standard-iv-estimand
+the-two-stage-least-squares-estimator
+sensitivity-analysis
+the-condition-of-homogenetity-or-alternative-condition-of-monotonictiy
 causal-inference

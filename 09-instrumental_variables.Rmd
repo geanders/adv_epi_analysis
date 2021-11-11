@@ -1,1 +1,378 @@
 # Instrumental variables 
+
+## Readings
+
+The required readings for this chapter is:
+
+- @hernanch16 The chapter covers IV analysis and required assumptions
+
+There are also some supplemental readings you may find useful.
+
+This is didactic paper summarizing IV approaches for epidemiology:
+
+- @greenland2000introduction
+
+This is an example of an application of IVs in epidemiology:
+
+- @austin2016does
+
+While this paper summarizes the NHEFS study and initial findings
+
+- @madans198610
+
+## Introduction to instrumental variables
+
+We have been utilizing regression approaches to quantify relationships beteween
+a particular exposure and outcome of interest, ranging from temperature and mortality in a time seires setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models we hae typically been including covariates that were potential confounders of the relationship of interest (e.g. seasonal trends in the time-series setting, age and sex in the cohort setting). 
+
+Confounding adjustment is an essential step in ensuring (conditional) exchangebility between the exposed and unexposed. This allows us to essentially treat the exposed and unexposed as exchangeable and cuse them as proxies for what would have happened in the other group if their exposure status were reversed (potential outcome if the exposed had been unexposed and vice versa). 
+
+In chapter 8 we explored some alternative methods to account for confounding other 
+than adding confounders in a regression model. These approaches are especially 
+useful in the case of exposure-confounding feedback and some mediation analyses 
+cases. However, there is one issue that we cannot overcome regardless of the confounding  adjustment method: unmeasured (or unknown) confounding. In order to account for confounding (regardless of approach) we need information on the confounders therefore these variables need to be measured. If we are unable to measure a known confounder, or if there exists an unknown confounder we cannot account for them and the conditional exchangeability assumption fails. This assumption is actually unverifiable in observational studies, as there is no way of verifying that we have measured all confounders. In the FHS it is plausible that we haven't measured all confounders for smoking (or  smoking cessation) - for example we don't have information on diet or physical activity  which maybe consequences of smoking, but also affect future smoking. What can we do then if we have a good reason to believe there exist unmeausured or unknown confounders in any given study?
+
+Instrumental variables approaches represent alternatives to the conditional exchangeability (no unmeasured confounding) assumption. We can estimate effects of exposure on an outcome of interest even in the presence of unmeasuref confounding if there exists a third variable that:
+
+- is associated with the exposure (causes the exposure of shares a common cause with it)
+
+- does not share unmeasured common causes with the outcome
+
+- only causes the outcome through the exposure
+
+This kind of variable is an instrumental variable, or an instrument of the exposure.
+If there exists such a variable then we can estimate the effect of exposure on the 
+outcome based on the associations between instrument and outcome and instrument 
+and exposure, even if there are unmeasured confounders between exposure and outcome.
+(There actually is another condition that needs to hold, in order for us to estimate 
+the average causal effect of exposure in the population - more on this later.)
+
+In this module, we'll explore how you can understand, use, and code instrumental 
+variable analysis. We will introduce a new dataset from the NHANES I Epidemiologic Followup Study (NHEFS). (From the NCHS: The NEHFS is a national longitudinal study, was jointly initiated by the National Center for Health Statistics (NCHS) and the National Institute on Aging in collaboration with other agencies of the Public Health Service. The NHEFS was designed to investigate the relationships between clinical, nutritional, and behavioral factors assessed in the first National Health and Nutrition Examination Survey NHANES I and subsequent morbidity, mortality, and hospital utilization, as well as changes in risk factors, functional limitation, and institutionalization.)
+
+The data subset from NEHFS consists of smokers (at baseline) followed between 1971 and 1982. The quantity of interest is the effect of smoking cessation on 10-year weight change. We will explore the relationship between exposure and outcome based on traditional outcome regression and then try to generate an estimate for this effect using instrumental variable analysis. 
+
+## The NHEFS data
+
+Let's explore the NHEFS dataset which is the dataset used in the example highlighted 
+this chapter's required reading, [@hernanch16]. The data are saved in a csv format (that is, a plain text file, with commas used as the delimiter), and so they can be read into R using the `read_csv` function from the `readr` package (part of the tidyverse), similar to the previous datasets we have been using. If you have saved the data in a "data" subdirectory of your current working directory then you can use the following code:
+
+```{r message = FALSE}
+library(tidyverse)
+nhefs <- read_csv("data/nhefs.csv")
+nhefs
+```
+
+There is  a codebook in the the same folder as the dataset you can read to familiarize yourself with the variables in the data. We see that this is subset of the NHEFS study with 1,629 participants. The unique identifier for participant is `seqn` (equivalent to the `randid` variable in the FHS data). Unlike the FHS data, there is only one observation per participant in this study with data on mortality over a 12-year period (1971-1982) with a `death` variable and three separate date variables for day (`dadth`), month (`modth`) and year (`yrdth`) of death. The dataset also includes information on several variables at baseline including demographics (`age`, `sex`, `race`, `marital`, `income`, `school` etc), as well as several other potential morbidity and diagnosis variables at baseline. There are also data on blood pressure at the end of follow-up (`dbp` and `sbp`). The exposure of interest is smoking cessation during follow-up (`qsmk`) and the outcome is change in weight from begining to end of follow-up in kgs (`wt82_71`). The instrument we will be using later is based on cigarette pricing t end of follow-up (`price82`). 
+Let's see if there's any missingness in the data. We will focus specifically on the exposure, outcome and instrument values:
+```{r message=FALSE}
+library(visdat)
+library(naniar)
+nhefs %>%
+  select(qsmk, price82, wt82_71) %>%
+  vis_miss()
+
+nhefs %>%
+  select(qsmk, price82, wt82_71) %>%
+gg_miss_var()
+```
+We see that there is a little bit of  missingness in the outcome and cigarette price variables, while the data on the exposure are complete. We will limit the dataset to those with data on exposure, outcome and instrument (there's only missingnes on , so we filter based on that)
+
+```{r}
+nhefs_iv<-nhefs %>%
+  filter(is.na(wt82_71)==F & is.na(price82)==F)
+```
+
+The limited dataset is down to 1476 participants (from 1,629). Now let's check the distributions of some of the variables of interest:
+
+```{r }
+nhefs %>% 
+  count(qsmk) 
+```
+We see that 428 (about 30%) of participants quit smoking. Let's check the distribution of weight change by smoking cessation.
+
+```{r}
+wtch_vs_qsmk<- nhefs_iv %>% 
+  group_by(qsmk) %>% 
+  summarize(perc_25 = quantile(wt82_71, 0.25), 
+            mean = mean(wt82_71), 
+            median = median(wt82_71),
+            perc_75 = quantile(wt82_71, 0.75))
+wtch_vs_qsmk
+```
+We see that there is higher weight gain among quitters on average as well as consistently higher change across quartiles. 
+
+```{r}
+nhefs_iv %>% 
+  group_by(qsmk) %>%
+  ggplot(aes(x = wt82_71)) + 
+  geom_histogram() + 
+  facet_wrap(~ qsmk, ncol = 1, scale = "free_y")
+```
+
+There doesn't seem to be a large difference between the two distributions, however we do observe some higher values in the quitters.
+
+Let's explore if the exposure has an effect on the outcome. We start with a simple unadjusted model
+
+```{r}
+library(broom)
+qsmk_mod1<- lm(wt82_71~qsmk, data=nhefs_iv)
+
+qsmk_mod1 %>% 
+  tidy() %>% 
+  filter(term=='qsmk') %>%
+  mutate(effect = estimate,
+         low_effect = estimate - 1.96 * std.error, 
+         high_effect = estimate + 1.96 * std.error) %>% 
+  select(term, effect, low_effect, high_effect)
+```
+The results indicate that quitting smoking is associated with a 2.7 kg increase in weight (95% CI: 1.7 - 3.6). It is likely that quitting smoking varies by covariates that are also likely to cause the outcome (such as age and sex and others), so let's try an adjusted model adjusting for several baseline covariates including duration of smoking and smoking intensity as well as weight at baseline in addition to sociodemographics. 
+
+```{r}
+qsmk_mod2<- lm(wt82_71~qsmk + sex + race + age + smokeintensity + smokeyrs + wt71, data=nhefs_iv)
+
+qsmk_mod2 %>% 
+  tidy() %>% 
+  filter(term=='qsmk') %>%
+  mutate(effect = estimate,
+         low_effect = estimate - 1.96 * std.error, 
+         high_effect = estimate + 1.96 * std.error) %>% 
+  select(term, effect, low_effect, high_effect)
+```
+
+We see that the adjusted effect estimate is somewhat higher than the unadjusted with smoking cessation associated with a 3.4 kg increase (95% CI: 2.5 - 4.3). It is still likely that we are not accounting for all confounders (those who quit smoking could be doing so because of a desire to lead a healthy lifestyle or because of underlying health conditions that may also affect the outcome). It is therefore plausible that there is unmeasured (or unknown) confounding for the effect of smoking cessation on weight change. A valid instrument can help us identify a causal effect even in the presnece of such confounding. 
+
+## Identifying an instrumental variable, checking the IV conditions and the standard IV estimand
+
+As mentioned above we will be using cigarette pricing in each participants state of residence as an instrument for the exposure of interest. We will check if the conditions for a valid instrument highlighted above hold for cigarette pricing (to the extent possible), and estimate the standard IV estimand for the effect of exposure. 
+
+*Applied exercise: Identify and instrument for the effect of smoking cessation on weight change and assess the IV conditions *
+
+1. What is the relationship of cigarette pricing and smoking cessation? Is there a significant difference in the probability of exposure across levels of the instrument? Which IV condition does this satisfy?
+2. What is the difference in sample averages for weight change across levels of the instrument?
+3. Estimate the IV estimand the above quantities.
+
+
+*Applied exercise: Example code*
+
+1. **What is the relationship of cigarette pricing and smoking cessation? Is there a significant difference in the probability of exposure across levels of the instrument? Which IV condition does this satisfy?**
+
+As we mentioned above we will be using cigarette pricing as an instrument for the exposure. The first condition for a valid instrumental variable is that is has to be associated with the exposure. Our rationale here is that higher cigarette prices act as a financial incentive for people to quit smoking. Even though we are assuming that cigarette pricing *causes* smoking cessation this isn't necessary for an instrument to be valid. It just has to be merely associated with the exposure. This is actually the only condition we can test formally and verify, as it makes no causal assumptions. We can check whether cigarette pricing and smoking cessation are association using F-statistics, r2 or the risk difference. 
+
+We will start by examining the distribution of cigarette prices at each participant's state of residence in 1982 and create a binary variable for cigarette pricing. 
+
+```{r message = FALSE}
+nhefs_iv %>% 
+  summarize(perc_25 = quantile(price82, 0.25), 
+            mean = mean(price82), 
+            median = median(price82),
+            perc_75 = quantile(price82, 0.75))
+
+nhefs_iv %>% 
+  ggplot(aes(x = price82)) + 
+  geom_histogram()
+
+```
+
+Let's create a binary cigarette price variable using a cutoff of $1.5 same as in @hernanch16.
+
+```{r}
+library(forcats)
+nhefs_iv <- nhefs_iv %>% 
+ mutate(highprice = case_when(
+    price82 >=1.5 ~ 1, 
+    price82<1.5 ~ 0))
+```
+
+We can get an F-value and p-value for the F-test with a simple analysis of variance:
+
+```{r}
+summary(aov(qsmk~highprice, data=nhefs_iv))
+```
+
+We see that there is a weak association between the instrument and smoking cessation. (p-value for the F-test>0.36 and the F value is rather small). Generally a good rule of thumb for a strong instrument is an F-value of at least 10, so here we have a fairly weak instrument. 
+
+Let's go ahead and estimate the risk difference anyway. The risk difference we are after is 
+$$
+Pr[X=1|Z=1] -  Pr[X=1|Z=0]
+$$
+where X is the exposure of interest (smoking cessation) and Z is the instrument (high cigarette prices). A two-by-two table for the values of X and Z as well as probabilities in this format is given by
+
+```{r}
+nhefs_iv %>% 
+  with(table(qsmk, highprice)) 
+
+nhefs_iv %>% 
+  with(table(qsmk, highprice)) %>% 
+  prop.table(margin=2)
+```
+
+The risk difference is therefore 0.26 - 0.20 = 0.06, or 6% higher probability of quitting among those living in states with high cigarette prices.
+
+The other conditions for valid instrument are actually not empirically verifiable. We have to assume that the instrument only causes the outcome though the exposure (this seems plausible), and that it shares no unmeasured common causes with the outcome (this is perhaps less of a safe assumption to make). We continue with our *candidate* instrument nonetheless.
+
+
+ 2. **What is the difference in sample averages for weight change across levels of the instrument?**
+ 
+ Now let's assess the relationship between instrument and outcome. We will compare sample averages in weight change among those living in states with high prices compared to low prices and estimate the difference
+ 
+$$
+E[Y|Z=1] - E[Y|Z=0]
+$$
+where $Y$ is the outcome of interest. We can test for a significant change in the sample means using a student's t-test.
+
+```{r}
+t.test(wt82_71 ~ highprice, data=nhefs_iv)
+```
+
+
+We see that the difference between the two means is small and not statistically significant. The actual difference between those with `highprice=1` and `highprice=0` is `2.69 - 2.54 = 0.15`, or in other words living in a state with high cigarette prices is associates with an increase in weight gain of 0.15 kg. This seems a much smaller estimate than the one we generated for smoking cessation using linear regression. This is not the IV estimand, however, only one component of it.
+
+3. **Estimate the IV estimand the above quantities.**
+
+The actual IV estimand is the following quantity
+
+$$
+\frac{E[Y|Z=1] - E[Y|Z=0]}{E[X|Z=1] - E[X|Z=0]}
+$$
+If the conditions for a valid instrument highlighted above (and the additional condition of homogeneity) are met then this quantity equals the average causal effect of exposure in the population ($E[Y^{x=1} - Y^{x=0}]$). 
+
+We've actually estimated the numerator and denominator for this quantity in exercises (2) and (1) respectively. We can go ahead and get the estimate for it 
+
+$$
+\frac{E[Y|Z=1] - E[Y|Z=0]}{E[X|Z=1] - E[X|Z=0]}=\frac{0.15}{0.06} = 2.5 
+$$
+The IV estimate of 2.5 kg is actually much closer to the unadjusted estimate we got from the linear regression model (which was 2.7 kg).
+
+
+## The two-stage-least-squares estimator
+
+Instead of the algebraic estimation of the IV estimate we can actually use models to generate this. This involves the *two-stage-least-squares estimator*, which is an extension of  ordinary least squares. The approach involves fitting a model for the exposure as a function of the instrument, 
+
+$$
+E[X|Z] = \alpha_{0} + \alpha_{1}Z
+$$
+and use predicted values from this model ($\hat{E}[X|Z]$) as predictors in a second outcome model:
+
+$$
+E[Y|Z] = \beta_{0} + \beta_{1}\hat{E}[X|Z]
+$$
+Let's start by fitting a logistic model for the exposure with the instrument as the only predictor and generate predicted values:
+
+```{r}
+modX_Z<-glm(qsmk ~ highprice, family=binomial, data=nhefs_iv)
+
+modX_Z %>%
+  tidy()
+
+nhefs_iv<-nhefs_iv %>%
+  mutate(ehat=predict(modX_Z, type='response'))
+```
+We then use the predicted values as a predictor in an outcome model
+```{r}
+modY_Z<-glm(wt82_71 ~ ehat, data=nhefs_iv)
+
+
+modY_Z %>%
+  tidy() %>% 
+  filter(term=='ehat') %>%
+  mutate(effect = estimate,
+         low_effect = estimate - 1.96 * std.error, 
+         high_effect = estimate + 1.96 * std.error) %>% 
+  select(term, effect, low_effect, high_effect)
+```
+The parameter coefficient for `ehat` is actually the IV estimate from above and we see that they are very close. The confidence intervals, however, for this estimate are very wide owing primarily to the weakness of the instrument we are using.
+
+The `sem` package in R, actually allows us to apply the two-stage-least-squares estimator using a single function (`tsls`) as opposed to fitting separate models.
+
+```{r}
+library(sem)
+IV_estimatemod<-tsls(wt82_71 ~ qsmk, ~ highprice, data = nhefs_iv)
+
+IV_estimatemod %>%
+summary()
+```
+
+We see that the `tsls` returns the same results as our two-stage approach above.
+
+## Sensitivity analysis
+
+In our applied example above, we used a rather weak instrument and also assumed that the IV conditions hold. Even though we cannot empirically verify the IV condition that the instrument shares no unmeasured common causes with the outcome, we can relax our assumption from above (essentially no common causes) by including some measured covariates in our IV estimation (similar to our adjusted linear model)
+
+
+*Applied exercise: Estimate the IV estimand accounting for covariates and use alternative IV*
+
+1. Estimate the IV estimand accounting for measured covariates. How do the results compare to above?
+2. Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1982.
+
+*Applied exercise: Example code*
+
+1. **Estimate the IV estimand accounting for measured covariates. How do the results compare to above?**
+
+We can apply the tsls estimator accounting for covariates in a similar fashion to the way we include them in a regression model. Note that here we will include these baseline covariates in both the exposure and outcome models
+
+
+```{r}
+IV_estimatemod2<-tsls(wt82_71 ~ qsmk+ sex + race + age + smokeintensity + smokeyrs + wt71, ~ highprice+ sex + race + age + smokeintensity + smokeyrs + wt71, data = nhefs_iv)
+
+IV_estimatemod2 %>%
+summary()
+```
+
+We now see that the parameter coefficient for smoking cessation is attenuated compared to the results from above. Remeber that covariate adjustment actually made the coefficient larger in the traditional linear regression. One potential explanation is that smoking cessation does not have the effect we thought it did and our linear model estimates we fitted at the beginning suffer from unmeasured confounding. A more likely explanation is a biased IV analysis. If our tsls model is misspecified leading to bias the weakness of the instrument actually amplifies this bias. A biased IV model (due to either a misspecified model or invalid instrument) combined with a weak instrument could be worse than unmeasured confounding in a traditional outcome regression analysis. A stronger instrument would be a much better option for us, *if* such an instrument exists.
+
+2. **Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1971..**
+
+Rather than use cigarette pricing at participant's state of residence in 1982 as the candidate instrument let's try using difference in cigarette prices from 1971 to 1982, `price71_82` in our data.
+
+```{r message = FALSE}
+nhefs_iv %>% 
+  summarize(perc_25 = quantile(price71_82, 0.25), 
+            mean = mean(price71_82), 
+            median = median(price71_82),
+            perc_75 = quantile(price71_82, 0.75))
+
+nhefs_iv %>% 
+  ggplot(aes(x = price71_82)) + 
+  geom_histogram()
+
+```
+
+We see that the majority of prices increase (although some actually decrease) in the period between 1971 and 1982, with increases ranging from 0 to a little more than 50 cents. Let's use an increase of $0.20 as our cutoff for a high increase in prices.
+
+```{r}
+nhefs_iv <- nhefs_iv %>% 
+ mutate(highincrease = case_when(
+    price71_82 >=0.2 ~ 1, 
+    price71_82<0.2 ~ 0))
+```
+
+We can check the strenght of ths instrument based on its association with smoking cessation as we did above
+
+```{r}
+summary(aov(qsmk~highincrease, data=nhefs_iv))
+
+nhefs_iv %>% 
+  with(table(qsmk, highincrease)) 
+
+nhefs_iv %>% 
+  with(table(qsmk, highincrease)) %>% 
+  prop.table(margin=2)
+
+```
+
+
+It actually turns out this is a weaker instrument that before and will likely not help us improve our results. We can try different cutoffs for either the absolute price or price difference (or some of the tax related variables in the data) in search of a better instrument, but a strong (and valid) instrument will not always be available. In many observational studies it is actually more likely that it doesn't exist. In this particular example a weak instrument provided similar results with an unadjusted analysis (albeit with very wide confidence intervals) and the covariate adjusted traditional outcome regression analysis results were actually greater in magnitude compared to the unadjusted or IV results. In this particular case use the IV approach did not necessarily add much to our quest in quantifying the potential effect of smoking cessation on weight change. However, in other settings (such as genetic epidemiology studies relying on genes as instruments for an exposure of interest or some pharmacoepidemiology examples relying on physician preferences as instruments for different treatment options) they have been very useful. Instrumental variables also likely have an important role in natural/quasi-experimental desings where the natural experiment or intervention can act as a good instrument for an alternative exposure of interest. This is an area where IV analysis probably remains underutilized. 
+
+In any case IV analysis can be a useful tool in epidemiology, relying on different assumptions than more traditional approaches. However, instrumental variables should be used in light of their own limitations.
+
+
+## The condition of homogenetity (or alternative condition of monotonictiy) 
+
+We highlighted three conditions for valid instrument above and mentioned a required fourth condition, that of homogeneity, which is also required in order to estimate the average causal effect of exposure in the population. In the absence of this condition we can only actually estimate bounds for the causal effect, which may be too wide and uninformative. These bounds will come with their own uncertainty and confidence intervals (CI for lower bound and upper bound respectively). Most researchers avoid estimating bounds for this reason and instead rely on the assumption of homogeneity in order to generate point estimates for the causal effects rather than bounds. 
+
+@hernanch16 outlines the homogeneity condition in different ways it has been defined in the literature and what has to hold in each case for the condition to be true. Each definition can vary from being highly unlikely to hold in most cases, not intuitive, and mostly unverifiable (similar to the other 2 of 3 conditions above). 
+
+Given these limitations of the homogeneity conditions, researchers often rely on an alternative condition that of monotonicity. The monotonicity condition stipulates that the effect (or association) between instrument and exposure be monotonous, or in other words the presence of the instrument can only affect the propensity of exposure in only one direction or at the very least not change it on the individual level. In other words if we have an instrument $Z$ with a positive association with exposure $X$ then $Z=1$ can only increase or at the very least not change the probability of exposure compared to $Z=0$ in any given individual. If we have an instrument $Z$ with a negative association with exposure $X$ then $Z=1$ can only decrease or at the very least not change the probability of exposure compared to $Z=0$ in any given individual. If this assumption holds then we can estimate the average causal effect of exposure $X$ using instrument $Z$, but not in the whole population. The effect we are estimating is the effect in the *compliers*, which can be a vague subset of the population. Furthermore, the monotonicity assumption does not translate well in the case of continuous exposures, as would be the case in most environmental epidemiology studies. See more details in @hernanch16.
+
+Despite the inherent limitations of the above conditions, it is important that they are addressed at least through a discussion surrounding them when IV analysis is used.
