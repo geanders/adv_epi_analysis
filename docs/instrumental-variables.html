@@ -59,7 +59,6 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
@@ -263,7 +262,7 @@ div.csl-indent {
 <h1><span class="header-section-number">Chapter 10</span> Instrumental variables</h1>
 <div id="readings-7" class="section level2" number="10.1">
 <h2><span class="header-section-number">10.1</span> Readings</h2>
-<p>The required readings for this chapter is:</p>
+<p>The required reading for this chapter is:</p>
 <ul>
 <li><span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span> The chapter covers IV analysis and required assumptions</li>
 </ul>
@@ -276,7 +275,7 @@ div.csl-indent {
 <ul>
 <li><span class="citation"><a href="#ref-austin2016does" role="doc-biblioref">Austin, Harper, and Strumpf</a> (<a href="#ref-austin2016does" role="doc-biblioref">2016</a>)</span></li>
 </ul>
-<p>While this paper summarizes the NHEFS study and initial findings</p>
+<p>While this paper summarizes the NHEFS study and initial findings:</p>
 <ul>
 <li><span class="citation"><a href="#ref-madans198610" role="doc-biblioref">Madans et al.</a> (<a href="#ref-madans198610" role="doc-biblioref">1986</a>)</span></li>
 </ul>
@@ -284,32 +283,82 @@ div.csl-indent {
 <div id="introduction-to-instrumental-variables" class="section level2" number="10.2">
 <h2><span class="header-section-number">10.2</span> Introduction to instrumental variables</h2>
 <p>We have been utilizing regression approaches to quantify relationships beteween
-a particular exposure and outcome of interest, ranging from temperature and mortality in a time seires setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models we hae typically been including covariates that were potential confounders of the relationship of interest (e.g. seasonal trends in the time-series setting, age and sex in the cohort setting).</p>
-<p>Confounding adjustment is an essential step in ensuring (conditional) exchangebility between the exposed and unexposed. This allows us to essentially treat the exposed and unexposed as exchangeable and cuse them as proxies for what would have happened in the other group if their exposure status were reversed (potential outcome if the exposed had been unexposed and vice versa).</p>
+a particular exposure and outcome of interest, ranging from temperature and mortality in a time seires setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models, we have typically been including covariates that were potential confounders of the relationship of interest (e.g. seasonal trends in the time-series setting, age and sex in the cohort setting).</p>
+<p>Confounding adjustment is an essential step in ensuring (conditional) exchangeability between the exposed and unexposed. This allows us to essentially treat the exposed and unexposed as exchangeable and use them as proxies for what would have happened in the other group if their exposure status were reversed (potential outcome if the exposed had been unexposed and vice versa).</p>
 <p>In chapter 8 we explored some alternative methods to account for confounding other
 than adding confounders in a regression model. These approaches are especially
 useful in the case of exposure-confounding feedback and some mediation analyses
-cases. However, there is one issue that we cannot overcome regardless of the confounding adjustment method: unmeasured (or unknown) confounding. In order to account for confounding (regardless of approach) we need information on the confounders therefore these variables need to be measured. If we are unable to measure a known confounder, or if there exists an unknown confounder we cannot account for them and the conditional exchangeability assumption fails. This assumption is actually unverifiable in observational studies, as there is no way of verifying that we have measured all confounders. In the FHS it is plausible that we haven’t measured all confounders for smoking (or smoking cessation) - for example we don’t have information on diet or physical activity which maybe consequences of smoking, but also affect future smoking. What can we do then if we have a good reason to believe there exist unmeausured or unknown confounders in any given study?</p>
-<p>Instrumental variables approaches represent alternatives to the conditional exchangeability (no unmeasured confounding) assumption. We can estimate effects of exposure on an outcome of interest even in the presence of unmeasuref confounding if there exists a third variable that:</p>
+cases. However, there is one issue that we cannot overcome regardless of the confounding adjustment method: unmeasured (or unknown) confounding. In order to account for confounding (regardless of approach) we need information on the confounders; therefore, these variables need to be measured. If we are unable to measure a known confounder, or if there exists an unknown confounder, we cannot account for them, and the conditional exchangeability assumption fails. This assumption is actually unverifiable in observational studies, as there is no way of verifying that we have measured all confounders. In the FHS it is plausible that we haven’t measured all confounders for smoking (or smoking cessation)—for example, we don’t have information on diet or physical activity which may be consequences of smoking, but also affect future smoking. What can we do, then, if we have a good reason to believe there exist unmeausured or unknown confounders in any given study?</p>
+<p>Approaches that leverage instrumental variables can provide alternatives to the conditional exchangeability (no unmeasured confounding) assumption. We can estimate effects of exposure on an outcome of interest even in the presence of unmeasured confounding if there exists a third variable that:</p>
 <ul>
-<li><p>is associated with the exposure (causes the exposure of shares a common cause with it)</p></li>
-<li><p>does not share unmeasured common causes with the outcome</p></li>
-<li><p>only causes the outcome through the exposure</p></li>
+<li>Is associated with the exposure (causes the exposure or shares a common cause with it);</li>
+<li>Does not share unmeasured common causes with the outcome; and</li>
+<li>Only causes the outcome through the exposure.</li>
 </ul>
-<p>This kind of variable is an instrumental variable, or an instrument of the exposure.
-If there exists such a variable then we can estimate the effect of exposure on the
+<p>This kind of variable is called an <strong>instrumental variable</strong>, or an instrument of the exposure.
+If an instrumental variable exists, then we can estimate the effect of exposure on the
 outcome based on the associations between instrument and outcome and instrument
 and exposure, even if there are unmeasured confounders between exposure and outcome.
 (There actually is another condition that needs to hold, in order for us to estimate
-the average causal effect of exposure in the population - more on this later.)</p>
+the average causal effect of exposure in the population—more on this later.)</p>
+<p>An instrumental variable can be very useful because it essentially is something
+that helps to “randomize” (although typically not completely) people into
+exposure groups. This is how an instrumental variable can help us estimate an
+effect that avoids (when done properly) bias from unmeasured confounding. As
+a very extreme case, you could think of a coin flip (when assigning treatment
+for a randomized control trial, for example) as an instrumental variable—in
+that case, it is associated with exposure (everyone who gets heads is given
+the treatment, everyone who doesn’t is kept as a control), it doesn’t share
+unmeasured causes with the outcome (since it’s a random coin flip, it won’t
+be linked to any other characteristics, measured or unmeasured—the only thing
+influencing it is the physics of the coin flip), and it only influences the
+outcome through the exposure (in other words, people who get heads might
+have better average outcomes, but the only possible reason is because they
+got the treatment).</p>
+<p>Good instrumental variables will often have this feel of creating some
+randomization through a random mechanism like a coin flip or a lottery. For
+example, in Fort Collins, you may enter a lottery to send your child to
+any school outside of your neighborhood assigned school. For any given
+school (that’s popular enough), there will be some students who enter the
+lottery and “win,” and so go to that school, and others that enter and don’t
+get a spot, so go to a different school. As long as the lottery is really
+random, we can probably assume that the students who win a spot and those who
+don’t are otherwise very, very similar. In this scenario, the lottery
+for spots at the school creates a very good instrumental variable if you
+want to measure the effects of attending that school versus other available
+schools—you’d do this by comparing only the students who entered through
+the lottery, and comparing those who won a spot to those who didn’t. By contrast,
+there’d probably be a lot more unmeasured confounding if you compared the
+students who went because it was their neighborhood school to those who
+went through the lottery system (or even if you compared students who went
+to different schools because they were in different neighborhoods and
+attended their neighborhood school). Unlike the coin toss example, in this
+case, the instrument might not be perfect—there might be some people who
+“win” the lottery but ultimately decide to go to other schools, or others
+that “lost” the lottery but somehow got a spot.</p>
+<p>There is a wide variety in studies that have used instrumental
+variable approaches, and it can be very interesting to read through and assess
+the quality of the instrument in them. Some are likely pretty strong—for
+example, there are studies that use the lottery system for the Vietnam draft
+as an instrumental variable for college education, with the assumption that
+people with low draft numbers (i.e., likely to be drafted based on the
+lottery) might have been more likely to join or stay in college to avoid
+being drafted. Other instrumental variables might be less protective against
+unmeasured confounding. For example, some have used the distance to a hospital
+that performs a certain procedure as an instrument for getting that
+treatment—depending on your study population, there’s a chance that more
+cutting-edge hospitals might have locations that are associated with
+potential confounders (for example, many of the top medical school hospitals
+were originally sited in poorer areas of a city, to serve needs for
+medical care).</p>
 <p>In this module, we’ll explore how you can understand, use, and code instrumental
-variable analysis. We will introduce a new dataset from the NHANES I Epidemiologic Followup Study (NHEFS). (From the NCHS: The NEHFS is a national longitudinal study, was jointly initiated by the National Center for Health Statistics (NCHS) and the National Institute on Aging in collaboration with other agencies of the Public Health Service. The NHEFS was designed to investigate the relationships between clinical, nutritional, and behavioral factors assessed in the first National Health and Nutrition Examination Survey NHANES I and subsequent morbidity, mortality, and hospital utilization, as well as changes in risk factors, functional limitation, and institutionalization.)</p>
-<p>The data subset from NEHFS consists of smokers (at baseline) followed between 1971 and 1982. The quantity of interest is the effect of smoking cessation on 10-year weight change. We will explore the relationship between exposure and outcome based on traditional outcome regression and then try to generate an estimate for this effect using instrumental variable analysis.</p>
+variable analysis. We will introduce a new dataset, one from the NHANES I Epidemiologic Followup Study (NHEFS). (From the NCHS: “The NEHFS is a national longitudinal study, was jointly initiated by the National Center for Health Statistics (NCHS) and the National Institute on Aging in collaboration with other agencies of the Public Health Service. The NHEFS was designed to investigate the relationships between clinical, nutritional, and behavioral factors assessed in the first National Health and Nutrition Examination Survey NHANES I and subsequent morbidity, mortality, and hospital utilization, as well as changes in risk factors, functional limitation, and institutionalization.”)</p>
+<p>The data subset from NEHFS consists of smokers (at baseline) followed between 1971 and 1982. The research question of interest is the effect of smoking cessation on 10-year weight change. We will explore the relationship between exposure and outcome based on traditional outcome regression and then try to generate an estimate for this effect using instrumental variable analysis.</p>
 </div>
 <div id="the-nhefs-data" class="section level2" number="10.3">
 <h2><span class="header-section-number">10.3</span> The NHEFS data</h2>
-<p>Let’s explore the NHEFS dataset which is the dataset used in the example highlighted
-this chapter’s required reading, <span class="citation">(<a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins 2020a</a>)</span>. The data are saved in a csv format (that is, a plain text file, with commas used as the delimiter), and so they can be read into R using the <code>read_csv</code> function from the <code>readr</code> package (part of the tidyverse), similar to the previous datasets we have been using. If you have saved the data in a “data” subdirectory of your current working directory then you can use the following code:</p>
+<p>Let’s explore the NHEFS dataset, which is the dataset used in the example highlighted
+this chapter’s required reading, <span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span>. You can download a copy from the GitHub page for this book, <a href="https://github.com/geanders/adv_epi_analysis/blob/master/data/nhefs.csv">here</a>. The data are saved in a csv format (that is, a plain text file, with commas used as the delimiter), and so they can be read into R using the <code>read_csv</code> function from the <code>readr</code> package (part of the tidyverse), similar to the previous datasets we have been using. If you have saved the data in a “data” subdirectory of your current working directory then you can use the following code:</p>
 <div class="sourceCode" id="cb605"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb605-1"><a href="instrumental-variables.html#cb605-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb605-2"><a href="instrumental-variables.html#cb605-2" aria-hidden="true" tabindex="-1"></a>nhefs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/nhefs.csv&quot;</span>)</span>
 <span id="cb605-3"><a href="instrumental-variables.html#cb605-3" aria-hidden="true" tabindex="-1"></a>nhefs</span></code></pre></div>
@@ -333,223 +382,265 @@ this chapter’s required reading, <span class="citation">(<a href="#ref-hernanc
 ## #   pepticulcer &lt;dbl&gt;, colitis &lt;dbl&gt;, hepatitis &lt;dbl&gt;, chroniccough &lt;dbl&gt;,
 ## #   hayfever &lt;dbl&gt;, diabetes &lt;dbl&gt;, polio &lt;dbl&gt;, tumor &lt;dbl&gt;,
 ## #   nervousbreak &lt;dbl&gt;, alcoholpy &lt;dbl&gt;, alcoholfreq &lt;dbl&gt;, …</code></pre>
-<p>There is a codebook in the the same folder as the dataset you can read to familiarize yourself with the variables in the data. We see that this is subset of the NHEFS study with 1,629 participants. The unique identifier for participant is <code>seqn</code> (equivalent to the <code>randid</code> variable in the FHS data). Unlike the FHS data, there is only one observation per participant in this study with data on mortality over a 12-year period (1971-1982) with a <code>death</code> variable and three separate date variables for day (<code>dadth</code>), month (<code>modth</code>) and year (<code>yrdth</code>) of death. The dataset also includes information on several variables at baseline including demographics (<code>age</code>, <code>sex</code>, <code>race</code>, <code>marital</code>, <code>income</code>, <code>school</code> etc), as well as several other potential morbidity and diagnosis variables at baseline. There are also data on blood pressure at the end of follow-up (<code>dbp</code> and <code>sbp</code>). The exposure of interest is smoking cessation during follow-up (<code>qsmk</code>) and the outcome is change in weight from begining to end of follow-up in kgs (<code>wt82_71</code>). The instrument we will be using later is based on cigarette pricing t end of follow-up (<code>price82</code>).
-Let’s see if there’s any missingness in the data. We will focus specifically on the exposure, outcome and instrument values:</p>
+<p>There is a codebook in the <a href="https://github.com/geanders/adv_epi_analysis/tree/master/data">the same folder as the dataset</a>, which you can download and read to familiarize yourself with the variables in the data.
+We see that this is subset of the NHEFS study with 1,629 participants. The unique identifier for participant is <code>seqn</code> (equivalent to the <code>randid</code> variable in the FHS data). Unlike the FHS data, there is only one observation per participant in this study, with data on mortality over a 12-year period (1971-1982) with a <code>death</code> variable (<code>1</code> for a death during follow-up, <code>0</code> otherwise) and three separate date variables for day (<code>dadth</code>), month (<code>modth</code>) and year (<code>yrdth</code>) of death. The dataset also includes information on several variables at baseline including demographics (<code>age</code>, <code>sex</code>, <code>race</code>, <code>marital</code>, <code>income</code>, <code>school</code> etc), as well as several other potential morbidity and diagnosis variables at baseline. There are also data on blood pressure at the end of follow-up (<code>dbp</code> and <code>sbp</code>). The exposure of interest is smoking cessation during follow-up (<code>qsmk</code>) and the outcome is change in weight from beginning to end of follow-up in kgs (<code>wt82_71</code>). The instrument we will be using later is based on cigarette pricing at the end of follow-up (<code>price82</code>).</p>
+<p>Let’s see if there’s any missingness in the data. We will focus specifically on the exposure, outcome and instrument values:</p>
 <div class="sourceCode" id="cb607"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb607-1"><a href="instrumental-variables.html#cb607-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
 <span id="cb607-2"><a href="instrumental-variables.html#cb607-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
-<span id="cb607-3"><a href="instrumental-variables.html#cb607-3" aria-hidden="true" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span></span>
-<span id="cb607-4"><a href="instrumental-variables.html#cb607-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, price82, wt82_71) <span class="sc">%&gt;%</span></span>
-<span id="cb607-5"><a href="instrumental-variables.html#cb607-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>()</span></code></pre></div>
+<span id="cb607-3"><a href="instrumental-variables.html#cb607-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb607-4"><a href="instrumental-variables.html#cb607-4" aria-hidden="true" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span></span>
+<span id="cb607-5"><a href="instrumental-variables.html#cb607-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, price82, wt82_71) <span class="sc">%&gt;%</span></span>
+<span id="cb607-6"><a href="instrumental-variables.html#cb607-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vis_miss</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-308-1.png" width="672" /></p>
 <div class="sourceCode" id="cb608"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb608-1"><a href="instrumental-variables.html#cb608-1" aria-hidden="true" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span></span>
 <span id="cb608-2"><a href="instrumental-variables.html#cb608-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, price82, wt82_71) <span class="sc">%&gt;%</span></span>
 <span id="cb608-3"><a href="instrumental-variables.html#cb608-3" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>()</span></code></pre></div>
-<pre><code>## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-## use `guide = &quot;none&quot;` instead.</code></pre>
-<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-308-2.png" width="672" />
-We see that there is a little bit of missingness in the outcome and cigarette price variables, while the data on the exposure are complete. We will limit the dataset to those with data on exposure, outcome and instrument (there’s only missingnes on , so we filter based on that)</p>
-<div class="sourceCode" id="cb610"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb610-1"><a href="instrumental-variables.html#cb610-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv<span class="ot">&lt;-</span>nhefs <span class="sc">%&gt;%</span></span>
-<span id="cb610-2"><a href="instrumental-variables.html#cb610-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(wt82_71)<span class="sc">==</span>F <span class="sc">&amp;</span> <span class="fu">is.na</span>(price82)<span class="sc">==</span>F)</span></code></pre></div>
-<p>The limited dataset is down to 1476 participants (from 1,629). Now let’s check the distributions of some of the variables of interest:</p>
-<div class="sourceCode" id="cb611"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb611-1"><a href="instrumental-variables.html#cb611-1" aria-hidden="true" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span> </span>
-<span id="cb611-2"><a href="instrumental-variables.html#cb611-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(qsmk) </span></code></pre></div>
+<p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-308-2.png" width="672" /></p>
+<p>We see that there is a little bit of missingness in the outcome and cigarette price variables, while the data on the exposure are complete. We will limit the dataset to those with data on exposure, outcome, and instrument (there’s only missingness on the outcome and the instrument, so we filter based on that)</p>
+<div class="sourceCode" id="cb609"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb609-1"><a href="instrumental-variables.html#cb609-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs <span class="sc">%&gt;%</span></span>
+<span id="cb609-2"><a href="instrumental-variables.html#cb609-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(wt82_71) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(price82))</span></code></pre></div>
+<p>The limited dataset is down to 1,476 participants (from 1,629). Now let’s check the distributions of some of the variables of interest:</p>
+<div class="sourceCode" id="cb610"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb610-1"><a href="instrumental-variables.html#cb610-1" aria-hidden="true" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span> </span>
+<span id="cb610-2"><a href="instrumental-variables.html#cb610-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(qsmk) </span></code></pre></div>
 <pre><code>## # A tibble: 2 × 2
 ##    qsmk     n
 ##   &lt;dbl&gt; &lt;int&gt;
 ## 1     0  1201
 ## 2     1   428</code></pre>
 <p>We see that 428 (about 30%) of participants quit smoking. Let’s check the distribution of weight change by smoking cessation.</p>
-<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb613-1"><a href="instrumental-variables.html#cb613-1" aria-hidden="true" tabindex="-1"></a>wtch_vs_qsmk<span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb613-2"><a href="instrumental-variables.html#cb613-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span> </span>
-<span id="cb613-3"><a href="instrumental-variables.html#cb613-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.25</span>), </span>
-<span id="cb613-4"><a href="instrumental-variables.html#cb613-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(wt82_71), </span>
-<span id="cb613-5"><a href="instrumental-variables.html#cb613-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(wt82_71),</span>
-<span id="cb613-6"><a href="instrumental-variables.html#cb613-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.75</span>))</span>
-<span id="cb613-7"><a href="instrumental-variables.html#cb613-7" aria-hidden="true" tabindex="-1"></a>wtch_vs_qsmk</span></code></pre></div>
+<div class="sourceCode" id="cb612"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb612-1"><a href="instrumental-variables.html#cb612-1" aria-hidden="true" tabindex="-1"></a>wtch_vs_qsmk<span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb612-2"><a href="instrumental-variables.html#cb612-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span> </span>
+<span id="cb612-3"><a href="instrumental-variables.html#cb612-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.25</span>), </span>
+<span id="cb612-4"><a href="instrumental-variables.html#cb612-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(wt82_71), </span>
+<span id="cb612-5"><a href="instrumental-variables.html#cb612-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(wt82_71),</span>
+<span id="cb612-6"><a href="instrumental-variables.html#cb612-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.75</span>))</span>
+<span id="cb612-7"><a href="instrumental-variables.html#cb612-7" aria-hidden="true" tabindex="-1"></a>wtch_vs_qsmk</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##    qsmk  perc_25  mean median perc_75
 ##   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1     0 -1.81     2.00   2.15    6.12
 ## 2     1 -0.00117  4.67   3.97    9.72</code></pre>
 <p>We see that there is higher weight gain among quitters on average as well as consistently higher change across quartiles.</p>
-<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb615-1"><a href="instrumental-variables.html#cb615-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb615-2"><a href="instrumental-variables.html#cb615-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span></span>
-<span id="cb615-3"><a href="instrumental-variables.html#cb615-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> wt82_71)) <span class="sc">+</span> </span>
-<span id="cb615-4"><a href="instrumental-variables.html#cb615-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
-<span id="cb615-5"><a href="instrumental-variables.html#cb615-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> qsmk, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;free_y&quot;</span>)</span></code></pre></div>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<div class="sourceCode" id="cb614"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb614-1"><a href="instrumental-variables.html#cb614-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb614-2"><a href="instrumental-variables.html#cb614-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span></span>
+<span id="cb614-3"><a href="instrumental-variables.html#cb614-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> wt82_71)) <span class="sc">+</span> </span>
+<span id="cb614-4"><a href="instrumental-variables.html#cb614-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb614-5"><a href="instrumental-variables.html#cb614-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> qsmk, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;free_y&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-312-1.png" width="672" /></p>
 <p>There doesn’t seem to be a large difference between the two distributions, however we do observe some higher values in the quitters.</p>
-<p>Let’s explore if the exposure has an effect on the outcome. We start with a simple unadjusted model</p>
-<div class="sourceCode" id="cb617"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb617-1"><a href="instrumental-variables.html#cb617-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb617-2"><a href="instrumental-variables.html#cb617-2" aria-hidden="true" tabindex="-1"></a>qsmk_mod1<span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71<span class="sc">~</span>qsmk, <span class="at">data=</span>nhefs_iv)</span>
-<span id="cb617-3"><a href="instrumental-variables.html#cb617-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb617-4"><a href="instrumental-variables.html#cb617-4" aria-hidden="true" tabindex="-1"></a>qsmk_mod1 <span class="sc">%&gt;%</span> </span>
-<span id="cb617-5"><a href="instrumental-variables.html#cb617-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb617-6"><a href="instrumental-variables.html#cb617-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb617-7"><a href="instrumental-variables.html#cb617-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
-<span id="cb617-8"><a href="instrumental-variables.html#cb617-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb617-9"><a href="instrumental-variables.html#cb617-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
-<span id="cb617-10"><a href="instrumental-variables.html#cb617-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
+<p>Let’s explore if the exposure has an effect on the outcome. We start with a simple unadjusted model:</p>
+<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb615-1"><a href="instrumental-variables.html#cb615-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb615-2"><a href="instrumental-variables.html#cb615-2" aria-hidden="true" tabindex="-1"></a>qsmk_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71 <span class="sc">~</span> qsmk, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb615-3"><a href="instrumental-variables.html#cb615-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb615-4"><a href="instrumental-variables.html#cb615-4" aria-hidden="true" tabindex="-1"></a>qsmk_mod1 <span class="sc">%&gt;%</span> </span>
+<span id="cb615-5"><a href="instrumental-variables.html#cb615-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb615-6"><a href="instrumental-variables.html#cb615-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb615-7"><a href="instrumental-variables.html#cb615-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
+<span id="cb615-8"><a href="instrumental-variables.html#cb615-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb615-9"><a href="instrumental-variables.html#cb615-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
+<span id="cb615-10"><a href="instrumental-variables.html#cb615-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   term  effect low_effect high_effect
 ##   &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
 ## 1 qsmk    2.67       1.75        3.58</code></pre>
-<p>The results indicate that quitting smoking is associated with a 2.7 kg increase in weight (95% CI: 1.7 - 3.6). It is likely that quitting smoking varies by covariates that are also likely to cause the outcome (such as age and sex and others), so let’s try an adjusted model adjusting for several baseline covariates including duration of smoking and smoking intensity as well as weight at baseline in addition to sociodemographics.</p>
-<div class="sourceCode" id="cb619"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb619-1"><a href="instrumental-variables.html#cb619-1" aria-hidden="true" tabindex="-1"></a>qsmk_mod2<span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71<span class="sc">~</span>qsmk <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, <span class="at">data=</span>nhefs_iv)</span>
-<span id="cb619-2"><a href="instrumental-variables.html#cb619-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb619-3"><a href="instrumental-variables.html#cb619-3" aria-hidden="true" tabindex="-1"></a>qsmk_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb619-4"><a href="instrumental-variables.html#cb619-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb619-5"><a href="instrumental-variables.html#cb619-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb619-6"><a href="instrumental-variables.html#cb619-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
-<span id="cb619-7"><a href="instrumental-variables.html#cb619-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb619-8"><a href="instrumental-variables.html#cb619-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
-<span id="cb619-9"><a href="instrumental-variables.html#cb619-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
+<p>The results indicate that quitting smoking is associated with a 2.7 kg increase in weight (95% CI: 1.7–3.6). It is likely, however, that whether or not you quit smoking might be associated with covariates that are also likely to influence the outcome (such as age and sex), so let’s try an adjusted model adjusting for several baseline covariates, including duration of smoking and smoking intensity, as well as weight at baseline and sociodemographics.</p>
+<div class="sourceCode" id="cb617"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb617-1"><a href="instrumental-variables.html#cb617-1" aria-hidden="true" tabindex="-1"></a>qsmk_mod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71 <span class="sc">~</span> qsmk <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb617-2"><a href="instrumental-variables.html#cb617-2" aria-hidden="true" tabindex="-1"></a>                  smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
+<span id="cb617-3"><a href="instrumental-variables.html#cb617-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data=</span>nhefs_iv)</span>
+<span id="cb617-4"><a href="instrumental-variables.html#cb617-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb617-5"><a href="instrumental-variables.html#cb617-5" aria-hidden="true" tabindex="-1"></a>qsmk_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb617-6"><a href="instrumental-variables.html#cb617-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb617-7"><a href="instrumental-variables.html#cb617-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb617-8"><a href="instrumental-variables.html#cb617-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
+<span id="cb617-9"><a href="instrumental-variables.html#cb617-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb617-10"><a href="instrumental-variables.html#cb617-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
+<span id="cb617-11"><a href="instrumental-variables.html#cb617-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   term  effect low_effect high_effect
 ##   &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
 ## 1 qsmk    3.40       2.51        4.30</code></pre>
-<p>We see that the adjusted effect estimate is somewhat higher than the unadjusted with smoking cessation associated with a 3.4 kg increase (95% CI: 2.5 - 4.3). It is still likely that we are not accounting for all confounders (those who quit smoking could be doing so because of a desire to lead a healthy lifestyle or because of underlying health conditions that may also affect the outcome). It is therefore plausible that there is unmeasured (or unknown) confounding for the effect of smoking cessation on weight change. A valid instrument can help us identify a causal effect even in the presnece of such confounding.</p>
+<p>We see that the adjusted effect estimate is somewhat higher than the unadjusted estimate, with smoking cessation associated with a 3.4 kg increase (95% CI: 2.5–4.3). It is still likely that we are not accounting for all confounders. For example, those who quit smoking could be doing so because of a desire to lead a healthy lifestyle or because of underlying health conditions that may also affect the outcome—these aren’t things that we’re measuring, but they could be associated with both the exposure and the outcome. It is therefore plausible that there is unmeasured (or unknown) confounding for the effect of smoking cessation on weight change. A valid instrument can help us identify a causal effect even in the presence of such confounding.</p>
 </div>
 <div id="identifying-an-instrumental-variable-checking-the-iv-conditions-and-the-standard-iv-estimand" class="section level2" number="10.4">
 <h2><span class="header-section-number">10.4</span> Identifying an instrumental variable, checking the IV conditions and the standard IV estimand</h2>
-<p>As mentioned above we will be using cigarette pricing in each participants state of residence as an instrument for the exposure of interest. We will check if the conditions for a valid instrument highlighted above hold for cigarette pricing (to the extent possible), and estimate the standard IV estimand for the effect of exposure.</p>
-<p><em>Applied exercise: Identify and instrument for the effect of smoking cessation on weight change and assess the IV conditions </em></p>
+<p>As mentioned above, we will be using cigarette pricing in each participant’s state of residence as an instrument for the exposure of interest. The idea is that the
+participant might be less likely to smoke if it costs more. Some states elevate
+cigarette prices in an effort to discourage smoking (and gain some funds for the
+state). These elevated prices might reduce smoking rates in that state, and so
+influence the probable level of exposure. These elevated prices could influence
+the outcome variable (weight gain), but <em>only</em> through how they affect the
+likihood of exposure. In theory, it seems like this could be a reasonable
+instrument for smoking exposure, then, but you should always try to check to
+see if your data looks like it aligns with those assumptions.</p>
+<p>We will therefore check to see if the conditions for a valid instrument highlighted above hold for cigarette pricing (to the extent possible), and estimate the standard IV estimand for the effect of exposure.</p>
+<p><em>Applied exercise: Identify an instrument for the effect of smoking cessation on weight change and assess the IV conditions</em></p>
 <ol style="list-style-type: decimal">
 <li>What is the relationship of cigarette pricing and smoking cessation? Is there a significant difference in the probability of exposure across levels of the instrument? Which IV condition does this satisfy?</li>
 <li>What is the difference in sample averages for weight change across levels of the instrument?</li>
-<li>Estimate the IV estimand the above quantities.</li>
+<li>Estimate the IV estimand for the above quantities.</li>
 </ol>
 <p><em>Applied exercise: Example code</em></p>
 <ol style="list-style-type: decimal">
 <li><strong>What is the relationship of cigarette pricing and smoking cessation? Is there a significant difference in the probability of exposure across levels of the instrument? Which IV condition does this satisfy?</strong></li>
 </ol>
-<p>As we mentioned above we will be using cigarette pricing as an instrument for the exposure. The first condition for a valid instrumental variable is that is has to be associated with the exposure. Our rationale here is that higher cigarette prices act as a financial incentive for people to quit smoking. Even though we are assuming that cigarette pricing <em>causes</em> smoking cessation this isn’t necessary for an instrument to be valid. It just has to be merely associated with the exposure. This is actually the only condition we can test formally and verify, as it makes no causal assumptions. We can check whether cigarette pricing and smoking cessation are association using F-statistics, r2 or the risk difference.</p>
-<p>We will start by examining the distribution of cigarette prices at each participant’s state of residence in 1982 and create a binary variable for cigarette pricing.</p>
+<p>As we mentioned above, we will be using cigarette pricing as an instrument for the exposure. The first condition for a valid instrumental variable is that is has to be associated with the exposure. Our rationale here is that higher cigarette prices act as a financial incentive for people to quit smoking. Even though we are assuming that cigarette pricing <em>causes</em> smoking cessation, this isn’t necessary for an instrument to be valid. It just has to be merely associated with the exposure. This is actually the only condition we can test formally and verify, as it makes no causal assumptions. We can check whether cigarette pricing and smoking cessation are associated using F-statistics, r2, or the risk difference.</p>
+<p>We will start by examining the distribution of cigarette prices in each participant’s state of residence in 1982 and create a binary variable for cigarette pricing.</p>
+<div class="sourceCode" id="cb619"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb619-1"><a href="instrumental-variables.html#cb619-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb619-2"><a href="instrumental-variables.html#cb619-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min =</span> <span class="fu">min</span>(price82), </span>
+<span id="cb619-3"><a href="instrumental-variables.html#cb619-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">perc_25 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.25</span>), </span>
+<span id="cb619-4"><a href="instrumental-variables.html#cb619-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price82), </span>
+<span id="cb619-5"><a href="instrumental-variables.html#cb619-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price82),</span>
+<span id="cb619-6"><a href="instrumental-variables.html#cb619-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.75</span>), </span>
+<span id="cb619-7"><a href="instrumental-variables.html#cb619-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">max =</span> <span class="fu">max</span>(price82))</span></code></pre></div>
+<pre><code>## # A tibble: 1 × 6
+##     min perc_25  mean median perc_75   max
+##   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1  1.45    1.74  1.81   1.81    1.87  2.10</code></pre>
 <div class="sourceCode" id="cb621"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb621-1"><a href="instrumental-variables.html#cb621-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb621-2"><a href="instrumental-variables.html#cb621-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.25</span>), </span>
-<span id="cb621-3"><a href="instrumental-variables.html#cb621-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price82), </span>
-<span id="cb621-4"><a href="instrumental-variables.html#cb621-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price82),</span>
-<span id="cb621-5"><a href="instrumental-variables.html#cb621-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.75</span>))</span></code></pre></div>
-<pre><code>## # A tibble: 1 × 4
-##   perc_25  mean median perc_75
-##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-## 1    1.74  1.81   1.81    1.87</code></pre>
-<div class="sourceCode" id="cb623"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb623-1"><a href="instrumental-variables.html#cb623-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb623-2"><a href="instrumental-variables.html#cb623-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price82)) <span class="sc">+</span> </span>
-<span id="cb623-3"><a href="instrumental-variables.html#cb623-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<span id="cb621-2"><a href="instrumental-variables.html#cb621-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price82)) <span class="sc">+</span> </span>
+<span id="cb621-3"><a href="instrumental-variables.html#cb621-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-315-1.png" width="672" /></p>
-<p>Let’s create a binary cigarette price variable using a cutoff of $1.5 same as in <span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span>.</p>
-<div class="sourceCode" id="cb624"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb624-1"><a href="instrumental-variables.html#cb624-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
-<span id="cb624-2"><a href="instrumental-variables.html#cb624-2" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb624-3"><a href="instrumental-variables.html#cb624-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highprice =</span> <span class="fu">case_when</span>(</span>
-<span id="cb624-4"><a href="instrumental-variables.html#cb624-4" aria-hidden="true" tabindex="-1"></a>    price82 <span class="sc">&gt;=</span><span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb624-5"><a href="instrumental-variables.html#cb624-5" aria-hidden="true" tabindex="-1"></a>    price82<span class="sc">&lt;</span><span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">0</span>))</span></code></pre></div>
+<p>Let’s create a binary cigarette price variable using a cutoff of $1.50, as in <span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span>:</p>
+<div class="sourceCode" id="cb622"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb622-1"><a href="instrumental-variables.html#cb622-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb622-2"><a href="instrumental-variables.html#cb622-2" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb622-3"><a href="instrumental-variables.html#cb622-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highprice =</span> <span class="fu">case_when</span>(</span>
+<span id="cb622-4"><a href="instrumental-variables.html#cb622-4" aria-hidden="true" tabindex="-1"></a>    price82 <span class="sc">&gt;=</span> <span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb622-5"><a href="instrumental-variables.html#cb622-5" aria-hidden="true" tabindex="-1"></a>    price82 <span class="sc">&lt;</span> <span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">0</span>))</span>
+<span id="cb622-6"><a href="instrumental-variables.html#cb622-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb622-7"><a href="instrumental-variables.html#cb622-7" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb622-8"><a href="instrumental-variables.html#cb622-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(seqn, price82, highprice) <span class="sc">%&gt;%</span> </span>
+<span id="cb622-9"><a href="instrumental-variables.html#cb622-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 3
+##    seqn price82 highprice
+##   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+## 1   233    1.74         1
+## 2   235    1.80         1
+## 3   244    1.51         1
+## 4   245    1.45         0
+## 5   252    1.80         1
+## 6   257    2.03         1</code></pre>
 <p>We can get an F-value and p-value for the F-test with a simple analysis of variance:</p>
-<div class="sourceCode" id="cb625"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb625-1"><a href="instrumental-variables.html#cb625-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(qsmk<span class="sc">~</span>highprice, <span class="at">data=</span>nhefs_iv))</span></code></pre></div>
-<pre><code>##               Df Sum Sq Mean Sq F value Pr(&gt;F)
-## highprice      1   0.16  0.1568   0.822  0.365
-## Residuals   1474 281.04  0.1907</code></pre>
-<p>We see that there is a weak association between the instrument and smoking cessation. (p-value for the F-test&gt;0.36 and the F value is rather small). Generally a good rule of thumb for a strong instrument is an F-value of at least 10, so here we have a fairly weak instrument.</p>
-<p>Let’s go ahead and estimate the risk difference anyway. The risk difference we are after is
-<span class="math display">\[
+<div class="sourceCode" id="cb624"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb624-1"><a href="instrumental-variables.html#cb624-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb624-2"><a href="instrumental-variables.html#cb624-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aov</span>(qsmk <span class="sc">~</span> highprice, <span class="at">data =</span> .) <span class="sc">%&gt;%</span> </span>
+<span id="cb624-3"><a href="instrumental-variables.html#cb624-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   term         df   sumsq meansq statistic p.value
+##   &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 highprice     1   0.157  0.157     0.822   0.365
+## 2 Residuals  1474 281.     0.191    NA      NA</code></pre>
+<p>We see that there is a weak association between the instrument and smoking cessation. (p-value for the F-test &gt; 0.36 and the F value, 0.822, is rather small). Generally a good rule of thumb for a strong instrument is an F-value of at least 10, so here we have a fairly weak instrument.</p>
+<p>Let’s go ahead and estimate the risk difference anyway. The risk difference we are after is:</p>
+<p><span class="math display">\[
 Pr[X=1|Z=1] -  Pr[X=1|Z=0]
-\]</span>
-where X is the exposure of interest (smoking cessation) and Z is the instrument (high cigarette prices). A two-by-two table for the values of X and Z as well as probabilities in this format is given by</p>
-<div class="sourceCode" id="cb627"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb627-1"><a href="instrumental-variables.html#cb627-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb627-2"><a href="instrumental-variables.html#cb627-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(<span class="fu">table</span>(qsmk, highprice)) </span></code></pre></div>
+\]</span></p>
+<p>where <span class="math inline">\(X\)</span> is the exposure of interest (smoking cessation) and <span class="math inline">\(Z\)</span> is the instrument (high cigarette prices). In other words, we want to estimate the different in the probability of quitting smoking (<span class="math inline">\(X = 1\)</span>) in states with high cigarette prices (<span class="math inline">\(Z = 1\)</span>) versus the probability of quitting smoking (<span class="math inline">\(X = 1\)</span>) in states with low cigarette prices (<span class="math inline">\(Z = 0\)</span>).</p>
+<p>A two-by-two table for the values of X and Z, as well as probabilities in this format, is given by:</p>
+<div class="sourceCode" id="cb626"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb626-1"><a href="instrumental-variables.html#cb626-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb626-2"><a href="instrumental-variables.html#cb626-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highprice) <span class="sc">%&gt;%</span> </span>
+<span id="cb626-3"><a href="instrumental-variables.html#cb626-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span></code></pre></div>
 <pre><code>##     highprice
 ## qsmk    0    1
 ##    0   33 1065
 ##    1    8  370</code></pre>
-<div class="sourceCode" id="cb629"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb629-1"><a href="instrumental-variables.html#cb629-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb629-2"><a href="instrumental-variables.html#cb629-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(<span class="fu">table</span>(qsmk, highprice)) <span class="sc">%&gt;%</span> </span>
-<span id="cb629-3"><a href="instrumental-variables.html#cb629-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb628"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb628-1"><a href="instrumental-variables.html#cb628-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb628-2"><a href="instrumental-variables.html#cb628-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highprice) <span class="sc">%&gt;%</span> </span>
+<span id="cb628-3"><a href="instrumental-variables.html#cb628-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb628-4"><a href="instrumental-variables.html#cb628-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##     highprice
 ## qsmk         0         1
 ##    0 0.8048780 0.7421603
 ##    1 0.1951220 0.2578397</code></pre>
-<p>The risk difference is therefore 0.26 - 0.20 = 0.06, or 6% higher probability of quitting among those living in states with high cigarette prices.</p>
-<p>The other conditions for valid instrument are actually not empirically verifiable. We have to assume that the instrument only causes the outcome though the exposure (this seems plausible), and that it shares no unmeasured common causes with the outcome (this is perhaps less of a safe assumption to make). We continue with our <em>candidate</em> instrument nonetheless.</p>
+<p>The risk difference can be seen in the bottom row, which compares the probability of quitting smoking in states with and without high cigarette prices. The risk difference is therefore <span class="math inline">\(0.26 - 0.20 = 0.06\)</span>, or a 6% higher probability of quitting among those living in states with high cigarette prices.</p>
+<p>The other conditions for a valid instrument are actually not empirically verifiable. We have to assume that the instrument only causes the outcome though the exposure (this seems plausible), and that it shares no unmeasured common causes with the outcome (this is perhaps less of a safe assumption to make, since state-level choices on smoking taxes might also be linked with other factors, like the political party in power in the state, which could itself be linked both to characteristics of people in the state and could also influence other health-related local laws). We continue with our <em>candidate</em> instrument nonetheless, to provide an example of the mechanics of this type of analysis.</p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>What is the difference in sample averages for weight change across levels of the instrument?</strong></li>
 </ol>
-<p>Now let’s assess the relationship between instrument and outcome. We will compare sample averages in weight change among those living in states with high prices compared to low prices and estimate the difference</p>
+<p>Now let’s assess the relationship between instrument and outcome. We will compare sample averages in weight change among those living in states with high prices compared to low prices and estimate the difference:</p>
 <p><span class="math display">\[
 E[Y|Z=1] - E[Y|Z=0]
-\]</span>
-where <span class="math inline">\(Y\)</span> is the outcome of interest. We can test for a significant change in the sample means using a student’s t-test.</p>
-<div class="sourceCode" id="cb631"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb631-1"><a href="instrumental-variables.html#cb631-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(wt82_71 <span class="sc">~</span> highprice, <span class="at">data=</span>nhefs_iv)</span></code></pre></div>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  wt82_71 by highprice
-## t = -0.10179, df = 41.644, p-value = 0.9194
-## alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
-## 95 percent confidence interval:
-##  -3.130588  2.830010
-## sample estimates:
-## mean in group 0 mean in group 1 
-##        2.535729        2.686018</code></pre>
-<p>We see that the difference between the two means is small and not statistically significant. The actual difference between those with <code>highprice=1</code> and <code>highprice=0</code> is <code>2.69 - 2.54 = 0.15</code>, or in other words living in a state with high cigarette prices is associates with an increase in weight gain of 0.15 kg. This seems a much smaller estimate than the one we generated for smoking cessation using linear regression. This is not the IV estimand, however, only one component of it.</p>
+\]</span></p>
+<p>where <span class="math inline">\(Y\)</span> is the outcome of interest (weight change) and <span class="math inline">\(Z\)</span> is, again, the instrument—whether the person lived in a state with high cigarette prices. We can test for a significant change in the sample means using a student’s t-test:</p>
+<div class="sourceCode" id="cb630"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb630-1"><a href="instrumental-variables.html#cb630-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(wt82_71 <span class="sc">~</span> highprice, <span class="at">data =</span> nhefs_iv) <span class="sc">%&gt;%</span> </span>
+<span id="cb630-2"><a href="instrumental-variables.html#cb630-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 1 × 10
+##   estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high
+##      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1   -0.150      2.54      2.69    -0.102   0.919      41.6    -3.13      2.83
+## # … with 2 more variables: method &lt;chr&gt;, alternative &lt;chr&gt;</code></pre>
+<p>We see that the difference between the two means is small and not statistically significant. The actual difference between those with <code>highprice = 1</code> and <code>highprice = 0</code> is <code>2.69 - 2.54 = 0.15</code>, or, in other words, living in a state with high cigarette prices is associated with an average weight gain of 0.15 kg. This seems a much smaller estimate than the one we generated for smoking cessation using linear regression. This is not the IV estimand, however, only one component of it.</p>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Estimate the IV estimand the above quantities.</strong></li>
 </ol>
-<p>The actual IV estimand is the following quantity</p>
+<p>The actual IV estimand is the following quantity:</p>
 <p><span class="math display">\[
 \frac{E[Y|Z=1] - E[Y|Z=0]}{E[X|Z=1] - E[X|Z=0]}
-\]</span>
-If the conditions for a valid instrument highlighted above (and the additional condition of homogeneity) are met then this quantity equals the average causal effect of exposure in the population (<span class="math inline">\(E[Y^{x=1} - Y^{x=0}]\)</span>).</p>
-<p>We’ve actually estimated the numerator and denominator for this quantity in exercises (2) and (1) respectively. We can go ahead and get the estimate for it</p>
+\]</span></p>
+<p>Notice that now we’re bringing in not only the association between the instrument
+and the outcome, but also that between the instrument and the exposure (which
+helps account for how strong or weak the instrument is in influencing the
+exposure). In the case of a perfect instrument (like the coin flip in the
+randomized trial example), the denominator here would equal 1, since
+everyone with heads would be exposed to the treatment (<span class="math inline">\(E[X|Z=1] = 1\)</span>) and
+everyone with tails would be kept unexposed as a control (<span class="math inline">\(E[X|Z=0] = 0\)</span>).
+Therefore, you can see that in the edge case of a perfect instrument, as in
+a randomized control trial, the estimand reverts to the simple calculation
+you’d make with data from a randomized trial (<span class="math inline">\(E[Y|Z=1] - E[Y|Z=0]\)</span>, or the
+expected value of the outcome in those who were treated versus those who were
+controls).
+In the case of imperfect instruments, if the conditions for a valid instrument highlighted above (and the additional condition of homogeneity) are met, the prior equation gives you the average causal effect of exposure in the population (<span class="math inline">\(E[Y^{x=1} - Y^{x=0}]\)</span>).</p>
+<p>We’ve actually estimated the numerator and denominator for this quantity in exercises (2) and (1) respectively. We can go ahead and get the estimate for it:</p>
 <p><span class="math display">\[
 \frac{E[Y|Z=1] - E[Y|Z=0]}{E[X|Z=1] - E[X|Z=0]}=\frac{0.15}{0.06} = 2.5 
-\]</span>
-The IV estimate of 2.5 kg is actually much closer to the unadjusted estimate we got from the linear regression model (which was 2.7 kg).</p>
+\]</span></p>
+<p>The IV estimate of 2.5 kg is actually much closer to the unadjusted estimate we got from the linear regression model (which was 2.7 kg).</p>
 </div>
 <div id="the-two-stage-least-squares-estimator" class="section level2" number="10.5">
 <h2><span class="header-section-number">10.5</span> The two-stage-least-squares estimator</h2>
-<p>Instead of the algebraic estimation of the IV estimate we can actually use models to generate this. This involves the <em>two-stage-least-squares estimator</em>, which is an extension of ordinary least squares. The approach involves fitting a model for the exposure as a function of the instrument,</p>
+<p>Instead of the algebraic estimation of the IV estimate, we can actually use models to generate this estimate. This involves the <em>two-stage-least-squares estimator</em>, which is an extension of ordinary least squares. The approach involves fitting a model for the exposure as a function of the instrument,</p>
 <p><span class="math display">\[
 E[X|Z] = \alpha_{0} + \alpha_{1}Z
-\]</span>
-and use predicted values from this model (<span class="math inline">\(\hat{E}[X|Z]\)</span>) as predictors in a second outcome model:</p>
+\]</span></p>
+<p>and then uses predicted values from this model (<span class="math inline">\(\hat{E}[X|Z]\)</span>) as predictors in a second outcome model:</p>
 <p><span class="math display">\[
 E[Y|Z] = \beta_{0} + \beta_{1}\hat{E}[X|Z]
-\]</span>
-Let’s start by fitting a logistic model for the exposure with the instrument as the only predictor and generate predicted values:</p>
-<div class="sourceCode" id="cb633"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb633-1"><a href="instrumental-variables.html#cb633-1" aria-hidden="true" tabindex="-1"></a>modX_Z<span class="ot">&lt;-</span><span class="fu">glm</span>(qsmk <span class="sc">~</span> highprice, <span class="at">family=</span>binomial, <span class="at">data=</span>nhefs_iv)</span>
-<span id="cb633-2"><a href="instrumental-variables.html#cb633-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb633-3"><a href="instrumental-variables.html#cb633-3" aria-hidden="true" tabindex="-1"></a>modX_Z <span class="sc">%&gt;%</span></span>
-<span id="cb633-4"><a href="instrumental-variables.html#cb633-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+\]</span></p>
+<p>Let’s start by fitting a logistic model for the exposure with the instrument as the only predictor and generate predicted values:</p>
+<div class="sourceCode" id="cb632"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb632-1"><a href="instrumental-variables.html#cb632-1" aria-hidden="true" tabindex="-1"></a>modX_Z <span class="ot">&lt;-</span> <span class="fu">glm</span>(qsmk <span class="sc">~</span> highprice, <span class="at">family =</span> binomial, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb632-2"><a href="instrumental-variables.html#cb632-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb632-3"><a href="instrumental-variables.html#cb632-3" aria-hidden="true" tabindex="-1"></a>modX_Z <span class="sc">%&gt;%</span></span>
+<span id="cb632-4"><a href="instrumental-variables.html#cb632-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)   -1.42      0.394    -3.60  0.000323
 ## 2 highprice      0.360     0.399     0.903 0.367</code></pre>
-<div class="sourceCode" id="cb635"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb635-1"><a href="instrumental-variables.html#cb635-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv<span class="ot">&lt;-</span>nhefs_iv <span class="sc">%&gt;%</span></span>
-<span id="cb635-2"><a href="instrumental-variables.html#cb635-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ehat=</span><span class="fu">predict</span>(modX_Z, <span class="at">type=</span><span class="st">&#39;response&#39;</span>))</span></code></pre></div>
-<p>We then use the predicted values as a predictor in an outcome model</p>
-<div class="sourceCode" id="cb636"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb636-1"><a href="instrumental-variables.html#cb636-1" aria-hidden="true" tabindex="-1"></a>modY_Z<span class="ot">&lt;-</span><span class="fu">glm</span>(wt82_71 <span class="sc">~</span> ehat, <span class="at">data=</span>nhefs_iv)</span>
-<span id="cb636-2"><a href="instrumental-variables.html#cb636-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb636-3"><a href="instrumental-variables.html#cb636-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb636-4"><a href="instrumental-variables.html#cb636-4" aria-hidden="true" tabindex="-1"></a>modY_Z <span class="sc">%&gt;%</span></span>
-<span id="cb636-5"><a href="instrumental-variables.html#cb636-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb636-6"><a href="instrumental-variables.html#cb636-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">&#39;ehat&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb636-7"><a href="instrumental-variables.html#cb636-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
-<span id="cb636-8"><a href="instrumental-variables.html#cb636-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb636-9"><a href="instrumental-variables.html#cb636-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
-<span id="cb636-10"><a href="instrumental-variables.html#cb636-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
+<div class="sourceCode" id="cb634"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb634-1"><a href="instrumental-variables.html#cb634-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span></span>
+<span id="cb634-2"><a href="instrumental-variables.html#cb634-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ehat =</span> <span class="fu">predict</span>(modX_Z, <span class="at">type =</span><span class="st">&#39;response&#39;</span>))</span></code></pre></div>
+<p>We then use the predicted values as a predictor in an outcome model:</p>
+<div class="sourceCode" id="cb635"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb635-1"><a href="instrumental-variables.html#cb635-1" aria-hidden="true" tabindex="-1"></a>modY_Z <span class="ot">&lt;-</span> <span class="fu">glm</span>(wt82_71 <span class="sc">~</span> ehat, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb635-2"><a href="instrumental-variables.html#cb635-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb635-3"><a href="instrumental-variables.html#cb635-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb635-4"><a href="instrumental-variables.html#cb635-4" aria-hidden="true" tabindex="-1"></a>modY_Z <span class="sc">%&gt;%</span></span>
+<span id="cb635-5"><a href="instrumental-variables.html#cb635-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb635-6"><a href="instrumental-variables.html#cb635-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;ehat&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb635-7"><a href="instrumental-variables.html#cb635-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
+<span id="cb635-8"><a href="instrumental-variables.html#cb635-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb635-9"><a href="instrumental-variables.html#cb635-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
+<span id="cb635-10"><a href="instrumental-variables.html#cb635-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   term  effect low_effect high_effect
 ##   &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
 ## 1 ehat    2.40      -36.9        41.7</code></pre>
-<p>The parameter coefficient for <code>ehat</code> is actually the IV estimate from above and we see that they are very close. The confidence intervals, however, for this estimate are very wide owing primarily to the weakness of the instrument we are using.</p>
-<p>The <code>sem</code> package in R, actually allows us to apply the two-stage-least-squares estimator using a single function (<code>tsls</code>) as opposed to fitting separate models.</p>
-<div class="sourceCode" id="cb638"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb638-1"><a href="instrumental-variables.html#cb638-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sem)</span>
-<span id="cb638-2"><a href="instrumental-variables.html#cb638-2" aria-hidden="true" tabindex="-1"></a>IV_estimatemod<span class="ot">&lt;-</span><span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk, <span class="sc">~</span> highprice, <span class="at">data =</span> nhefs_iv)</span>
-<span id="cb638-3"><a href="instrumental-variables.html#cb638-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb638-4"><a href="instrumental-variables.html#cb638-4" aria-hidden="true" tabindex="-1"></a>IV_estimatemod <span class="sc">%&gt;%</span></span>
-<span id="cb638-5"><a href="instrumental-variables.html#cb638-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>()</span></code></pre></div>
+<p>The parameter coefficient for <code>ehat</code> is actually the IV estimate from above, and we see that they are very close. The confidence intervals, however, for this estimate are very wide, owing primarily to the weakness of the instrument we are using.</p>
+<p>The <code>sem</code> package in R actually allows us to apply the two-stage-least-squares estimator using a single function (<code>tsls</code>) as opposed to fitting separate models.
+In this function call, we first give the formula for the relationship between
+the outcome and the exposure (<code>wt82_71 ~ qsmk</code>), and then the right hand of the formula for
+the instrumental variable (<code>~ highprice</code>):</p>
+<div class="sourceCode" id="cb637"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb637-1"><a href="instrumental-variables.html#cb637-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sem)</span>
+<span id="cb637-2"><a href="instrumental-variables.html#cb637-2" aria-hidden="true" tabindex="-1"></a>IV_estimatemod <span class="ot">&lt;-</span> <span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk, <span class="sc">~</span> highprice, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb637-3"><a href="instrumental-variables.html#cb637-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb637-4"><a href="instrumental-variables.html#cb637-4" aria-hidden="true" tabindex="-1"></a>IV_estimatemod <span class="sc">%&gt;%</span></span>
+<span id="cb637-5"><a href="instrumental-variables.html#cb637-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## 
 ##  2SLS Estimates
 ## 
@@ -580,11 +671,15 @@ Let’s start by fitting a logistic model for the exposure with the instrument a
 <ol style="list-style-type: decimal">
 <li><strong>Estimate the IV estimand accounting for measured covariates. How do the results compare to above?</strong></li>
 </ol>
-<p>We can apply the tsls estimator accounting for covariates in a similar fashion to the way we include them in a regression model. Note that here we will include these baseline covariates in both the exposure and outcome models</p>
-<div class="sourceCode" id="cb640"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb640-1"><a href="instrumental-variables.html#cb640-1" aria-hidden="true" tabindex="-1"></a>IV_estimatemod2<span class="ot">&lt;-</span><span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk<span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, <span class="sc">~</span> highprice<span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, <span class="at">data =</span> nhefs_iv)</span>
-<span id="cb640-2"><a href="instrumental-variables.html#cb640-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb640-3"><a href="instrumental-variables.html#cb640-3" aria-hidden="true" tabindex="-1"></a>IV_estimatemod2 <span class="sc">%&gt;%</span></span>
-<span id="cb640-4"><a href="instrumental-variables.html#cb640-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>()</span></code></pre></div>
+<p>We can apply the tsls estimator while accounting for covariates in a similar fashion to the way we include them in a regression model. Note that here we will include these baseline covariates in both the exposure and outcome models:</p>
+<div class="sourceCode" id="cb639"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb639-1"><a href="instrumental-variables.html#cb639-1" aria-hidden="true" tabindex="-1"></a>IV_estimatemod2 <span class="ot">&lt;-</span> <span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb639-2"><a href="instrumental-variables.html#cb639-2" aria-hidden="true" tabindex="-1"></a>                          smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
+<span id="cb639-3"><a href="instrumental-variables.html#cb639-3" aria-hidden="true" tabindex="-1"></a>                        <span class="sc">~</span> highprice <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb639-4"><a href="instrumental-variables.html#cb639-4" aria-hidden="true" tabindex="-1"></a>                          smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
+<span id="cb639-5"><a href="instrumental-variables.html#cb639-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb639-6"><a href="instrumental-variables.html#cb639-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb639-7"><a href="instrumental-variables.html#cb639-7" aria-hidden="true" tabindex="-1"></a>IV_estimatemod2 <span class="sc">%&gt;%</span></span>
+<span id="cb639-8"><a href="instrumental-variables.html#cb639-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## 
 ##  2SLS Estimates
 ## 
@@ -610,55 +705,58 @@ Let’s start by fitting a logistic model for the exposure with the instrument a
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Residual standard error: 7.6124334 on 1468 degrees of freedom</code></pre>
-<p>We now see that the parameter coefficient for smoking cessation is attenuated compared to the results from above. Remeber that covariate adjustment actually made the coefficient larger in the traditional linear regression. One potential explanation is that smoking cessation does not have the effect we thought it did and our linear model estimates we fitted at the beginning suffer from unmeasured confounding. A more likely explanation is a biased IV analysis. If our tsls model is misspecified leading to bias the weakness of the instrument actually amplifies this bias. A biased IV model (due to either a misspecified model or invalid instrument) combined with a weak instrument could be worse than unmeasured confounding in a traditional outcome regression analysis. A stronger instrument would be a much better option for us, <em>if</em> such an instrument exists.</p>
+<p>We now see that the parameter coefficient for smoking cessation is attenuated compared to the results from above. Remember that covariate adjustment actually made the coefficient larger in the traditional linear regression. One potential explanation is that smoking cessation does not have the effect we thought it did and our linear model estimates we fitted at the beginning suffer from unmeasured confounding. A more likely explanation is a biased IV analysis. If our tsls model is misspecified, leading to bias, the weakness of the instrument actually amplifies this bias. A biased IV model (due to either a misspecified model or invalid instrument) combined with a weak instrument could be worse than unmeasured confounding in a traditional outcome regression analysis. A stronger instrument would be a much better option for us, <em>if</em> such an instrument exists.</p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1971..</strong></li>
 </ol>
 <p>Rather than use cigarette pricing at participant’s state of residence in 1982 as the candidate instrument let’s try using difference in cigarette prices from 1971 to 1982, <code>price71_82</code> in our data.</p>
-<div class="sourceCode" id="cb642"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb642-1"><a href="instrumental-variables.html#cb642-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb642-2"><a href="instrumental-variables.html#cb642-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.25</span>), </span>
-<span id="cb642-3"><a href="instrumental-variables.html#cb642-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price71_82), </span>
-<span id="cb642-4"><a href="instrumental-variables.html#cb642-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price71_82),</span>
-<span id="cb642-5"><a href="instrumental-variables.html#cb642-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.75</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb641"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb641-1"><a href="instrumental-variables.html#cb641-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb641-2"><a href="instrumental-variables.html#cb641-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.25</span>), </span>
+<span id="cb641-3"><a href="instrumental-variables.html#cb641-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price71_82), </span>
+<span id="cb641-4"><a href="instrumental-variables.html#cb641-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price71_82),</span>
+<span id="cb641-5"><a href="instrumental-variables.html#cb641-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.75</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   perc_25  mean median perc_75
 ##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1   0.201 0.332  0.336   0.444</code></pre>
-<div class="sourceCode" id="cb644"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb644-1"><a href="instrumental-variables.html#cb644-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb644-2"><a href="instrumental-variables.html#cb644-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price71_82)) <span class="sc">+</span> </span>
-<span id="cb644-3"><a href="instrumental-variables.html#cb644-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb643"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb643-1"><a href="instrumental-variables.html#cb643-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb643-2"><a href="instrumental-variables.html#cb643-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price71_82)) <span class="sc">+</span> </span>
+<span id="cb643-3"><a href="instrumental-variables.html#cb643-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-324-1.png" width="672" /></p>
 <p>We see that the majority of prices increase (although some actually decrease) in the period between 1971 and 1982, with increases ranging from 0 to a little more than 50 cents. Let’s use an increase of $0.20 as our cutoff for a high increase in prices.</p>
-<div class="sourceCode" id="cb645"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb645-1"><a href="instrumental-variables.html#cb645-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb645-2"><a href="instrumental-variables.html#cb645-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highincrease =</span> <span class="fu">case_when</span>(</span>
-<span id="cb645-3"><a href="instrumental-variables.html#cb645-3" aria-hidden="true" tabindex="-1"></a>    price71_82 <span class="sc">&gt;=</span><span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb645-4"><a href="instrumental-variables.html#cb645-4" aria-hidden="true" tabindex="-1"></a>    price71_82<span class="sc">&lt;</span><span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">0</span>))</span></code></pre></div>
-<p>We can check the strenght of ths instrument based on its association with smoking cessation as we did above</p>
-<div class="sourceCode" id="cb646"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb646-1"><a href="instrumental-variables.html#cb646-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(qsmk<span class="sc">~</span>highincrease, <span class="at">data=</span>nhefs_iv))</span></code></pre></div>
+<div class="sourceCode" id="cb644"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb644-1"><a href="instrumental-variables.html#cb644-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb644-2"><a href="instrumental-variables.html#cb644-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highincrease =</span> <span class="fu">case_when</span>(</span>
+<span id="cb644-3"><a href="instrumental-variables.html#cb644-3" aria-hidden="true" tabindex="-1"></a>    price71_82 <span class="sc">&gt;=</span> <span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb644-4"><a href="instrumental-variables.html#cb644-4" aria-hidden="true" tabindex="-1"></a>    price71_82 <span class="sc">&lt;</span> <span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">0</span>))</span></code></pre></div>
+<p>We can check the strength of this instrument based on its association with smoking cessation, as we did above:</p>
+<div class="sourceCode" id="cb645"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb645-1"><a href="instrumental-variables.html#cb645-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(qsmk <span class="sc">~</span> highincrease, <span class="at">data =</span> nhefs_iv))</span></code></pre></div>
 <pre><code>##                Df Sum Sq Mean Sq F value Pr(&gt;F)
 ## highincrease    1   0.04 0.04101   0.215  0.643
 ## Residuals    1474 281.15 0.19074</code></pre>
-<div class="sourceCode" id="cb648"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb648-1"><a href="instrumental-variables.html#cb648-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb648-2"><a href="instrumental-variables.html#cb648-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(<span class="fu">table</span>(qsmk, highincrease)) </span></code></pre></div>
+<div class="sourceCode" id="cb647"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb647-1"><a href="instrumental-variables.html#cb647-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb647-2"><a href="instrumental-variables.html#cb647-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highincrease) <span class="sc">%&gt;%</span> </span>
+<span id="cb647-3"><a href="instrumental-variables.html#cb647-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span></code></pre></div>
 <pre><code>##     highincrease
 ## qsmk   0   1
 ##    0 223 875
 ##    1  81 297</code></pre>
-<div class="sourceCode" id="cb650"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb650-1"><a href="instrumental-variables.html#cb650-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb650-2"><a href="instrumental-variables.html#cb650-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(<span class="fu">table</span>(qsmk, highincrease)) <span class="sc">%&gt;%</span> </span>
-<span id="cb650-3"><a href="instrumental-variables.html#cb650-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb649"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb649-1"><a href="instrumental-variables.html#cb649-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb649-2"><a href="instrumental-variables.html#cb649-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highincrease) <span class="sc">%&gt;%</span> </span>
+<span id="cb649-3"><a href="instrumental-variables.html#cb649-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb649-4"><a href="instrumental-variables.html#cb649-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin=</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##     highincrease
 ## qsmk         0         1
 ##    0 0.7335526 0.7465870
 ##    1 0.2664474 0.2534130</code></pre>
-<p>It actually turns out this is a weaker instrument that before and will likely not help us improve our results. We can try different cutoffs for either the absolute price or price difference (or some of the tax related variables in the data) in search of a better instrument, but a strong (and valid) instrument will not always be available. In many observational studies it is actually more likely that it doesn’t exist. In this particular example a weak instrument provided similar results with an unadjusted analysis (albeit with very wide confidence intervals) and the covariate adjusted traditional outcome regression analysis results were actually greater in magnitude compared to the unadjusted or IV results. In this particular case use the IV approach did not necessarily add much to our quest in quantifying the potential effect of smoking cessation on weight change. However, in other settings (such as genetic epidemiology studies relying on genes as instruments for an exposure of interest or some pharmacoepidemiology examples relying on physician preferences as instruments for different treatment options) they have been very useful. Instrumental variables also likely have an important role in natural/quasi-experimental desings where the natural experiment or intervention can act as a good instrument for an alternative exposure of interest. This is an area where IV analysis probably remains underutilized.</p>
-<p>In any case IV analysis can be a useful tool in epidemiology, relying on different assumptions than more traditional approaches. However, instrumental variables should be used in light of their own limitations.</p>
+<p>It actually turns out this is a weaker instrument that before and will likely not help us improve our results. We can try different cutoffs for either the absolute price or price difference (or some of the tax related variables in the data) in search of a better instrument, but a strong (and valid) instrument will not always be available. In many observational studies it is actually more likely that it doesn’t exist.</p>
+<p>In this particular example a weak instrument provided similar results with an unadjusted analysis (albeit with very wide confidence intervals), and the covariate adjusted traditional outcome regression analysis results were actually greater in magnitude compared to the unadjusted or IV results. In this particular case, using the IV approach did not necessarily add much to our quest to quantify the potential effect of smoking cessation on weight change. However, in other settings (such as genetic epidemiology studies relying on genes as instruments for an exposure of interest or some pharmacoepidemiology examples relying on physician preferences as instruments for different treatment options), they have been very useful. Instrumental variables also likely have an important role in natural/quasi-experimental desings where the natural experiment or intervention can act as a good instrument for an alternative exposure of interest. This is an area where IV analysis probably remains underutilized.</p>
+<p>In any case, IV analysis can be a useful tool in epidemiology, relying on different assumptions than more traditional approaches. However, instrumental variables should be used in light of their own limitations.</p>
 </div>
 <div id="the-condition-of-homogenetity-or-alternative-condition-of-monotonictiy" class="section level2" number="10.7">
 <h2><span class="header-section-number">10.7</span> The condition of homogenetity (or alternative condition of monotonictiy)</h2>
-<p>We highlighted three conditions for valid instrument above and mentioned a required fourth condition, that of homogeneity, which is also required in order to estimate the average causal effect of exposure in the population. In the absence of this condition we can only actually estimate bounds for the causal effect, which may be too wide and uninformative. These bounds will come with their own uncertainty and confidence intervals (CI for lower bound and upper bound respectively). Most researchers avoid estimating bounds for this reason and instead rely on the assumption of homogeneity in order to generate point estimates for the causal effects rather than bounds.</p>
-<p><span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span> outlines the homogeneity condition in different ways it has been defined in the literature and what has to hold in each case for the condition to be true. Each definition can vary from being highly unlikely to hold in most cases, not intuitive, and mostly unverifiable (similar to the other 2 of 3 conditions above).</p>
-<p>Given these limitations of the homogeneity conditions, researchers often rely on an alternative condition that of monotonicity. The monotonicity condition stipulates that the effect (or association) between instrument and exposure be monotonous, or in other words the presence of the instrument can only affect the propensity of exposure in only one direction or at the very least not change it on the individual level. In other words if we have an instrument <span class="math inline">\(Z\)</span> with a positive association with exposure <span class="math inline">\(X\)</span> then <span class="math inline">\(Z=1\)</span> can only increase or at the very least not change the probability of exposure compared to <span class="math inline">\(Z=0\)</span> in any given individual. If we have an instrument <span class="math inline">\(Z\)</span> with a negative association with exposure <span class="math inline">\(X\)</span> then <span class="math inline">\(Z=1\)</span> can only decrease or at the very least not change the probability of exposure compared to <span class="math inline">\(Z=0\)</span> in any given individual. If this assumption holds then we can estimate the average causal effect of exposure <span class="math inline">\(X\)</span> using instrument <span class="math inline">\(Z\)</span>, but not in the whole population. The effect we are estimating is the effect in the <em>compliers</em>, which can be a vague subset of the population. Furthermore, the monotonicity assumption does not translate well in the case of continuous exposures, as would be the case in most environmental epidemiology studies. See more details in <span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span>.</p>
+<p>We highlighted three conditions for valid instrument above and mentioned a required fourth condition, that of homogeneity, which is also required in order to estimate the average causal effect of exposure in the population. In the absence of this condition, we can only actually estimate bounds for the causal effect, which may be too wide and uninformative. These bounds will come with their own uncertainty and confidence intervals (CI for lower bound and upper bound respectively). Most researchers avoid estimating bounds for this reason and instead rely on the assumption of homogeneity in order to generate point estimates for the causal effects rather than bounds.</p>
+<p><span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span> outlines the homogeneity condition in terms of different ways it has been defined in the literature and what has to hold in each case for the condition to be true. Each definition can vary from being highly unlikely to hold in most cases, not intuitive, and mostly unverifiable (similar to the other 2 of 3 conditions above).</p>
+<p>Given these limitations of the homogeneity conditions, researchers often rely on an alternative condition, that of monotonicity. The monotonicity condition stipulates that the effect (or association) between instrument and exposure be monotonous, i.e., that the presence of the instrument can only affect the propensity of exposure in one direction or at the very least not change it on the individual level. In other words, if we have an instrument <span class="math inline">\(Z\)</span> with a positive association with exposure <span class="math inline">\(X\)</span> then <span class="math inline">\(Z=1\)</span> can only increase or at the very least not change the probability of exposure compared to <span class="math inline">\(Z=0\)</span> in any given individual. If we have an instrument <span class="math inline">\(Z\)</span> with a negative association with exposure <span class="math inline">\(X\)</span> then <span class="math inline">\(Z=1\)</span> can only decrease or at the very least not change the probability of exposure compared to <span class="math inline">\(Z=0\)</span> in any given individual. In the example of the Fort Collins school lottery, we’d be assuming that winning the lottery would never <em>decrease</em> your probability of attending that school, only increase it or keep it unchanged. If this assumption holds then we can estimate the average causal effect of exposure <span class="math inline">\(X\)</span> using instrument <span class="math inline">\(Z\)</span>, but not in the whole population. The effect we are estimating is the effect in the <em>compliers</em>, which can be a vague subset of the population (in the Fort Collins school example, those who <em>complied</em> with their lottery results—went to the school if they won and didn’t if they lost). Furthermore, the monotonicity assumption does not translate well in the case of continuous exposures, as would be the case in most environmental epidemiology studies. See more details in <span class="citation"><a href="#ref-hernanch16" role="doc-biblioref">Hernán and Robins</a> (<a href="#ref-hernanch16" role="doc-biblioref">2020a</a>)</span>.</p>
 <p>Despite the inherent limitations of the above conditions, it is important that they are addressed at least through a discussion surrounding them when IV analysis is used.</p>
 
 </div>

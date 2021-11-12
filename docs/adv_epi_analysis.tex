@@ -4,17 +4,14 @@
 %
 \documentclass[
 ]{book}
-\title{Advanced Epidemiological Analysis}
-\author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-11-11}
-
-\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{iftex}
-\ifPDFTeX
+\usepackage{amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
+  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -85,7 +82,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -113,11 +110,15 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
-\ifLuaTeX
+\ifluatex
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
+
+\title{Advanced Epidemiological Analysis}
+\author{Andreas M. Neophytou and G. Brooke Anderson}
+\date{2021-11-11}
 
 \begin{document}
 \maketitle
@@ -10926,7 +10927,7 @@ of GEEs for clustered continuous and categorical data.
 \hypertarget{readings-7}{%
 \section{Readings}\label{readings-7}}
 
-The required readings for this chapter is:
+The required reading for this chapter is:
 
 \begin{itemize}
 \tightlist
@@ -10952,7 +10953,7 @@ This is an example of an application of IVs in epidemiology:
   \citet{austin2016does}
 \end{itemize}
 
-While this paper summarizes the NHEFS study and initial findings
+While this paper summarizes the NHEFS study and initial findings:
 
 \begin{itemize}
 \tightlist
@@ -10964,43 +10965,97 @@ While this paper summarizes the NHEFS study and initial findings
 \section{Introduction to instrumental variables}\label{introduction-to-instrumental-variables}}
 
 We have been utilizing regression approaches to quantify relationships beteween
-a particular exposure and outcome of interest, ranging from temperature and mortality in a time seires setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models we hae typically been including covariates that were potential confounders of the relationship of interest (e.g.~seasonal trends in the time-series setting, age and sex in the cohort setting).
+a particular exposure and outcome of interest, ranging from temperature and mortality in a time seires setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models, we have typically been including covariates that were potential confounders of the relationship of interest (e.g.~seasonal trends in the time-series setting, age and sex in the cohort setting).
 
-Confounding adjustment is an essential step in ensuring (conditional) exchangebility between the exposed and unexposed. This allows us to essentially treat the exposed and unexposed as exchangeable and cuse them as proxies for what would have happened in the other group if their exposure status were reversed (potential outcome if the exposed had been unexposed and vice versa).
+Confounding adjustment is an essential step in ensuring (conditional) exchangeability between the exposed and unexposed. This allows us to essentially treat the exposed and unexposed as exchangeable and use them as proxies for what would have happened in the other group if their exposure status were reversed (potential outcome if the exposed had been unexposed and vice versa).
 
 In chapter 8 we explored some alternative methods to account for confounding other
 than adding confounders in a regression model. These approaches are especially
 useful in the case of exposure-confounding feedback and some mediation analyses
-cases. However, there is one issue that we cannot overcome regardless of the confounding adjustment method: unmeasured (or unknown) confounding. In order to account for confounding (regardless of approach) we need information on the confounders therefore these variables need to be measured. If we are unable to measure a known confounder, or if there exists an unknown confounder we cannot account for them and the conditional exchangeability assumption fails. This assumption is actually unverifiable in observational studies, as there is no way of verifying that we have measured all confounders. In the FHS it is plausible that we haven't measured all confounders for smoking (or smoking cessation) - for example we don't have information on diet or physical activity which maybe consequences of smoking, but also affect future smoking. What can we do then if we have a good reason to believe there exist unmeausured or unknown confounders in any given study?
+cases. However, there is one issue that we cannot overcome regardless of the confounding adjustment method: unmeasured (or unknown) confounding. In order to account for confounding (regardless of approach) we need information on the confounders; therefore, these variables need to be measured. If we are unable to measure a known confounder, or if there exists an unknown confounder, we cannot account for them, and the conditional exchangeability assumption fails. This assumption is actually unverifiable in observational studies, as there is no way of verifying that we have measured all confounders. In the FHS it is plausible that we haven't measured all confounders for smoking (or smoking cessation)---for example, we don't have information on diet or physical activity which may be consequences of smoking, but also affect future smoking. What can we do, then, if we have a good reason to believe there exist unmeausured or unknown confounders in any given study?
 
-Instrumental variables approaches represent alternatives to the conditional exchangeability (no unmeasured confounding) assumption. We can estimate effects of exposure on an outcome of interest even in the presence of unmeasuref confounding if there exists a third variable that:
+Approaches that leverage instrumental variables can provide alternatives to the conditional exchangeability (no unmeasured confounding) assumption. We can estimate effects of exposure on an outcome of interest even in the presence of unmeasured confounding if there exists a third variable that:
 
 \begin{itemize}
+\tightlist
 \item
-  is associated with the exposure (causes the exposure of shares a common cause with it)
+  Is associated with the exposure (causes the exposure or shares a common cause with it);
 \item
-  does not share unmeasured common causes with the outcome
+  Does not share unmeasured common causes with the outcome; and
 \item
-  only causes the outcome through the exposure
+  Only causes the outcome through the exposure.
 \end{itemize}
 
-This kind of variable is an instrumental variable, or an instrument of the exposure.
-If there exists such a variable then we can estimate the effect of exposure on the
+This kind of variable is called an \textbf{instrumental variable}, or an instrument of the exposure.
+If an instrumental variable exists, then we can estimate the effect of exposure on the
 outcome based on the associations between instrument and outcome and instrument
 and exposure, even if there are unmeasured confounders between exposure and outcome.
 (There actually is another condition that needs to hold, in order for us to estimate
-the average causal effect of exposure in the population - more on this later.)
+the average causal effect of exposure in the population---more on this later.)
+
+An instrumental variable can be very useful because it essentially is something
+that helps to ``randomize'' (although typically not completely) people into
+exposure groups. This is how an instrumental variable can help us estimate an
+effect that avoids (when done properly) bias from unmeasured confounding. As
+a very extreme case, you could think of a coin flip (when assigning treatment
+for a randomized control trial, for example) as an instrumental variable---in
+that case, it is associated with exposure (everyone who gets heads is given
+the treatment, everyone who doesn't is kept as a control), it doesn't share
+unmeasured causes with the outcome (since it's a random coin flip, it won't
+be linked to any other characteristics, measured or unmeasured---the only thing
+influencing it is the physics of the coin flip), and it only influences the
+outcome through the exposure (in other words, people who get heads might
+have better average outcomes, but the only possible reason is because they
+got the treatment).
+
+Good instrumental variables will often have this feel of creating some
+randomization through a random mechanism like a coin flip or a lottery. For
+example, in Fort Collins, you may enter a lottery to send your child to
+any school outside of your neighborhood assigned school. For any given
+school (that's popular enough), there will be some students who enter the
+lottery and ``win'', and so go to that school, and others that enter and don't
+get a spot, so go to a different school. As long as the lottery is really
+random, we can probably assume that the students who win a spot and those who
+don't are otherwise very, very similar. In this scenario, the lottery
+for spots at the school creates a very good instrumental variable if you
+want to measure the effects of attending that school versus other available
+schools---you'd do this by comparing only the students who entered through
+the lottery, and comparing those who won a spot to those who didn't. By contrast,
+there'd probably be a lot more unmeasured confounding if you compared the
+students who went because it was their neighborhood school to those who
+went through the lottery system (or even if you compared students who went
+to different schools because they were in different neighborhoods and
+attended their neighborhood school). Unlike the coin toss example, in this
+case, the instrument might not be perfect---there might be some people who
+``win'' the lottery but ultimately decide to go to other schools, or others
+that ``lost'' the lottery but somehow got a spot.
+
+There is a wide variety in studies that have used instrumental
+variable approaches, and it can be very interesting to read through and assess
+the quality of the instrument in them. Some are likely pretty strong---for
+example, there are studies that use the lottery system for the Vietnam draft
+as an instrumental variable for college education, with the assumption that
+people with low draft numbers (i.e., likely to be drafted based on the
+lottery) might have been more likely to join or stay in college to avoid
+being drafted. Other instrumental variables might be less protective against
+unmeasured confounding. For example, some have used the distance to a hospital
+that performs a certain procedure as an instrument for getting that
+treatment---depending on your study population, there's a chance that more
+cutting-edge hospitals might have locations that are associated with
+potential confounders (for example, many of the top medical school hospitals
+were originally sited in poorer areas of a city, to serve needs for
+medical care).
 
 In this module, we'll explore how you can understand, use, and code instrumental
-variable analysis. We will introduce a new dataset from the NHANES I Epidemiologic Followup Study (NHEFS). (From the NCHS: The NEHFS is a national longitudinal study, was jointly initiated by the National Center for Health Statistics (NCHS) and the National Institute on Aging in collaboration with other agencies of the Public Health Service. The NHEFS was designed to investigate the relationships between clinical, nutritional, and behavioral factors assessed in the first National Health and Nutrition Examination Survey NHANES I and subsequent morbidity, mortality, and hospital utilization, as well as changes in risk factors, functional limitation, and institutionalization.)
+variable analysis. We will introduce a new dataset, one from the NHANES I Epidemiologic Followup Study (NHEFS). (From the NCHS: ``The NEHFS is a national longitudinal study, was jointly initiated by the National Center for Health Statistics (NCHS) and the National Institute on Aging in collaboration with other agencies of the Public Health Service. The NHEFS was designed to investigate the relationships between clinical, nutritional, and behavioral factors assessed in the first National Health and Nutrition Examination Survey NHANES I and subsequent morbidity, mortality, and hospital utilization, as well as changes in risk factors, functional limitation, and institutionalization.'')
 
-The data subset from NEHFS consists of smokers (at baseline) followed between 1971 and 1982. The quantity of interest is the effect of smoking cessation on 10-year weight change. We will explore the relationship between exposure and outcome based on traditional outcome regression and then try to generate an estimate for this effect using instrumental variable analysis.
+The data subset from NEHFS consists of smokers (at baseline) followed between 1971 and 1982. The research question of interest is the effect of smoking cessation on 10-year weight change. We will explore the relationship between exposure and outcome based on traditional outcome regression and then try to generate an estimate for this effect using instrumental variable analysis.
 
 \hypertarget{the-nhefs-data}{%
 \section{The NHEFS data}\label{the-nhefs-data}}
 
-Let's explore the NHEFS dataset which is the dataset used in the example highlighted
-this chapter's required reading, \citep{hernanch16}. The data are saved in a csv format (that is, a plain text file, with commas used as the delimiter), and so they can be read into R using the \texttt{read\_csv} function from the \texttt{readr} package (part of the tidyverse), similar to the previous datasets we have been using. If you have saved the data in a ``data'' subdirectory of your current working directory then you can use the following code:
+Let's explore the NHEFS dataset, which is the dataset used in the example highlighted
+this chapter's required reading, \citet{hernanch16}. You can download a copy from the GitHub page for this book, \href{https://github.com/geanders/adv_epi_analysis/blob/master/data/nhefs.csv}{here}. The data are saved in a csv format (that is, a plain text file, with commas used as the delimiter), and so they can be read into R using the \texttt{read\_csv} function from the \texttt{readr} package (part of the tidyverse), similar to the previous datasets we have been using. If you have saved the data in a ``data'' subdirectory of your current working directory then you can use the following code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -11033,13 +11088,16 @@ this chapter's required reading, \citep{hernanch16}. The data are saved in a csv
 ## #   nervousbreak <dbl>, alcoholpy <dbl>, alcoholfreq <dbl>, ...
 \end{verbatim}
 
-There is a codebook in the the same folder as the dataset you can read to familiarize yourself with the variables in the data. We see that this is subset of the NHEFS study with 1,629 participants. The unique identifier for participant is \texttt{seqn} (equivalent to the \texttt{randid} variable in the FHS data). Unlike the FHS data, there is only one observation per participant in this study with data on mortality over a 12-year period (1971-1982) with a \texttt{death} variable and three separate date variables for day (\texttt{dadth}), month (\texttt{modth}) and year (\texttt{yrdth}) of death. The dataset also includes information on several variables at baseline including demographics (\texttt{age}, \texttt{sex}, \texttt{race}, \texttt{marital}, \texttt{income}, \texttt{school} etc), as well as several other potential morbidity and diagnosis variables at baseline. There are also data on blood pressure at the end of follow-up (\texttt{dbp} and \texttt{sbp}). The exposure of interest is smoking cessation during follow-up (\texttt{qsmk}) and the outcome is change in weight from begining to end of follow-up in kgs (\texttt{wt82\_71}). The instrument we will be using later is based on cigarette pricing t end of follow-up (\texttt{price82}).
+There is a codebook in the \href{https://github.com/geanders/adv_epi_analysis/tree/master/data}{the same folder as the dataset}, which you can download and read to familiarize yourself with the variables in the data.
+We see that this is subset of the NHEFS study with 1,629 participants. The unique identifier for participant is \texttt{seqn} (equivalent to the \texttt{randid} variable in the FHS data). Unlike the FHS data, there is only one observation per participant in this study, with data on mortality over a 12-year period (1971-1982) with a \texttt{death} variable (\texttt{1} for a death during follow-up, \texttt{0} otherwise) and three separate date variables for day (\texttt{dadth}), month (\texttt{modth}) and year (\texttt{yrdth}) of death. The dataset also includes information on several variables at baseline including demographics (\texttt{age}, \texttt{sex}, \texttt{race}, \texttt{marital}, \texttt{income}, \texttt{school} etc), as well as several other potential morbidity and diagnosis variables at baseline. There are also data on blood pressure at the end of follow-up (\texttt{dbp} and \texttt{sbp}). The exposure of interest is smoking cessation during follow-up (\texttt{qsmk}) and the outcome is change in weight from beginning to end of follow-up in kgs (\texttt{wt82\_71}). The instrument we will be using later is based on cigarette pricing at the end of follow-up (\texttt{price82}).
+
 Let's see if there's any missingness in the data. We will focus specifically on the exposure, outcome and instrument values:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(visdat)}
 \FunctionTok{library}\NormalTok{(naniar)}
+
 \NormalTok{nhefs }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{select}\NormalTok{(qsmk, price82, wt82\_71) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{vis\_miss}\NormalTok{()}
@@ -11056,22 +11114,18 @@ Let's see if there's any missingness in the data. We will focus specifically on 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{verbatim}
-## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-## use `guide = "none"` instead.
-\end{verbatim}
-
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-308-2.pdf}
-We see that there is a little bit of missingness in the outcome and cigarette price variables, while the data on the exposure are complete. We will limit the dataset to those with data on exposure, outcome and instrument (there's only missingnes on , so we filter based on that)
+
+We see that there is a little bit of missingness in the outcome and cigarette price variables, while the data on the exposure are complete. We will limit the dataset to those with data on exposure, outcome, and instrument (there's only missingness on the outcome and the instrument, so we filter based on that)
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{nhefs\_iv}\OtherTok{\textless{}{-}}\NormalTok{nhefs }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{filter}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(wt82\_71)}\SpecialCharTok{==}\NormalTok{F }\SpecialCharTok{\&} \FunctionTok{is.na}\NormalTok{(price82)}\SpecialCharTok{==}\NormalTok{F)}
+\NormalTok{nhefs\_iv }\OtherTok{\textless{}{-}}\NormalTok{ nhefs }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(wt82\_71) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(price82))}
 \end{Highlighting}
 \end{Shaded}
 
-The limited dataset is down to 1476 participants (from 1,629). Now let's check the distributions of some of the variables of interest:
+The limited dataset is down to 1,476 participants (from 1,629). Now let's check the distributions of some of the variables of interest:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -11122,24 +11176,20 @@ We see that there is higher weight gain among quitters on average as well as con
 \end{Highlighting}
 \end{Shaded}
 
-\begin{verbatim}
-## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-\end{verbatim}
-
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-312-1.pdf}
 
 There doesn't seem to be a large difference between the two distributions, however we do observe some higher values in the quitters.
 
-Let's explore if the exposure has an effect on the outcome. We start with a simple unadjusted model
+Let's explore if the exposure has an effect on the outcome. We start with a simple unadjusted model:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(broom)}
-\NormalTok{qsmk\_mod1}\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(wt82\_71}\SpecialCharTok{\textasciitilde{}}\NormalTok{qsmk, }\AttributeTok{data=}\NormalTok{nhefs\_iv)}
+\NormalTok{qsmk\_mod1 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ qsmk, }\AttributeTok{data =}\NormalTok{ nhefs\_iv)}
 
 \NormalTok{qsmk\_mod1 }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term}\SpecialCharTok{==}\StringTok{\textquotesingle{}qsmk\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{\textquotesingle{}qsmk\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{effect =}\NormalTok{ estimate,}
          \AttributeTok{low\_effect =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
          \AttributeTok{high\_effect =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error) }\SpecialCharTok{\%\textgreater{}\%} 
@@ -11154,15 +11204,17 @@ Let's explore if the exposure has an effect on the outcome. We start with a simp
 ## 1 qsmk    2.67       1.75        3.58
 \end{verbatim}
 
-The results indicate that quitting smoking is associated with a 2.7 kg increase in weight (95\% CI: 1.7 - 3.6). It is likely that quitting smoking varies by covariates that are also likely to cause the outcome (such as age and sex and others), so let's try an adjusted model adjusting for several baseline covariates including duration of smoking and smoking intensity as well as weight at baseline in addition to sociodemographics.
+The results indicate that quitting smoking is associated with a 2.7 kg increase in weight (95\% CI: 1.7--3.6). It is likely, however, that whether or not you quit smoking might be associated with covariates that are also likely to influence the outcome (such as age and sex), so let's try an adjusted model adjusting for several baseline covariates, including duration of smoking and smoking intensity, as well as weight at baseline and sociodemographics.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{qsmk\_mod2}\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(wt82\_71}\SpecialCharTok{\textasciitilde{}}\NormalTok{qsmk }\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ race }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ smokeintensity }\SpecialCharTok{+}\NormalTok{ smokeyrs }\SpecialCharTok{+}\NormalTok{ wt71, }\AttributeTok{data=}\NormalTok{nhefs\_iv)}
+\NormalTok{qsmk\_mod2 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ qsmk }\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ race }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+} 
+\NormalTok{                  smokeintensity }\SpecialCharTok{+}\NormalTok{ smokeyrs }\SpecialCharTok{+}\NormalTok{ wt71, }
+                \AttributeTok{data=}\NormalTok{nhefs\_iv)}
 
 \NormalTok{qsmk\_mod2 }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term}\SpecialCharTok{==}\StringTok{\textquotesingle{}qsmk\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{\textquotesingle{}qsmk\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{effect =}\NormalTok{ estimate,}
          \AttributeTok{low\_effect =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
          \AttributeTok{high\_effect =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error) }\SpecialCharTok{\%\textgreater{}\%} 
@@ -11177,14 +11229,24 @@ The results indicate that quitting smoking is associated with a 2.7 kg increase 
 ## 1 qsmk    3.40       2.51        4.30
 \end{verbatim}
 
-We see that the adjusted effect estimate is somewhat higher than the unadjusted with smoking cessation associated with a 3.4 kg increase (95\% CI: 2.5 - 4.3). It is still likely that we are not accounting for all confounders (those who quit smoking could be doing so because of a desire to lead a healthy lifestyle or because of underlying health conditions that may also affect the outcome). It is therefore plausible that there is unmeasured (or unknown) confounding for the effect of smoking cessation on weight change. A valid instrument can help us identify a causal effect even in the presnece of such confounding.
+We see that the adjusted effect estimate is somewhat higher than the unadjusted estimate, with smoking cessation associated with a 3.4 kg increase (95\% CI: 2.5--4.3). It is still likely that we are not accounting for all confounders. For example, those who quit smoking could be doing so because of a desire to lead a healthy lifestyle or because of underlying health conditions that may also affect the outcome---these aren't things that we're measuring, but they could be associated with both the exposure and the outcome. It is therefore plausible that there is unmeasured (or unknown) confounding for the effect of smoking cessation on weight change. A valid instrument can help us identify a causal effect even in the presence of such confounding.
 
 \hypertarget{identifying-an-instrumental-variable-checking-the-iv-conditions-and-the-standard-iv-estimand}{%
 \section{Identifying an instrumental variable, checking the IV conditions and the standard IV estimand}\label{identifying-an-instrumental-variable-checking-the-iv-conditions-and-the-standard-iv-estimand}}
 
-As mentioned above we will be using cigarette pricing in each participants state of residence as an instrument for the exposure of interest. We will check if the conditions for a valid instrument highlighted above hold for cigarette pricing (to the extent possible), and estimate the standard IV estimand for the effect of exposure.
+As mentioned above, we will be using cigarette pricing in each participant's state of residence as an instrument for the exposure of interest. The idea is that the
+participant might be less likely to smoke if it costs more. Some states elevate
+cigarette prices in an effort to discourage smoking (and gain some funds for the
+state). These elevated prices might reduce smoking rates in that state, and so
+influence the probable level of exposure. These elevated prices could influence
+the outcome variable (weight gain), but \emph{only} through how they affect the
+likihood of exposure. In theory, it seems like this could be a reasonable
+instrument for smoking exposure, then, but you should always try to check to
+see if your data looks like it aligns with those assumptions.
 
-\emph{Applied exercise: Identify and instrument for the effect of smoking cessation on weight change and assess the IV conditions }
+We will therefore check to see if the conditions for a valid instrument highlighted above hold for cigarette pricing (to the extent possible), and estimate the standard IV estimand for the effect of exposure.
+
+\emph{Applied exercise: Identify an instrument for the effect of smoking cessation on weight change and assess the IV conditions}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -11194,7 +11256,7 @@ As mentioned above we will be using cigarette pricing in each participants state
 \item
   What is the difference in sample averages for weight change across levels of the instrument?
 \item
-  Estimate the IV estimand the above quantities.
+  Estimate the IV estimand for the above quantities.
 \end{enumerate}
 
 \emph{Applied exercise: Example code}
@@ -11206,25 +11268,27 @@ As mentioned above we will be using cigarette pricing in each participants state
   \textbf{What is the relationship of cigarette pricing and smoking cessation? Is there a significant difference in the probability of exposure across levels of the instrument? Which IV condition does this satisfy?}
 \end{enumerate}
 
-As we mentioned above we will be using cigarette pricing as an instrument for the exposure. The first condition for a valid instrumental variable is that is has to be associated with the exposure. Our rationale here is that higher cigarette prices act as a financial incentive for people to quit smoking. Even though we are assuming that cigarette pricing \emph{causes} smoking cessation this isn't necessary for an instrument to be valid. It just has to be merely associated with the exposure. This is actually the only condition we can test formally and verify, as it makes no causal assumptions. We can check whether cigarette pricing and smoking cessation are association using F-statistics, r2 or the risk difference.
+As we mentioned above, we will be using cigarette pricing as an instrument for the exposure. The first condition for a valid instrumental variable is that is has to be associated with the exposure. Our rationale here is that higher cigarette prices act as a financial incentive for people to quit smoking. Even though we are assuming that cigarette pricing \emph{causes} smoking cessation, this isn't necessary for an instrument to be valid. It just has to be merely associated with the exposure. This is actually the only condition we can test formally and verify, as it makes no causal assumptions. We can check whether cigarette pricing and smoking cessation are associated using F-statistics, r2, or the risk difference.
 
-We will start by examining the distribution of cigarette prices at each participant's state of residence in 1982 and create a binary variable for cigarette pricing.
+We will start by examining the distribution of cigarette prices in each participant's state of residence in 1982 and create a binary variable for cigarette pricing.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{perc\_25 =} \FunctionTok{quantile}\NormalTok{(price82, }\FloatTok{0.25}\NormalTok{), }
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{min =} \FunctionTok{min}\NormalTok{(price82), }
+            \AttributeTok{perc\_25 =} \FunctionTok{quantile}\NormalTok{(price82, }\FloatTok{0.25}\NormalTok{), }
             \AttributeTok{mean =} \FunctionTok{mean}\NormalTok{(price82), }
             \AttributeTok{median =} \FunctionTok{median}\NormalTok{(price82),}
-            \AttributeTok{perc\_75 =} \FunctionTok{quantile}\NormalTok{(price82, }\FloatTok{0.75}\NormalTok{))}
+            \AttributeTok{perc\_75 =} \FunctionTok{quantile}\NormalTok{(price82, }\FloatTok{0.75}\NormalTok{), }
+            \AttributeTok{max =} \FunctionTok{max}\NormalTok{(price82))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 1 x 4
-##   perc_25  mean median perc_75
-##     <dbl> <dbl>  <dbl>   <dbl>
-## 1    1.74  1.81   1.81    1.87
+## # A tibble: 1 x 6
+##     min perc_25  mean median perc_75   max
+##   <dbl>   <dbl> <dbl>  <dbl>   <dbl> <dbl>
+## 1  1.45    1.74  1.81   1.81    1.87  2.10
 \end{verbatim}
 
 \begin{Shaded}
@@ -11237,44 +11301,69 @@ We will start by examining the distribution of cigarette prices at each particip
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-315-1.pdf}
 
-Let's create a binary cigarette price variable using a cutoff of \$1.5 same as in \citet{hernanch16}.
+Let's create a binary cigarette price variable using a cutoff of \$1.50, as in \citet{hernanch16}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(forcats)}
 \NormalTok{nhefs\_iv }\OtherTok{\textless{}{-}}\NormalTok{ nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{highprice =} \FunctionTok{case\_when}\NormalTok{(}
-\NormalTok{    price82 }\SpecialCharTok{\textgreater{}=}\FloatTok{1.5} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }
-\NormalTok{    price82}\SpecialCharTok{\textless{}}\FloatTok{1.5} \SpecialCharTok{\textasciitilde{}} \DecValTok{0}\NormalTok{))}
+\NormalTok{    price82 }\SpecialCharTok{\textgreater{}=} \FloatTok{1.5} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }
+\NormalTok{    price82 }\SpecialCharTok{\textless{}} \FloatTok{1.5} \SpecialCharTok{\textasciitilde{}} \DecValTok{0}\NormalTok{))}
+
+\NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(seqn, price82, highprice) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{head}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 3
+##    seqn price82 highprice
+##   <dbl>   <dbl>     <dbl>
+## 1   233    1.74         1
+## 2   235    1.80         1
+## 3   244    1.51         1
+## 4   245    1.45         0
+## 5   252    1.80         1
+## 6   257    2.03         1
+\end{verbatim}
 
 We can get an F-value and p-value for the F-test with a simple analysis of variance:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(}\FunctionTok{aov}\NormalTok{(qsmk}\SpecialCharTok{\textasciitilde{}}\NormalTok{highprice, }\AttributeTok{data=}\NormalTok{nhefs\_iv))}
+\NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{aov}\NormalTok{(qsmk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice, }\AttributeTok{data =}\NormalTok{ .) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##               Df Sum Sq Mean Sq F value Pr(>F)
-## highprice      1   0.16  0.1568   0.822  0.365
-## Residuals   1474 281.04  0.1907
+## # A tibble: 2 x 6
+##   term         df   sumsq meansq statistic p.value
+##   <chr>     <dbl>   <dbl>  <dbl>     <dbl>   <dbl>
+## 1 highprice     1   0.157  0.157     0.822   0.365
+## 2 Residuals  1474 281.     0.191    NA      NA
 \end{verbatim}
 
-We see that there is a weak association between the instrument and smoking cessation. (p-value for the F-test\textgreater0.36 and the F value is rather small). Generally a good rule of thumb for a strong instrument is an F-value of at least 10, so here we have a fairly weak instrument.
+We see that there is a weak association between the instrument and smoking cessation. (p-value for the F-test \textgreater{} 0.36 and the F value, 0.822, is rather small). Generally a good rule of thumb for a strong instrument is an F-value of at least 10, so here we have a fairly weak instrument.
 
-Let's go ahead and estimate the risk difference anyway. The risk difference we are after is
+Let's go ahead and estimate the risk difference anyway. The risk difference we are after is:
+
 \[
 Pr[X=1|Z=1] -  Pr[X=1|Z=0]
 \]
-where X is the exposure of interest (smoking cessation) and Z is the instrument (high cigarette prices). A two-by-two table for the values of X and Z as well as probabilities in this format is given by
+
+where \(X\) is the exposure of interest (smoking cessation) and \(Z\) is the instrument (high cigarette prices). In other words, we want to estimate the different in the probability of quitting smoking (\(X = 1\)) in states with high cigarette prices (\(Z = 1\)) versus the probability of quitting smoking (\(X = 1\)) in states with low cigarette prices (\(Z = 0\)).
+
+A two-by-two table for the values of X and Z, as well as probabilities in this format, is given by:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{with}\NormalTok{(}\FunctionTok{table}\NormalTok{(qsmk, highprice)) }
+  \FunctionTok{select}\NormalTok{(qsmk, highprice) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{table}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -11288,8 +11377,9 @@ where X is the exposure of interest (smoking cessation) and Z is the instrument 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{with}\NormalTok{(}\FunctionTok{table}\NormalTok{(qsmk, highprice)) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{prop.table}\NormalTok{(}\AttributeTok{margin=}\DecValTok{2}\NormalTok{)}
+  \FunctionTok{select}\NormalTok{(qsmk, highprice) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{table}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{prop.table}\NormalTok{(}\AttributeTok{margin =} \DecValTok{2}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -11300,9 +11390,9 @@ where X is the exposure of interest (smoking cessation) and Z is the instrument 
 ##    1 0.1951220 0.2578397
 \end{verbatim}
 
-The risk difference is therefore 0.26 - 0.20 = 0.06, or 6\% higher probability of quitting among those living in states with high cigarette prices.
+The risk difference can be seen in the bottom row, which compares the probability of quitting smoking in states with and without high cigarette prices. The risk difference is therefore \(0.26 - 0.20 = 0.06\), or a 6\% higher probability of quitting among those living in states with high cigarette prices.
 
-The other conditions for valid instrument are actually not empirically verifiable. We have to assume that the instrument only causes the outcome though the exposure (this seems plausible), and that it shares no unmeasured common causes with the outcome (this is perhaps less of a safe assumption to make). We continue with our \emph{candidate} instrument nonetheless.
+The other conditions for a valid instrument are actually not empirically verifiable. We have to assume that the instrument only causes the outcome though the exposure (this seems plausible), and that it shares no unmeasured common causes with the outcome (this is perhaps less of a safe assumption to make, since state-level choices on smoking taxes might also be linked with other factors, like the political party in power in the state, which could itself be linked both to characteristics of people in the state and could also influence other health-related local laws). We continue with our \emph{candidate} instrument nonetheless, to provide an example of the mechanics of this type of analysis.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -11312,34 +11402,30 @@ The other conditions for valid instrument are actually not empirically verifiabl
   \textbf{What is the difference in sample averages for weight change across levels of the instrument?}
 \end{enumerate}
 
-Now let's assess the relationship between instrument and outcome. We will compare sample averages in weight change among those living in states with high prices compared to low prices and estimate the difference
+Now let's assess the relationship between instrument and outcome. We will compare sample averages in weight change among those living in states with high prices compared to low prices and estimate the difference:
 
 \[
 E[Y|Z=1] - E[Y|Z=0]
 \]
-where \(Y\) is the outcome of interest. We can test for a significant change in the sample means using a student's t-test.
+
+where \(Y\) is the outcome of interest (weight change) and \(Z\) is, again, the instrument---whether the person lived in a state with high cigarette prices. We can test for a significant change in the sample means using a student's t-test:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{t.test}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice, }\AttributeTok{data=}\NormalTok{nhefs\_iv)}
+\FunctionTok{t.test}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice, }\AttributeTok{data =}\NormalTok{ nhefs\_iv) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  wt82_71 by highprice
-## t = -0.10179, df = 41.644, p-value = 0.9194
-## alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
-## 95 percent confidence interval:
-##  -3.130588  2.830010
-## sample estimates:
-## mean in group 0 mean in group 1 
-##        2.535729        2.686018
+## # A tibble: 1 x 10
+##   estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high
+##      <dbl>     <dbl>     <dbl>     <dbl>   <dbl>     <dbl>    <dbl>     <dbl>
+## 1   -0.150      2.54      2.69    -0.102   0.919      41.6    -3.13      2.83
+## # ... with 2 more variables: method <chr>, alternative <chr>
 \end{verbatim}
 
-We see that the difference between the two means is small and not statistically significant. The actual difference between those with \texttt{highprice=1} and \texttt{highprice=0} is \texttt{2.69\ -\ 2.54\ =\ 0.15}, or in other words living in a state with high cigarette prices is associates with an increase in weight gain of 0.15 kg. This seems a much smaller estimate than the one we generated for smoking cessation using linear regression. This is not the IV estimand, however, only one component of it.
+We see that the difference between the two means is small and not statistically significant. The actual difference between those with \texttt{highprice\ =\ 1} and \texttt{highprice\ =\ 0} is \texttt{2.69\ -\ 2.54\ =\ 0.15}, or, in other words, living in a state with high cigarette prices is associated with an average weight gain of 0.15 kg. This seems a much smaller estimate than the one we generated for smoking cessation using linear regression. This is not the IV estimand, however, only one component of it.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -11349,38 +11435,54 @@ We see that the difference between the two means is small and not statistically 
   \textbf{Estimate the IV estimand the above quantities.}
 \end{enumerate}
 
-The actual IV estimand is the following quantity
+The actual IV estimand is the following quantity:
 
 \[
 \frac{E[Y|Z=1] - E[Y|Z=0]}{E[X|Z=1] - E[X|Z=0]}
 \]
-If the conditions for a valid instrument highlighted above (and the additional condition of homogeneity) are met then this quantity equals the average causal effect of exposure in the population (\(E[Y^{x=1} - Y^{x=0}]\)).
 
-We've actually estimated the numerator and denominator for this quantity in exercises (2) and (1) respectively. We can go ahead and get the estimate for it
+Notice that now we're bringing in not only the association between the instrument
+and the outcome, but also that between the instrument and the exposure (which
+helps account for how strong or weak the instrument is in influencing the
+exposure). In the case of a perfect instrument (like the coin flip in the
+randomized trial example), the denominator here would equal 1, since
+everyone with heads would be exposed to the treatment (\(E[X|Z=1] = 1\)) and
+everyone with tails would be kept unexposed as a control (\(E[X|Z=0] = 0\)).
+Therefore, you can see that in the edge case of a perfect instrument, as in
+a randomized control trial, the estimand reverts to the simple calculation
+you'd make with data from a randomized trial (\(E[Y|Z=1] - E[Y|Z=0]\), or the
+expected value of the outcome in those who were treated versus those who were
+controls).
+In the case of imperfect instruments, if the conditions for a valid instrument highlighted above (and the additional condition of homogeneity) are met, the prior equation gives you the average causal effect of exposure in the population (\(E[Y^{x=1} - Y^{x=0}]\)).
+
+We've actually estimated the numerator and denominator for this quantity in exercises (2) and (1) respectively. We can go ahead and get the estimate for it:
 
 \[
 \frac{E[Y|Z=1] - E[Y|Z=0]}{E[X|Z=1] - E[X|Z=0]}=\frac{0.15}{0.06} = 2.5 
 \]
+
 The IV estimate of 2.5 kg is actually much closer to the unadjusted estimate we got from the linear regression model (which was 2.7 kg).
 
 \hypertarget{the-two-stage-least-squares-estimator}{%
 \section{The two-stage-least-squares estimator}\label{the-two-stage-least-squares-estimator}}
 
-Instead of the algebraic estimation of the IV estimate we can actually use models to generate this. This involves the \emph{two-stage-least-squares estimator}, which is an extension of ordinary least squares. The approach involves fitting a model for the exposure as a function of the instrument,
+Instead of the algebraic estimation of the IV estimate, we can actually use models to generate this estimate. This involves the \emph{two-stage-least-squares estimator}, which is an extension of ordinary least squares. The approach involves fitting a model for the exposure as a function of the instrument,
 
 \[
 E[X|Z] = \alpha_{0} + \alpha_{1}Z
 \]
-and use predicted values from this model (\(\hat{E}[X|Z]\)) as predictors in a second outcome model:
+
+and then uses predicted values from this model (\(\hat{E}[X|Z]\)) as predictors in a second outcome model:
 
 \[
 E[Y|Z] = \beta_{0} + \beta_{1}\hat{E}[X|Z]
 \]
+
 Let's start by fitting a logistic model for the exposure with the instrument as the only predictor and generate predicted values:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{modX\_Z}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(qsmk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice, }\AttributeTok{family=}\NormalTok{binomial, }\AttributeTok{data=}\NormalTok{nhefs\_iv)}
+\NormalTok{modX\_Z }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(qsmk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice, }\AttributeTok{family =}\NormalTok{ binomial, }\AttributeTok{data =}\NormalTok{ nhefs\_iv)}
 
 \NormalTok{modX\_Z }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{()}
@@ -11397,21 +11499,21 @@ Let's start by fitting a logistic model for the exposure with the instrument as 
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{nhefs\_iv}\OtherTok{\textless{}{-}}\NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ehat=}\FunctionTok{predict}\NormalTok{(modX\_Z, }\AttributeTok{type=}\StringTok{\textquotesingle{}response\textquotesingle{}}\NormalTok{))}
+\NormalTok{nhefs\_iv }\OtherTok{\textless{}{-}}\NormalTok{ nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ehat =} \FunctionTok{predict}\NormalTok{(modX\_Z, }\AttributeTok{type =}\StringTok{\textquotesingle{}response\textquotesingle{}}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
-We then use the predicted values as a predictor in an outcome model
+We then use the predicted values as a predictor in an outcome model:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{modY\_Z}\OtherTok{\textless{}{-}}\FunctionTok{glm}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ehat, }\AttributeTok{data=}\NormalTok{nhefs\_iv)}
+\NormalTok{modY\_Z }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ehat, }\AttributeTok{data =}\NormalTok{ nhefs\_iv)}
 
 
 \NormalTok{modY\_Z }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{tidy}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(term}\SpecialCharTok{==}\StringTok{\textquotesingle{}ehat\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{\textquotesingle{}ehat\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{effect =}\NormalTok{ estimate,}
          \AttributeTok{low\_effect =}\NormalTok{ estimate }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error, }
          \AttributeTok{high\_effect =}\NormalTok{ estimate }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ std.error) }\SpecialCharTok{\%\textgreater{}\%} 
@@ -11426,17 +11528,20 @@ We then use the predicted values as a predictor in an outcome model
 ## 1 ehat    2.40      -36.9        41.7
 \end{verbatim}
 
-The parameter coefficient for \texttt{ehat} is actually the IV estimate from above and we see that they are very close. The confidence intervals, however, for this estimate are very wide owing primarily to the weakness of the instrument we are using.
+The parameter coefficient for \texttt{ehat} is actually the IV estimate from above, and we see that they are very close. The confidence intervals, however, for this estimate are very wide, owing primarily to the weakness of the instrument we are using.
 
-The \texttt{sem} package in R, actually allows us to apply the two-stage-least-squares estimator using a single function (\texttt{tsls}) as opposed to fitting separate models.
+The \texttt{sem} package in R actually allows us to apply the two-stage-least-squares estimator using a single function (\texttt{tsls}) as opposed to fitting separate models.
+In this function call, we first give the formula for the relationship between
+the outcome and the exposure (\texttt{wt82\_71\ \textasciitilde{}\ qsmk}), and then the right hand of the formula for
+the instrumental variable (\texttt{\textasciitilde{}\ highprice}):
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(sem)}
-\NormalTok{IV\_estimatemod}\OtherTok{\textless{}{-}}\FunctionTok{tsls}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ qsmk, }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice, }\AttributeTok{data =}\NormalTok{ nhefs\_iv)}
+\NormalTok{IV\_estimatemod }\OtherTok{\textless{}{-}} \FunctionTok{tsls}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ qsmk, }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice, }\AttributeTok{data =}\NormalTok{ nhefs\_iv)}
 
 \NormalTok{IV\_estimatemod }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{summary}\NormalTok{()}
+  \FunctionTok{summary}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -11486,14 +11591,18 @@ In our applied example above, we used a rather weak instrument and also assumed 
   \textbf{Estimate the IV estimand accounting for measured covariates. How do the results compare to above?}
 \end{enumerate}
 
-We can apply the tsls estimator accounting for covariates in a similar fashion to the way we include them in a regression model. Note that here we will include these baseline covariates in both the exposure and outcome models
+We can apply the tsls estimator while accounting for covariates in a similar fashion to the way we include them in a regression model. Note that here we will include these baseline covariates in both the exposure and outcome models:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{IV\_estimatemod2}\OtherTok{\textless{}{-}}\FunctionTok{tsls}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ qsmk}\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ race }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ smokeintensity }\SpecialCharTok{+}\NormalTok{ smokeyrs }\SpecialCharTok{+}\NormalTok{ wt71, }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice}\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ race }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+}\NormalTok{ smokeintensity }\SpecialCharTok{+}\NormalTok{ smokeyrs }\SpecialCharTok{+}\NormalTok{ wt71, }\AttributeTok{data =}\NormalTok{ nhefs\_iv)}
+\NormalTok{IV\_estimatemod2 }\OtherTok{\textless{}{-}} \FunctionTok{tsls}\NormalTok{(wt82\_71 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ qsmk }\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ race }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+} 
+\NormalTok{                          smokeintensity }\SpecialCharTok{+}\NormalTok{ smokeyrs }\SpecialCharTok{+}\NormalTok{ wt71, }
+                        \SpecialCharTok{\textasciitilde{}}\NormalTok{ highprice }\SpecialCharTok{+}\NormalTok{ sex }\SpecialCharTok{+}\NormalTok{ race }\SpecialCharTok{+}\NormalTok{ age }\SpecialCharTok{+} 
+\NormalTok{                          smokeintensity }\SpecialCharTok{+}\NormalTok{ smokeyrs }\SpecialCharTok{+}\NormalTok{ wt71, }
+                        \AttributeTok{data =}\NormalTok{ nhefs\_iv)}
 
 \NormalTok{IV\_estimatemod2 }\SpecialCharTok{\%\textgreater{}\%}
-\FunctionTok{summary}\NormalTok{()}
+  \FunctionTok{summary}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -11525,7 +11634,7 @@ We can apply the tsls estimator accounting for covariates in a similar fashion t
 ## Residual standard error: 7.6124334 on 1468 degrees of freedom
 \end{verbatim}
 
-We now see that the parameter coefficient for smoking cessation is attenuated compared to the results from above. Remeber that covariate adjustment actually made the coefficient larger in the traditional linear regression. One potential explanation is that smoking cessation does not have the effect we thought it did and our linear model estimates we fitted at the beginning suffer from unmeasured confounding. A more likely explanation is a biased IV analysis. If our tsls model is misspecified leading to bias the weakness of the instrument actually amplifies this bias. A biased IV model (due to either a misspecified model or invalid instrument) combined with a weak instrument could be worse than unmeasured confounding in a traditional outcome regression analysis. A stronger instrument would be a much better option for us, \emph{if} such an instrument exists.
+We now see that the parameter coefficient for smoking cessation is attenuated compared to the results from above. Remember that covariate adjustment actually made the coefficient larger in the traditional linear regression. One potential explanation is that smoking cessation does not have the effect we thought it did and our linear model estimates we fitted at the beginning suffer from unmeasured confounding. A more likely explanation is a biased IV analysis. If our tsls model is misspecified, leading to bias, the weakness of the instrument actually amplifies this bias. A biased IV model (due to either a misspecified model or invalid instrument) combined with a weak instrument could be worse than unmeasured confounding in a traditional outcome regression analysis. A stronger instrument would be a much better option for us, \emph{if} such an instrument exists.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -11570,16 +11679,16 @@ We see that the majority of prices increase (although some actually decrease) in
 \begin{Highlighting}[]
 \NormalTok{nhefs\_iv }\OtherTok{\textless{}{-}}\NormalTok{ nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{highincrease =} \FunctionTok{case\_when}\NormalTok{(}
-\NormalTok{    price71\_82 }\SpecialCharTok{\textgreater{}=}\FloatTok{0.2} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }
-\NormalTok{    price71\_82}\SpecialCharTok{\textless{}}\FloatTok{0.2} \SpecialCharTok{\textasciitilde{}} \DecValTok{0}\NormalTok{))}
+\NormalTok{    price71\_82 }\SpecialCharTok{\textgreater{}=} \FloatTok{0.2} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{, }
+\NormalTok{    price71\_82 }\SpecialCharTok{\textless{}} \FloatTok{0.2} \SpecialCharTok{\textasciitilde{}} \DecValTok{0}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
-We can check the strenght of ths instrument based on its association with smoking cessation as we did above
+We can check the strength of this instrument based on its association with smoking cessation, as we did above:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(}\FunctionTok{aov}\NormalTok{(qsmk}\SpecialCharTok{\textasciitilde{}}\NormalTok{highincrease, }\AttributeTok{data=}\NormalTok{nhefs\_iv))}
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{aov}\NormalTok{(qsmk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ highincrease, }\AttributeTok{data =}\NormalTok{ nhefs\_iv))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -11592,7 +11701,8 @@ We can check the strenght of ths instrument based on its association with smokin
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{with}\NormalTok{(}\FunctionTok{table}\NormalTok{(qsmk, highincrease)) }
+  \FunctionTok{select}\NormalTok{(qsmk, highincrease) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{table}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -11606,7 +11716,8 @@ We can check the strenght of ths instrument based on its association with smokin
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{nhefs\_iv }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{with}\NormalTok{(}\FunctionTok{table}\NormalTok{(qsmk, highincrease)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(qsmk, highincrease) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{table}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{prop.table}\NormalTok{(}\AttributeTok{margin=}\DecValTok{2}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -11618,18 +11729,20 @@ We can check the strenght of ths instrument based on its association with smokin
 ##    1 0.2664474 0.2534130
 \end{verbatim}
 
-It actually turns out this is a weaker instrument that before and will likely not help us improve our results. We can try different cutoffs for either the absolute price or price difference (or some of the tax related variables in the data) in search of a better instrument, but a strong (and valid) instrument will not always be available. In many observational studies it is actually more likely that it doesn't exist. In this particular example a weak instrument provided similar results with an unadjusted analysis (albeit with very wide confidence intervals) and the covariate adjusted traditional outcome regression analysis results were actually greater in magnitude compared to the unadjusted or IV results. In this particular case use the IV approach did not necessarily add much to our quest in quantifying the potential effect of smoking cessation on weight change. However, in other settings (such as genetic epidemiology studies relying on genes as instruments for an exposure of interest or some pharmacoepidemiology examples relying on physician preferences as instruments for different treatment options) they have been very useful. Instrumental variables also likely have an important role in natural/quasi-experimental desings where the natural experiment or intervention can act as a good instrument for an alternative exposure of interest. This is an area where IV analysis probably remains underutilized.
+It actually turns out this is a weaker instrument that before and will likely not help us improve our results. We can try different cutoffs for either the absolute price or price difference (or some of the tax related variables in the data) in search of a better instrument, but a strong (and valid) instrument will not always be available. In many observational studies it is actually more likely that it doesn't exist.
 
-In any case IV analysis can be a useful tool in epidemiology, relying on different assumptions than more traditional approaches. However, instrumental variables should be used in light of their own limitations.
+In this particular example a weak instrument provided similar results with an unadjusted analysis (albeit with very wide confidence intervals), and the covariate adjusted traditional outcome regression analysis results were actually greater in magnitude compared to the unadjusted or IV results. In this particular case, using the IV approach did not necessarily add much to our quest to quantify the potential effect of smoking cessation on weight change. However, in other settings (such as genetic epidemiology studies relying on genes as instruments for an exposure of interest or some pharmacoepidemiology examples relying on physician preferences as instruments for different treatment options), they have been very useful. Instrumental variables also likely have an important role in natural/quasi-experimental desings where the natural experiment or intervention can act as a good instrument for an alternative exposure of interest. This is an area where IV analysis probably remains underutilized.
+
+In any case, IV analysis can be a useful tool in epidemiology, relying on different assumptions than more traditional approaches. However, instrumental variables should be used in light of their own limitations.
 
 \hypertarget{the-condition-of-homogenetity-or-alternative-condition-of-monotonictiy}{%
 \section{The condition of homogenetity (or alternative condition of monotonictiy)}\label{the-condition-of-homogenetity-or-alternative-condition-of-monotonictiy}}
 
-We highlighted three conditions for valid instrument above and mentioned a required fourth condition, that of homogeneity, which is also required in order to estimate the average causal effect of exposure in the population. In the absence of this condition we can only actually estimate bounds for the causal effect, which may be too wide and uninformative. These bounds will come with their own uncertainty and confidence intervals (CI for lower bound and upper bound respectively). Most researchers avoid estimating bounds for this reason and instead rely on the assumption of homogeneity in order to generate point estimates for the causal effects rather than bounds.
+We highlighted three conditions for valid instrument above and mentioned a required fourth condition, that of homogeneity, which is also required in order to estimate the average causal effect of exposure in the population. In the absence of this condition, we can only actually estimate bounds for the causal effect, which may be too wide and uninformative. These bounds will come with their own uncertainty and confidence intervals (CI for lower bound and upper bound respectively). Most researchers avoid estimating bounds for this reason and instead rely on the assumption of homogeneity in order to generate point estimates for the causal effects rather than bounds.
 
-\citet{hernanch16} outlines the homogeneity condition in different ways it has been defined in the literature and what has to hold in each case for the condition to be true. Each definition can vary from being highly unlikely to hold in most cases, not intuitive, and mostly unverifiable (similar to the other 2 of 3 conditions above).
+\citet{hernanch16} outlines the homogeneity condition in terms of different ways it has been defined in the literature and what has to hold in each case for the condition to be true. Each definition can vary from being highly unlikely to hold in most cases, not intuitive, and mostly unverifiable (similar to the other 2 of 3 conditions above).
 
-Given these limitations of the homogeneity conditions, researchers often rely on an alternative condition that of monotonicity. The monotonicity condition stipulates that the effect (or association) between instrument and exposure be monotonous, or in other words the presence of the instrument can only affect the propensity of exposure in only one direction or at the very least not change it on the individual level. In other words if we have an instrument \(Z\) with a positive association with exposure \(X\) then \(Z=1\) can only increase or at the very least not change the probability of exposure compared to \(Z=0\) in any given individual. If we have an instrument \(Z\) with a negative association with exposure \(X\) then \(Z=1\) can only decrease or at the very least not change the probability of exposure compared to \(Z=0\) in any given individual. If this assumption holds then we can estimate the average causal effect of exposure \(X\) using instrument \(Z\), but not in the whole population. The effect we are estimating is the effect in the \emph{compliers}, which can be a vague subset of the population. Furthermore, the monotonicity assumption does not translate well in the case of continuous exposures, as would be the case in most environmental epidemiology studies. See more details in \citet{hernanch16}.
+Given these limitations of the homogeneity conditions, researchers often rely on an alternative condition, that of monotonicity. The monotonicity condition stipulates that the effect (or association) between instrument and exposure be monotonous, i.e., that the presence of the instrument can only affect the propensity of exposure in one direction or at the very least not change it on the individual level. In other words, if we have an instrument \(Z\) with a positive association with exposure \(X\) then \(Z=1\) can only increase or at the very least not change the probability of exposure compared to \(Z=0\) in any given individual. If we have an instrument \(Z\) with a negative association with exposure \(X\) then \(Z=1\) can only decrease or at the very least not change the probability of exposure compared to \(Z=0\) in any given individual. In the example of the Fort Collins school lottery, we'd be assuming that winning the lottery would never \emph{decrease} your probability of attending that school, only increase it or keep it unchanged. If this assumption holds then we can estimate the average causal effect of exposure \(X\) using instrument \(Z\), but not in the whole population. The effect we are estimating is the effect in the \emph{compliers}, which can be a vague subset of the population (in the Fort Collins school example, those who \emph{complied} with their lottery results---went to the school if they won and didn't if they lost). Furthermore, the monotonicity assumption does not translate well in the case of continuous exposures, as would be the case in most environmental epidemiology studies. See more details in \citet{hernanch16}.
 
 Despite the inherent limitations of the above conditions, it is important that they are addressed at least through a discussion surrounding them when IV analysis is used.
 
