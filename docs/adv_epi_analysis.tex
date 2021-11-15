@@ -4,14 +4,17 @@
 %
 \documentclass[
 ]{book}
+\title{Advanced Epidemiological Analysis}
+\author{Andreas M. Neophytou and G. Brooke Anderson}
+\date{2021-11-15}
+
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amsmath}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
-  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -82,7 +85,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -110,15 +113,11 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
-\ifluatex
+\ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
-
-\title{Advanced Epidemiological Analysis}
-\author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-11-11}
 
 \begin{document}
 \maketitle
@@ -10964,8 +10963,8 @@ While this paper summarizes the NHEFS study and initial findings:
 \hypertarget{introduction-to-instrumental-variables}{%
 \section{Introduction to instrumental variables}\label{introduction-to-instrumental-variables}}
 
-We have been utilizing regression approaches to quantify relationships beteween
-a particular exposure and outcome of interest, ranging from temperature and mortality in a time seires setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models, we have typically been including covariates that were potential confounders of the relationship of interest (e.g.~seasonal trends in the time-series setting, age and sex in the cohort setting).
+We have been utilizing regression approaches to quantify relationships between
+a particular exposure and outcome of interest, ranging from temperature and mortality in a time-series setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models, we have typically been including covariates that were potential confounders of the relationship of interest (e.g.~seasonal trends in the time-series setting, age and sex in the cohort setting).
 
 Confounding adjustment is an essential step in ensuring (conditional) exchangeability between the exposed and unexposed. This allows us to essentially treat the exposed and unexposed as exchangeable and use them as proxies for what would have happened in the other group if their exposure status were reversed (potential outcome if the exposed had been unexposed and vice versa).
 
@@ -11240,7 +11239,7 @@ cigarette prices in an effort to discourage smoking (and gain some funds for the
 state). These elevated prices might reduce smoking rates in that state, and so
 influence the probable level of exposure. These elevated prices could influence
 the outcome variable (weight gain), but \emph{only} through how they affect the
-likihood of exposure. In theory, it seems like this could be a reasonable
+likelihood of exposure. In theory, it seems like this could be a reasonable
 instrument for smoking exposure, then, but you should always try to check to
 see if your data looks like it aligns with those assumptions.
 
@@ -11449,7 +11448,7 @@ randomized trial example), the denominator here would equal 1, since
 everyone with heads would be exposed to the treatment (\(E[X|Z=1] = 1\)) and
 everyone with tails would be kept unexposed as a control (\(E[X|Z=0] = 0\)).
 Therefore, you can see that in the edge case of a perfect instrument, as in
-a randomized control trial, the estimand reverts to the simple calculation
+a randomized control trial with 100\% compliance, the estimand reverts to the simple calculation
 you'd make with data from a randomized trial (\(E[Y|Z=1] - E[Y|Z=0]\), or the
 expected value of the outcome in those who were treated versus those who were
 controls).
@@ -11641,7 +11640,7 @@ We now see that the parameter coefficient for smoking cessation is attenuated co
 \setcounter{enumi}{1}
 \tightlist
 \item
-  \textbf{Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1971..}
+  \textbf{Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1982.}
 \end{enumerate}
 
 Rather than use cigarette pricing at participant's state of residence in 1982 as the candidate instrument let's try using difference in cigarette prices from 1971 to 1982, \texttt{price71\_82} in our data.

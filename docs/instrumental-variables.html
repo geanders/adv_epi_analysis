@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2021-11-11" />
+<meta name="date" content="2021-11-15" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -59,6 +59,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
@@ -282,8 +283,8 @@ div.csl-indent {
 </div>
 <div id="introduction-to-instrumental-variables" class="section level2" number="10.2">
 <h2><span class="header-section-number">10.2</span> Introduction to instrumental variables</h2>
-<p>We have been utilizing regression approaches to quantify relationships beteween
-a particular exposure and outcome of interest, ranging from temperature and mortality in a time seires setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models, we have typically been including covariates that were potential confounders of the relationship of interest (e.g. seasonal trends in the time-series setting, age and sex in the cohort setting).</p>
+<p>We have been utilizing regression approaches to quantify relationships between
+a particular exposure and outcome of interest, ranging from temperature and mortality in a time-series setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models, we have typically been including covariates that were potential confounders of the relationship of interest (e.g. seasonal trends in the time-series setting, age and sex in the cohort setting).</p>
 <p>Confounding adjustment is an essential step in ensuring (conditional) exchangeability between the exposed and unexposed. This allows us to essentially treat the exposed and unexposed as exchangeable and use them as proxies for what would have happened in the other group if their exposure status were reversed (potential outcome if the exposed had been unexposed and vice versa).</p>
 <p>In chapter 8 we explored some alternative methods to account for confounding other
 than adding confounders in a regression model. These approaches are especially
@@ -469,7 +470,7 @@ cigarette prices in an effort to discourage smoking (and gain some funds for the
 state). These elevated prices might reduce smoking rates in that state, and so
 influence the probable level of exposure. These elevated prices could influence
 the outcome variable (weight gain), but <em>only</em> through how they affect the
-likihood of exposure. In theory, it seems like this could be a reasonable
+likelihood of exposure. In theory, it seems like this could be a reasonable
 instrument for smoking exposure, then, but you should always try to check to
 see if your data looks like it aligns with those assumptions.</p>
 <p>We will therefore check to see if the conditions for a valid instrument highlighted above hold for cigarette pricing (to the extent possible), and estimate the standard IV estimand for the effect of exposure.</p>
@@ -583,7 +584,7 @@ randomized trial example), the denominator here would equal 1, since
 everyone with heads would be exposed to the treatment (<span class="math inline">\(E[X|Z=1] = 1\)</span>) and
 everyone with tails would be kept unexposed as a control (<span class="math inline">\(E[X|Z=0] = 0\)</span>).
 Therefore, you can see that in the edge case of a perfect instrument, as in
-a randomized control trial, the estimand reverts to the simple calculation
+a randomized control trial with 100% compliance, the estimand reverts to the simple calculation
 you’d make with data from a randomized trial (<span class="math inline">\(E[Y|Z=1] - E[Y|Z=0]\)</span>, or the
 expected value of the outcome in those who were treated versus those who were
 controls).
@@ -707,7 +708,7 @@ the instrumental variable (<code>~ highprice</code>):</p>
 ## Residual standard error: 7.6124334 on 1468 degrees of freedom</code></pre>
 <p>We now see that the parameter coefficient for smoking cessation is attenuated compared to the results from above. Remember that covariate adjustment actually made the coefficient larger in the traditional linear regression. One potential explanation is that smoking cessation does not have the effect we thought it did and our linear model estimates we fitted at the beginning suffer from unmeasured confounding. A more likely explanation is a biased IV analysis. If our tsls model is misspecified, leading to bias, the weakness of the instrument actually amplifies this bias. A biased IV model (due to either a misspecified model or invalid instrument) combined with a weak instrument could be worse than unmeasured confounding in a traditional outcome regression analysis. A stronger instrument would be a much better option for us, <em>if</em> such an instrument exists.</p>
 <ol start="2" style="list-style-type: decimal">
-<li><strong>Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1971..</strong></li>
+<li><strong>Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1982.</strong></li>
 </ol>
 <p>Rather than use cigarette pricing at participant’s state of residence in 1982 as the candidate instrument let’s try using difference in cigarette prices from 1971 to 1982, <code>price71_82</code> in our data.</p>
 <div class="sourceCode" id="cb641"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb641-1"><a href="instrumental-variables.html#cb641-1" aria-hidden="true" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
