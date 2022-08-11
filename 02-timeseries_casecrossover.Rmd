@@ -1,7 +1,7 @@
 # Time series / case-crossover studies 
 
 We'll start by exploring common characteristics in time series data for 
-environmental epidemiology. In the first have of the class, we're 
+environmental epidemiology. In the first half of the class, we're 
 focusing on a very specific type of study---one that leverages large-scale
 vital statistics data, collected at a regular time scale (e.g., daily), 
 combined with large-scale measurements of a climate-related exposure, with 
@@ -148,7 +148,7 @@ to conditions at other times that should otherwise (i.e., outside of the exposur
 of interest) be comparable. A case-crossover study could, for example, investigate
 the association between weather and car accidents by taking a set of car accidents
 and investigating how weather during the car accident compared to weather in the 
-same location the week before. 
+same location the week before.
 
 One choice in a case-crossover study design is how to select the control time 
 periods. Early studies tended to use a simple method for this---for example, taking
