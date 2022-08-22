@@ -4,17 +4,14 @@
 %
 \documentclass[
 ]{book}
-\title{Advanced Epidemiological Analysis}
-\author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2021-11-15}
-
-\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{iftex}
-\ifPDFTeX
+\usepackage{amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
+  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -85,7 +82,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -113,11 +110,15 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
-\ifLuaTeX
+\ifluatex
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
+
+\title{Advanced Epidemiological Analysis}
+\author{Andreas M. Neophytou and G. Brooke Anderson}
+\date{2022-08-21}
 
 \begin{document}
 \maketitle
@@ -329,35 +330,35 @@ Participation in in-course exercises & 10\\
 \hline
 Class & Date & Study type & Topic & Book sections\\
 \hline
-1 & August 30 & Time series & Time series / case-crossover study designs & 3.1--3.4\\
+1 & August 22 & Time series & Time series / case-crossover study designs & 3.1--3.4 (complete by Sept. 3)\\
 \hline
-2 & September 3 & Time series & Time series / case-crossover study designs & 3.5\\
+2 & August 29 & Time series & Time series / case-crossover study designs & 3.5\\
 \hline
-3 & September 13 & Time series & Generalized linear models & 4.1--4.2\\
+3 & September 12 & Time series & Generalized linear models & 4.1--4.2\\
 \hline
-4 & September 20 & Time series & Generalized linear models & 4.3\\
+4 & September 19 & Time series & Generalized linear models & 4.3\\
 \hline
-5 & September 27 & Time series & Natural experiments & 5.1--5.3\\
+5 & September 26 & Time series & Natural experiments & 5.1--5.3\\
 \hline
-6 & October 4 & Time series & Risk assessment & TBD\\
+6 & October 3 & Time series & Risk assessment & 6.1--6.3\\
 \hline
-7 & October 11 & Time series & Group midterm reports & None\\
+7 & October 10 & Time series & Group midterm reports & None\\
 \hline
-8 & October 18 & Cohort & Longitudinal cohort study designs & TBD\\
+8 & October 17 & Cohort & Longitudinal cohort study designs & TBD\\
 \hline
-9 & October 25 & Cohort & Longitudinal cohort study designs & TBD\\
+9 & October 24 & Cohort & Longitudinal cohort study designs & TBD\\
 \hline
-10 & November 1 & Cohort & Inverse probability weighting, Propensity scores & TBD\\
+10 & October 31 & Cohort & Inverse probability weighting, Propensity scores & TBD\\
 \hline
-11 & November 8 & Cohort & Mixed models & TBD\\
+11 & November 7 & Cohort & Mixed models & TBD\\
 \hline
-12 & November 15 & Cohort & Instrumental variables & TBD\\
+12 & November 14 & Cohort & Instrumental variables & TBD\\
 \hline
-13 & November 29 & Cohort & Counterfactuals / Causal inference & TBD\\
+13 & November 28 & Cohort & Counterfactuals / Causal inference & TBD\\
 \hline
-14 & December 6 & Cohort & Finals preperation & None\\
+14 & December 5 & Cohort & Finals preperation & None\\
 \hline
-15 & December 13 & Cohort & Finals presentation & None\\
+15 & December 13 & Cohort & Finals presentation (4:10-6:10 PM) & None\\
 \hline
 \end{tabular}
 
@@ -1247,7 +1248,7 @@ We did the same check for temperature:
 
 \begin{verbatim}
 ## # A tibble: 7 x 5
-##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.25)` `quantile(tmean, ~
+##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.25)` `quantile(tmean,~`
 ##   <ord>         <dbl>           <dbl>                   <dbl>              <dbl>
 ## 1 Sun            11.6            11.3                    7.48               15.9
 ## 2 Mon            11.6            11.4                    7.33               15.8
