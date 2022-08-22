@@ -142,21 +142,21 @@ library(knitr)
 
 tribble(
   ~ `Class`, ~ `Date`, ~ `Study type`, ~ `Topic`, ~ `Book sections`,
-  1, "August 30", "Time series", "Time series / case-crossover study designs", "3.1--3.4",
-  2, "September 3", "Time series", "Time series / case-crossover study designs", "3.5",
-  3, "September 13", "Time series", "Generalized linear models", "4.1--4.2",
-  4,  "September 20", "Time series", "Generalized linear models", "4.3",
-  5, "September 27", "Time series", "Natural experiments", "5.1--5.3",
-  6, "October 4", "Time series", "Risk assessment", "TBD",
-  7, "October 11", "Time series", "Group midterm reports", "None",
-  8, "October 18", "Cohort", "Longitudinal cohort study designs", "TBD",
-  9, "October 25", "Cohort", "Longitudinal cohort study designs", "TBD",
-  10, "November 1", "Cohort", "Inverse probability weighting, Propensity scores", "TBD",
-  11, "November 8", "Cohort", "Mixed models", "TBD",
-  12, "November 15", "Cohort", "Instrumental variables", "TBD",
-  13, "November 29", "Cohort", "Counterfactuals / Causal inference", "TBD",
-  14, "December 6", "Cohort", "Finals preperation", "None",
-  15, "December 13", "Cohort", "Finals presentation", "None"
+  1, "August 22", "Time series", "Time series / case-crossover study designs", "3.1--3.4 (complete by Sept. 3)",
+  2, "August 29", "Time series", "Time series / case-crossover study designs", "3.5",
+  3, "September 12", "Time series", "Generalized linear models", "4.1--4.2",
+  4,  "September 19", "Time series", "Generalized linear models", "4.3",
+  5, "September 26", "Time series", "Natural experiments", "5.1--5.3",
+  6, "October 3", "Time series", "Risk assessment", "6.1--6.3",
+  7, "October 10", "Time series", "Group midterm reports", "None",
+  8, "October 17", "Cohort", "Longitudinal cohort study designs", "TBD",
+  9, "October 24", "Cohort", "Longitudinal cohort study designs", "TBD",
+  10, "October 31", "Cohort", "Inverse probability weighting, Propensity scores", "TBD",
+  11, "November 7", "Cohort", "Mixed models", "TBD",
+  12, "November 14", "Cohort", "Instrumental variables", "TBD",
+  13, "November 28", "Cohort", "Counterfactuals / Causal inference", "TBD",
+  14, "December 5", "Cohort", "Finals preperation", "None",
+  15, "December 13", "Cohort", "Finals presentation (4:10-6:10 PM)", "None"
 ) %>% 
   kable()
 ```
