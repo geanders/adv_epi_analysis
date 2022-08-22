@@ -63,9 +63,9 @@ campus in MRB 312.
 It is expected that *before* coming to class, students will read the required
 papers for the week, as well as the online book sections assigned for the week.
 Reading assignments will be announced the week before each class session.
-Students should come to class prepared to prepared to do
-statistical programming (i.e., bring in a laptop with statistical software,
-download any datasets needed for the week).
+Students should come to class prepared to do statistical programming (i.e., 
+bring in a laptop with statistical software, download any datasets needed for 
+the week).
 - **In-class schedule:**
     + Topic overview: Each class will start with a brief overview of the week's
     topic. This will focus on the material covered in that week's assigned 
