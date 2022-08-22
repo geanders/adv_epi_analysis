@@ -78,8 +78,8 @@ knitr::include_graphics("../figures/readings.png")
 ```{r}
 tribble(
   ~ `Class Date`, ~ `Coursebook reading`, 
-  "August 30", "3.1--3.4", 
-  "September 3", "3.5", 
+  "August 22", "3.1--3.4 (complete by next week)", 
+  "August 29", "3.5", 
   "September 13", "4.1--4.2",
   "September 20", "4.3"
 ) %>% 
@@ -160,8 +160,3 @@ statistical programming (i.e., bring in a laptop with statistical software,
 download any datasets needed for the week).
 
 
-## Make-up Class
-
-We will hold a make-up class this Friday, **September 3, 10:00--11:40 AM**. 
-
-We will meet in the Environmental Health classroom (Room 120).
