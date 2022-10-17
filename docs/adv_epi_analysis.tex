@@ -4,14 +4,17 @@
 %
 \documentclass[
 ]{book}
+\title{Advanced Epidemiological Analysis}
+\author{Andreas M. Neophytou and G. Brooke Anderson}
+\date{2022-10-17}
+
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amsmath}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
-  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -82,7 +85,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -110,15 +113,11 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
-\ifluatex
+\ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
-
-\title{Advanced Epidemiological Analysis}
-\author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2022-08-21}
 
 \begin{document}
 \maketitle
@@ -344,15 +343,15 @@ Class & Date & Study type & Topic & Book sections\\
 \hline
 7 & October 10 & Time series & Group midterm reports & None\\
 \hline
-8 & October 17 & Cohort & Longitudinal cohort study designs & TBD\\
+8 & October 17 & Cohort & Longitudinal cohort study designs & 7.1--7.3\\
 \hline
-9 & October 24 & Cohort & Longitudinal cohort study designs & TBD\\
+9 & October 24 & Cohort & Longitudinal cohort study designs & 7.4\\
 \hline
-10 & October 31 & Cohort & Inverse probability weighting, Propensity scores & TBD\\
+10 & October 31 & Cohort & Inverse probability weighting, Propensity scores & 8.1--8.3\\
 \hline
-11 & November 7 & Cohort & Mixed models & TBD\\
+11 & November 7 & Cohort & Mixed models & 9.1--9.5\\
 \hline
-12 & November 14 & Cohort & Instrumental variables & TBD\\
+12 & November 14 & Cohort & Instrumental variables & 10.1--10.7\\
 \hline
 13 & November 28 & Cohort & Counterfactuals / Causal inference & TBD\\
 \hline
@@ -1248,7 +1247,7 @@ We did the same check for temperature:
 
 \begin{verbatim}
 ## # A tibble: 7 x 5
-##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.25)` `quantile(tmean,~`
+##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.25)` `quantile(tmean, ~
 ##   <ord>         <dbl>           <dbl>                   <dbl>              <dbl>
 ## 1 Sun            11.6            11.3                    7.48               15.9
 ## 2 Mon            11.6            11.4                    7.33               15.8
@@ -2919,8 +2918,7 @@ If you subtract the second from the first, you get:
 \[
 log(E(Y|T=15)) - log(E(Y|T=10)) = (5.3092 - 5.3092) - 0.0298(15 - 10) + 0.0007(15^2 - 10^2)
 \]
-which simplifies to (if the left part isn't clear, review the rules for how you can manipulate
-logarithms):
+which simplifies to (if the left part isn't clear, review the rules for how you can manipulate logarithms):
 
 \[
 log(\frac{E(Y|T=15)}{E(Y|T=10)}) = - 0.0298(5) + 0.0007(125) = -0.0615

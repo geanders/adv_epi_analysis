@@ -24,7 +24,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2022-08-21" />
+<meta name="date" content="2022-10-17" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -59,6 +59,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
@@ -875,8 +876,7 @@ If you subtract the second from the first, you get:</p>
 <p><span class="math display">\[
 log(E(Y|T=15)) - log(E(Y|T=10)) = (5.3092 - 5.3092) - 0.0298(15 - 10) + 0.0007(15^2 - 10^2)
 \]</span>
-which simplifies to (if the left part isn’t clear, review the rules for how you can manipulate
-logarithms):</p>
+which simplifies to (if the left part isn’t clear, review the rules for how you can manipulate logarithms):</p>
 <p><span class="math display">\[
 log(\frac{E(Y|T=15)}{E(Y|T=10)}) = - 0.0298(5) + 0.0007(125) = -0.0615
 \]</span>
