@@ -688,8 +688,7 @@ If you subtract the second from the first, you get:
 $$
 log(E(Y|T=15)) - log(E(Y|T=10)) = (5.3092 - 5.3092) - 0.0298(15 - 10) + 0.0007(15^2 - 10^2)
 $$
-which simplifies to (if the left part isn't clear, review the rules for how you can manipulate
-logarithms): 
+which simplifies to (if the left part isn't clear, review the rules for how you can manipulate logarithms): 
 
 $$
 log(\frac{E(Y|T=15)}{E(Y|T=10)}) = - 0.0298(5) + 0.0007(125) = -0.0615
