@@ -3,6 +3,7 @@ title: "ERHS 732. Advanced Epidemiological Analysis "
 subtitle: "Course Overview"
 author: "Brooke Anderson and Andreas Neophytou"
 output: beamer_presentation
+knit: rmarkdown::render
 ---
 
 ```{r setup, include=FALSE}
