@@ -4,21 +4,20 @@
 %
 \documentclass[
 ]{book}
-\title{Advanced Epidemiological Analysis}
-\author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2023-08-13}
-
 \usepackage{amsmath,amssymb}
-\usepackage{lmodern}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -37,14 +36,6 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  pdftitle={Advanced Epidemiological Analysis},
-  pdfauthor={Andreas M. Neophytou and G. Brooke Anderson},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -56,13 +47,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -70,7 +61,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -79,7 +70,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -118,6 +109,18 @@
 \fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Advanced Epidemiological Analysis},
+  pdfauthor={Andreas M. Neophytou and G. Brooke Anderson},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Advanced Epidemiological Analysis}
+\author{Andreas M. Neophytou and G. Brooke Anderson}
+\date{2024-08-18}
 
 \begin{document}
 \maketitle
@@ -126,8 +129,7 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
-\hypertarget{overview}{%
-\chapter{Overview}\label{overview}}
+\chapter{Overview}\label{overview}
 
 This is a the coursebook for the Colorado State University course ERHS 732,
 Advanced Epidemiological Analysis. This course provides the opportunity to
@@ -137,8 +139,7 @@ datasets from the environmental epidemiology literature.
 
 This book is in development over the Fall 2021 semester.
 
-\hypertarget{license}{%
-\section{License}\label{license}}
+\section{License}\label{license}
 
 This book is licensed under the \href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0 International
@@ -148,8 +149,7 @@ the book is under the \href{https://opensource.org/licenses/MIT}{MIT license}.
 Click on the \textbf{Next} button (or navigate using the links in the table of
 contents) to continue.
 
-\hypertarget{courseinfo}{%
-\chapter{Course information}\label{courseinfo}}
+\chapter{Course information}\label{courseinfo}
 
 This is a the coursebook for the Colorado State University course ERHS 732,
 Advanced Epidemiological Analysis. This course provides the opportunity to
@@ -168,8 +168,7 @@ and studies will be discussed and explored as a supplement.
 
 This class will utilize a variety of instructional formats, including short lectures, readings, topic specific examples from the substantive literature, discussion and directed group work on in-course coding exercises putting lecture and discussion content into practice. A variety of teaching modalities will be used, including group discussions, student directed discussions, and in-class group exercises. It is expected that before coming to class, students will read the required papers for the week, as well as any associated code included in the papers' supplemental materials. Students should come to class prepared to do statistical programming (i.e., bring a laptop with statistical software, download any datasets needed for the week etc). Participation is based on in-class coding exercises based on each week's topic. If a student misses a class, they will be expected to complete the in-course exercise outside of class to receive credit for participation in that exercise. Students will be required to do mid-term and final projects which will be presented in class and submitted as a written write-up describing the project.
 
-\hypertarget{course-learning-objectives}{%
-\section{Course learning objectives}\label{course-learning-objectives}}
+\section{Course learning objectives}\label{course-learning-objectives}
 
 The learning objectives for this proposed course complement core epidemiology
 and statistics courses required by the program and provide the opportunity for
@@ -217,14 +216,12 @@ Upon successful completion of this course students will be able to:
   data to answer an epidemiological research question. (\emph{Application})
 \end{enumerate}
 
-\hypertarget{meeting-time-and-place}{%
-\section{Meeting time and place}\label{meeting-time-and-place}}
+\section{Meeting time and place}\label{meeting-time-and-place}
 
 The class will meet on Mondays, 2:00--3:40 PM on the Colorado State University
 campus in MRB 312.
 
-\hypertarget{class-structure-and-expectations}{%
-\section{Class Structure and Expectations}\label{class-structure-and-expectations}}
+\section{Class Structure and Expectations}\label{class-structure-and-expectations}
 
 \begin{itemize}
 \tightlist
@@ -262,8 +259,7 @@ campus in MRB 312.
   \end{itemize}
 \end{itemize}
 
-\hypertarget{course-grading}{%
-\section{Course grading}\label{course-grading}}
+\section{Course grading}\label{course-grading}
 
 \begin{tabular}{l|r}
 \hline
@@ -322,8 +318,7 @@ Participation in in-course exercises & 10\\
   actively participate in discussions and group work during the class period.
 \end{itemize}
 
-\hypertarget{course-schedule}{%
-\section{Course Schedule}\label{course-schedule}}
+\section{Course Schedule}\label{course-schedule}
 
 \begin{tabular}{r|l|l|l|l}
 \hline
@@ -361,8 +356,7 @@ Class & Date & Study type & Topic & Book sections\\
 \hline
 \end{tabular}
 
-\hypertarget{textbooks-and-course-materials}{%
-\section{Textbooks and Course Materials}\label{textbooks-and-course-materials}}
+\section{Textbooks and Course Materials}\label{textbooks-and-course-materials}
 
 Readings for this course will focus on peer-reviewed literature that will be
 posted for the students in the class, as well as assigned reading from this
@@ -382,8 +376,7 @@ to students throughout the semester include:
   Francesca Dominici and Roger D. Peng, \emph{Statistical Methods for Environmental Epidemiology with R}, Springer, 2008. (Available online through the CSU library or in print through Springer.)
 \end{itemize}
 
-\hypertarget{prerequisites-and-preparation}{%
-\section{Prerequisites and Preparation}\label{prerequisites-and-preparation}}
+\section{Prerequisites and Preparation}\label{prerequisites-and-preparation}
 
 This course assumes experience in epidemiology and some experience
 programming in statistical programming (e.g., R, SAS) and statistics.
@@ -404,13 +397,11 @@ in any of these topics, we recommend starting with the papers and book chapters
 listed as general reviews of these topics in the chapters' supplemental reading
 sections.
 
-\hypertarget{academic-honesty}{%
-\section{Academic Honesty}\label{academic-honesty}}
+\section{Academic Honesty}\label{academic-honesty}
 
 Lack of knowledge of the academic honesty policy is not a reasonable explanation for a violation. For more on Colorado State University's policies on \href{https://catalog.colostate.edu/general-catalog/policies/students-responsibilities/\#academic-integrity}{Academic Integrity / Misconduct}.
 
-\hypertarget{time-series-case-crossover-studies}{%
-\chapter{Time series / case-crossover studies}\label{time-series-case-crossover-studies}}
+\chapter{Time series / case-crossover studies}\label{time-series-case-crossover-studies}
 
 We'll start by exploring common characteristics in time series data for
 environmental epidemiology. In the first half of the class, we're
@@ -429,8 +420,7 @@ concentration and daily risk of cardiovascular mortality. These statistical
 models---and the type of data used to fit them---will be the focus of the
 first part of this course.
 
-\hypertarget{readings}{%
-\section{Readings}\label{readings}}
+\section{Readings}\label{readings}
 
 The required readings for this chapter are:
 
@@ -507,8 +497,7 @@ interest) associated with the material in this chapter:
   available online through the CSU library.
 \end{itemize}
 
-\hypertarget{time-series-and-case-crossover-study-designs}{%
-\section{Time series and case-crossover study designs}\label{time-series-and-case-crossover-study-designs}}
+\section{Time series and case-crossover study designs}\label{time-series-and-case-crossover-study-designs}
 
 In the first half of this course, we'll take a deep look at how researchers
 can study how environmental exposures and health risk are linked using
@@ -636,8 +625,7 @@ Further, these designs are just two tools in a wider collection of study designs
 that can be used to explore the health effects of climate-related exposures.
 \citet{dominici2008statistical1} provides a nice overview of this broader set of designs.
 
-\hypertarget{time-series-data}{%
-\section{Time series data}\label{time-series-data}}
+\section{Time series data}\label{time-series-data}
 
 Let's explore the type of dataset that can be used for these
 time series--style studies in environmental epidemiology. In the examples
@@ -675,8 +663,8 @@ use the following code to read in these data, assuming you have saved them in a
 ##  8 1990-01-08  1990     1     8     8 Mon     235       46        57        76
 ##  9 1990-01-09  1990     1     9     9 Tue     250       48        54        96
 ## 10 1990-01-10  1990     1    10    10 Wed     214       44        46        62
-## # ... with 8,269 more rows, and 4 more variables: all_85plus <dbl>,
-## #   tmean <dbl>, tmin <dbl>, tmax <dbl>
+## # i 8,269 more rows
+## # i 4 more variables: all_85plus <dbl>, tmean <dbl>, tmin <dbl>, tmax <dbl>
 \end{verbatim}
 
 This example dataset shows many characteristics that are common for datasets for
@@ -727,8 +715,7 @@ week, month etc). General characteristics of time series data for environmental 
   statistical models to determine an exposure-response function for each outcome.
 \end{itemize}
 
-\hypertarget{exploratory-data-analysis}{%
-\section{Exploratory data analysis}\label{exploratory-data-analysis}}
+\section{Exploratory data analysis}\label{exploratory-data-analysis}
 
 When working with time series data, it is helpful to start with some exploratory
 data analysis. This type of time series data will often be secondary data---it is
@@ -1247,15 +1234,16 @@ We did the same check for temperature:
 
 \begin{verbatim}
 ## # A tibble: 7 x 5
-##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.25)` `quantile(tmean, ~
-##   <ord>         <dbl>           <dbl>                   <dbl>              <dbl>
-## 1 Sun            11.6            11.3                    7.48               15.9
-## 2 Mon            11.6            11.4                    7.33               15.8
-## 3 Tue            11.5            11.4                    7.48               15.9
-## 4 Wed            11.7            11.7                    7.64               16.0
-## 5 Thu            11.6            11.5                    7.57               16.0
-## 6 Fri            11.6            11.6                    7.41               15.8
-## 7 Sat            11.6            11.5                    7.53               15.9
+##   dow   `mean(tmean)` `median(tmean)` `quantile(tmean, 0.25)`
+##   <ord>         <dbl>           <dbl>                   <dbl>
+## 1 Sun            11.6            11.3                    7.48
+## 2 Mon            11.6            11.4                    7.33
+## 3 Tue            11.5            11.4                    7.48
+## 4 Wed            11.7            11.7                    7.64
+## 5 Thu            11.6            11.5                    7.57
+## 6 Fri            11.6            11.6                    7.41
+## 7 Sat            11.6            11.5                    7.53
+## # i 1 more variable: `quantile(tmean, 0.75)` <dbl>
 \end{verbatim}
 
 In this case, there does not seem to be much of a pattern by weekday.
@@ -1296,8 +1284,7 @@ you begin fitting a statistical model, and you should get in the habit of using
 it regularly in your research. \citet{dominici2008statistical5} provides another walk-through of exploring this type of data, including some more advanced tools
 for exploring autocorrelation and time patterns.
 
-\hypertarget{statistical-modeling-for-a-time-series-study}{%
-\section{Statistical modeling for a time series study}\label{statistical-modeling-for-a-time-series-study}}
+\section{Statistical modeling for a time series study}\label{statistical-modeling-for-a-time-series-study}
 
 Now that we've explored the data typical of a time series study in climate
 epidemiology, we'll look at how we can fit a statistical model to those
@@ -1525,10 +1512,6 @@ object:
 ## Call:
 ## glm(formula = all ~ tmean, data = obs)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -77.301  -20.365   -1.605   17.502  169.280  
-## 
 ## Coefficients:
 ##              Estimate Std. Error t value Pr(>|t|)    
 ## (Intercept) 187.64658    0.73557  255.10   <2e-16 ***
@@ -1613,19 +1596,19 @@ fit.
 
 \begin{verbatim}
 ## # A tibble: 8,279 x 8
-##      all tmean .fitted .resid .std.resid     .hat .sigma  .cooksd
-##    <dbl> <dbl>   <dbl>  <dbl>      <dbl>    <dbl>  <dbl>    <dbl>
-##  1   220  3.91    178.   41.6       1.46 0.000359   28.6 0.000380
-##  2   257  5.55    175.   82.5       2.89 0.000268   28.6 0.00112 
-##  3   245  4.39    177.   67.7       2.37 0.000330   28.6 0.000928
-##  4   226  5.43    175.   51.2       1.79 0.000274   28.6 0.000440
-##  5   236  6.87    171.   64.6       2.26 0.000211   28.6 0.000539
-##  6   235  9.23    166.   69.2       2.42 0.000144   28.6 0.000420
-##  7   231  6.69    172.   59.2       2.07 0.000218   28.6 0.000467
-##  8   235  7.96    169.   66.2       2.31 0.000174   28.6 0.000467
-##  9   250  7.27    170.   79.5       2.78 0.000197   28.6 0.000761
-## 10   214  9.51    165.   48.9       1.71 0.000139   28.6 0.000202
-## # ... with 8,269 more rows
+##      all tmean .fitted .resid     .hat .sigma  .cooksd .std.resid
+##    <dbl> <dbl>   <dbl>  <dbl>    <dbl>  <dbl>    <dbl>      <dbl>
+##  1   220  3.91    178.   41.6 0.000359   28.6 0.000380       1.46
+##  2   257  5.55    175.   82.5 0.000268   28.6 0.00112        2.89
+##  3   245  4.39    177.   67.7 0.000330   28.6 0.000928       2.37
+##  4   226  5.43    175.   51.2 0.000274   28.6 0.000440       1.79
+##  5   236  6.87    171.   64.6 0.000211   28.6 0.000539       2.26
+##  6   235  9.23    166.   69.2 0.000144   28.6 0.000420       2.42
+##  7   231  6.69    172.   59.2 0.000218   28.6 0.000467       2.07
+##  8   235  7.96    169.   66.2 0.000174   28.6 0.000467       2.31
+##  9   250  7.27    170.   79.5 0.000197   28.6 0.000761       2.78
+## 10   214  9.51    165.   48.9 0.000139   28.6 0.000202       1.71
+## # i 8,269 more rows
 \end{verbatim}
 
 One way you can use \texttt{augment} is to graph the fitted values for each observation
@@ -1698,10 +1681,6 @@ increase in temperature.
 ## 
 ## Call:
 ## glm(formula = all ~ tmean, family = "poisson", data = obs)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -6.5945  -1.6365  -0.1167   1.3652  12.2221  
 ## 
 ## Coefficients:
 ##               Estimate Std. Error z value Pr(>|z|)    
@@ -1837,10 +1816,6 @@ seasonal trends).
 ## Call:
 ## glm(formula = all ~ tmean, family = "quasipoisson", data = obs)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -6.5945  -1.6365  -0.1167   1.3652  12.2221  
-## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(>|t|)    
 ## (Intercept)  5.2445409  0.0044087  1189.6   <2e-16 ***
@@ -1949,10 +1924,6 @@ is the same for the two days.
 ## glm(formula = all ~ tmean + factor(dow, ordered = FALSE), family = "quasipoisson", 
 ##     data = obs)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -6.3211  -1.6476  -0.1313   1.3549  12.5286  
-## 
 ## Coefficients:
 ##                                   Estimate Std. Error t value Pr(>|t|)    
 ## (Intercept)                      5.2208502  0.0065277 799.804  < 2e-16 ***
@@ -2028,11 +1999,9 @@ tends to decrease as temperature increases. Do you think this is reasonable?
 What else might be important to build into the model based on your analysis
 up to this point?
 
-\hypertarget{generalized-linear-models}{%
-\chapter{Generalized linear models}\label{generalized-linear-models}}
+\chapter{Generalized linear models}\label{generalized-linear-models}
 
-\hypertarget{readings-1}{%
-\section{Readings}\label{readings-1}}
+\section{Readings}\label{readings-1}
 
 The readings for this chapter are:
 
@@ -2098,8 +2067,7 @@ interest) associated with the material in this chapter:
   available online through the CSU library.
 \end{itemize}
 
-\hypertarget{splines-in-glms}{%
-\section{Splines in GLMs}\label{splines-in-glms}}
+\section{Splines in GLMs}\label{splines-in-glms}
 
 We saw from the last model, with a linear term for mean daily temperature, that the
 suggested effect on mortality is a decrease in daily mortality counts with
@@ -2411,7 +2379,7 @@ data are included). The use of the dates is more robust:
 ##  8 1990-01-08     7
 ##  9 1990-01-09     8
 ## 10 1990-01-10     9
-## # ... with 8,269 more rows
+## # i 8,269 more rows
 \end{verbatim}
 
 As a next step, it is always useful to use exploratory data analysis to look
@@ -2981,8 +2949,7 @@ You can the \texttt{str} function to explore both the data and metadata stored i
 ##   ..$ : NULL
 ##   ..$ : chr [1:4] "1" "2" "3" "4"
 ##  - attr(*, "degree")= int 3
-##  - attr(*, "knots")= Named num [1:3] 7.47 11.47 15.93
-##   ..- attr(*, "names")= chr [1:3] "25%" "50%" "75%"
+##  - attr(*, "knots")= num [1:3] 7.47 11.47 15.93
 ##  - attr(*, "Boundary.knots")= num [1:2] -5.5 29.1
 ##  - attr(*, "intercept")= logi FALSE
 \end{verbatim}
@@ -3132,6 +3099,14 @@ mortality:
   \FunctionTok{filter}\NormalTok{(rr }\SpecialCharTok{==} \FunctionTok{min}\NormalTok{(rr))}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## Warning: Using one column matrices in `filter()` was deprecated in dplyr 1.1.0.
+## i Please use one dimensional logical vectors instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
+\end{verbatim}
 
 \begin{verbatim}
 ## # A tibble: 1 x 3
@@ -3396,8 +3371,7 @@ out how to interpret the results of the model that you fit. It is worth the effo
 as this is a very powerful tool when working with regression modeling in environmental
 epidemiology.
 
-\hypertarget{distributed-lags-and-cross-basis-functions-in-glms}{%
-\section{Distributed lags and cross-basis functions in GLMs}\label{distributed-lags-and-cross-basis-functions-in-glms}}
+\section{Distributed lags and cross-basis functions in GLMs}\label{distributed-lags-and-cross-basis-functions-in-glms}
 
 Next, let's explore how we can add into our model something that lets us look at
 delayed effects and the potential for mortality displacement. So far, we have only
@@ -4687,18 +4661,16 @@ RR = exp(0.107 + 0.085) = 1.21
 
 And so on, until we reach our last day of the heatwave with RR=1.39. There is a bidirectional relationship for this RR, as you can interpret this as the overall effect of the heatwave on mortality on the last day of the heatwave, or as the overall effect of temperature on the first day of the heatwave on mortality over the next 5 days.
 
-\hypertarget{natural-experiments}{%
-\chapter{Natural experiments}\label{natural-experiments}}
+\chapter{Natural experiments}\label{natural-experiments}
 
-\hypertarget{readings-2}{%
-\section{Readings}\label{readings-2}}
+\section{Readings}\label{readings-2}
 
 The readings for this chapter are:
 
 \begin{itemize}
 \tightlist
 \item
-  \citet{bernal2017interrupted} (on interrupted time series), with a correction to an equation in the paper at \url{https://academic.oup.com/ije/article/49/4/1414/5900884}. Example data and R code for the paper are available \href{https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/ije/49/4/10.1093_ije_dyaa118/1/dyaa118_supplementary_data.zip?Expires=1623897009\&Signature=BzYQrBg60cMKHYeDU~OIZYIFuRgEIPwQsWMjzON0dB~fL8y-8x4xdGIJQBBPgDxBIoUIGnjmShVf1jlVqzloo3IldAdVC78TZ~~XseYdJ9c590QRAR6m7mH~VbPe-fCnQSnZF0z2Qw9PZcSGITZeNr4YXPVY-~gtpgBeZiN0MpgEVBLVT5fYhhQBGbp0vxl1bKdUfNtF71fdVJrglkhSG8-M24A07LmAr8jThx4MQmSAzKCxA4VZLRE6To8zC3-rJlxyWiqrSTFsVQM2SN4R6UuxYoRsILRcIAr2sUfqgmaSlxBiYAf71PdGSrnBcXX3l0l7yuAftX5PYTwMKTyxOA__\&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA}{to download} through a Supplemental Appendix. (Also, note that there is a correction of one of the statistical model equations in this paper, given at the same web address.)
+  \citet{bernal2017interrupted} (on interrupted time series), with a correction to an equation in the paper at \url{https://academic.oup.com/ije/article/49/4/1414/5900884}. Example data and R code for the paper are available \href{https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/ije/49/4/10.1093_ije_dyaa118/1/dyaa118_supplementary_data.zip?Expires=1623897009&Signature=BzYQrBg60cMKHYeDU~OIZYIFuRgEIPwQsWMjzON0dB~fL8y-8x4xdGIJQBBPgDxBIoUIGnjmShVf1jlVqzloo3IldAdVC78TZ~~XseYdJ9c590QRAR6m7mH~VbPe-fCnQSnZF0z2Qw9PZcSGITZeNr4YXPVY-~gtpgBeZiN0MpgEVBLVT5fYhhQBGbp0vxl1bKdUfNtF71fdVJrglkhSG8-M24A07LmAr8jThx4MQmSAzKCxA4VZLRE6To8zC3-rJlxyWiqrSTFsVQM2SN4R6UuxYoRsILRcIAr2sUfqgmaSlxBiYAf71PdGSrnBcXX3l0l7yuAftX5PYTwMKTyxOA__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA}{to download} through a Supplemental Appendix. (Also, note that there is a correction of one of the statistical model equations in this paper, given at the same web address.)
 \item
   \citet{bor2014regression} A systematic review of regression discontinuity designs in epidemiological research
 \item
@@ -4736,8 +4708,7 @@ interest) associated with the material in this chapter:
   \citet{haber2021covid} An overview of potential study designs for assessing COVID-19 policies, including interrupted time series and difference-in-differences
 \end{itemize}
 
-\hypertarget{natural-experiments-1}{%
-\section{Natural experiments}\label{natural-experiments-1}}
+\section{Natural experiments}\label{natural-experiments-1}
 
 If you want to test a scientific hypothesis---like whether a vaccine has a certain success rate in preventing infection---the ideal way to do it is to run a randomized controlled experiment. The ``controlled'' part of the experiment indicates that there will be some study subjects that get the treatment and some that instead will serve as a comparison by not being treated---that is, they will be controls. The randomized part of the experiment is that you will divide the study subjects into groups of treated and controls randomly, rather than through some method that could introduce confounding (like by assigning all study subjects in one city to treatment and all in other city to control).
 
@@ -4761,8 +4732,7 @@ This study design belongs to a more general type of natural experiment study des
 
 For example, some medications are prescribed based on a threshold. For example, a doctor might describe when to start drug treatment for HIV based on a certain threshold of white blood cells measured in the patient. In this case, the white blood cell count is negatively associated with disease severity and so with many outcomes from the disease, so you might expect many outcomes to increase in risk as this count decreases. However, if the treatment is helpful in decreasing risk for those outcomes, then it may be that people with white blood cell counts that are just barely low enough to receive treatment have lower risk of those outcomes than people just barely too high in the counts to receive treatment. The people just barely above the threshold are likely pretty similar to those just barely below the threshold, and so a ``discontinuity'' in the risk of health outcomes that happens as you cross that threshold is likely caused by the treatment, which changes abruptly while other factors change minimally if at all. In the next section of this chapter, we will explore how you can use a GLM regression model in the context of interrupted time series (and by extension, for regression discontinuity study designs in general).
 
-\hypertarget{interrupted-time-series}{%
-\section{Interrupted time series}\label{interrupted-time-series}}
+\section{Interrupted time series}\label{interrupted-time-series}
 
 In this section, we'll take a closer look at interrupted time series study designs, focusing on how you can use statistical models to fit time series data and draw conclusions from these studies.
 
@@ -4833,7 +4803,7 @@ Once you read the data in, you should check it out:
 ##  8  2002     8   740     8       0 364277. 376296.
 ##  9  2002     9   720     9       0 364277. 374653.
 ## 10  2002    10   814    10       0 364277. 378486.
-## # ... with 49 more rows
+## # i 49 more rows
 \end{verbatim}
 
 In this case, it looks like the time-step for observations is by month. In other words, we have one measurement per month. The \texttt{time} variable has already been added---this gives us the month in the study period. The outcome variable of interest is \texttt{aces}, which gives the number of hospital admissions for acute coronary events (ACEs) in each month.
@@ -5420,11 +5390,9 @@ We see that the spline term has succesfully fitted a flexible function over time
 
 The RR for the smoking ban term is now null. A richly parameterized spline term with a lot of degrees of freedom is actually too felxible a function for this analysis. Because of all the flexibility we are affording it, it is absorbing the drop in ACE rates occurring immediately after the ban in the overall function for time. Although spline functions and their flexibility can be an invaluable tool in modeling complex exposure-respone relationships, in this case it actually masked the effect of interest.
 
-\hypertarget{estimating-health-impacts}{%
-\chapter{Estimating health impacts}\label{estimating-health-impacts}}
+\chapter{Estimating health impacts}\label{estimating-health-impacts}
 
-\hypertarget{readings-3}{%
-\section{Readings}\label{readings-3}}
+\section{Readings}\label{readings-3}
 
 The readings for this chapter are:
 
@@ -5456,8 +5424,7 @@ interest) associated with the material in this chapter:
   \citet{greenland1988conceptual} Definition and interpretation of attributable fractions
 \end{itemize}
 
-\hypertarget{attributable-risk-and-attributable-number}{%
-\section{Attributable risk and attributable number}\label{attributable-risk-and-attributable-number}}
+\section{Attributable risk and attributable number}\label{attributable-risk-and-attributable-number}
 
 So far, we have focused on estimating the relative risk of exposure on a health outcome. In some cases---where we can assume a linear relationship between the exposure and the log counts of the outcome---we were able to get a single measure of the relative risk per unit change of the exposure. In this case, the single measure of relative risk applies to a one-unit change anywhere along the range of exposure observed for the population. One common example is the association between outdoor particulate matter concentration and mortality, which is typically modeled using a linear association, resulting in a single estimate of relative risk per unit increase in the exposure (as a note, this ``unit'' can be any constant change in the exposure---often it will be selected to reflect a realistically important change in the exposure, for example, an increase of \(10 \mu g/m^3\) for \(PM_{2.5}\)).
 
@@ -5890,7 +5857,7 @@ Going back to the \texttt{attrdl} function, you can use the \texttt{tot\ =\ FALS
 ##  8 1990-01-08  7.96   235  0.546 
 ##  9 1990-01-09  7.27   250  0.114 
 ## 10 1990-01-10  9.51   214  1.84  
-## # ... with 8,269 more rows
+## # i 8,269 more rows
 \end{verbatim}
 
 With this, we can look at how the number of excess deaths vary by temperature. We can bin temperatures into broad bins and then plot the total number of attributable deaths for days with each temperature:
@@ -6009,8 +5976,7 @@ When we use this model that includes distributed lag effects of temperature, you
 
 These long lagged effects of temperature start to bring in some questions about whether the effect is specifically from the absolute value of the temperature, or whether they may be starting to pick up some impacts that are caused by seasonality, rather than absolute temperature. As you include lags up to a month or longer, it gets harder to separate the impact of temperature specifically from the impact of season. This question is very important when you start thinking about the impacts of climate change. With climate change, we expect in many places that winter days will, on average, have a higher temperature. If the mortality risk of cold is caused by the absolute temperature, this would result in fewer cold-related deaths. However, if there are other seasonal factors (that we don't expect to change, or at least not as much), then the rising winter temperatures would have less of a beneficial effect on winter mortality risk. There are a number of interesting papers that focus on this question and its implications for climate change projections \citep{kinney2015winter, ebi2015greater, hajat2016excess}. Also, there are some papers that go more deeply into how to estimate minimum mortality temperatures \citep{lee2017monte, tobias2017investigating}, as well as what baseline temperature makes a suitable threshold for estimating attributable risk for cold-related mortality \citep{arbuthnott2018cold}.
 
-\hypertarget{quantifying-potential-health-impacts-under-different-scenarios}{%
-\section{Quantifying potential health impacts under different scenarios}\label{quantifying-potential-health-impacts-under-different-scenarios}}
+\section{Quantifying potential health impacts under different scenarios}\label{quantifying-potential-health-impacts-under-different-scenarios}
 
 You can use measures of attributable risk and attributable number to communicate the estimated impacts of the exposure in the population that you studied. However, you can also use this same idea to investigate the potential health impacts of an exposure under different scenarios. The basic framework on these calculations was to compare one scenario (a baseline of no, limited, or ``safest'' exposure) to another scenario (the observed levels of exposure in the population). It's fairly straightforward to transfer this idea to broader applications---any case where you would like to compare one scenario of exposure to another scenario of exposure.
 
@@ -6022,11 +5988,9 @@ Second, you will not have the observed number of cases (for example, deaths) on 
 
 Finally, when you use the estimate exposure-response functions that are estimated with present-day data to project impacts in a future period, there are a number of reasons that the exposure-response function might not provide as good of an estimate of how temperature would impact health. Exposure-response functions for temperature are not the same in every city. Instead, there's clear evidence that, in cities with cooler climates, heat tends to start affecting risk at a lower temperature, and, in cities with hotter climates, cold tends to start affecting risk at a higher temperature. In other words, there's not an ``absolute'' shape, tied to specific temperature values, that can universally describe how mortality risk changes with temperature. Further, there is evidence that these exposure-response functions have changed in the same city over time. This all suggests that there's likely some influence from adaptation on these exposure-response functions. For example, a decreasing risk from heat over the 20th century likely was, at least in part, caused by adaptation through the invention and increased use of air conditioning, which reduces exposure to heat for at least some of the population at least some of the time. Other changes can come from changes in the population structure. For example, we know that temperature-related risk tends to be higher in older versus younger adults, so if a population is aging, that could change the shape of its overall exposure-response function, even without other changes. These questions are an area of continuing development for climate epidemiologists. Good discussions are available in a number of papers, including \citet{kinney2008approaches}, \citet{arbuthnott2016changes}, \citet{gosling2017adaptation}, and \citet{kinney2018temporal}.
 
-\hypertarget{longitudinal-cohort-study-designs}{%
-\chapter{Longitudinal cohort study designs}\label{longitudinal-cohort-study-designs}}
+\chapter{Longitudinal cohort study designs}\label{longitudinal-cohort-study-designs}
 
-\hypertarget{readings-4}{%
-\section{Readings}\label{readings-4}}
+\section{Readings}\label{readings-4}
 
 The required readings for this chapter are:
 
@@ -6081,8 +6045,7 @@ These articles provide some general reviews on our current understanding of the 
   \citet{zhou2021global} Review on global epidemiology of hypertension
 \end{itemize}
 
-\hypertarget{longitudinal-cohort-data}{%
-\section{Longitudinal cohort data}\label{longitudinal-cohort-data}}
+\section{Longitudinal cohort data}\label{longitudinal-cohort-data}
 
 Our example data for this chapter comes from the Framingham Heart Study. This is a cohort study that began in 1948 \citep{andersson201970}. At the time (and continuing today), heart disease was the most common cause of death in the US---a notable shift from earlier times, when infectious diseases played a larger role in mortality. While heart disease was an important cause of death, however, very little was known about risk factors for heart disease, outside of a little concerning the role of some infectious and nutritional diseases that affected the heart \citep{dawber1951epidemiological, andersson201970}. This study was designed to collect a group of people without evident cardiovascular disease (although this restriction was eased in practice) and track them over many years, to try to identify risk factors for developing cardiovascular disease. The study subjects were tracked over time, with data regularly collected on both risk factors and cardiovascular outcomes. The study was revolutionary in identifying some key risk factors for coronary heart disease, including elevated blood pressure, high cholesterol levels, being overweight, and smoking \citep{andersson201970}. It was also revolutionary in identifying high blood pressure as a risk for other cardiovascular outcomes, including stroke and congestive heart failure \citep{andersson201970}.
 
@@ -6115,13 +6078,13 @@ working directory:
 ##  8  10552     2     225    61  150   95          1      30  28.6        0      0
 ##  9  10552     2     232    67  183  109          1      20  30.2        0      0
 ## 10  11252     2     285    46  130   84          1      23  23.1        0      0
-## # ... with 11,617 more rows, and 28 more variables: HEARTRTE <dbl>,
-## #   GLUCOSE <dbl>, educ <dbl>, PREVCHD <dbl>, PREVAP <dbl>, PREVMI <dbl>,
-## #   PREVSTRK <dbl>, PREVHYP <dbl>, TIME <dbl>, PERIOD <dbl>, HDLC <dbl>,
-## #   LDLC <dbl>, DEATH <dbl>, ANGINA <dbl>, HOSPMI <dbl>, MI_FCHD <dbl>,
-## #   ANYCHD <dbl>, STROKE <dbl>, CVD <dbl>, HYPERTEN <dbl>, TIMEAP <dbl>,
-## #   TIMEMI <dbl>, TIMEMIFC <dbl>, TIMECHD <dbl>, TIMESTRK <dbl>, TIMECVD <dbl>,
-## #   TIMEDTH <dbl>, TIMEHYP <dbl>
+## # i 11,617 more rows
+## # i 28 more variables: HEARTRTE <dbl>, GLUCOSE <dbl>, educ <dbl>,
+## #   PREVCHD <dbl>, PREVAP <dbl>, PREVMI <dbl>, PREVSTRK <dbl>, PREVHYP <dbl>,
+## #   TIME <dbl>, PERIOD <dbl>, HDLC <dbl>, LDLC <dbl>, DEATH <dbl>,
+## #   ANGINA <dbl>, HOSPMI <dbl>, MI_FCHD <dbl>, ANYCHD <dbl>, STROKE <dbl>,
+## #   CVD <dbl>, HYPERTEN <dbl>, TIMEAP <dbl>, TIMEMI <dbl>, TIMEMIFC <dbl>,
+## #   TIMECHD <dbl>, TIMESTRK <dbl>, TIMECVD <dbl>, TIMEDTH <dbl>, ...
 \end{verbatim}
 
 You can find full details on the structure of this data in the codebook. At a broad scale, note that it includes several health outcomes related to heart disease, which the codebook calls ``events'' (\texttt{DEATH}: indicator of death from any cause; \texttt{ANYCHD}: indicator of one of several types of events related to coronary heart disease; \texttt{HOSPMI}: Hopitalization for myocardial infarction {[}heart attack{]}, etc.). The data also includes a number of risk factors that the study researchers hypothesized might be linked to cardiovascular disease (\texttt{CURSMOKE}: if the study subject is currently a smoker; \texttt{TOTCHOL}: serum total cholesterol; \texttt{SYSBP}, \texttt{DIABP}: measures of the systolic and diastolic blood pressure, respectively; \texttt{BMI}: Body Mass Index; etc.). Finally, there are some characteristics of the study subject, like age (\texttt{AGE}) and sex (\texttt{SEX}), as well as some variables that are connected to either the time of the record or the time of certain events (or of censoring, if the event did not happen during follow-up).
@@ -6171,13 +6134,13 @@ the \texttt{tidyverse}):
 ##  8  10552     2     225    61  150   95          1      30  28.6        0      0
 ##  9  10552     2     232    67  183  109          1      20  30.2        0      0
 ## 10  11252     2     285    46  130   84          1      23  23.1        0      0
-## # ... with 11,617 more rows, and 28 more variables: heartrte <dbl>,
-## #   glucose <dbl>, educ <dbl>, prevchd <dbl>, prevap <dbl>, prevmi <dbl>,
-## #   prevstrk <dbl>, prevhyp <dbl>, time <dbl>, period <dbl>, hdlc <dbl>,
-## #   ldlc <dbl>, death <dbl>, angina <dbl>, hospmi <dbl>, mi_fchd <dbl>,
-## #   anychd <dbl>, stroke <dbl>, cvd <dbl>, hyperten <dbl>, timeap <dbl>,
-## #   timemi <dbl>, timemifc <dbl>, timechd <dbl>, timestrk <dbl>, timecvd <dbl>,
-## #   timedth <dbl>, timehyp <dbl>
+## # i 11,617 more rows
+## # i 28 more variables: heartrte <dbl>, glucose <dbl>, educ <dbl>,
+## #   prevchd <dbl>, prevap <dbl>, prevmi <dbl>, prevstrk <dbl>, prevhyp <dbl>,
+## #   time <dbl>, period <dbl>, hdlc <dbl>, ldlc <dbl>, death <dbl>,
+## #   angina <dbl>, hospmi <dbl>, mi_fchd <dbl>, anychd <dbl>, stroke <dbl>,
+## #   cvd <dbl>, hyperten <dbl>, timeap <dbl>, timemi <dbl>, timemifc <dbl>,
+## #   timechd <dbl>, timestrk <dbl>, timecvd <dbl>, timedth <dbl>, ...
 \end{verbatim}
 
 To look a bit more closely at how this dataset works, let's take a look just at the observations of the oldest study subjects at the first examination, those 69 or older (\texttt{age\ \textgreater{}=\ 69}) at their first examination (\texttt{period\ ==\ 1}):
@@ -6220,7 +6183,7 @@ Once we have the IDs of these study subjects (\texttt{oldest\_subjects}), we can
 ##  8 7351212  2146      2     1    4396
 ##  9 7351212  4283      3     1    4396
 ## 10 7568367     0      1     1    1563
-## # ... with 14 more rows
+## # i 14 more rows
 \end{verbatim}
 
 We can explore this subset of the data by plotting, for each of these study subjects, the timing of each of their examination periods, whether they died during follow-up, and the timing of their death or censoring:
@@ -6424,11 +6387,6 @@ Another was to visualize this is with \texttt{gg\_miss\_var} from the \texttt{na
 \end{Highlighting}
 \end{Shaded}
 
-\begin{verbatim}
-## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-## use `guide = "none"` instead.
-\end{verbatim}
-
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-174-1.pdf}
 
 This output again focuses on missingness by column in the data, helping you identify columns where we might not have many non-missing observations.
@@ -6449,11 +6407,6 @@ example, you could see if missingness varies by the period of the observation:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{verbatim}
-## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-## use `guide = "none"` instead.
-\end{verbatim}
-
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-175-1.pdf}
 
 You may also want to check if missingness varies with whether an observation
@@ -6464,11 +6417,6 @@ was associated with death of the study subject:
 \FunctionTok{gg\_miss\_var}\NormalTok{(fhs, }\AttributeTok{facet =}\NormalTok{ death)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-## use `guide = "none"` instead.
-\end{verbatim}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-176-1.pdf}
 
@@ -6546,7 +6494,7 @@ subject (this is what we mean by it being ``time-invariant'' in the data):
 ##  8  10552      1     1
 ##  9  10552      2     1
 ## 10  11252      1     0
-## # ... with 11,617 more rows
+## # i 11,617 more rows
 \end{verbatim}
 
 We need to think some about this convention of recording the data when we count
@@ -6558,7 +6506,7 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 \begin{Highlighting}[]
 \NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{slice}\NormalTok{(1L) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# The L after the one clarifies that this is an integer}
+  \FunctionTok{slice}\NormalTok{(}\DecValTok{1}\DataTypeTok{L}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# The L after the one clarifies that this is an integer}
   \FunctionTok{ungroup}\NormalTok{()}
 \NormalTok{fhs\_first}
 \end{Highlighting}
@@ -6578,13 +6526,13 @@ It is often useful to extract the first (and sometimes last) observation, in ord
 ##  8  12806     2     313    45  100     71        1      20  21.7        0      0
 ##  9  14367     1     260    52  142.    89        0       0  26.4        0      0
 ## 10  16365     1     225    43  162    107        1      30  23.6        0      0
-## # ... with 4,424 more rows, and 28 more variables: heartrte <dbl>,
-## #   glucose <dbl>, educ <dbl>, prevchd <dbl>, prevap <dbl>, prevmi <dbl>,
-## #   prevstrk <dbl>, prevhyp <dbl>, time <dbl>, period <dbl>, hdlc <dbl>,
-## #   ldlc <dbl>, death <dbl>, angina <dbl>, hospmi <dbl>, mi_fchd <dbl>,
-## #   anychd <dbl>, stroke <dbl>, cvd <dbl>, hyperten <dbl>, timeap <dbl>,
-## #   timemi <dbl>, timemifc <dbl>, timechd <dbl>, timestrk <dbl>, timecvd <dbl>,
-## #   timedth <dbl>, timehyp <dbl>
+## # i 4,424 more rows
+## # i 28 more variables: heartrte <dbl>, glucose <dbl>, educ <dbl>,
+## #   prevchd <dbl>, prevap <dbl>, prevmi <dbl>, prevstrk <dbl>, prevhyp <dbl>,
+## #   time <dbl>, period <dbl>, hdlc <dbl>, ldlc <dbl>, death <dbl>,
+## #   angina <dbl>, hospmi <dbl>, mi_fchd <dbl>, anychd <dbl>, stroke <dbl>,
+## #   cvd <dbl>, hyperten <dbl>, timeap <dbl>, timemi <dbl>, timemifc <dbl>,
+## #   timechd <dbl>, timestrk <dbl>, timecvd <dbl>, timedth <dbl>, ...
 \end{verbatim}
 
 Alternatively you can use the \texttt{slice\_head} function, which allows us to slice a designated number of rows beginning from the first observation. Because we are piping this in the \texttt{group\_by} function, we will be slicing rows beginning from the first observation for each \texttt{randid}:
@@ -6624,13 +6572,13 @@ We can similarly select the last observation for each participant:
 ##  8  12806     2     320    57   110    46        1      30  22.0        0      0
 ##  9  14367     1     280    64   168   100        0       0  25.7        0      0
 ## 10  16365     1     211    55   173   123        0       0  29.1        0      1
-## # ... with 4,424 more rows, and 28 more variables: heartrte <dbl>,
-## #   glucose <dbl>, educ <dbl>, prevchd <dbl>, prevap <dbl>, prevmi <dbl>,
-## #   prevstrk <dbl>, prevhyp <dbl>, time <dbl>, period <dbl>, hdlc <dbl>,
-## #   ldlc <dbl>, death <dbl>, angina <dbl>, hospmi <dbl>, mi_fchd <dbl>,
-## #   anychd <dbl>, stroke <dbl>, cvd <dbl>, hyperten <dbl>, timeap <dbl>,
-## #   timemi <dbl>, timemifc <dbl>, timechd <dbl>, timestrk <dbl>, timecvd <dbl>,
-## #   timedth <dbl>, timehyp <dbl>
+## # i 4,424 more rows
+## # i 28 more variables: heartrte <dbl>, glucose <dbl>, educ <dbl>,
+## #   prevchd <dbl>, prevap <dbl>, prevmi <dbl>, prevstrk <dbl>, prevhyp <dbl>,
+## #   time <dbl>, period <dbl>, hdlc <dbl>, ldlc <dbl>, death <dbl>,
+## #   angina <dbl>, hospmi <dbl>, mi_fchd <dbl>, anychd <dbl>, stroke <dbl>,
+## #   cvd <dbl>, hyperten <dbl>, timeap <dbl>, timemi <dbl>, timemifc <dbl>,
+## #   timechd <dbl>, timestrk <dbl>, timecvd <dbl>, timedth <dbl>, ...
 \end{verbatim}
 
 or using the \texttt{slice\_tail} function:
@@ -6708,13 +6656,13 @@ We can create a new age at death variable for those with \texttt{death\ =\ 1} us
 ##  8  12806     2     313    45  100     71        1      20  21.7        0      0
 ##  9  14367     1     260    52  142.    89        0       0  26.4        0      0
 ## 10  16365     1     225    43  162    107        1      30  23.6        0      0
-## # ... with 4,424 more rows, and 30 more variables: heartrte <dbl>,
-## #   glucose <dbl>, educ <dbl>, prevchd <dbl>, prevap <dbl>, prevmi <dbl>,
-## #   prevstrk <dbl>, prevhyp <dbl>, time <dbl>, period <dbl>, hdlc <dbl>,
-## #   ldlc <dbl>, death <dbl>, angina <dbl>, hospmi <dbl>, mi_fchd <dbl>,
-## #   anychd <dbl>, stroke <dbl>, cvd <dbl>, hyperten <dbl>, timeap <dbl>,
-## #   timemi <dbl>, timemifc <dbl>, timechd <dbl>, timestrk <dbl>, timecvd <dbl>,
-## #   timedth <dbl>, timehyp <dbl>, timedthy <dbl>, agedth <dbl>
+## # i 4,424 more rows
+## # i 30 more variables: heartrte <dbl>, glucose <dbl>, educ <dbl>,
+## #   prevchd <dbl>, prevap <dbl>, prevmi <dbl>, prevstrk <dbl>, prevhyp <dbl>,
+## #   time <dbl>, period <dbl>, hdlc <dbl>, ldlc <dbl>, death <dbl>,
+## #   angina <dbl>, hospmi <dbl>, mi_fchd <dbl>, anychd <dbl>, stroke <dbl>,
+## #   cvd <dbl>, hyperten <dbl>, timeap <dbl>, timemi <dbl>, timemifc <dbl>,
+## #   timechd <dbl>, timestrk <dbl>, timecvd <dbl>, timedth <dbl>, ...
 \end{verbatim}
 
 We can then get summary statistics on this new variable, filtering down to only the observations where death occurs during follow-up (this means that we're only calculating average age at death among those who died during follow-up---see the note at the end of this section related to that):
@@ -6820,7 +6768,7 @@ We will need to think about how to handle these variant values while we compare 
 ##  8  12806  22.0      0
 ##  9  14367  25.8      0
 ## 10  16365  26.7      0
-## # ... with 4,424 more rows
+## # i 4,424 more rows
 \end{verbatim}
 
 Now we can compare the distribution of these average BMIs among study subjects who did and did not have a hospitalization for MI during follow-up. A simple was is by creating some summaries:
@@ -6860,7 +6808,8 @@ We can also create a plot to help explore this question:
 \end{verbatim}
 
 \begin{verbatim}
-## Warning: Removed 44 rows containing non-finite values (stat_bin).
+## Warning: Removed 44 rows containing non-finite outside the scale range
+## (`stat_bin()`).
 \end{verbatim}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-192-1.pdf}
@@ -6942,8 +6891,7 @@ Again, we might want to check how ``stable'' smoking status is among study subje
 
 Less than 20\% of the study subjects changed their smoking status over the course of the examinations. This isn't negligible, but it also means that for the majority of the study subjects, their smoking status was stable across all study examinations.
 
-\hypertarget{coding-a-survival-analysis}{%
-\section{Coding a survival analysis}\label{coding-a-survival-analysis}}
+\section{Coding a survival analysis}\label{coding-a-survival-analysis}
 
 In the context of survival analysis, what is modeled is time to an event (also referred to as survival time or failure time). This is a bit different than the models in the linear or \texttt{glm} family that model an outcome that may follow a gaussian (linear regression), binomial (logistic model) or Poisson distribution. Another difference is that the outcome (time to event) will not be determined in some participants, as they will not have experienced the event of interest during their follow-up. These participants are considered `censored'. Censoring can occur in three ways:
 
@@ -7424,13 +7372,11 @@ Here we see that the assumption fails. If we plot the results of the models we c
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-217-1.pdf}
 
-\hypertarget{handling-complexity}{%
-\section{Handling complexity}\label{handling-complexity}}
+\section{Handling complexity}\label{handling-complexity}
 
 You may have noticed that the models we've been fitting above only use the first observation from the dataset (including death and time of death variables). This would be fine if all covariates of interest were time-invariant (e.g.~sex: its value at baseline would be representative for the duration of follow-up). However, this is a longitudinal dataset with multiple observations per participant, and as we have seen with BMI and smoking, some measurement values change over time. The time-varying nature of these values can be informative whether it has to do with an exposure, covariate, or outcome of interest, and we will now see how to leverage this extra bit of information in the survival analysis context. We will create a longitudinal dataset appropriate for analysis, and go through steps of dealing with repeated outcome measures, time-varying exposures and covariates, and handling multi-level exposures in this setting.
 
-\hypertarget{recurrent-outcome-and-time-varying-exposures}{%
-\subsection{Recurrent outcome and time varying-exposures}\label{recurrent-outcome-and-time-varying-exposures}}
+\subsection{Recurrent outcome and time varying-exposures}\label{recurrent-outcome-and-time-varying-exposures}
 
 We mentioned earlier how typically in longitudinal studies survival outcomes may be represented in a time-varying fashion. Typically these variables will take the value of 0 until someone becomes a case (i.e., an event like death happens to the person) in which case the value is 1 (and usually this will be the last observation for a given participant). We will go ahead and create these types of variables for death and incident MI in our longitudinal dataset.
 
@@ -7489,7 +7435,7 @@ We can look at each piece of this. First, we can check the time-related variable
 ##  8  10552      1     0      1977  1976
 ##  9  10552      2  1977        NA  2956
 ## 10  11252      1     0      2072  2071
-## # ... with 11,617 more rows
+## # i 11,617 more rows
 \end{verbatim}
 
 You can see that we've grabbed the time of the start of the next period, then reduced this by one to get the last time in the current period. For example, study subject \#2448 has examinations for periods 1 and 3. Since period 3 starts at 4,628 days, we can figure out that the first period's data represents all days up to day 4.627. For the last period, it represents measures from the time of the last examination to the time of death or loss to follow-up, so we can use the column with the time of death / follow-up in the original data to figure out this time.
@@ -7938,8 +7884,7 @@ If we repeat for MI hospitalization (we should recreate our incident MI dataset 
 
 We can now see that the parameter for current smokers compared to never smokers is still elevated, with a HR = 1.60, but the hazard associated with a comparison of former smokers compared to never smokers is actually below the null, but the CI is very wide and includes the null.
 
-\hypertarget{multi-level-exposure}{%
-\subsection{Multi-level exposure}\label{multi-level-exposure}}
+\subsection{Multi-level exposure}\label{multi-level-exposure}
 
 We've seen that changing smoking from a binary `yes/no' variable to one with three categories (representing some history in the exposure) has added more information in our assessment for the potential effect of smoking on risk of MI. We actually have even more information on smoking, and specifically smoking intensity, through the \texttt{cigpday} variable. We will incorporate this in our model, as well as look at some other continuous exposures with respect to risk of MI.
 
@@ -8116,7 +8061,7 @@ You can see that this added variable gives us the desired ordered categories for
 ##  8  10552      30 Very Heavy
 ##  9  10552      20 Heavy     
 ## 10  11252      23 Very Heavy
-## # ... with 11,243 more rows
+## # i 11,243 more rows
 \end{verbatim}
 
 Now you can use this variable within the regression model:
@@ -8404,8 +8349,7 @@ We see an almost monotonic increase in the HR (keep in mind the log-transformati
 
 Both BMI and systolic blood pressure appear significant predictors for the hazard of MI hospitalization. You can explore other predictors in the dataset (including blood glucose, cholesterol, etc.) but keep in mind of the missingness in some of these variables and how might these affect your results.
 
-\hypertarget{time-varying-coefficients}{%
-\subsection{Time-varying coefficients}\label{time-varying-coefficients}}
+\subsection{Time-varying coefficients}\label{time-varying-coefficients}
 
 We've already shown how some of the covariate values in the dataset change over time. Now consider the following model including smoking, and some of the other predictors from above:
 
@@ -8461,8 +8405,7 @@ The HR for current smoking appears more elevated than in our simple models with 
 
 Keeping in mind the dynamic nature of some of these variable over time, what are some other potential explanations for these relationships? How does that affect our potential interpretation of the parameter coefficients for these variables? We will revisit this issue in chapter 8 of the book.
 
-\hypertarget{using-survey-data-e.g.-nhanes}{%
-\subsection{Using survey data (e.g.~NHANES)}\label{using-survey-data-e.g.-nhanes}}
+\subsection{Using survey data (e.g.~NHANES)}\label{using-survey-data-e.g.-nhanes}
 
 For this chapter, we've used data from the Framingham study as an example. Another very famous public health study in the United States is the National Health and Nutrition Examination study, more commonly known by its acronym of NHANES. We'll wrap up this chapter by talking a bit about this other famous study, a branch of it that includes longitudinal data appropriate for a survival analysis like that covered in this chapter for Framingham, and how some quirks of the NHANES study design make the analysis of its data a bit more complex.
 
@@ -8484,11 +8427,9 @@ However, when a study population is selected based on this type of complex surve
 
 These characteristics of the NHEFS cohort were necessary to make the original survey practical enough that it could be carried out. While it does make the data more complicated to analyze, there are strategies that can be used to account for oversampling and the multi-stage sampling design. Some papers have described these approaches for the NHEFS cohort and provide a good roadmap if you'd like to explore these data yourself \citep{korn1991epidemiologic, ingram1994statistical}. Further, the \href{https://www.cdc.gov/nchs/nhanes/index.htm}{NHANES website} includes extensive information about the NHANES series of studies, as well as tools, data, and tutorials, if you would like to try working with the data.
 
-\hypertarget{some-approaches-for-confounding}{%
-\chapter{Some approaches for confounding}\label{some-approaches-for-confounding}}
+\chapter{Some approaches for confounding}\label{some-approaches-for-confounding}
 
-\hypertarget{readings-5}{%
-\section{Readings}\label{readings-5}}
+\section{Readings}\label{readings-5}
 
 The required readings for this chapter are:
 
@@ -8540,8 +8481,7 @@ Lastly this paper offers a very good explanation on (non-)collapsibility:
   \citet{greenland1999confounding}
 \end{itemize}
 
-\hypertarget{propensity-scores-and-inverse-probability-weighting}{%
-\section{Propensity scores and inverse probability weighting}\label{propensity-scores-and-inverse-probability-weighting}}
+\section{Propensity scores and inverse probability weighting}\label{propensity-scores-and-inverse-probability-weighting}
 
 We've already fit some Cox models with multiple covariates, where the interpretation of each parameter coefficient is \emph{conditional} on the other parameters in the model, and typically these coefficients are expected to yield effect estimates unconfounded by the other variables in the model. In this section we will explore an alternative approach to confounding adjustment in inverse probability weighting (IPW).
 
@@ -8592,7 +8532,7 @@ First, you will want to recreate the \texttt{fhs\_first} dataset if you don't ha
 
 \NormalTok{fhs\_first }\OtherTok{\textless{}{-}}\NormalTok{ fhs }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{group\_by}\NormalTok{(randid) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{slice}\NormalTok{(1L) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{slice}\NormalTok{(}\DecValTok{1}\DataTypeTok{L}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{timedthy =}\NormalTok{ timedth }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{,}
          \AttributeTok{timemiy =}\NormalTok{ timemi }\SpecialCharTok{/} \FloatTok{365.25}\NormalTok{,}
@@ -9392,8 +9332,7 @@ Based on the results of this model and using the correct interpretation we can d
 
 The HR is now lower that the conditional model, and although they are not directly comparable, the difference could be explained by the fact that we are no longer blocking a potentially negative effect of smoking on risk of MI hospitalization mediated through BMI (smoking usually has a negative association with BMI overall). Another potential explanation is that the conditional Cox model adjusting for BMI and blood pressure, also induced collider bias through unmeasured common causes between BMI and systolic blood pressure and the outcome, leading to bias away from the null. These are all issues we have to take in mind when choosing the estimation approach we think is more likely to lead to unbiased results. IPW is advantageous compared to traditional regression approaches to control for confounding in the presence of exposure-confounder feedback, however it comes at the cost of additional model(s). Misspecifying any of the models involved could also lead to bias, and as we have seen in the complex time-varying setting, weights may not always behave well. We could improve our weight estimation using machine learning algorithms that make fewer to no distributional and parametric assumptions, thus minimizing the potential for misspecification of weight models.
 
-\hypertarget{more-ways-to-use-propensity-scores}{%
-\section{More ways to use propensity scores}\label{more-ways-to-use-propensity-scores}}
+\section{More ways to use propensity scores}\label{more-ways-to-use-propensity-scores}
 
 As we mentioned earlier, IPW is technically part of a general approach to adjust for confounding relying on measures for the probability of exposure, known as propensity scores. In other words rather than adjusting for potential confounders directly, we adjust for the propensity of exposure given observed values of those potential confounders. Propensity scores can be used as weights (like in IPW), can be stratified upon, entered as a covariate in a model, or can be used as a matching variable for covariate adjustment. Each participant (or observation in the data) essentially receives a \emph{score} for their propensity to be exposed given their covariate values. This score is equal to the probability of exposure given covariate values \(Pr[X=1|C]\) where \(X\) is the exposure of interest (\(X=1\) for exposed and \(X=0\) for unexposed), and \(C\) is a vector of covariates (potential confounders).
 
@@ -9500,7 +9439,7 @@ We can check the first few rows of the new variable, as well as use a histogram 
 ##  8 0.463 Q2      
 ##  9 0.582 Q3      
 ## 10 0.688 Q4      
-## # ... with 4,424 more rows
+## # i 4,424 more rows
 \end{verbatim}
 
 \begin{Shaded}
@@ -9591,11 +9530,9 @@ To wrap up, there are a few additional points we should bring up. The first is a
 
 The other point we want to bring up is about the propensity score model. We used a pretty simple one (at least in terms of you having seen it before)---a logistic regression model. However, you can use any format of predictive model that you think might work. This is one area in epidemiology where you see some machine learning methods---some people have tried using things like random forests, ridge or lasso regression, and neural networks to improve their propensity score model. This is at heart a predictive model, rather than one built for inference. In other words, you're aiming for a model that performs well in predicting the outcome, rather than in estimating the relationship between a particular independent variable and the outcome (as we've done for most of our earlier models). Some of the other types of models might be particularly helpful if you have loads of potential confounders that you want to include, especially if some of them are strongly correlated, because some of these other types of models handle large numbers of (potentially collinear) independent variables better than classic regression models do. These other types of models might be useful if you have a case where you think there's a lot of non-linearity in the relationship between your confounders and your exposure, or if you think that there might be a lot of interactions between different confounders in predicting the outcome (this could certainly be the case in the example used here---age might have different influences on the chance of smoking for males versus females). If you are using propensity scores in your own research, you could explore some of these other types of models for building your predictive model of the propensity of being exposed versus unexposed.
 
-\hypertarget{mixed-models}{%
-\chapter{Mixed models}\label{mixed-models}}
+\chapter{Mixed models}\label{mixed-models}
 
-\hypertarget{readings-6}{%
-\section{Readings}\label{readings-6}}
+\section{Readings}\label{readings-6}
 
 The required readings for this chapter are:
 
@@ -9626,8 +9563,7 @@ There are also some supplemental readings you may find useful.
   want a deeper dive
 \end{itemize}
 
-\hypertarget{introduction-to-mixed-models}{%
-\section{Introduction to mixed models}\label{introduction-to-mixed-models}}
+\section{Introduction to mixed models}\label{introduction-to-mixed-models}
 
 In all our previous models, we've been assuming that the observations are
 independent of each other, at least after accounting for the role of any
@@ -9786,7 +9722,7 @@ number.
 ##  8 4452358      2 female    65   165        0  27.4     1  2104
 ##  9 4452358      3 female    71   154        0  26.4     1  4286
 ## 10 9694232      1 female    48   155        0  28.5     1     0
-## # ... with 35 more rows
+## # i 35 more rows
 \end{verbatim}
 
 This code results in a dataset of a few study subjects, with three measurements
@@ -9895,8 +9831,7 @@ dataset:
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-287-1.pdf}
 
-\hypertarget{mixed-models-with-random-intercepts}{%
-\section{Mixed models with random intercepts}\label{mixed-models-with-random-intercepts}}
+\section{Mixed models with random intercepts}\label{mixed-models-with-random-intercepts}
 
 \emph{Applied exercise: Mixed models with random intercepts}
 
@@ -10224,9 +10159,9 @@ the \texttt{randid} for each row of the augmented data.
 ##  8 4452358      2 female    65   165        0  27.4     1  2104    152.  12.9  
 ##  9 4452358      3 female    71   154        0  26.4     1  4286    152.   1.92 
 ## 10 9694232      1 female    48   155        0  28.5     1     0    146.   9.00 
-## # ... with 35 more rows, and 9 more variables: .hat <dbl>, .cooksd <dbl>,
-## #   .fixed <dbl>, .mu <dbl>, .offset <dbl>, .sqrtXwt <dbl>, .sqrtrwt <dbl>,
-## #   .weights <dbl>, .wtres <dbl>
+## # i 35 more rows
+## # i 9 more variables: .hat <dbl>, .cooksd <dbl>, .fixed <dbl>, .mu <dbl>,
+## #   .offset <dbl>, .sqrtXwt <dbl>, .sqrtrwt <dbl>, .weights <dbl>, .wtres <dbl>
 \end{verbatim}
 
 In this output, it's taken the original \texttt{fhs\_sample} data and added columns
@@ -10457,7 +10392,7 @@ from the standard error, as we would for a GLM. Instead, we can use the
 
 \begin{verbatim}
 ##                   2.5 %     97.5 %
-## .sig01        2.5909664  16.942640
+## .sig01        2.5909663  16.942640
 ## .sigma        8.8895592  15.390316
 ## (Intercept)   9.9000046 109.789814
 ## age           0.2071763   1.379707
@@ -10631,7 +10566,7 @@ an interaction term to the model to explore this:
 ## .sigma       12.3097777 12.7300610
 ## (Intercept)  60.9726067 78.1195143
 ## age           0.3863850  0.6532505
-## sex         -13.3311622 -4.2170025
+## sex         -13.3311621 -4.2170024
 ## bmi           1.2915867  1.5216440
 ## cursmoke     -1.0683462  0.6533164
 ## educ         -1.2509263 -0.1926849
@@ -10733,8 +10668,7 @@ level and the association with systolic blood pressure:
 The decrease in expected blood pressure is most notable when you compare the
 highest education group to the lowest education risk.
 
-\hypertarget{adding-random-effect-slopes}{%
-\section{Adding random effect slopes}\label{adding-random-effect-slopes}}
+\section{Adding random effect slopes}\label{adding-random-effect-slopes}
 
 We can also add other random effects to our models. For example, if we think that
 each of the people has a different evolution of blood pressure as they age, then
@@ -10853,8 +10787,7 @@ can see that, for some study subjects, this slope is very close to zero (i.e.,
 blood pressure stays similar with age), while for others, it's much higher than
 the fixed effects estimate for the age slope of 0.72 from our earlier model.
 
-\hypertarget{some-final-points-on-mixed-effects-models}{%
-\section{Some final points on mixed effects models:}\label{some-final-points-on-mixed-effects-models}}
+\section{Some final points on mixed effects models:}\label{some-final-points-on-mixed-effects-models}
 
 \begin{itemize}
 \tightlist
@@ -10919,11 +10852,9 @@ saw how we got varying individual level predictions from our mixed models above 
 at the expense of further assumptions). The \texttt{geepack} package in R allows for fitting
 of GEEs for clustered continuous and categorical data.
 
-\hypertarget{instrumental-variables}{%
-\chapter{Instrumental variables}\label{instrumental-variables}}
+\chapter{Instrumental variables}\label{instrumental-variables}
 
-\hypertarget{readings-7}{%
-\section{Readings}\label{readings-7}}
+\section{Readings}\label{readings-7}
 
 The required reading for this chapter is:
 
@@ -10959,8 +10890,7 @@ While this paper summarizes the NHEFS study and initial findings:
   \citet{madans198610}
 \end{itemize}
 
-\hypertarget{introduction-to-instrumental-variables}{%
-\section{Introduction to instrumental variables}\label{introduction-to-instrumental-variables}}
+\section{Introduction to instrumental variables}\label{introduction-to-instrumental-variables}
 
 We have been utilizing regression approaches to quantify relationships between
 a particular exposure and outcome of interest, ranging from temperature and mortality in a time-series setting to smoking and cardiovascular outcomes in a longitudinal cohort setting. In these models, we have typically been including covariates that were potential confounders of the relationship of interest (e.g.~seasonal trends in the time-series setting, age and sex in the cohort setting).
@@ -11049,8 +10979,7 @@ variable analysis. We will introduce a new dataset, one from the NHANES I Epidem
 
 The data subset from NEHFS consists of smokers (at baseline) followed between 1971 and 1982. The research question of interest is the effect of smoking cessation on 10-year weight change. We will explore the relationship between exposure and outcome based on traditional outcome regression and then try to generate an estimate for this effect using instrumental variable analysis.
 
-\hypertarget{the-nhefs-data}{%
-\section{The NHEFS data}\label{the-nhefs-data}}
+\section{The NHEFS data}\label{the-nhefs-data}
 
 Let's explore the NHEFS dataset, which is the dataset used in the example highlighted
 this chapter's required reading, \citet{hernanch16}. You can download a copy from the GitHub page for this book, \href{https://github.com/geanders/adv_epi_analysis/blob/master/data/nhefs.csv}{here}. The data are saved in a csv format (that is, a plain text file, with commas used as the delimiter), and so they can be read into R using the \texttt{read\_csv} function from the \texttt{readr} package (part of the tidyverse), similar to the previous datasets we have been using. If you have saved the data in a ``data'' subdirectory of your current working directory then you can use the following code:
@@ -11077,13 +11006,13 @@ this chapter's required reading, \citet{hernanch16}. You can download a copy fro
 ##  8   266     0     0    NA    NA    NA   100    53     1    29     0     22
 ##  9   419     0     1    84    10    13   163    79     0    51     0     18
 ## 10   420     0     1    86    10    17   184   106     0    43     0     16
-## # ... with 1,619 more rows, and 52 more variables: marital <dbl>, school <dbl>,
-## #   education <dbl>, ht <dbl>, wt71 <dbl>, wt82 <dbl>, wt82_71 <dbl>,
-## #   birthplace <dbl>, smokeintensity <dbl>, smkintensity82_71 <dbl>,
-## #   smokeyrs <dbl>, asthma <dbl>, bronch <dbl>, tb <dbl>, hf <dbl>, hbp <dbl>,
+## # i 1,619 more rows
+## # i 52 more variables: marital <dbl>, school <dbl>, education <dbl>, ht <dbl>,
+## #   wt71 <dbl>, wt82 <dbl>, wt82_71 <dbl>, birthplace <dbl>,
+## #   smokeintensity <dbl>, smkintensity82_71 <dbl>, smokeyrs <dbl>,
+## #   asthma <dbl>, bronch <dbl>, tb <dbl>, hf <dbl>, hbp <dbl>,
 ## #   pepticulcer <dbl>, colitis <dbl>, hepatitis <dbl>, chroniccough <dbl>,
-## #   hayfever <dbl>, diabetes <dbl>, polio <dbl>, tumor <dbl>,
-## #   nervousbreak <dbl>, alcoholpy <dbl>, alcoholfreq <dbl>, ...
+## #   hayfever <dbl>, diabetes <dbl>, polio <dbl>, tumor <dbl>, ...
 \end{verbatim}
 
 There is a codebook in the \href{https://github.com/geanders/adv_epi_analysis/tree/master/data}{the same folder as the dataset}, which you can download and read to familiarize yourself with the variables in the data.
@@ -11229,8 +11158,7 @@ The results indicate that quitting smoking is associated with a 2.7 kg increase 
 
 We see that the adjusted effect estimate is somewhat higher than the unadjusted estimate, with smoking cessation associated with a 3.4 kg increase (95\% CI: 2.5--4.3). It is still likely that we are not accounting for all confounders. For example, those who quit smoking could be doing so because of a desire to lead a healthy lifestyle or because of underlying health conditions that may also affect the outcome---these aren't things that we're measuring, but they could be associated with both the exposure and the outcome. It is therefore plausible that there is unmeasured (or unknown) confounding for the effect of smoking cessation on weight change. A valid instrument can help us identify a causal effect even in the presence of such confounding.
 
-\hypertarget{identifying-an-instrumental-variable-checking-the-iv-conditions-and-the-standard-iv-estimand}{%
-\section{Identifying an instrumental variable, checking the IV conditions and the standard IV estimand}\label{identifying-an-instrumental-variable-checking-the-iv-conditions-and-the-standard-iv-estimand}}
+\section{Identifying an instrumental variable, checking the IV conditions and the standard IV estimand}\label{identifying-an-instrumental-variable-checking-the-iv-conditions-and-the-standard-iv-estimand}
 
 As mentioned above, we will be using cigarette pricing in each participant's state of residence as an instrument for the exposure of interest. The idea is that the
 participant might be less likely to smoke if it costs more. Some states elevate
@@ -11420,7 +11348,7 @@ where \(Y\) is the outcome of interest (weight change) and \(Z\) is, again, the 
 ##   estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high
 ##      <dbl>     <dbl>     <dbl>     <dbl>   <dbl>     <dbl>    <dbl>     <dbl>
 ## 1   -0.150      2.54      2.69    -0.102   0.919      41.6    -3.13      2.83
-## # ... with 2 more variables: method <chr>, alternative <chr>
+## # i 2 more variables: method <chr>, alternative <chr>
 \end{verbatim}
 
 We see that the difference between the two means is small and not statistically significant. The actual difference between those with \texttt{highprice\ =\ 1} and \texttt{highprice\ =\ 0} is \texttt{2.69\ -\ 2.54\ =\ 0.15}, or, in other words, living in a state with high cigarette prices is associated with an average weight gain of 0.15 kg. This seems a much smaller estimate than the one we generated for smoking cessation using linear regression. This is not the IV estimand, however, only one component of it.
@@ -11461,8 +11389,7 @@ We've actually estimated the numerator and denominator for this quantity in exer
 
 The IV estimate of 2.5 kg is actually much closer to the unadjusted estimate we got from the linear regression model (which was 2.7 kg).
 
-\hypertarget{the-two-stage-least-squares-estimator}{%
-\section{The two-stage-least-squares estimator}\label{the-two-stage-least-squares-estimator}}
+\section{The two-stage-least-squares estimator}\label{the-two-stage-least-squares-estimator}
 
 Instead of the algebraic estimation of the IV estimate, we can actually use models to generate this estimate. This involves the \emph{two-stage-least-squares estimator}, which is an extension of ordinary least squares. The approach involves fitting a model for the exposure as a function of the instrument,
 
@@ -11564,8 +11491,7 @@ the instrumental variable (\texttt{\textasciitilde{}\ highprice}):
 
 We see that the \texttt{tsls} returns the same results as our two-stage approach above.
 
-\hypertarget{sensitivity-analysis}{%
-\section{Sensitivity analysis}\label{sensitivity-analysis}}
+\section{Sensitivity analysis}\label{sensitivity-analysis}
 
 In our applied example above, we used a rather weak instrument and also assumed that the IV conditions hold. Even though we cannot empirically verify the IV condition that the instrument shares no unmeasured common causes with the outcome, we can relax our assumption from above (essentially no common causes) by including some measured covariates in our IV estimation (similar to our adjusted linear model)
 
@@ -11733,8 +11659,7 @@ In this particular example a weak instrument provided similar results with an un
 
 In any case, IV analysis can be a useful tool in epidemiology, relying on different assumptions than more traditional approaches. However, instrumental variables should be used in light of their own limitations.
 
-\hypertarget{the-condition-of-homogenetity-or-alternative-condition-of-monotonictiy}{%
-\section{The condition of homogenetity (or alternative condition of monotonictiy)}\label{the-condition-of-homogenetity-or-alternative-condition-of-monotonictiy}}
+\section{The condition of homogenetity (or alternative condition of monotonictiy)}\label{the-condition-of-homogenetity-or-alternative-condition-of-monotonictiy}
 
 We highlighted three conditions for valid instrument above and mentioned a required fourth condition, that of homogeneity, which is also required in order to estimate the average causal effect of exposure in the population. In the absence of this condition, we can only actually estimate bounds for the causal effect, which may be too wide and uninformative. These bounds will come with their own uncertainty and confidence intervals (CI for lower bound and upper bound respectively). Most researchers avoid estimating bounds for this reason and instead rely on the assumption of homogeneity in order to generate point estimates for the causal effects rather than bounds.
 
@@ -11744,8 +11669,7 @@ Given these limitations of the homogeneity conditions, researchers often rely on
 
 Despite the inherent limitations of the above conditions, it is important that they are addressed at least through a discussion surrounding them when IV analysis is used.
 
-\hypertarget{causal-inference}{%
-\chapter{Causal inference}\label{causal-inference}}
+\chapter{Causal inference}\label{causal-inference}
 
 The readings for this chapter are:
 
