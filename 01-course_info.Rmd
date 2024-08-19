@@ -55,7 +55,7 @@ data to answer an epidemiological research question. (*Application*)
 ## Meeting time and place
 
 The class will meet on Mondays, 2:00--3:40 PM on the Colorado State University 
-campus in MRB 312.
+campus in EH 120.
 
 ## Class Structure and Expectations
 
