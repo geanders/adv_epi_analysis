@@ -23,6 +23,7 @@ The required readings for this chapter are:
 
 - @bhaskaran2013time Provides an overview of time series regression
 in environmental epidemiology.
+
 - @vicedo2019hands Provides a tutorial of all the steps for a 
 projecting of health impacts of temperature extremes under climate change. 
 One of the steps is to fit the exposure-response association using present-day data
