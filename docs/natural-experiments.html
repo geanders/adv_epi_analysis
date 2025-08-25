@@ -23,7 +23,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2024-08-19" />
+<meta name="date" content="2025-08-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -66,7 +66,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -322,16 +322,16 @@ interest) associated with the material in this chapter:</p>
 <li><strong>Load the data into R and explore the dataset. Plot the time series of the data on the outcome of interest as it varies over the study period. Use a visual marker in the plot to show the intervention (the date the law was implemented).</strong></li>
 </ol>
 <p>These data are available in the paper’s supplement. If you download the supplemental data file on the paper’s website, it gives you a zipped file that you can unzip to create a directory of several files. This directory includes “data/sicily.csv”. You’ll need to move that to your working directory or a subdirectory of your working directory. In the code below, I have it in a subdirectory named “data” of my working directory. The data is in a plain text, comma-separated file (you can tell by the “.csv” file extension), so you can use <code>read_csv</code> from the <code>tidyverse</code> suite of packages to read it in.</p>
-<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="natural-experiments.html#cb218-1" tabindex="-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
-<span id="cb218-2"><a href="natural-experiments.html#cb218-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb218-3"><a href="natural-experiments.html#cb218-3" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
-<span id="cb218-4"><a href="natural-experiments.html#cb218-4" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb218-5"><a href="natural-experiments.html#cb218-5" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb218-6"><a href="natural-experiments.html#cb218-6" tabindex="-1"></a></span>
-<span id="cb218-7"><a href="natural-experiments.html#cb218-7" tabindex="-1"></a><span class="co"># Load and clean the data</span></span>
-<span id="cb218-8"><a href="natural-experiments.html#cb218-8" tabindex="-1"></a>sicily <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/sicily.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="natural-experiments.html#cb219-1" tabindex="-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
+<span id="cb219-2"><a href="natural-experiments.html#cb219-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb219-3"><a href="natural-experiments.html#cb219-3" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb219-4"><a href="natural-experiments.html#cb219-4" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb219-5"><a href="natural-experiments.html#cb219-5" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb219-6"><a href="natural-experiments.html#cb219-6" tabindex="-1"></a></span>
+<span id="cb219-7"><a href="natural-experiments.html#cb219-7" tabindex="-1"></a><span class="co"># Load and clean the data</span></span>
+<span id="cb219-8"><a href="natural-experiments.html#cb219-8" tabindex="-1"></a>sicily <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/sicily.csv&quot;</span>)</span></code></pre></div>
 <p>Once you read the data in, you should check it out:</p>
-<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="natural-experiments.html#cb219-1" tabindex="-1"></a>sicily</span></code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="natural-experiments.html#cb220-1" tabindex="-1"></a>sicily</span></code></pre></div>
 <pre><code>## # A tibble: 59 × 7
 ##     year month  aces  time smokban     pop  stdpop
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
@@ -350,9 +350,9 @@ interest) associated with the material in this chapter:</p>
 <p>The forcing variable in the study is, since it is an interrupted time series, <code>time</code>. We will be comparing risk of ACE hospitalizations before and after the date of the indoor smoking ban, so that date will form our threshold rule for the study. The creators of this dataset already added a variable with data on this threshold rule: the <code>smokban</code> variable is <code>0</code> before the ban and <code>1</code> after.</p>
 <p>We can take a look using <code>smokban</code> to see when the ban was implemented. One
 way to do this is to group the data by the <code>smokban</code> variable and then use <code>slice</code> to see the first three rows within each group. Based on this, it looks like the ban started the 37th month of the study:</p>
-<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="natural-experiments.html#cb221-1" tabindex="-1"></a>sicily <span class="sc">%&gt;%</span>  </span>
-<span id="cb221-2"><a href="natural-experiments.html#cb221-2" tabindex="-1"></a>  <span class="fu">group_by</span>(smokban) <span class="sc">%&gt;%</span> </span>
-<span id="cb221-3"><a href="natural-experiments.html#cb221-3" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="natural-experiments.html#cb222-1" tabindex="-1"></a>sicily <span class="sc">%&gt;%</span>  </span>
+<span id="cb222-2"><a href="natural-experiments.html#cb222-2" tabindex="-1"></a>  <span class="fu">group_by</span>(smokban) <span class="sc">%&gt;%</span> </span>
+<span id="cb222-3"><a href="natural-experiments.html#cb222-3" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 7
 ## # Groups:   smokban [2]
 ##    year month  aces  time smokban     pop  stdpop
@@ -364,35 +364,35 @@ way to do this is to group the data by the <code>smokban</code> variable and the
 ## 5  2005     2   796    38       1 364421. 388373.
 ## 6  2005     3   833    39       1 364421. 386470.</code></pre>
 <p>Let’s use a plot to explore the relationship between the forcing value (time) and the outcome (ACE hospitalizations) before we look at the remaining variables in the data.</p>
-<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="natural-experiments.html#cb223-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb223-2"><a href="natural-experiments.html#cb223-2" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
-<span id="cb223-3"><a href="natural-experiments.html#cb223-3" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
-<span id="cb223-4"><a href="natural-experiments.html#cb223-4" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
-<span id="cb223-5"><a href="natural-experiments.html#cb223-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sicily, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces)) <span class="sc">+</span> </span>
-<span id="cb223-6"><a href="natural-experiments.html#cb223-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Month in study&quot;</span>, </span>
-<span id="cb223-7"><a href="natural-experiments.html#cb223-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of hospitalizations</span><span class="sc">\n</span><span class="st">for acute coronary events&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="natural-experiments.html#cb224-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb224-2"><a href="natural-experiments.html#cb224-2" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
+<span id="cb224-3"><a href="natural-experiments.html#cb224-3" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
+<span id="cb224-4"><a href="natural-experiments.html#cb224-4" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb224-5"><a href="natural-experiments.html#cb224-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sicily, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces)) <span class="sc">+</span> </span>
+<span id="cb224-6"><a href="natural-experiments.html#cb224-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Month in study&quot;</span>, </span>
+<span id="cb224-7"><a href="natural-experiments.html#cb224-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of hospitalizations</span><span class="sc">\n</span><span class="st">for acute coronary events&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-124-1.png" width="672" /></p>
 <p>As a note, to get this to work with <code>ggplot</code>, you need to be careful about where you specify the data. We’ve added the polygon using exact x and y values, rather than pulling them from a column in the dataframe (we knew from checking the data that the ban started for week 37 and then lasted the rest of the study, and there are 59 weeks in the study). Since we are only using the <code>sicily</code> data when we add points, but not when we add the polygon, we need to specify those data only for the the <code>geom_point</code> layer, and not within <code>ggplot</code>. Also, the order of our layers matters a bit more here than it normally does. If we want the shaded polygon to go behind the points, we should add <code>geom_polygon</code> before we add <code>geom_point</code>, so the points get plotted on top.</p>
 <p>Two other variables are also included in the data, <code>pop</code> and <code>stdpop</code>. These give measures of the study’s population size for every time point in the study, as well as that population as an age-standardized population (in person-years). In our examples in earlier studies, we didn’t incorporate the size of the study population in any way. We used counts of deaths, fitting them with a Poisson regression. If the size of the total population only changes slowly (in comparison to the time-scale of the association we were looking at, which was from days up to about a month), and if the disease outcome is rare (that is, unlikely on any study day for any population member), then it is typically fine not to include information about the total population size on each study day (or month, if that is your time step, as in the example for this study).</p>
 <p>However, in some cases you will have a population that changes more abruptly. For example, if you may want to count outcomes based on insurance claims. If the number of enrollees for that insurance change substantially on certain dates (e.g., the start of the month or start of the year, which can be points where many new people become eligible for the insurance), you can get abrupt changes in the size of your study population.</p>
 <p>If you have the population size for each observation in the time series, then you can address this when you fit your statistical model. You can still fit the data with a Poisson regression model, but you will include something called an <em>offset</em>. You will include that in you regression model equation when you fit the regression with R, as we’ll look at in the next part of the exercise. The <em>offset</em> also allows us to model rates rather than counts as we show later in the chapter.</p>
 <p>For right now, we can use the information about population size to change our plot a bit, so that it shows the rate of hospitalizations for coronary events (times 10,000) in each month of the study, rather than the unadjusted count:</p>
-<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="natural-experiments.html#cb224-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb224-2"><a href="natural-experiments.html#cb224-2" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
-<span id="cb224-3"><a href="natural-experiments.html#cb224-3" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
-<span id="cb224-4"><a href="natural-experiments.html#cb224-4" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
-<span id="cb224-5"><a href="natural-experiments.html#cb224-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sicily, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
-<span id="cb224-6"><a href="natural-experiments.html#cb224-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Month in study&quot;</span>, </span>
-<span id="cb224-7"><a href="natural-experiments.html#cb224-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of hospitalizations</span><span class="sc">\n</span><span class="st">for acute coronary events * 10,000&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="natural-experiments.html#cb225-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb225-2"><a href="natural-experiments.html#cb225-2" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
+<span id="cb225-3"><a href="natural-experiments.html#cb225-3" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
+<span id="cb225-4"><a href="natural-experiments.html#cb225-4" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb225-5"><a href="natural-experiments.html#cb225-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sicily, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
+<span id="cb225-6"><a href="natural-experiments.html#cb225-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Month in study&quot;</span>, </span>
+<span id="cb225-7"><a href="natural-experiments.html#cb225-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of hospitalizations</span><span class="sc">\n</span><span class="st">for acute coronary events * 10,000&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-125-1.png" width="672" /></p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Next, let’s look at how the rates of the outcome changes right before and right after the ban. At this stage, we won’t worry about any underlying time trends in the outcome rates. Instead, compare the outcome rates in two groups—the data points collected for the time points right before the ban, and then the data collected for time points right after the ban. Try a few windows for capturing “right before” and “right after” (e.g., 3 months, 6 months, 12 months). How does the precision of the estimate change as you change that window? How do you think the potential might change for residual confounding from long-term trends in the outcome rates irrespective of the ban?</strong></li>
 </ol>
 <p>Let’s start with the smallest window, 3 months. This means that we will pick out
 only the three data points before the ban (months 34, 35, and 36 of the study) and the three after (months 37, 38, and 39):</p>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="natural-experiments.html#cb225-1" tabindex="-1"></a>near_threshold <span class="ot">&lt;-</span> sicily <span class="sc">%&gt;%</span> </span>
-<span id="cb225-2"><a href="natural-experiments.html#cb225-2" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">%in%</span> <span class="dv">34</span><span class="sc">:</span><span class="dv">39</span>)</span>
-<span id="cb225-3"><a href="natural-experiments.html#cb225-3" tabindex="-1"></a>near_threshold</span></code></pre></div>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="natural-experiments.html#cb226-1" tabindex="-1"></a>near_threshold <span class="ot">&lt;-</span> sicily <span class="sc">%&gt;%</span> </span>
+<span id="cb226-2"><a href="natural-experiments.html#cb226-2" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">%in%</span> <span class="dv">34</span><span class="sc">:</span><span class="dv">39</span>)</span>
+<span id="cb226-3"><a href="natural-experiments.html#cb226-3" tabindex="-1"></a>near_threshold</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 7
 ##    year month  aces  time smokban     pop  stdpop
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
@@ -403,23 +403,23 @@ only the three data points before the ban (months 34, 35, and 36 of the study) a
 ## 5  2005     2   796    38       1 364421. 388373.
 ## 6  2005     3   833    39       1 364421. 386470.</code></pre>
 <p>To check that we’ve pulled the right months, we can add these in a different color to our plot from the last section:</p>
-<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="natural-experiments.html#cb227-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb227-2"><a href="natural-experiments.html#cb227-2" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
-<span id="cb227-3"><a href="natural-experiments.html#cb227-3" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
-<span id="cb227-4"><a href="natural-experiments.html#cb227-4" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
-<span id="cb227-5"><a href="natural-experiments.html#cb227-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sicily, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
-<span id="cb227-6"><a href="natural-experiments.html#cb227-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> near_threshold, </span>
-<span id="cb227-7"><a href="natural-experiments.html#cb227-7" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
-<span id="cb227-8"><a href="natural-experiments.html#cb227-8" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb227-9"><a href="natural-experiments.html#cb227-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Month in study&quot;</span>, </span>
-<span id="cb227-10"><a href="natural-experiments.html#cb227-10" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of hospitalizations</span><span class="sc">\n</span><span class="st">for acute coronary events * 10,000&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="natural-experiments.html#cb228-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb228-2"><a href="natural-experiments.html#cb228-2" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
+<span id="cb228-3"><a href="natural-experiments.html#cb228-3" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
+<span id="cb228-4"><a href="natural-experiments.html#cb228-4" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb228-5"><a href="natural-experiments.html#cb228-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sicily, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
+<span id="cb228-6"><a href="natural-experiments.html#cb228-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> near_threshold, </span>
+<span id="cb228-7"><a href="natural-experiments.html#cb228-7" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
+<span id="cb228-8"><a href="natural-experiments.html#cb228-8" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb228-9"><a href="natural-experiments.html#cb228-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Month in study&quot;</span>, </span>
+<span id="cb228-10"><a href="natural-experiments.html#cb228-10" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Number of hospitalizations</span><span class="sc">\n</span><span class="st">for acute coronary events * 10,000&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-127-1.png" width="672" /></p>
 <p>Next, let’s compare the rates of the outcome in these two groups: “untreated” (i.e., right before the date of the ban) and “treated” (i.e., right after the date of the ban). We can use a GLM to do this. It might seem somewhat like overkill—we could typically use a simpler statistical framework to determine the difference in two groups. However, using the GLM framework gets the job done even for a simple comparison, with the added benefit that it gives us room to expand as we think about adding control for some other factors. Further, it allows us to do some nice things like add an offset for the population size and allow for overdispersion.</p>
 <p>To allow for overdispersion, we’ll do the same thing we did in earlier chapters—we’ll use the “quasipoisson” family when setting up the regression equation. This will have R estimate an additional parameter, one that estimates an overdispersion parameter for the data. For the population offset, we can incorporate that using the <code>offset</code> function. We’ll take the log of the standardized population, so it will have the same transformation as the outcome variable in this structure (remember that, for Poisson GLMs, the link is a log). By wrapping it in <code>offset</code> when we include it in the model equation, we’re telling R something special—it should include this variable in the structure of the equation when it fits the data, but it should not estimate a coefficient for it (as it will for everything else on the right side of the <code>~</code> in the nodel statement).</p>
 <p>Here is the code you can use to fit this regression model:</p>
-<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="natural-experiments.html#cb228-1" tabindex="-1"></a>near_thres_mod <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban, </span>
-<span id="cb228-2"><a href="natural-experiments.html#cb228-2" tabindex="-1"></a>                      <span class="at">data =</span> near_threshold, </span>
-<span id="cb228-3"><a href="natural-experiments.html#cb228-3" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="natural-experiments.html#cb229-1" tabindex="-1"></a>near_thres_mod <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban, </span>
+<span id="cb229-2"><a href="natural-experiments.html#cb229-2" tabindex="-1"></a>                      <span class="at">data =</span> near_threshold, </span>
+<span id="cb229-3"><a href="natural-experiments.html#cb229-3" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>The model equation for the model you are fitting with this code is:</p>
 <p><span class="math display">\[
 log(E(Y_t)) = \beta_0 + \beta_1 X_t + log(StdPop_t)
@@ -434,9 +434,9 @@ log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t
 \]</span></p>
 <p><span class="math inline">\(E(Y/Std.Pop.)\)</span> is the expected rate of outcome <span class="math inline">\(Y\)</span> on day <span class="math inline">\(t\)</span> (the <span class="math inline">\(StdPop_t\)</span> in the denominator makes this a rate based on the standardize population size that day rather than just a count), <span class="math inline">\(\beta_0\)</span> is a model intercept, <span class="math inline">\(X_t\)</span> is an indicator variable that is 1 after the ban and 0 before the ban, and <span class="math inline">\(\beta_1\)</span> is the estimate of the log rate ratio after the ban versus before the ban.</p>
 <p>You can use the same technique as always to extract the estimates of the coefficients (again, notice that you don’t get one for the offset term!):</p>
-<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="natural-experiments.html#cb229-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb229-2"><a href="natural-experiments.html#cb229-2" tabindex="-1"></a>near_thres_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb229-3"><a href="natural-experiments.html#cb229-3" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="natural-experiments.html#cb230-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb230-2"><a href="natural-experiments.html#cb230-2" tabindex="-1"></a>near_thres_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb230-3"><a href="natural-experiments.html#cb230-3" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
@@ -445,69 +445,69 @@ log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t
 <p>Based on these, there is a decrease in rates of ACE after the smoking ban, and we would reject the null hypothesis that the size of the change in rates post- versus pre-ban is 0 (because the p-value is lower than 0.05, although barely).</p>
 <p>From these estimates, we can also get an estimate of the relative rate for the
 group right after the ban versus right before the ban, as well as the 95% confidence intervals for that estimate. Since we only have a few data points (6), we shouldn’t use 1.96 in calculating the confidence intervals, but instead get the right value for our sample size using <code>qt</code>, which allows us to get quantiles of interest from the (student’s) t-distribution. (The 1.96, is taken from the standard normal distribution (z-scores), but because of out small sample size n=6 the t-distribution will deviate considerably for that)) Since we have 6 data points and are estimating one coefficient plus the intercept, we have 6 - 2 degrees of freedom for this comparison:</p>
-<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="natural-experiments.html#cb231-1" tabindex="-1"></a>near_thres_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb231-2"><a href="natural-experiments.html#cb231-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb231-3"><a href="natural-experiments.html#cb231-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb231-4"><a href="natural-experiments.html#cb231-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
-<span id="cb231-5"><a href="natural-experiments.html#cb231-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">4</span>) <span class="sc">*</span> std.error), </span>
-<span id="cb231-6"><a href="natural-experiments.html#cb231-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">4</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
-<span id="cb231-7"><a href="natural-experiments.html#cb231-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="natural-experiments.html#cb232-1" tabindex="-1"></a>near_thres_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb232-2"><a href="natural-experiments.html#cb232-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb232-3"><a href="natural-experiments.html#cb232-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb232-4"><a href="natural-experiments.html#cb232-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb232-5"><a href="natural-experiments.html#cb232-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">4</span>) <span class="sc">*</span> std.error), </span>
+<span id="cb232-6"><a href="natural-experiments.html#cb232-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">4</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
+<span id="cb232-7"><a href="natural-experiments.html#cb232-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ##      rr low_rr high_rr
 ##   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 0.933  0.872   0.998</code></pre>
 <p>(We can check the quantilies of the t-distriution for 4 df, if we want to see how far away from the 1.96 value we are)</p>
-<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="natural-experiments.html#cb233-1" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="natural-experiments.html#cb234-1" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">4</span>)</span></code></pre></div>
 <pre><code>## [1] -2.776445</code></pre>
-<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="natural-experiments.html#cb235-1" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">4</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="natural-experiments.html#cb236-1" tabindex="-1"></a><span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">4</span>) </span></code></pre></div>
 <pre><code>## [1] 2.776445</code></pre>
 <p>We can see that <span class="math inline">\(\pm 1.96\)</span> would have given us deceptively narrower CIs</p>
 <p>Now we can try some larger windows. Here is the analysis for 6 month-windows
 on either side of the ban. The only things that change are the window for selecting data to include and the degrees of freedom used when calculating confidence intervals:</p>
-<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="natural-experiments.html#cb237-1" tabindex="-1"></a>near_threshold2 <span class="ot">&lt;-</span> sicily <span class="sc">%&gt;%</span> </span>
-<span id="cb237-2"><a href="natural-experiments.html#cb237-2" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">%in%</span> <span class="dv">31</span><span class="sc">:</span><span class="dv">42</span>)</span>
-<span id="cb237-3"><a href="natural-experiments.html#cb237-3" tabindex="-1"></a>near_thres_mod2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban, </span>
-<span id="cb237-4"><a href="natural-experiments.html#cb237-4" tabindex="-1"></a>                      <span class="at">data =</span> near_threshold2, </span>
-<span id="cb237-5"><a href="natural-experiments.html#cb237-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
-<span id="cb237-6"><a href="natural-experiments.html#cb237-6" tabindex="-1"></a>near_thres_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb237-7"><a href="natural-experiments.html#cb237-7" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="natural-experiments.html#cb238-1" tabindex="-1"></a>near_threshold2 <span class="ot">&lt;-</span> sicily <span class="sc">%&gt;%</span> </span>
+<span id="cb238-2"><a href="natural-experiments.html#cb238-2" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">%in%</span> <span class="dv">31</span><span class="sc">:</span><span class="dv">42</span>)</span>
+<span id="cb238-3"><a href="natural-experiments.html#cb238-3" tabindex="-1"></a>near_thres_mod2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban, </span>
+<span id="cb238-4"><a href="natural-experiments.html#cb238-4" tabindex="-1"></a>                      <span class="at">data =</span> near_threshold2, </span>
+<span id="cb238-5"><a href="natural-experiments.html#cb238-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
+<span id="cb238-6"><a href="natural-experiments.html#cb238-6" tabindex="-1"></a>near_thres_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb238-7"><a href="natural-experiments.html#cb238-7" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)  -6.10      0.0167   -366.   5.74e-22
 ## 2 smokban      -0.0520    0.0239     -2.18 5.43e- 2</code></pre>
-<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="natural-experiments.html#cb239-1" tabindex="-1"></a>near_thres_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb239-2"><a href="natural-experiments.html#cb239-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb239-3"><a href="natural-experiments.html#cb239-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb239-4"><a href="natural-experiments.html#cb239-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
-<span id="cb239-5"><a href="natural-experiments.html#cb239-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">10</span>) <span class="sc">*</span> std.error), </span>
-<span id="cb239-6"><a href="natural-experiments.html#cb239-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">10</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
-<span id="cb239-7"><a href="natural-experiments.html#cb239-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="natural-experiments.html#cb240-1" tabindex="-1"></a>near_thres_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb240-2"><a href="natural-experiments.html#cb240-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb240-3"><a href="natural-experiments.html#cb240-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb240-4"><a href="natural-experiments.html#cb240-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb240-5"><a href="natural-experiments.html#cb240-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">10</span>) <span class="sc">*</span> std.error), </span>
+<span id="cb240-6"><a href="natural-experiments.html#cb240-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">10</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
+<span id="cb240-7"><a href="natural-experiments.html#cb240-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ##      rr low_rr high_rr
 ##   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 0.949  0.900    1.00</code></pre>
 <p>Here is the analysis for 12 month-windows
 on either side of the ban. Again, the only things that change are the window for selecting data to include and the degrees of freedom used when calculating confidence intervals:</p>
-<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="natural-experiments.html#cb241-1" tabindex="-1"></a>near_threshold3 <span class="ot">&lt;-</span> sicily <span class="sc">%&gt;%</span> </span>
-<span id="cb241-2"><a href="natural-experiments.html#cb241-2" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">%in%</span> <span class="dv">25</span><span class="sc">:</span><span class="dv">48</span>)</span>
-<span id="cb241-3"><a href="natural-experiments.html#cb241-3" tabindex="-1"></a>near_thres_mod3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban, </span>
-<span id="cb241-4"><a href="natural-experiments.html#cb241-4" tabindex="-1"></a>                      <span class="at">data =</span> near_threshold3, </span>
-<span id="cb241-5"><a href="natural-experiments.html#cb241-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
-<span id="cb241-6"><a href="natural-experiments.html#cb241-6" tabindex="-1"></a>near_thres_mod3 <span class="sc">%&gt;%</span> </span>
-<span id="cb241-7"><a href="natural-experiments.html#cb241-7" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="natural-experiments.html#cb242-1" tabindex="-1"></a>near_threshold3 <span class="ot">&lt;-</span> sicily <span class="sc">%&gt;%</span> </span>
+<span id="cb242-2"><a href="natural-experiments.html#cb242-2" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">%in%</span> <span class="dv">25</span><span class="sc">:</span><span class="dv">48</span>)</span>
+<span id="cb242-3"><a href="natural-experiments.html#cb242-3" tabindex="-1"></a>near_thres_mod3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban, </span>
+<span id="cb242-4"><a href="natural-experiments.html#cb242-4" tabindex="-1"></a>                      <span class="at">data =</span> near_threshold3, </span>
+<span id="cb242-5"><a href="natural-experiments.html#cb242-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span>
+<span id="cb242-6"><a href="natural-experiments.html#cb242-6" tabindex="-1"></a>near_thres_mod3 <span class="sc">%&gt;%</span> </span>
+<span id="cb242-7"><a href="natural-experiments.html#cb242-7" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)  -6.09      0.0160   -382.   1.56e-43
 ## 2 smokban      -0.0656    0.0229     -2.86 9.04e- 3</code></pre>
-<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="natural-experiments.html#cb243-1" tabindex="-1"></a>near_thres_mod3 <span class="sc">%&gt;%</span> </span>
-<span id="cb243-2"><a href="natural-experiments.html#cb243-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb243-3"><a href="natural-experiments.html#cb243-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb243-4"><a href="natural-experiments.html#cb243-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
-<span id="cb243-5"><a href="natural-experiments.html#cb243-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">22</span>) <span class="sc">*</span> std.error), </span>
-<span id="cb243-6"><a href="natural-experiments.html#cb243-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">22</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
-<span id="cb243-7"><a href="natural-experiments.html#cb243-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="natural-experiments.html#cb244-1" tabindex="-1"></a>near_thres_mod3 <span class="sc">%&gt;%</span> </span>
+<span id="cb244-2"><a href="natural-experiments.html#cb244-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb244-3"><a href="natural-experiments.html#cb244-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb244-4"><a href="natural-experiments.html#cb244-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb244-5"><a href="natural-experiments.html#cb244-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">22</span>) <span class="sc">*</span> std.error), </span>
+<span id="cb244-6"><a href="natural-experiments.html#cb244-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">22</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
+<span id="cb244-7"><a href="natural-experiments.html#cb244-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ##      rr low_rr high_rr
 ##   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
@@ -524,43 +524,43 @@ log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t + \beta_2 T
 \]</span></p>
 <p>where all the terms are the same as in the last section, while now a linear term has been added for month in study (time; <span class="math inline">\(T\)</span>) with an associated coefficient <span class="math inline">\(\beta_2\)</span>. In <span class="citation">Bernal, Cummins, and Gasparrini (<a href="#ref-bernal2017interrupted">2017</a>)</span>, this corresponds to the model structure shown in panel (a) of Figure 2: There is an “interruption” at the time of the ban, and there is a long-term trend in the outcome rates regardless of this ban, but the ban only creates the immediate interruption, without changing the shape of the long-term trend.</p>
 <p>Below is the code that will fit this model in R. We’ll change the <code>data</code> argument to now include all available data points. The other change is that we’re adding a linear term for time (<code>time</code>).</p>
-<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="natural-experiments.html#cb245-1" tabindex="-1"></a>int_ts_mod1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time, </span>
-<span id="cb245-2"><a href="natural-experiments.html#cb245-2" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
-<span id="cb245-3"><a href="natural-experiments.html#cb245-3" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="natural-experiments.html#cb246-1" tabindex="-1"></a>int_ts_mod1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time, </span>
+<span id="cb246-2"><a href="natural-experiments.html#cb246-2" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
+<span id="cb246-3"><a href="natural-experiments.html#cb246-3" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>We can look at the results from fitting this model, using the same technique as in the last section:</p>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="natural-experiments.html#cb246-1" tabindex="-1"></a>int_ts_mod1 <span class="sc">%&gt;%</span> </span>
-<span id="cb246-2"><a href="natural-experiments.html#cb246-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="natural-experiments.html#cb247-1" tabindex="-1"></a>int_ts_mod1 <span class="sc">%&gt;%</span> </span>
+<span id="cb247-2"><a href="natural-experiments.html#cb247-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept) -6.24     0.0211     -296.   3.94e-91
 ## 2 smokban     -0.112    0.0325       -3.44 1.12e- 3
 ## 3 time         0.00494  0.000942      5.25 2.43e- 6</code></pre>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="natural-experiments.html#cb248-1" tabindex="-1"></a>int_ts_mod1 <span class="sc">%&gt;%</span> </span>
-<span id="cb248-2"><a href="natural-experiments.html#cb248-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb248-3"><a href="natural-experiments.html#cb248-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb248-4"><a href="natural-experiments.html#cb248-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
-<span id="cb248-5"><a href="natural-experiments.html#cb248-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">56</span>) <span class="sc">*</span> std.error), </span>
-<span id="cb248-6"><a href="natural-experiments.html#cb248-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">56</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
-<span id="cb248-7"><a href="natural-experiments.html#cb248-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="natural-experiments.html#cb249-1" tabindex="-1"></a>int_ts_mod1 <span class="sc">%&gt;%</span> </span>
+<span id="cb249-2"><a href="natural-experiments.html#cb249-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb249-3"><a href="natural-experiments.html#cb249-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb249-4"><a href="natural-experiments.html#cb249-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb249-5"><a href="natural-experiments.html#cb249-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">56</span>) <span class="sc">*</span> std.error), </span>
+<span id="cb249-6"><a href="natural-experiments.html#cb249-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">56</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
+<span id="cb249-7"><a href="natural-experiments.html#cb249-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ##      rr low_rr high_rr
 ##   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 0.894  0.838   0.955</code></pre>
 <p>These results show us a few things. First, there is clearly a long-term time trend—the p value on the “time” coefficient estimate is much lower than 0.05. Second, the estimated benefit from the smoking ban, in terms of reducing rates of ACE hospitalization, is a bit stronger when we control for long-term trends. We are now estimating about a 11% decrease in hospitalization rates in association with this indoor smoking ban. It’s possible that our results in the last sections were somewhat confounded by long-term trends.</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="natural-experiments.html#cb250-1" tabindex="-1"></a>mod_data <span class="ot">&lt;-</span> int_ts_mod1 <span class="sc">%&gt;%</span> </span>
-<span id="cb250-2"><a href="natural-experiments.html#cb250-2" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb250-3"><a href="natural-experiments.html#cb250-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stdpop =</span> sicily<span class="sc">$</span>stdpop,</span>
-<span id="cb250-4"><a href="natural-experiments.html#cb250-4" tabindex="-1"></a>         <span class="at">aces_adj =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)) </span>
-<span id="cb250-5"><a href="natural-experiments.html#cb250-5" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span>  </span>
-<span id="cb250-6"><a href="natural-experiments.html#cb250-6" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
-<span id="cb250-7"><a href="natural-experiments.html#cb250-7" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
-<span id="cb250-8"><a href="natural-experiments.html#cb250-8" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb250-9"><a href="natural-experiments.html#cb250-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> mod_data, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
-<span id="cb250-10"><a href="natural-experiments.html#cb250-10" tabindex="-1"></a>                                  <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
-<span id="cb250-11"><a href="natural-experiments.html#cb250-11" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mod_data, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
-<span id="cb250-12"><a href="natural-experiments.html#cb250-12" tabindex="-1"></a>                                 <span class="at">y =</span> <span class="fu">exp</span>(.fitted) <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
-<span id="cb250-13"><a href="natural-experiments.html#cb250-13" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="natural-experiments.html#cb251-1" tabindex="-1"></a>mod_data <span class="ot">&lt;-</span> int_ts_mod1 <span class="sc">%&gt;%</span> </span>
+<span id="cb251-2"><a href="natural-experiments.html#cb251-2" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb251-3"><a href="natural-experiments.html#cb251-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stdpop =</span> sicily<span class="sc">$</span>stdpop,</span>
+<span id="cb251-4"><a href="natural-experiments.html#cb251-4" tabindex="-1"></a>         <span class="at">aces_adj =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)) </span>
+<span id="cb251-5"><a href="natural-experiments.html#cb251-5" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span>  </span>
+<span id="cb251-6"><a href="natural-experiments.html#cb251-6" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">37</span>, <span class="dv">59</span>, <span class="dv">59</span>, <span class="dv">37</span>), </span>
+<span id="cb251-7"><a href="natural-experiments.html#cb251-7" tabindex="-1"></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>, <span class="sc">-</span><span class="cn">Inf</span>)), </span>
+<span id="cb251-8"><a href="natural-experiments.html#cb251-8" tabindex="-1"></a>               <span class="at">fill =</span> <span class="st">&quot;cyan&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb251-9"><a href="natural-experiments.html#cb251-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> mod_data, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
+<span id="cb251-10"><a href="natural-experiments.html#cb251-10" tabindex="-1"></a>                                  <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
+<span id="cb251-11"><a href="natural-experiments.html#cb251-11" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mod_data, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
+<span id="cb251-12"><a href="natural-experiments.html#cb251-12" tabindex="-1"></a>                                 <span class="at">y =</span> <span class="fu">exp</span>(.fitted) <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
+<span id="cb251-13"><a href="natural-experiments.html#cb251-13" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-136-1.png" width="672" /></p>
 <p>Next, we can try to fit the model stucture that is shown in panel (c) of Figure 2 in <span class="citation">Bernal, Cummins, and Gasparrini (<a href="#ref-bernal2017interrupted">2017</a>)</span>. This structure includes an abrupt interruption when the ban is introduced, as well as a change in the slope of the long-term trend following the ban.</p>
 <p>The structure of this regression model will include an extra term, to allow the slope of the long-term trend to change after the ban. The model is:</p>
@@ -569,12 +569,12 @@ log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t + \beta_2 T + \beta_3 (T-T_0)X_t
 \]</span></p>
 <p>where <span class="math inline">\((T-T_0)\)</span> is a measure of time since the date of the ban and <span class="math inline">\(\beta_3\)</span> allows for a change in the slope of the time trend line after the ban. (As a note, <span class="math inline">\((T-T_0)X_t\)</span> could also be expressed as <span class="math inline">\((T-T_0)_+\)</span> using the <span class="math inline">\((..)_+\)</span> notation we introduced last week.)</p>
 <p>To fit this model in R, you can run:</p>
-<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="natural-experiments.html#cb251-1" tabindex="-1"></a>int_ts_mod2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time <span class="sc">+</span> </span>
-<span id="cb251-2"><a href="natural-experiments.html#cb251-2" tabindex="-1"></a>                     <span class="fu">I</span>(time <span class="sc">-</span> <span class="dv">36</span>)<span class="sc">:</span>smokban, </span>
-<span id="cb251-3"><a href="natural-experiments.html#cb251-3" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
-<span id="cb251-4"><a href="natural-experiments.html#cb251-4" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="natural-experiments.html#cb252-1" tabindex="-1"></a>int_ts_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb252-2"><a href="natural-experiments.html#cb252-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="natural-experiments.html#cb252-1" tabindex="-1"></a>int_ts_mod2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time <span class="sc">+</span> </span>
+<span id="cb252-2"><a href="natural-experiments.html#cb252-2" tabindex="-1"></a>                     <span class="fu">I</span>(time <span class="sc">-</span> <span class="dv">36</span>)<span class="sc">:</span>smokban, </span>
+<span id="cb252-3"><a href="natural-experiments.html#cb252-3" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
+<span id="cb252-4"><a href="natural-experiments.html#cb252-4" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="natural-experiments.html#cb253-1" tabindex="-1"></a>int_ts_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb253-2"><a href="natural-experiments.html#cb253-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 4 × 5
 ##   term                  estimate std.error statistic  p.value
 ##   &lt;chr&gt;                    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
@@ -582,13 +582,13 @@ log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t + \beta_2 T + \beta_3 (T-T_0)X_t
 ## 2 smokban              -0.114      0.0356     -3.21  2.23e- 3
 ## 3 time                  0.00485    0.00107     4.52  3.28e- 5
 ## 4 smokban:I(time - 36)  0.000417   0.00231     0.181 8.57e- 1</code></pre>
-<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="natural-experiments.html#cb254-1" tabindex="-1"></a>int_ts_mod1 <span class="sc">%&gt;%</span> </span>
-<span id="cb254-2"><a href="natural-experiments.html#cb254-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb254-3"><a href="natural-experiments.html#cb254-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb254-4"><a href="natural-experiments.html#cb254-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
-<span id="cb254-5"><a href="natural-experiments.html#cb254-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">55</span>) <span class="sc">*</span> std.error), </span>
-<span id="cb254-6"><a href="natural-experiments.html#cb254-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">55</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
-<span id="cb254-7"><a href="natural-experiments.html#cb254-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="natural-experiments.html#cb255-1" tabindex="-1"></a>int_ts_mod1 <span class="sc">%&gt;%</span> </span>
+<span id="cb255-2"><a href="natural-experiments.html#cb255-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb255-3"><a href="natural-experiments.html#cb255-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb255-4"><a href="natural-experiments.html#cb255-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb255-5"><a href="natural-experiments.html#cb255-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">55</span>) <span class="sc">*</span> std.error), </span>
+<span id="cb255-6"><a href="natural-experiments.html#cb255-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">55</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
+<span id="cb255-7"><a href="natural-experiments.html#cb255-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ##      rr low_rr high_rr
 ##   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
@@ -598,26 +598,26 @@ log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t + \beta_2 T + \beta_3 (T-T_0)X_t
 <li><strong>Now let’s try to control for long-term and seasonal trends beyond the linear term for time. Fit a model using a harmonic term like in <span class="citation">Bernal, Cummins, and Gasparrini (<a href="#ref-bernal2017interrupted">2017</a>)</span>. Do the coefficients from the model for the smoking ban and linear time term change? In previous examples, we’ve been using flexible functions for this such as splines. Repeat the model from above using a spline term. How does this model compare with respect to the smoking ban coefficient? Why?</strong></li>
 </ol>
 <p>We’ve been adjusting for long-term and seasonal trends using a flexible spline term so far. Let’s try and incorporate this in the mode here. Here we will try a new function from the <code>tsModel</code> package called <code>harmonic</code>. The <code>harmonic</code> function will fit pairs of sine and cosine functions in a given period of time. Here we will define the function as <code>harmonic(month,2,12)</code> fitting two pairs of sine and cosine functions over a 12-month period. These combined sine and cosine functions create a sinusoidal patten with peaks and troughs that we’ve seen for seasonal treands previously.</p>
-<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="natural-experiments.html#cb256-1" tabindex="-1"></a><span class="fu">library</span>(tsModel)</span>
-<span id="cb256-2"><a href="natural-experiments.html#cb256-2" tabindex="-1"></a>int_ts_mod3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time <span class="sc">+</span> </span>
-<span id="cb256-3"><a href="natural-experiments.html#cb256-3" tabindex="-1"></a>                     <span class="fu">I</span>(time <span class="sc">-</span> <span class="dv">36</span>)<span class="sc">:</span>smokban <span class="sc">+</span> <span class="fu">harmonic</span>(month,<span class="dv">2</span>,<span class="dv">12</span>), </span>
-<span id="cb256-4"><a href="natural-experiments.html#cb256-4" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
-<span id="cb256-5"><a href="natural-experiments.html#cb256-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="natural-experiments.html#cb257-1" tabindex="-1"></a><span class="fu">library</span>(tsModel)</span>
+<span id="cb257-2"><a href="natural-experiments.html#cb257-2" tabindex="-1"></a>int_ts_mod3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time <span class="sc">+</span> </span>
+<span id="cb257-3"><a href="natural-experiments.html#cb257-3" tabindex="-1"></a>                     <span class="fu">I</span>(time <span class="sc">-</span> <span class="dv">36</span>)<span class="sc">:</span>smokban <span class="sc">+</span> <span class="fu">harmonic</span>(month,<span class="dv">2</span>,<span class="dv">12</span>), </span>
+<span id="cb257-4"><a href="natural-experiments.html#cb257-4" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
+<span id="cb257-5"><a href="natural-experiments.html#cb257-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>In order to visualize the effect of the harmonic function we can plot the predicted values from this model same as above:</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="natural-experiments.html#cb257-1" tabindex="-1"></a>mod_data2 <span class="ot">&lt;-</span> int_ts_mod3 <span class="sc">%&gt;%</span> </span>
-<span id="cb257-2"><a href="natural-experiments.html#cb257-2" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb257-3"><a href="natural-experiments.html#cb257-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stdpop =</span> sicily<span class="sc">$</span>stdpop,</span>
-<span id="cb257-4"><a href="natural-experiments.html#cb257-4" tabindex="-1"></a>         <span class="at">aces_adj =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)) </span>
-<span id="cb257-5"><a href="natural-experiments.html#cb257-5" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span>  </span>
-<span id="cb257-6"><a href="natural-experiments.html#cb257-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> mod_data2, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
-<span id="cb257-7"><a href="natural-experiments.html#cb257-7" tabindex="-1"></a>                                  <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
-<span id="cb257-8"><a href="natural-experiments.html#cb257-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mod_data2, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
-<span id="cb257-9"><a href="natural-experiments.html#cb257-9" tabindex="-1"></a>                                 <span class="at">y =</span> <span class="fu">exp</span>(.fitted) <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
-<span id="cb257-10"><a href="natural-experiments.html#cb257-10" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="natural-experiments.html#cb258-1" tabindex="-1"></a>mod_data2 <span class="ot">&lt;-</span> int_ts_mod3 <span class="sc">%&gt;%</span> </span>
+<span id="cb258-2"><a href="natural-experiments.html#cb258-2" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb258-3"><a href="natural-experiments.html#cb258-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stdpop =</span> sicily<span class="sc">$</span>stdpop,</span>
+<span id="cb258-4"><a href="natural-experiments.html#cb258-4" tabindex="-1"></a>         <span class="at">aces_adj =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)) </span>
+<span id="cb258-5"><a href="natural-experiments.html#cb258-5" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span>  </span>
+<span id="cb258-6"><a href="natural-experiments.html#cb258-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> mod_data2, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
+<span id="cb258-7"><a href="natural-experiments.html#cb258-7" tabindex="-1"></a>                                  <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
+<span id="cb258-8"><a href="natural-experiments.html#cb258-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mod_data2, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
+<span id="cb258-9"><a href="natural-experiments.html#cb258-9" tabindex="-1"></a>                                 <span class="at">y =</span> <span class="fu">exp</span>(.fitted) <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
+<span id="cb258-10"><a href="natural-experiments.html#cb258-10" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-140-1.png" width="672" /></p>
 <p>We see that the addition of the harmonic term now yields a more flexible overall function over time. Now let’s check how the coefficients for <code>smokban</code> and <code>time</code> changed if at all</p>
-<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="natural-experiments.html#cb258-1" tabindex="-1"></a>int_ts_mod3 <span class="sc">%&gt;%</span> </span>
-<span id="cb258-2"><a href="natural-experiments.html#cb258-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="natural-experiments.html#cb259-1" tabindex="-1"></a>int_ts_mod3 <span class="sc">%&gt;%</span> </span>
+<span id="cb259-2"><a href="natural-experiments.html#cb259-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 8 × 5
 ##   term                    estimate std.error statistic  p.value
 ##   &lt;chr&gt;                      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
@@ -629,43 +629,43 @@ log(E(Y_t/StdPop_t)) = \beta_0 + \beta_1 X_t + \beta_2 T + \beta_3 (T-T_0)X_t
 ## 6 harmonic(month, 2, 12)3  0.0384   0.00971      3.95  2.42e- 4
 ## 7 harmonic(month, 2, 12)4  0.0150   0.00975      1.53  1.31e- 1
 ## 8 smokban:I(time - 36)     0.00148  0.00185      0.799 4.28e- 1</code></pre>
-<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="natural-experiments.html#cb260-1" tabindex="-1"></a>int_ts_mod3 <span class="sc">%&gt;%</span> </span>
-<span id="cb260-2"><a href="natural-experiments.html#cb260-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb260-3"><a href="natural-experiments.html#cb260-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb260-4"><a href="natural-experiments.html#cb260-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
-<span id="cb260-5"><a href="natural-experiments.html#cb260-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">51</span>) <span class="sc">*</span> std.error), </span>
-<span id="cb260-6"><a href="natural-experiments.html#cb260-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">51</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
-<span id="cb260-7"><a href="natural-experiments.html#cb260-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
+<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="natural-experiments.html#cb261-1" tabindex="-1"></a>int_ts_mod3 <span class="sc">%&gt;%</span> </span>
+<span id="cb261-2"><a href="natural-experiments.html#cb261-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb261-3"><a href="natural-experiments.html#cb261-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb261-4"><a href="natural-experiments.html#cb261-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb261-5"><a href="natural-experiments.html#cb261-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">51</span>) <span class="sc">*</span> std.error), </span>
+<span id="cb261-6"><a href="natural-experiments.html#cb261-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">51</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
+<span id="cb261-7"><a href="natural-experiments.html#cb261-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ##      rr low_rr high_rr
 ##   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 0.876  0.826   0.930</code></pre>
 <p>The change in the slope of the time trend after the ban is still not statistically significant, but we see that the RR for the smoking ban term is actually marginally lower, meaning a slighlty more protetive effect after adjusting for the seasonal trends with a harmonic term.</p>
 <p>Now why did we use this type of function as opposed to a spline? Let’s repeat the model from above with a natural spline term as we had been doing in the previous example, with 30 df’s (~6 per year).</p>
-<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="natural-experiments.html#cb262-1" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
-<span id="cb262-2"><a href="natural-experiments.html#cb262-2" tabindex="-1"></a>int_ts_mod4 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time <span class="sc">+</span> </span>
-<span id="cb262-3"><a href="natural-experiments.html#cb262-3" tabindex="-1"></a>                     <span class="fu">I</span>(time <span class="sc">-</span> <span class="dv">36</span>)<span class="sc">:</span>smokban <span class="sc">+</span> <span class="fu">ns</span>(time, <span class="at">df=</span><span class="dv">30</span>), </span>
-<span id="cb262-4"><a href="natural-experiments.html#cb262-4" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
-<span id="cb262-5"><a href="natural-experiments.html#cb262-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="natural-experiments.html#cb263-1" tabindex="-1"></a>mod_data3 <span class="ot">&lt;-</span> int_ts_mod4 <span class="sc">%&gt;%</span> </span>
-<span id="cb263-2"><a href="natural-experiments.html#cb263-2" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb263-3"><a href="natural-experiments.html#cb263-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stdpop =</span> sicily<span class="sc">$</span>stdpop,</span>
-<span id="cb263-4"><a href="natural-experiments.html#cb263-4" tabindex="-1"></a>         <span class="at">aces_adj =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)) </span>
-<span id="cb263-5"><a href="natural-experiments.html#cb263-5" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span>  </span>
-<span id="cb263-6"><a href="natural-experiments.html#cb263-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> mod_data3, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
-<span id="cb263-7"><a href="natural-experiments.html#cb263-7" tabindex="-1"></a>                                  <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
-<span id="cb263-8"><a href="natural-experiments.html#cb263-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mod_data3, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
-<span id="cb263-9"><a href="natural-experiments.html#cb263-9" tabindex="-1"></a>                                 <span class="at">y =</span> <span class="fu">exp</span>(.fitted) <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
-<span id="cb263-10"><a href="natural-experiments.html#cb263-10" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="natural-experiments.html#cb263-1" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb263-2"><a href="natural-experiments.html#cb263-2" tabindex="-1"></a>int_ts_mod4 <span class="ot">&lt;-</span> <span class="fu">glm</span>(aces <span class="sc">~</span> <span class="fu">offset</span>(<span class="fu">log</span>(stdpop)) <span class="sc">+</span> smokban <span class="sc">+</span> time <span class="sc">+</span> </span>
+<span id="cb263-3"><a href="natural-experiments.html#cb263-3" tabindex="-1"></a>                     <span class="fu">I</span>(time <span class="sc">-</span> <span class="dv">36</span>)<span class="sc">:</span>smokban <span class="sc">+</span> <span class="fu">ns</span>(time, <span class="at">df=</span><span class="dv">30</span>), </span>
+<span id="cb263-4"><a href="natural-experiments.html#cb263-4" tabindex="-1"></a>                      <span class="at">data =</span> sicily, </span>
+<span id="cb263-5"><a href="natural-experiments.html#cb263-5" tabindex="-1"></a>                      <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="natural-experiments.html#cb264-1" tabindex="-1"></a>mod_data3 <span class="ot">&lt;-</span> int_ts_mod4 <span class="sc">%&gt;%</span> </span>
+<span id="cb264-2"><a href="natural-experiments.html#cb264-2" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb264-3"><a href="natural-experiments.html#cb264-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stdpop =</span> sicily<span class="sc">$</span>stdpop,</span>
+<span id="cb264-4"><a href="natural-experiments.html#cb264-4" tabindex="-1"></a>         <span class="at">aces_adj =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)) </span>
+<span id="cb264-5"><a href="natural-experiments.html#cb264-5" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span>  </span>
+<span id="cb264-6"><a href="natural-experiments.html#cb264-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> mod_data3, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
+<span id="cb264-7"><a href="natural-experiments.html#cb264-7" tabindex="-1"></a>                                  <span class="at">y =</span> aces <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>))) <span class="sc">+</span> </span>
+<span id="cb264-8"><a href="natural-experiments.html#cb264-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mod_data3, <span class="fu">aes</span>(<span class="at">x =</span> time, </span>
+<span id="cb264-9"><a href="natural-experiments.html#cb264-9" tabindex="-1"></a>                                 <span class="at">y =</span> <span class="fu">exp</span>(.fitted) <span class="sc">/</span> stdpop <span class="sc">*</span> (<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)), </span>
+<span id="cb264-10"><a href="natural-experiments.html#cb264-10" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-143-1.png" width="672" />
 We see that the spline term has succesfully fitted a flexible function over time. Now let’s check the smoking ban RR</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="natural-experiments.html#cb264-1" tabindex="-1"></a>int_ts_mod4 <span class="sc">%&gt;%</span> </span>
-<span id="cb264-2"><a href="natural-experiments.html#cb264-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb264-3"><a href="natural-experiments.html#cb264-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb264-4"><a href="natural-experiments.html#cb264-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
-<span id="cb264-5"><a href="natural-experiments.html#cb264-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">25</span>) <span class="sc">*</span> std.error), </span>
-<span id="cb264-6"><a href="natural-experiments.html#cb264-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">25</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
-<span id="cb264-7"><a href="natural-experiments.html#cb264-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="natural-experiments.html#cb265-1" tabindex="-1"></a>int_ts_mod4 <span class="sc">%&gt;%</span> </span>
+<span id="cb265-2"><a href="natural-experiments.html#cb265-2" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb265-3"><a href="natural-experiments.html#cb265-3" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;smokban&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb265-4"><a href="natural-experiments.html#cb265-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rr =</span> <span class="fu">exp</span>(estimate), </span>
+<span id="cb265-5"><a href="natural-experiments.html#cb265-5" tabindex="-1"></a>         <span class="at">low_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.025</span>, <span class="at">df =</span> <span class="dv">25</span>) <span class="sc">*</span> std.error), </span>
+<span id="cb265-6"><a href="natural-experiments.html#cb265-6" tabindex="-1"></a>         <span class="at">high_rr =</span> <span class="fu">exp</span>(estimate <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="dv">25</span>) <span class="sc">*</span> std.error)) <span class="sc">%&gt;%</span> </span>
+<span id="cb265-7"><a href="natural-experiments.html#cb265-7" tabindex="-1"></a>  <span class="fu">select</span>(rr, low_rr, high_rr)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ##      rr low_rr high_rr
 ##   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
@@ -742,42 +742,42 @@ Venkataramani, Atheendar S, Jacob Bor, and Anupam B Jena. 2016. <span>“Regress
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>

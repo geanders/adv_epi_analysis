@@ -23,7 +23,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2024-08-19" />
+<meta name="date" content="2025-08-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -66,7 +66,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -360,9 +360,9 @@ but it can be helpful to start by seeing what’s going on for just a few subjec
 first, to understand the idea of random versus fixed effects.</p>
 <p>First, you’ll want to re-load the study data, if you don’t have it handy in
 your R session:</p>
-<div class="sourceCode" id="cb556"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb556-1"><a href="mixed-models.html#cb556-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
-<span id="cb556-2"><a href="mixed-models.html#cb556-2" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/frmgham2.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb556-3"><a href="mixed-models.html#cb556-3" tabindex="-1"></a>  <span class="fu">rename_all</span>(str_to_lower)</span></code></pre></div>
+<div class="sourceCode" id="cb557"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb557-1"><a href="mixed-models.html#cb557-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Loads all the tidyverse packages, including readr</span></span>
+<span id="cb557-2"><a href="mixed-models.html#cb557-2" tabindex="-1"></a>fhs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/frmgham2.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb557-3"><a href="mixed-models.html#cb557-3" tabindex="-1"></a>  <span class="fu">rename_all</span>(str_to_lower)</span></code></pre></div>
 <p>Next, let’s create a sample of a few of the study subjects. We can use the
 <code>slice_sample</code> function from the <code>dplyr</code> package to get a sample of rows from a
 dataframe. Since we want to make sure that we sample at the level of study
@@ -378,30 +378,30 @@ we have multiple measurements for each subject in our small sample, but we’ll
 take out this step when we move later to using the whole dataset). To make sure
 that you get the same sample that we show here, you can set the seed to the same
 number.</p>
-<div class="sourceCode" id="cb557"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb557-1"><a href="mixed-models.html#cb557-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">416</span>)</span>
-<span id="cb557-2"><a href="mixed-models.html#cb557-2" tabindex="-1"></a>fhs_sample <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb557-3"><a href="mixed-models.html#cb557-3" tabindex="-1"></a>  <span class="co"># Relabel factor levels</span></span>
-<span id="cb557-4"><a href="mixed-models.html#cb557-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">as_factor</span>(sex),</span>
-<span id="cb557-5"><a href="mixed-models.html#cb557-5" tabindex="-1"></a>         <span class="at">sex =</span> <span class="fu">fct_recode</span>(sex, </span>
-<span id="cb557-6"><a href="mixed-models.html#cb557-6" tabindex="-1"></a>                          <span class="at">male =</span> <span class="st">&quot;1&quot;</span>, </span>
-<span id="cb557-7"><a href="mixed-models.html#cb557-7" tabindex="-1"></a>                          <span class="at">female =</span> <span class="st">&quot;2&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb557-8"><a href="mixed-models.html#cb557-8" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb557-9"><a href="mixed-models.html#cb557-9" tabindex="-1"></a>  <span class="co"># Calculate baseline age and number of observations for each study subject</span></span>
-<span id="cb557-10"><a href="mixed-models.html#cb557-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb557-11"><a href="mixed-models.html#cb557-11" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb557-12"><a href="mixed-models.html#cb557-12" tabindex="-1"></a>  <span class="co"># Filter to only subjects with three examinations</span></span>
-<span id="cb557-13"><a href="mixed-models.html#cb557-13" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">==</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb557-14"><a href="mixed-models.html#cb557-14" tabindex="-1"></a>  <span class="co"># Limit to just the columns we&#39;ll use (to make the dataset simpler)</span></span>
-<span id="cb557-15"><a href="mixed-models.html#cb557-15" tabindex="-1"></a>  <span class="fu">select</span>(randid, period, sex, age, sysbp,cursmoke, bmi, educ, time) <span class="sc">%&gt;%</span> </span>
-<span id="cb557-16"><a href="mixed-models.html#cb557-16" tabindex="-1"></a>  <span class="co"># Nest the data, so there&#39;s one row per study subject, so we can sample </span></span>
-<span id="cb557-17"><a href="mixed-models.html#cb557-17" tabindex="-1"></a>  <span class="co"># by subject</span></span>
-<span id="cb557-18"><a href="mixed-models.html#cb557-18" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">cols =</span> <span class="sc">-</span>randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb557-19"><a href="mixed-models.html#cb557-19" tabindex="-1"></a>  <span class="co"># Sample a few study subjects</span></span>
-<span id="cb557-20"><a href="mixed-models.html#cb557-20" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb557-21"><a href="mixed-models.html#cb557-21" tabindex="-1"></a>  <span class="co"># Unnest, to get back to one row per measurement</span></span>
-<span id="cb557-22"><a href="mixed-models.html#cb557-22" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> cols)</span>
-<span id="cb557-23"><a href="mixed-models.html#cb557-23" tabindex="-1"></a></span>
-<span id="cb557-24"><a href="mixed-models.html#cb557-24" tabindex="-1"></a>fhs_sample</span></code></pre></div>
+<div class="sourceCode" id="cb558"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb558-1"><a href="mixed-models.html#cb558-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">416</span>)</span>
+<span id="cb558-2"><a href="mixed-models.html#cb558-2" tabindex="-1"></a>fhs_sample <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb558-3"><a href="mixed-models.html#cb558-3" tabindex="-1"></a>  <span class="co"># Relabel factor levels</span></span>
+<span id="cb558-4"><a href="mixed-models.html#cb558-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">as_factor</span>(sex),</span>
+<span id="cb558-5"><a href="mixed-models.html#cb558-5" tabindex="-1"></a>         <span class="at">sex =</span> <span class="fu">fct_recode</span>(sex, </span>
+<span id="cb558-6"><a href="mixed-models.html#cb558-6" tabindex="-1"></a>                          <span class="at">male =</span> <span class="st">&quot;1&quot;</span>, </span>
+<span id="cb558-7"><a href="mixed-models.html#cb558-7" tabindex="-1"></a>                          <span class="at">female =</span> <span class="st">&quot;2&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb558-8"><a href="mixed-models.html#cb558-8" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb558-9"><a href="mixed-models.html#cb558-9" tabindex="-1"></a>  <span class="co"># Calculate baseline age and number of observations for each study subject</span></span>
+<span id="cb558-10"><a href="mixed-models.html#cb558-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb558-11"><a href="mixed-models.html#cb558-11" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb558-12"><a href="mixed-models.html#cb558-12" tabindex="-1"></a>  <span class="co"># Filter to only subjects with three examinations</span></span>
+<span id="cb558-13"><a href="mixed-models.html#cb558-13" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">==</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb558-14"><a href="mixed-models.html#cb558-14" tabindex="-1"></a>  <span class="co"># Limit to just the columns we&#39;ll use (to make the dataset simpler)</span></span>
+<span id="cb558-15"><a href="mixed-models.html#cb558-15" tabindex="-1"></a>  <span class="fu">select</span>(randid, period, sex, age, sysbp,cursmoke, bmi, educ, time) <span class="sc">%&gt;%</span> </span>
+<span id="cb558-16"><a href="mixed-models.html#cb558-16" tabindex="-1"></a>  <span class="co"># Nest the data, so there&#39;s one row per study subject, so we can sample </span></span>
+<span id="cb558-17"><a href="mixed-models.html#cb558-17" tabindex="-1"></a>  <span class="co"># by subject</span></span>
+<span id="cb558-18"><a href="mixed-models.html#cb558-18" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">cols =</span> <span class="sc">-</span>randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb558-19"><a href="mixed-models.html#cb558-19" tabindex="-1"></a>  <span class="co"># Sample a few study subjects</span></span>
+<span id="cb558-20"><a href="mixed-models.html#cb558-20" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb558-21"><a href="mixed-models.html#cb558-21" tabindex="-1"></a>  <span class="co"># Unnest, to get back to one row per measurement</span></span>
+<span id="cb558-22"><a href="mixed-models.html#cb558-22" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> cols)</span>
+<span id="cb558-23"><a href="mixed-models.html#cb558-23" tabindex="-1"></a></span>
+<span id="cb558-24"><a href="mixed-models.html#cb558-24" tabindex="-1"></a>fhs_sample</span></code></pre></div>
 <pre><code>## # A tibble: 45 × 9
 ##     randid period sex      age sysbp cursmoke   bmi  educ  time
 ##      &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
@@ -425,11 +425,11 @@ on your arteries between heart beats. We’ll focus on systolic blood
 pressure, which is included in the data in the column <code>sysbp</code>.</p>
 <p>Let’s make a plot of how systolic blood pressure varies across each of our
 study subjects, looking at their measurements at different ages:</p>
-<div class="sourceCode" id="cb559"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb559-1"><a href="mixed-models.html#cb559-1" tabindex="-1"></a>fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb559-2"><a href="mixed-models.html#cb559-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> sysbp, <span class="at">group =</span> randid, </span>
-<span id="cb559-3"><a href="mixed-models.html#cb559-3" tabindex="-1"></a>             <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
-<span id="cb559-4"><a href="mixed-models.html#cb559-4" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
-<span id="cb559-5"><a href="mixed-models.html#cb559-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb560"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb560-1"><a href="mixed-models.html#cb560-1" tabindex="-1"></a>fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb560-2"><a href="mixed-models.html#cb560-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> sysbp, <span class="at">group =</span> randid, </span>
+<span id="cb560-3"><a href="mixed-models.html#cb560-3" tabindex="-1"></a>             <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
+<span id="cb560-4"><a href="mixed-models.html#cb560-4" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb560-5"><a href="mixed-models.html#cb560-5" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-284-1.png" width="672" /></p>
 <p>Within this sample, we see that there’s a lot of variation across the study
 subjects in systolic blood pressure. Some of this variation is explained by age,
@@ -453,10 +453,10 @@ subjects.</p>
 <p>First, the <code>GGally</code> package can produce a nice exploratory graph that includes
 the univariate distribution of each column, plus correlations and scatterplots
 to show the relationship between each pair of columns:</p>
-<div class="sourceCode" id="cb560"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb560-1"><a href="mixed-models.html#cb560-1" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
-<span id="cb560-2"><a href="mixed-models.html#cb560-2" tabindex="-1"></a>fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb560-3"><a href="mixed-models.html#cb560-3" tabindex="-1"></a>  <span class="fu">select</span>(sex, age, cursmoke, bmi, educ, sysbp) <span class="sc">%&gt;%</span> </span>
-<span id="cb560-4"><a href="mixed-models.html#cb560-4" tabindex="-1"></a>  <span class="fu">ggpairs</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb561"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb561-1"><a href="mixed-models.html#cb561-1" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb561-2"><a href="mixed-models.html#cb561-2" tabindex="-1"></a>fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb561-3"><a href="mixed-models.html#cb561-3" tabindex="-1"></a>  <span class="fu">select</span>(sex, age, cursmoke, bmi, educ, sysbp) <span class="sc">%&gt;%</span> </span>
+<span id="cb561-4"><a href="mixed-models.html#cb561-4" tabindex="-1"></a>  <span class="fu">ggpairs</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-285-1.png" width="672" /></p>
 <p>Based on this, age is clearly correlated with systolic blood pressure, with
 blood pressure tending to be higher at higher ages. BMI also seems to be
@@ -472,23 +472,23 @@ function. Since only numeric values can be included when calculating the
 correlation matrix, we’ll level sex out this time. This function shows only
 correlations, but would be nice with larger datasets, which the <code>ggpairs</code>
 function might struggle to fit quickly (because there are so many observations):</p>
-<div class="sourceCode" id="cb561"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb561-1"><a href="mixed-models.html#cb561-1" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)</span>
-<span id="cb561-2"><a href="mixed-models.html#cb561-2" tabindex="-1"></a>fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb561-3"><a href="mixed-models.html#cb561-3" tabindex="-1"></a>  <span class="fu">select</span>(age, cursmoke, bmi, educ, sysbp) <span class="sc">%&gt;%</span> </span>
-<span id="cb561-4"><a href="mixed-models.html#cb561-4" tabindex="-1"></a>  <span class="fu">cor</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb561-5"><a href="mixed-models.html#cb561-5" tabindex="-1"></a>  <span class="fu">ggcorrplot</span>(<span class="at">method =</span> <span class="st">&quot;circle&quot;</span>, <span class="at">type =</span> <span class="st">&quot;lower&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb562"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb562-1"><a href="mixed-models.html#cb562-1" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)</span>
+<span id="cb562-2"><a href="mixed-models.html#cb562-2" tabindex="-1"></a>fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb562-3"><a href="mixed-models.html#cb562-3" tabindex="-1"></a>  <span class="fu">select</span>(age, cursmoke, bmi, educ, sysbp) <span class="sc">%&gt;%</span> </span>
+<span id="cb562-4"><a href="mixed-models.html#cb562-4" tabindex="-1"></a>  <span class="fu">cor</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb562-5"><a href="mixed-models.html#cb562-5" tabindex="-1"></a>  <span class="fu">ggcorrplot</span>(<span class="at">method =</span> <span class="st">&quot;circle&quot;</span>, <span class="at">type =</span> <span class="st">&quot;lower&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-286-1.png" width="672" /></p>
 <p>We could also use beeswarm plots in our original data to explore how
 education levels are associated with systolic blood pressure in that full
 dataset:</p>
-<div class="sourceCode" id="cb562"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb562-1"><a href="mixed-models.html#cb562-1" tabindex="-1"></a><span class="fu">library</span>(ggbeeswarm)</span>
-<span id="cb562-2"><a href="mixed-models.html#cb562-2" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb562-3"><a href="mixed-models.html#cb562-3" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
-<span id="cb562-4"><a href="mixed-models.html#cb562-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">educ =</span> <span class="fu">first</span>(educ), </span>
-<span id="cb562-5"><a href="mixed-models.html#cb562-5" tabindex="-1"></a>            <span class="at">sysbp =</span> <span class="fu">mean</span>(sysbp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb562-6"><a href="mixed-models.html#cb562-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> educ, <span class="at">y =</span> sysbp, <span class="at">group =</span> educ)) <span class="sc">+</span> </span>
-<span id="cb562-7"><a href="mixed-models.html#cb562-7" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> </span>
-<span id="cb562-8"><a href="mixed-models.html#cb562-8" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width=</span><span class="fl">0.1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb563"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb563-1"><a href="mixed-models.html#cb563-1" tabindex="-1"></a><span class="fu">library</span>(ggbeeswarm)</span>
+<span id="cb563-2"><a href="mixed-models.html#cb563-2" tabindex="-1"></a>fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb563-3"><a href="mixed-models.html#cb563-3" tabindex="-1"></a>  <span class="fu">group_by</span>(randid) <span class="sc">%&gt;%</span> </span>
+<span id="cb563-4"><a href="mixed-models.html#cb563-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">educ =</span> <span class="fu">first</span>(educ), </span>
+<span id="cb563-5"><a href="mixed-models.html#cb563-5" tabindex="-1"></a>            <span class="at">sysbp =</span> <span class="fu">mean</span>(sysbp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb563-6"><a href="mixed-models.html#cb563-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> educ, <span class="at">y =</span> sysbp, <span class="at">group =</span> educ)) <span class="sc">+</span> </span>
+<span id="cb563-7"><a href="mixed-models.html#cb563-7" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> </span>
+<span id="cb563-8"><a href="mixed-models.html#cb563-8" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width=</span><span class="fl">0.1</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-287-1.png" width="672" /></p>
 </div>
 <div id="mixed-models-with-random-intercepts" class="section level2 hasAnchor" number="9.3">
@@ -517,8 +517,8 @@ specify—you can use the <code>glm</code> (or in this case <code>lm</code> sinc
 model) function since we’re using only a fixed effect (more later on what that is,
 but essentially it’s the type of effect we’ve been fitting in all the previous models),
 and in the model formula, we only need to specify <code>1</code> for an intercept:</p>
-<div class="sourceCode" id="cb563"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb563-1"><a href="mixed-models.html#cb563-1" tabindex="-1"></a>int_only_fe_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb563-2"><a href="mixed-models.html#cb563-2" tabindex="-1"></a>  <span class="fu">glm</span>(sysbp <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> .) </span></code></pre></div>
+<div class="sourceCode" id="cb564"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb564-1"><a href="mixed-models.html#cb564-1" tabindex="-1"></a>int_only_fe_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb564-2"><a href="mixed-models.html#cb564-2" tabindex="-1"></a>  <span class="fu">glm</span>(sysbp <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> .) </span></code></pre></div>
 <p>The model we are fitting here is the following:
 <span class="math display">\[
 Y_{ti} = \beta_{0} + \epsilon_{ti}
@@ -533,14 +533,14 @@ participant-specific time-period (each observation). We are assuming that
 for each study subject. One nice way to do that is to used faceting in ggplot to
 create a small plot for each study subject, so we can focus on each individual’s
 set of repeated measures:</p>
-<div class="sourceCode" id="cb564"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb564-1"><a href="mixed-models.html#cb564-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb564-2"><a href="mixed-models.html#cb564-2" tabindex="-1"></a>int_only_fe_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb564-3"><a href="mixed-models.html#cb564-3" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
-<span id="cb564-4"><a href="mixed-models.html#cb564-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
-<span id="cb564-5"><a href="mixed-models.html#cb564-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb564-6"><a href="mixed-models.html#cb564-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb564-7"><a href="mixed-models.html#cb564-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb564-8"><a href="mixed-models.html#cb564-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb565"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb565-1"><a href="mixed-models.html#cb565-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb565-2"><a href="mixed-models.html#cb565-2" tabindex="-1"></a>int_only_fe_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb565-3"><a href="mixed-models.html#cb565-3" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
+<span id="cb565-4"><a href="mixed-models.html#cb565-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
+<span id="cb565-5"><a href="mixed-models.html#cb565-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb565-6"><a href="mixed-models.html#cb565-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb565-7"><a href="mixed-models.html#cb565-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb565-8"><a href="mixed-models.html#cb565-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-289-1.png" width="672" /></p>
 <p>In this plot, the solid lines show the observed data for each person in the
 sample (again, each person’s data is shown in one small plot). The dotted line
@@ -597,9 +597,9 @@ effect for the grouping variable (study subject) by adding it to the model formu
 inside parentheses, with the elements we want to include first (<code>1</code> for only
 an intercept random effect), and then a bar, and then the column that gives
 the grouping variable (<code>randid</code> for the study subject): <code>(1 | randid)</code>.</p>
-<div class="sourceCode" id="cb565"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb565-1"><a href="mixed-models.html#cb565-1" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb565-2"><a href="mixed-models.html#cb565-2" tabindex="-1"></a>int_only_mm_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb565-3"><a href="mixed-models.html#cb565-3" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), <span class="at">data =</span> .) </span></code></pre></div>
+<div class="sourceCode" id="cb566"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb566-1"><a href="mixed-models.html#cb566-1" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb566-2"><a href="mixed-models.html#cb566-2" tabindex="-1"></a>int_only_mm_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb566-3"><a href="mixed-models.html#cb566-3" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), <span class="at">data =</span> .) </span></code></pre></div>
 <p>The model we are fitting here is
 <span class="math display">\[
 Y_{ti} = \beta_{0} + b_{i} + \epsilon_{ti}
@@ -613,14 +613,14 @@ the sum of <span class="math inline">\(\sigma_{b}^2\)</span> and <span class="ma
 we can use an <code>augment</code> function (as we did when using <code>broom</code> functions with
 <code>glm</code> objects), but we’ll need to load a new library (<code>broom.mixed</code>) that defines
 those <code>broom</code> methods for the model output from these mixed models.</p>
-<div class="sourceCode" id="cb566"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb566-1"><a href="mixed-models.html#cb566-1" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
-<span id="cb566-2"><a href="mixed-models.html#cb566-2" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb566-3"><a href="mixed-models.html#cb566-3" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
-<span id="cb566-4"><a href="mixed-models.html#cb566-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
-<span id="cb566-5"><a href="mixed-models.html#cb566-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb566-6"><a href="mixed-models.html#cb566-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb566-7"><a href="mixed-models.html#cb566-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb566-8"><a href="mixed-models.html#cb566-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb567"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb567-1"><a href="mixed-models.html#cb567-1" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
+<span id="cb567-2"><a href="mixed-models.html#cb567-2" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb567-3"><a href="mixed-models.html#cb567-3" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
+<span id="cb567-4"><a href="mixed-models.html#cb567-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
+<span id="cb567-5"><a href="mixed-models.html#cb567-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb567-6"><a href="mixed-models.html#cb567-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb567-7"><a href="mixed-models.html#cb567-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb567-8"><a href="mixed-models.html#cb567-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-291-1.png" width="672" /></p>
 <p>You can see that this has really reduced our prediction errors—the predicted
 values are now much closer to the observed values for each study subject,
@@ -631,8 +631,8 @@ estimated intercept to be subject-specific.</p>
 <p>Let’s take a look at the output of this model a bit more. First, we can use
 <code>coef</code> to pull out the coefficients for each unit for which we fit a random
 effect—in this case, for each study subject:</p>
-<div class="sourceCode" id="cb567"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb567-1"><a href="mixed-models.html#cb567-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span></span>
-<span id="cb567-2"><a href="mixed-models.html#cb567-2" tabindex="-1"></a>  <span class="fu">coef</span>() </span></code></pre></div>
+<div class="sourceCode" id="cb568"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb568-1"><a href="mixed-models.html#cb568-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span></span>
+<span id="cb568-2"><a href="mixed-models.html#cb568-2" tabindex="-1"></a>  <span class="fu">coef</span>() </span></code></pre></div>
 <pre><code>## $randid
 ##         (Intercept)
 ## 11252      132.9810
@@ -660,8 +660,8 @@ randomly varies from the overall one, or in other words the <span class="math in
 for each participant <span class="math inline">\(i\)</span>. We can see that these subject-specific intercepts
 range from the 120s through the 180s.</p>
 <p>Next, we can look at a summary of the model as a whole:</p>
-<div class="sourceCode" id="cb569"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb569-1"><a href="mixed-models.html#cb569-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span></span>
-<span id="cb569-2"><a href="mixed-models.html#cb569-2" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb570"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb570-1"><a href="mixed-models.html#cb570-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span></span>
+<span id="cb570-2"><a href="mixed-models.html#cb570-2" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
 ## Formula: sysbp ~ 1 + (1 | randid)
 ##    Data: .
@@ -702,8 +702,8 @@ the two random effect components (that from variation between study subjects,
 standard deviation column given in the summary output for the model; these values
 are <span class="math inline">\(\sigma_{b}\)</span> and <span class="math inline">\(\sigma\)</span> resepctively and if you want to get the variances,
 you could just square these values.</p>
-<div class="sourceCode" id="cb571"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb571-1"><a href="mixed-models.html#cb571-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span></span>
-<span id="cb571-2"><a href="mixed-models.html#cb571-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb572"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb572-1"><a href="mixed-models.html#cb572-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span></span>
+<span id="cb572-2"><a href="mixed-models.html#cb572-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 6
 ##   effect   group    term            estimate std.error statistic
 ##   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -715,8 +715,8 @@ original observations. For these models, it’s helpful to clarify that you want
 to augment the original data (<code>fhs_sample</code>), rather than basing it on the model
 matrix that’s the default. This will ensure that you can maintain information about
 the <code>randid</code> for each row of the augmented data.</p>
-<div class="sourceCode" id="cb573"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb573-1"><a href="mixed-models.html#cb573-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb573-2"><a href="mixed-models.html#cb573-2" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample)</span></code></pre></div>
+<div class="sourceCode" id="cb574"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb574-1"><a href="mixed-models.html#cb574-1" tabindex="-1"></a>int_only_mm_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb574-2"><a href="mixed-models.html#cb574-2" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample)</span></code></pre></div>
 <pre><code>## # A tibble: 45 × 20
 ##     randid period sex      age sysbp cursmoke   bmi  educ  time .fitted  .resid
 ##      &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
@@ -768,8 +768,8 @@ intercept in the fixed part (which we can specify just as <code>age</code>—we 
 to add <code>1</code> for intercept since it’s the default if you put in any other
 covariates). For the random effect, we’ll continue to only add a random
 intercept for each study subject (<code>(1 | randid)</code>).</p>
-<div class="sourceCode" id="cb575"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb575-1"><a href="mixed-models.html#cb575-1" tabindex="-1"></a>age_mm_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb575-2"><a href="mixed-models.html#cb575-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), <span class="at">data =</span> .) </span></code></pre></div>
+<div class="sourceCode" id="cb576"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb576-1"><a href="mixed-models.html#cb576-1" tabindex="-1"></a>age_mm_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb576-2"><a href="mixed-models.html#cb576-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), <span class="at">data =</span> .) </span></code></pre></div>
 <p>Here we fit a similar model to the random intercept one, by simply addig the fixed
 effect for age:
 <span class="math display">\[
@@ -778,14 +778,14 @@ Y_{ti} = \beta_{0} + \beta_{1}X_{ti1} + b_{i} + \epsilon_{ti}
 <p>Note that age <span class="math inline">\(X_{ti1}\)</span> also varies by participant and time-period.</p>
 <p>Again, we can see how our predictions have changed in our set of sample
 subjects:</p>
-<div class="sourceCode" id="cb576"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb576-1"><a href="mixed-models.html#cb576-1" tabindex="-1"></a>age_mm_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb576-2"><a href="mixed-models.html#cb576-2" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
-<span id="cb576-3"><a href="mixed-models.html#cb576-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
-<span id="cb576-4"><a href="mixed-models.html#cb576-4" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb576-5"><a href="mixed-models.html#cb576-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb576-6"><a href="mixed-models.html#cb576-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fixed), <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb576-7"><a href="mixed-models.html#cb576-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb576-8"><a href="mixed-models.html#cb576-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb577"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb577-1"><a href="mixed-models.html#cb577-1" tabindex="-1"></a>age_mm_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb577-2"><a href="mixed-models.html#cb577-2" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
+<span id="cb577-3"><a href="mixed-models.html#cb577-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
+<span id="cb577-4"><a href="mixed-models.html#cb577-4" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb577-5"><a href="mixed-models.html#cb577-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb577-6"><a href="mixed-models.html#cb577-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fixed), <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb577-7"><a href="mixed-models.html#cb577-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb577-8"><a href="mixed-models.html#cb577-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-297-1.png" width="672" /></p>
 <p>In this case, we’re showing three different lines, which help tease apart the
 different components of the model. First, the solid line shows the observed data
@@ -802,8 +802,8 @@ fit the study subject’s data more closely. Again, we see that we would have
 had correlated errors if we’d only used fixed effects, even with the term for
 age, but that the random effects intercept seems to remove most of this issue.</p>
 <p>We can look at the summary for this model:</p>
-<div class="sourceCode" id="cb577"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb577-1"><a href="mixed-models.html#cb577-1" tabindex="-1"></a>age_mm_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb577-2"><a href="mixed-models.html#cb577-2" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb578"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb578-1"><a href="mixed-models.html#cb578-1" tabindex="-1"></a>age_mm_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb578-2"><a href="mixed-models.html#cb578-2" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
 ## Formula: sysbp ~ age + (1 | randid)
 ##    Data: .
@@ -848,12 +848,12 @@ as the estimate here for “randid” is still pretty high).</p>
 Let’s also include model control for smoking, sex, and BMI. For all of these,
 we have measures that span the range we might expect in our target population,
 so we’ll include these using fixed effects terms:</p>
-<div class="sourceCode" id="cb579"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb579-1"><a href="mixed-models.html#cb579-1" tabindex="-1"></a>full_mm_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb579-2"><a href="mixed-models.html#cb579-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
-<span id="cb579-3"><a href="mixed-models.html#cb579-3" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
-<span id="cb579-4"><a href="mixed-models.html#cb579-4" tabindex="-1"></a></span>
-<span id="cb579-5"><a href="mixed-models.html#cb579-5" tabindex="-1"></a>full_mm_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb579-6"><a href="mixed-models.html#cb579-6" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb580"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb580-1"><a href="mixed-models.html#cb580-1" tabindex="-1"></a>full_mm_mod <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb580-2"><a href="mixed-models.html#cb580-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
+<span id="cb580-3"><a href="mixed-models.html#cb580-3" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
+<span id="cb580-4"><a href="mixed-models.html#cb580-4" tabindex="-1"></a></span>
+<span id="cb580-5"><a href="mixed-models.html#cb580-5" tabindex="-1"></a>full_mm_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb580-6"><a href="mixed-models.html#cb580-6" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
 ## Formula: sysbp ~ age + sex + bmi + cursmoke + educ + (1 | randid)
 ##    Data: .
@@ -899,8 +899,8 @@ pressure tends to be lower for people with higher levels of education.</p>
 <p>We can’t directly calculate our confidence interval for this coefficient estimate
 from the standard error, as we would for a GLM. Instead, we can use the
 <code>confint.merMod</code> function that comes with the <code>lme4</code> package:</p>
-<div class="sourceCode" id="cb581"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb581-1"><a href="mixed-models.html#cb581-1" tabindex="-1"></a>full_mm_mod <span class="sc">%&gt;%</span> </span>
-<span id="cb581-2"><a href="mixed-models.html#cb581-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb582"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb582-1"><a href="mixed-models.html#cb582-1" tabindex="-1"></a>full_mm_mod <span class="sc">%&gt;%</span> </span>
+<span id="cb582-2"><a href="mixed-models.html#cb582-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
 <pre><code>##                   2.5 %     97.5 %
 ## .sig01        2.5909663  16.942640
@@ -923,12 +923,12 @@ full dataset, rather than the sample of a few subjects. What can you conclude?</
 </ol>
 <p>We can expand this model to include all the study subjects now, to see if
 something is detectable once we have that increased power:</p>
-<div class="sourceCode" id="cb584"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb584-1"><a href="mixed-models.html#cb584-1" tabindex="-1"></a>full_mm_mod_alldata <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb584-2"><a href="mixed-models.html#cb584-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
-<span id="cb584-3"><a href="mixed-models.html#cb584-3" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
-<span id="cb584-4"><a href="mixed-models.html#cb584-4" tabindex="-1"></a></span>
-<span id="cb584-5"><a href="mixed-models.html#cb584-5" tabindex="-1"></a>full_mm_mod_alldata <span class="sc">%&gt;%</span> </span>
-<span id="cb584-6"><a href="mixed-models.html#cb584-6" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb585"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb585-1"><a href="mixed-models.html#cb585-1" tabindex="-1"></a>full_mm_mod_alldata <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb585-2"><a href="mixed-models.html#cb585-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
+<span id="cb585-3"><a href="mixed-models.html#cb585-3" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
+<span id="cb585-4"><a href="mixed-models.html#cb585-4" tabindex="-1"></a></span>
+<span id="cb585-5"><a href="mixed-models.html#cb585-5" tabindex="-1"></a>full_mm_mod_alldata <span class="sc">%&gt;%</span> </span>
+<span id="cb585-6"><a href="mixed-models.html#cb585-6" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
 ## Formula: sysbp ~ age + sex + bmi + cursmoke + educ + (1 | randid)
 ##    Data: .
@@ -961,8 +961,8 @@ something is detectable once we have that increased power:</p>
 ## bmi      -0.704 -0.008  0.070              
 ## cursmoke -0.344  0.248  0.126  0.134       
 ## educ     -0.365  0.097  0.024  0.120  0.039</code></pre>
-<div class="sourceCode" id="cb586"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb586-1"><a href="mixed-models.html#cb586-1" tabindex="-1"></a>full_mm_mod_alldata <span class="sc">%&gt;%</span> </span>
-<span id="cb586-2"><a href="mixed-models.html#cb586-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb587"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb587-1"><a href="mixed-models.html#cb587-1" tabindex="-1"></a>full_mm_mod_alldata <span class="sc">%&gt;%</span> </span>
+<span id="cb587-2"><a href="mixed-models.html#cb587-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
 <pre><code>##                  2.5 %     97.5 %
 ## .sig01      15.7414341 16.6192814
@@ -982,12 +982,12 @@ these all may be risk factors for high blood pressure.</p>
 may be an interaction between age and sex, where the evolution of blood pressure
 during aging tends to be different for males versus females. We could add
 an interaction term to the model to explore this:</p>
-<div class="sourceCode" id="cb589"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb589-1"><a href="mixed-models.html#cb589-1" tabindex="-1"></a>full_mm_mod_alldata2 <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb589-2"><a href="mixed-models.html#cb589-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">*</span> sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
-<span id="cb589-3"><a href="mixed-models.html#cb589-3" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
-<span id="cb589-4"><a href="mixed-models.html#cb589-4" tabindex="-1"></a></span>
-<span id="cb589-5"><a href="mixed-models.html#cb589-5" tabindex="-1"></a>full_mm_mod_alldata2 <span class="sc">%&gt;%</span> </span>
-<span id="cb589-6"><a href="mixed-models.html#cb589-6" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb590"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb590-1"><a href="mixed-models.html#cb590-1" tabindex="-1"></a>full_mm_mod_alldata2 <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb590-2"><a href="mixed-models.html#cb590-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">*</span> sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
+<span id="cb590-3"><a href="mixed-models.html#cb590-3" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
+<span id="cb590-4"><a href="mixed-models.html#cb590-4" tabindex="-1"></a></span>
+<span id="cb590-5"><a href="mixed-models.html#cb590-5" tabindex="-1"></a>full_mm_mod_alldata2 <span class="sc">%&gt;%</span> </span>
+<span id="cb590-6"><a href="mixed-models.html#cb590-6" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
 ## Formula: sysbp ~ age * sex + bmi + cursmoke + educ + (1 | randid)
 ##    Data: .
@@ -1022,8 +1022,8 @@ an interaction term to the model to explore this:</p>
 ## cursmoke -0.225  0.121  0.076  0.137              
 ## educ     -0.210  0.045  0.021  0.122  0.039       
 ## age:sex   0.842 -0.951 -0.970 -0.082 -0.047 -0.015</code></pre>
-<div class="sourceCode" id="cb591"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb591-1"><a href="mixed-models.html#cb591-1" tabindex="-1"></a>full_mm_mod_alldata2 <span class="sc">%&gt;%</span> </span>
-<span id="cb591-2"><a href="mixed-models.html#cb591-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb592"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb592-1"><a href="mixed-models.html#cb592-1" tabindex="-1"></a>full_mm_mod_alldata2 <span class="sc">%&gt;%</span> </span>
+<span id="cb592-2"><a href="mixed-models.html#cb592-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
 <pre><code>##                   2.5 %     97.5 %
 ## .sig01       15.6135990 16.4926583
@@ -1041,18 +1041,18 @@ of education level on systolic blood pressure.</p>
 <p>We could also treat each level of education as a separate category, in case
 there’s non-linearity between these four different designations of education
 level and the association with systolic blood pressure:</p>
-<div class="sourceCode" id="cb594"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb594-1"><a href="mixed-models.html#cb594-1" tabindex="-1"></a>full_mm_mod_alldata3 <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
-<span id="cb594-2"><a href="mixed-models.html#cb594-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">educ =</span> <span class="fu">as_factor</span>(educ),</span>
-<span id="cb594-3"><a href="mixed-models.html#cb594-3" tabindex="-1"></a>         <span class="at">educ =</span> <span class="fu">fct_recode</span>(educ, </span>
-<span id="cb594-4"><a href="mixed-models.html#cb594-4" tabindex="-1"></a>                           <span class="at">lowest =</span> <span class="st">&quot;1&quot;</span>, </span>
-<span id="cb594-5"><a href="mixed-models.html#cb594-5" tabindex="-1"></a>                           <span class="at">middle_low =</span> <span class="st">&quot;2&quot;</span>, </span>
-<span id="cb594-6"><a href="mixed-models.html#cb594-6" tabindex="-1"></a>                           <span class="at">middle_high =</span> <span class="st">&quot;3&quot;</span>, </span>
-<span id="cb594-7"><a href="mixed-models.html#cb594-7" tabindex="-1"></a>                           <span class="at">highest =</span> <span class="st">&quot;4&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb594-8"><a href="mixed-models.html#cb594-8" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age<span class="sc">*</span>sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
-<span id="cb594-9"><a href="mixed-models.html#cb594-9" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
-<span id="cb594-10"><a href="mixed-models.html#cb594-10" tabindex="-1"></a></span>
-<span id="cb594-11"><a href="mixed-models.html#cb594-11" tabindex="-1"></a>full_mm_mod_alldata3 <span class="sc">%&gt;%</span> </span>
-<span id="cb594-12"><a href="mixed-models.html#cb594-12" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb595"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb595-1"><a href="mixed-models.html#cb595-1" tabindex="-1"></a>full_mm_mod_alldata3 <span class="ot">&lt;-</span> fhs <span class="sc">%&gt;%</span> </span>
+<span id="cb595-2"><a href="mixed-models.html#cb595-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">educ =</span> <span class="fu">as_factor</span>(educ),</span>
+<span id="cb595-3"><a href="mixed-models.html#cb595-3" tabindex="-1"></a>         <span class="at">educ =</span> <span class="fu">fct_recode</span>(educ, </span>
+<span id="cb595-4"><a href="mixed-models.html#cb595-4" tabindex="-1"></a>                           <span class="at">lowest =</span> <span class="st">&quot;1&quot;</span>, </span>
+<span id="cb595-5"><a href="mixed-models.html#cb595-5" tabindex="-1"></a>                           <span class="at">middle_low =</span> <span class="st">&quot;2&quot;</span>, </span>
+<span id="cb595-6"><a href="mixed-models.html#cb595-6" tabindex="-1"></a>                           <span class="at">middle_high =</span> <span class="st">&quot;3&quot;</span>, </span>
+<span id="cb595-7"><a href="mixed-models.html#cb595-7" tabindex="-1"></a>                           <span class="at">highest =</span> <span class="st">&quot;4&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb595-8"><a href="mixed-models.html#cb595-8" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age<span class="sc">*</span>sex <span class="sc">+</span> bmi <span class="sc">+</span> cursmoke <span class="sc">+</span> educ <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> randid), </span>
+<span id="cb595-9"><a href="mixed-models.html#cb595-9" tabindex="-1"></a>       <span class="at">data =</span> .) </span>
+<span id="cb595-10"><a href="mixed-models.html#cb595-10" tabindex="-1"></a></span>
+<span id="cb595-11"><a href="mixed-models.html#cb595-11" tabindex="-1"></a>full_mm_mod_alldata3 <span class="sc">%&gt;%</span> </span>
+<span id="cb595-12"><a href="mixed-models.html#cb595-12" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
 ## Formula: sysbp ~ age * sex + bmi + cursmoke + educ + (1 | randid)
 ##    Data: .
@@ -1091,8 +1091,8 @@ level and the association with systolic blood pressure:</p>
 ## edcmddl_hgh -0.103  0.030 -0.015  0.111  0.030  0.359                    
 ## educhighest -0.130  0.040  0.036  0.090  0.033  0.308     0.253          
 ## age:sex      0.849 -0.951 -0.970 -0.083 -0.046 -0.027    -0.005    -0.017</code></pre>
-<div class="sourceCode" id="cb596"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb596-1"><a href="mixed-models.html#cb596-1" tabindex="-1"></a>full_mm_mod_alldata3 <span class="sc">%&gt;%</span> </span>
-<span id="cb596-2"><a href="mixed-models.html#cb596-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb597"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb597-1"><a href="mixed-models.html#cb597-1" tabindex="-1"></a>full_mm_mod_alldata3 <span class="sc">%&gt;%</span> </span>
+<span id="cb597-2"><a href="mixed-models.html#cb597-2" tabindex="-1"></a>  <span class="fu">confint.merMod</span>()</span></code></pre></div>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
 <pre><code>##                       2.5 %     97.5 %
 ## .sig01           15.6010488 16.4799563
@@ -1142,8 +1142,8 @@ for each person, we’re probably pushing the model a bit to include a fixed
 effect for age in this case, but it’s useful to know how to do this if you
 have a larger set of repeated measures for each person, so we’d like to
 cover the principle.)</p>
-<div class="sourceCode" id="cb599"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb599-1"><a href="mixed-models.html#cb599-1" tabindex="-1"></a>age_mm_mod2 <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
-<span id="cb599-2"><a href="mixed-models.html#cb599-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">|</span> randid), <span class="at">data =</span> .) </span></code></pre></div>
+<div class="sourceCode" id="cb600"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb600-1"><a href="mixed-models.html#cb600-1" tabindex="-1"></a>age_mm_mod2 <span class="ot">&lt;-</span> fhs_sample <span class="sc">%&gt;%</span> </span>
+<span id="cb600-2"><a href="mixed-models.html#cb600-2" tabindex="-1"></a>  <span class="fu">lmer</span>(sysbp <span class="sc">~</span> age <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">|</span> randid), <span class="at">data =</span> .) </span></code></pre></div>
 <p>The model fitted here is
 <span class="math display">\[
 Y_{ti} = \beta_{0} + \beta_{1}X_{ti1} + b_{0i} + b_{1i}X_{ti1} + \epsilon_{ti}
@@ -1152,20 +1152,20 @@ with <span class="math inline">\(b_{1i}\)</span> being the added slope term for 
 that <span class="math inline">\(b_{1i} \sim N(0,\sigma_{b1}^2)\)</span> in addition to <span class="math inline">\(b_{0i} \sim N(0,\sigma_{b0}^2)\)</span>
 and <span class="math inline">\(\epsilon_{ti} \sim N(0,\sigma^2)\)</span></p>
 <p>We can take a look again at the predictions from this model:</p>
-<div class="sourceCode" id="cb600"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb600-1"><a href="mixed-models.html#cb600-1" tabindex="-1"></a>age_mm_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb600-2"><a href="mixed-models.html#cb600-2" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
-<span id="cb600-3"><a href="mixed-models.html#cb600-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
-<span id="cb600-4"><a href="mixed-models.html#cb600-4" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb600-5"><a href="mixed-models.html#cb600-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb600-6"><a href="mixed-models.html#cb600-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fixed), <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb600-7"><a href="mixed-models.html#cb600-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb600-8"><a href="mixed-models.html#cb600-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb601"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb601-1"><a href="mixed-models.html#cb601-1" tabindex="-1"></a>age_mm_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb601-2"><a href="mixed-models.html#cb601-2" tabindex="-1"></a>  <span class="fu">augment</span>(<span class="at">data =</span> fhs_sample) <span class="sc">%&gt;%</span> </span>
+<span id="cb601-3"><a href="mixed-models.html#cb601-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
+<span id="cb601-4"><a href="mixed-models.html#cb601-4" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> sysbp), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb601-5"><a href="mixed-models.html#cb601-5" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb601-6"><a href="mixed-models.html#cb601-6" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fixed), <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb601-7"><a href="mixed-models.html#cb601-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Systolic blood pressure (mmHg)&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb601-8"><a href="mixed-models.html#cb601-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> randid, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-305-1.png" width="672" /></p>
 <p>It’s a bit subtle to see here, but unlike in our earlier model, now each
 prediction (dashed line) has a slope that can vary between study subjects.
 We can check this as well by running <code>coef</code>:</p>
-<div class="sourceCode" id="cb601"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb601-1"><a href="mixed-models.html#cb601-1" tabindex="-1"></a>age_mm_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb601-2"><a href="mixed-models.html#cb601-2" tabindex="-1"></a>  <span class="fu">coef</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb602"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb602-1"><a href="mixed-models.html#cb602-1" tabindex="-1"></a>age_mm_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb602-2"><a href="mixed-models.html#cb602-2" tabindex="-1"></a>  <span class="fu">coef</span>()</span></code></pre></div>
 <pre><code>## $randid
 ##         (Intercept)         age
 ## 11252     106.66493 0.586807745
@@ -1286,42 +1286,42 @@ Rice, Mary B, Petter L Ljungman, Elissa H Wilker, Diane R Gold, Joel D Schwartz,
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>

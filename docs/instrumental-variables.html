@@ -23,7 +23,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2024-08-19" />
+<meta name="date" content="2025-08-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -66,7 +66,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -364,9 +364,9 @@ variable analysis. We will introduce a new dataset, one from the NHANES I Epidem
 <h2><span class="header-section-number">10.3</span> The NHEFS data<a href="instrumental-variables.html#the-nhefs-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Let’s explore the NHEFS dataset, which is the dataset used in the example highlighted
 this chapter’s required reading, <span class="citation">Hernán and Robins (<a href="#ref-hernanch16">2020a</a>)</span>. You can download a copy from the GitHub page for this book, <a href="https://github.com/geanders/adv_epi_analysis/blob/master/data/nhefs.csv">here</a>. The data are saved in a csv format (that is, a plain text file, with commas used as the delimiter), and so they can be read into R using the <code>read_csv</code> function from the <code>readr</code> package (part of the tidyverse), similar to the previous datasets we have been using. If you have saved the data in a “data” subdirectory of your current working directory then you can use the following code:</p>
-<div class="sourceCode" id="cb603"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb603-1"><a href="instrumental-variables.html#cb603-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb603-2"><a href="instrumental-variables.html#cb603-2" tabindex="-1"></a>nhefs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/nhefs.csv&quot;</span>)</span>
-<span id="cb603-3"><a href="instrumental-variables.html#cb603-3" tabindex="-1"></a>nhefs</span></code></pre></div>
+<div class="sourceCode" id="cb604"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb604-1"><a href="instrumental-variables.html#cb604-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb604-2"><a href="instrumental-variables.html#cb604-2" tabindex="-1"></a>nhefs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/nhefs.csv&quot;</span>)</span>
+<span id="cb604-3"><a href="instrumental-variables.html#cb604-3" tabindex="-1"></a>nhefs</span></code></pre></div>
 <pre><code>## # A tibble: 1,629 × 64
 ##     seqn  qsmk death yrdth modth dadth   sbp   dbp   sex   age  race income
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
@@ -390,76 +390,76 @@ this chapter’s required reading, <span class="citation">Hernán and Robins (<a
 <p>There is a codebook in the <a href="https://github.com/geanders/adv_epi_analysis/tree/master/data">the same folder as the dataset</a>, which you can download and read to familiarize yourself with the variables in the data.
 We see that this is subset of the NHEFS study with 1,629 participants. The unique identifier for participant is <code>seqn</code> (equivalent to the <code>randid</code> variable in the FHS data). Unlike the FHS data, there is only one observation per participant in this study, with data on mortality over a 12-year period (1971-1982) with a <code>death</code> variable (<code>1</code> for a death during follow-up, <code>0</code> otherwise) and three separate date variables for day (<code>dadth</code>), month (<code>modth</code>) and year (<code>yrdth</code>) of death. The dataset also includes information on several variables at baseline including demographics (<code>age</code>, <code>sex</code>, <code>race</code>, <code>marital</code>, <code>income</code>, <code>school</code> etc), as well as several other potential morbidity and diagnosis variables at baseline. There are also data on blood pressure at the end of follow-up (<code>dbp</code> and <code>sbp</code>). The exposure of interest is smoking cessation during follow-up (<code>qsmk</code>) and the outcome is change in weight from beginning to end of follow-up in kgs (<code>wt82_71</code>). The instrument we will be using later is based on cigarette pricing at the end of follow-up (<code>price82</code>).</p>
 <p>Let’s see if there’s any missingness in the data. We will focus specifically on the exposure, outcome and instrument values:</p>
-<div class="sourceCode" id="cb605"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb605-1"><a href="instrumental-variables.html#cb605-1" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
-<span id="cb605-2"><a href="instrumental-variables.html#cb605-2" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
-<span id="cb605-3"><a href="instrumental-variables.html#cb605-3" tabindex="-1"></a></span>
-<span id="cb605-4"><a href="instrumental-variables.html#cb605-4" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span></span>
-<span id="cb605-5"><a href="instrumental-variables.html#cb605-5" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, price82, wt82_71) <span class="sc">%&gt;%</span></span>
-<span id="cb605-6"><a href="instrumental-variables.html#cb605-6" tabindex="-1"></a>  <span class="fu">vis_miss</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb606"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb606-1"><a href="instrumental-variables.html#cb606-1" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
+<span id="cb606-2"><a href="instrumental-variables.html#cb606-2" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb606-3"><a href="instrumental-variables.html#cb606-3" tabindex="-1"></a></span>
+<span id="cb606-4"><a href="instrumental-variables.html#cb606-4" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span></span>
+<span id="cb606-5"><a href="instrumental-variables.html#cb606-5" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, price82, wt82_71) <span class="sc">%&gt;%</span></span>
+<span id="cb606-6"><a href="instrumental-variables.html#cb606-6" tabindex="-1"></a>  <span class="fu">vis_miss</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-308-1.png" width="672" /></p>
-<div class="sourceCode" id="cb606"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb606-1"><a href="instrumental-variables.html#cb606-1" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span></span>
-<span id="cb606-2"><a href="instrumental-variables.html#cb606-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, price82, wt82_71) <span class="sc">%&gt;%</span></span>
-<span id="cb606-3"><a href="instrumental-variables.html#cb606-3" tabindex="-1"></a><span class="fu">gg_miss_var</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb607"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb607-1"><a href="instrumental-variables.html#cb607-1" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span></span>
+<span id="cb607-2"><a href="instrumental-variables.html#cb607-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, price82, wt82_71) <span class="sc">%&gt;%</span></span>
+<span id="cb607-3"><a href="instrumental-variables.html#cb607-3" tabindex="-1"></a><span class="fu">gg_miss_var</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-308-2.png" width="672" /></p>
 <p>We see that there is a little bit of missingness in the outcome and cigarette price variables, while the data on the exposure are complete. We will limit the dataset to those with data on exposure, outcome, and instrument (there’s only missingness on the outcome and the instrument, so we filter based on that)</p>
-<div class="sourceCode" id="cb607"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb607-1"><a href="instrumental-variables.html#cb607-1" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs <span class="sc">%&gt;%</span></span>
-<span id="cb607-2"><a href="instrumental-variables.html#cb607-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(wt82_71) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(price82))</span></code></pre></div>
+<div class="sourceCode" id="cb608"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb608-1"><a href="instrumental-variables.html#cb608-1" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs <span class="sc">%&gt;%</span></span>
+<span id="cb608-2"><a href="instrumental-variables.html#cb608-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(wt82_71) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(price82))</span></code></pre></div>
 <p>The limited dataset is down to 1,476 participants (from 1,629). Now let’s check the distributions of some of the variables of interest:</p>
-<div class="sourceCode" id="cb608"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb608-1"><a href="instrumental-variables.html#cb608-1" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span> </span>
-<span id="cb608-2"><a href="instrumental-variables.html#cb608-2" tabindex="-1"></a>  <span class="fu">count</span>(qsmk) </span></code></pre></div>
+<div class="sourceCode" id="cb609"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb609-1"><a href="instrumental-variables.html#cb609-1" tabindex="-1"></a>nhefs <span class="sc">%&gt;%</span> </span>
+<span id="cb609-2"><a href="instrumental-variables.html#cb609-2" tabindex="-1"></a>  <span class="fu">count</span>(qsmk) </span></code></pre></div>
 <pre><code>## # A tibble: 2 × 2
 ##    qsmk     n
 ##   &lt;dbl&gt; &lt;int&gt;
 ## 1     0  1201
 ## 2     1   428</code></pre>
 <p>We see that 428 (about 30%) of participants quit smoking. Let’s check the distribution of weight change by smoking cessation.</p>
-<div class="sourceCode" id="cb610"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb610-1"><a href="instrumental-variables.html#cb610-1" tabindex="-1"></a>wtch_vs_qsmk<span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb610-2"><a href="instrumental-variables.html#cb610-2" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span> </span>
-<span id="cb610-3"><a href="instrumental-variables.html#cb610-3" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.25</span>), </span>
-<span id="cb610-4"><a href="instrumental-variables.html#cb610-4" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(wt82_71), </span>
-<span id="cb610-5"><a href="instrumental-variables.html#cb610-5" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(wt82_71),</span>
-<span id="cb610-6"><a href="instrumental-variables.html#cb610-6" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.75</span>))</span>
-<span id="cb610-7"><a href="instrumental-variables.html#cb610-7" tabindex="-1"></a>wtch_vs_qsmk</span></code></pre></div>
+<div class="sourceCode" id="cb611"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb611-1"><a href="instrumental-variables.html#cb611-1" tabindex="-1"></a>wtch_vs_qsmk<span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb611-2"><a href="instrumental-variables.html#cb611-2" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span> </span>
+<span id="cb611-3"><a href="instrumental-variables.html#cb611-3" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.25</span>), </span>
+<span id="cb611-4"><a href="instrumental-variables.html#cb611-4" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(wt82_71), </span>
+<span id="cb611-5"><a href="instrumental-variables.html#cb611-5" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(wt82_71),</span>
+<span id="cb611-6"><a href="instrumental-variables.html#cb611-6" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(wt82_71, <span class="fl">0.75</span>))</span>
+<span id="cb611-7"><a href="instrumental-variables.html#cb611-7" tabindex="-1"></a>wtch_vs_qsmk</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##    qsmk  perc_25  mean median perc_75
 ##   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1     0 -1.81     2.00   2.15    6.12
 ## 2     1 -0.00117  4.67   3.97    9.72</code></pre>
 <p>We see that there is higher weight gain among quitters on average as well as consistently higher change across quartiles.</p>
-<div class="sourceCode" id="cb612"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb612-1"><a href="instrumental-variables.html#cb612-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb612-2"><a href="instrumental-variables.html#cb612-2" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span></span>
-<span id="cb612-3"><a href="instrumental-variables.html#cb612-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> wt82_71)) <span class="sc">+</span> </span>
-<span id="cb612-4"><a href="instrumental-variables.html#cb612-4" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
-<span id="cb612-5"><a href="instrumental-variables.html#cb612-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> qsmk, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;free_y&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb613-1"><a href="instrumental-variables.html#cb613-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb613-2"><a href="instrumental-variables.html#cb613-2" tabindex="-1"></a>  <span class="fu">group_by</span>(qsmk) <span class="sc">%&gt;%</span></span>
+<span id="cb613-3"><a href="instrumental-variables.html#cb613-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> wt82_71)) <span class="sc">+</span> </span>
+<span id="cb613-4"><a href="instrumental-variables.html#cb613-4" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb613-5"><a href="instrumental-variables.html#cb613-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> qsmk, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="st">&quot;free_y&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-312-1.png" width="672" /></p>
 <p>There doesn’t seem to be a large difference between the two distributions, however we do observe some higher values in the quitters.</p>
 <p>Let’s explore if the exposure has an effect on the outcome. We start with a simple unadjusted model:</p>
-<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb613-1"><a href="instrumental-variables.html#cb613-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb613-2"><a href="instrumental-variables.html#cb613-2" tabindex="-1"></a>qsmk_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71 <span class="sc">~</span> qsmk, <span class="at">data =</span> nhefs_iv)</span>
-<span id="cb613-3"><a href="instrumental-variables.html#cb613-3" tabindex="-1"></a></span>
-<span id="cb613-4"><a href="instrumental-variables.html#cb613-4" tabindex="-1"></a>qsmk_mod1 <span class="sc">%&gt;%</span> </span>
-<span id="cb613-5"><a href="instrumental-variables.html#cb613-5" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb613-6"><a href="instrumental-variables.html#cb613-6" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb613-7"><a href="instrumental-variables.html#cb613-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
-<span id="cb613-8"><a href="instrumental-variables.html#cb613-8" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb613-9"><a href="instrumental-variables.html#cb613-9" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
-<span id="cb613-10"><a href="instrumental-variables.html#cb613-10" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
+<div class="sourceCode" id="cb614"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb614-1"><a href="instrumental-variables.html#cb614-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb614-2"><a href="instrumental-variables.html#cb614-2" tabindex="-1"></a>qsmk_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71 <span class="sc">~</span> qsmk, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb614-3"><a href="instrumental-variables.html#cb614-3" tabindex="-1"></a></span>
+<span id="cb614-4"><a href="instrumental-variables.html#cb614-4" tabindex="-1"></a>qsmk_mod1 <span class="sc">%&gt;%</span> </span>
+<span id="cb614-5"><a href="instrumental-variables.html#cb614-5" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb614-6"><a href="instrumental-variables.html#cb614-6" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb614-7"><a href="instrumental-variables.html#cb614-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
+<span id="cb614-8"><a href="instrumental-variables.html#cb614-8" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb614-9"><a href="instrumental-variables.html#cb614-9" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
+<span id="cb614-10"><a href="instrumental-variables.html#cb614-10" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   term  effect low_effect high_effect
 ##   &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
 ## 1 qsmk    2.67       1.75        3.58</code></pre>
 <p>The results indicate that quitting smoking is associated with a 2.7 kg increase in weight (95% CI: 1.7–3.6). It is likely, however, that whether or not you quit smoking might be associated with covariates that are also likely to influence the outcome (such as age and sex), so let’s try an adjusted model adjusting for several baseline covariates, including duration of smoking and smoking intensity, as well as weight at baseline and sociodemographics.</p>
-<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb615-1"><a href="instrumental-variables.html#cb615-1" tabindex="-1"></a>qsmk_mod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71 <span class="sc">~</span> qsmk <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
-<span id="cb615-2"><a href="instrumental-variables.html#cb615-2" tabindex="-1"></a>                  smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
-<span id="cb615-3"><a href="instrumental-variables.html#cb615-3" tabindex="-1"></a>                <span class="at">data=</span>nhefs_iv)</span>
-<span id="cb615-4"><a href="instrumental-variables.html#cb615-4" tabindex="-1"></a></span>
-<span id="cb615-5"><a href="instrumental-variables.html#cb615-5" tabindex="-1"></a>qsmk_mod2 <span class="sc">%&gt;%</span> </span>
-<span id="cb615-6"><a href="instrumental-variables.html#cb615-6" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb615-7"><a href="instrumental-variables.html#cb615-7" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb615-8"><a href="instrumental-variables.html#cb615-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
-<span id="cb615-9"><a href="instrumental-variables.html#cb615-9" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb615-10"><a href="instrumental-variables.html#cb615-10" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
-<span id="cb615-11"><a href="instrumental-variables.html#cb615-11" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
+<div class="sourceCode" id="cb616"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb616-1"><a href="instrumental-variables.html#cb616-1" tabindex="-1"></a>qsmk_mod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(wt82_71 <span class="sc">~</span> qsmk <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb616-2"><a href="instrumental-variables.html#cb616-2" tabindex="-1"></a>                  smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
+<span id="cb616-3"><a href="instrumental-variables.html#cb616-3" tabindex="-1"></a>                <span class="at">data=</span>nhefs_iv)</span>
+<span id="cb616-4"><a href="instrumental-variables.html#cb616-4" tabindex="-1"></a></span>
+<span id="cb616-5"><a href="instrumental-variables.html#cb616-5" tabindex="-1"></a>qsmk_mod2 <span class="sc">%&gt;%</span> </span>
+<span id="cb616-6"><a href="instrumental-variables.html#cb616-6" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb616-7"><a href="instrumental-variables.html#cb616-7" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;qsmk&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb616-8"><a href="instrumental-variables.html#cb616-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
+<span id="cb616-9"><a href="instrumental-variables.html#cb616-9" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb616-10"><a href="instrumental-variables.html#cb616-10" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
+<span id="cb616-11"><a href="instrumental-variables.html#cb616-11" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   term  effect low_effect high_effect
 ##   &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
@@ -490,31 +490,31 @@ see if your data looks like it aligns with those assumptions.</p>
 </ol>
 <p>As we mentioned above, we will be using cigarette pricing as an instrument for the exposure. The first condition for a valid instrumental variable is that is has to be associated with the exposure. Our rationale here is that higher cigarette prices act as a financial incentive for people to quit smoking. Even though we are assuming that cigarette pricing <em>causes</em> smoking cessation, this isn’t necessary for an instrument to be valid. It just has to be merely associated with the exposure. This is actually the only condition we can test formally and verify, as it makes no causal assumptions. We can check whether cigarette pricing and smoking cessation are associated using F-statistics, r2, or the risk difference.</p>
 <p>We will start by examining the distribution of cigarette prices in each participant’s state of residence in 1982 and create a binary variable for cigarette pricing.</p>
-<div class="sourceCode" id="cb617"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb617-1"><a href="instrumental-variables.html#cb617-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb617-2"><a href="instrumental-variables.html#cb617-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min =</span> <span class="fu">min</span>(price82), </span>
-<span id="cb617-3"><a href="instrumental-variables.html#cb617-3" tabindex="-1"></a>            <span class="at">perc_25 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.25</span>), </span>
-<span id="cb617-4"><a href="instrumental-variables.html#cb617-4" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price82), </span>
-<span id="cb617-5"><a href="instrumental-variables.html#cb617-5" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price82),</span>
-<span id="cb617-6"><a href="instrumental-variables.html#cb617-6" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.75</span>), </span>
-<span id="cb617-7"><a href="instrumental-variables.html#cb617-7" tabindex="-1"></a>            <span class="at">max =</span> <span class="fu">max</span>(price82))</span></code></pre></div>
+<div class="sourceCode" id="cb618"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb618-1"><a href="instrumental-variables.html#cb618-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb618-2"><a href="instrumental-variables.html#cb618-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min =</span> <span class="fu">min</span>(price82), </span>
+<span id="cb618-3"><a href="instrumental-variables.html#cb618-3" tabindex="-1"></a>            <span class="at">perc_25 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.25</span>), </span>
+<span id="cb618-4"><a href="instrumental-variables.html#cb618-4" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price82), </span>
+<span id="cb618-5"><a href="instrumental-variables.html#cb618-5" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price82),</span>
+<span id="cb618-6"><a href="instrumental-variables.html#cb618-6" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price82, <span class="fl">0.75</span>), </span>
+<span id="cb618-7"><a href="instrumental-variables.html#cb618-7" tabindex="-1"></a>            <span class="at">max =</span> <span class="fu">max</span>(price82))</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 6
 ##     min perc_25  mean median perc_75   max
 ##   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
 ## 1  1.45    1.74  1.81   1.81    1.87  2.10</code></pre>
-<div class="sourceCode" id="cb619"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb619-1"><a href="instrumental-variables.html#cb619-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb619-2"><a href="instrumental-variables.html#cb619-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price82)) <span class="sc">+</span> </span>
-<span id="cb619-3"><a href="instrumental-variables.html#cb619-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb620"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb620-1"><a href="instrumental-variables.html#cb620-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb620-2"><a href="instrumental-variables.html#cb620-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price82)) <span class="sc">+</span> </span>
+<span id="cb620-3"><a href="instrumental-variables.html#cb620-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-315-1.png" width="672" /></p>
 <p>Let’s create a binary cigarette price variable using a cutoff of $1.50, as in <span class="citation">Hernán and Robins (<a href="#ref-hernanch16">2020a</a>)</span>:</p>
-<div class="sourceCode" id="cb620"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb620-1"><a href="instrumental-variables.html#cb620-1" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
-<span id="cb620-2"><a href="instrumental-variables.html#cb620-2" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb620-3"><a href="instrumental-variables.html#cb620-3" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highprice =</span> <span class="fu">case_when</span>(</span>
-<span id="cb620-4"><a href="instrumental-variables.html#cb620-4" tabindex="-1"></a>    price82 <span class="sc">&gt;=</span> <span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb620-5"><a href="instrumental-variables.html#cb620-5" tabindex="-1"></a>    price82 <span class="sc">&lt;</span> <span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">0</span>))</span>
-<span id="cb620-6"><a href="instrumental-variables.html#cb620-6" tabindex="-1"></a></span>
-<span id="cb620-7"><a href="instrumental-variables.html#cb620-7" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb620-8"><a href="instrumental-variables.html#cb620-8" tabindex="-1"></a>  <span class="fu">select</span>(seqn, price82, highprice) <span class="sc">%&gt;%</span> </span>
-<span id="cb620-9"><a href="instrumental-variables.html#cb620-9" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb621"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb621-1"><a href="instrumental-variables.html#cb621-1" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb621-2"><a href="instrumental-variables.html#cb621-2" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb621-3"><a href="instrumental-variables.html#cb621-3" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highprice =</span> <span class="fu">case_when</span>(</span>
+<span id="cb621-4"><a href="instrumental-variables.html#cb621-4" tabindex="-1"></a>    price82 <span class="sc">&gt;=</span> <span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb621-5"><a href="instrumental-variables.html#cb621-5" tabindex="-1"></a>    price82 <span class="sc">&lt;</span> <span class="fl">1.5</span> <span class="sc">~</span> <span class="dv">0</span>))</span>
+<span id="cb621-6"><a href="instrumental-variables.html#cb621-6" tabindex="-1"></a></span>
+<span id="cb621-7"><a href="instrumental-variables.html#cb621-7" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb621-8"><a href="instrumental-variables.html#cb621-8" tabindex="-1"></a>  <span class="fu">select</span>(seqn, price82, highprice) <span class="sc">%&gt;%</span> </span>
+<span id="cb621-9"><a href="instrumental-variables.html#cb621-9" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 3
 ##    seqn price82 highprice
 ##   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
@@ -525,9 +525,9 @@ see if your data looks like it aligns with those assumptions.</p>
 ## 5   252    1.80         1
 ## 6   257    2.03         1</code></pre>
 <p>We can get an F-value and p-value for the F-test with a simple analysis of variance:</p>
-<div class="sourceCode" id="cb622"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb622-1"><a href="instrumental-variables.html#cb622-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb622-2"><a href="instrumental-variables.html#cb622-2" tabindex="-1"></a>  <span class="fu">aov</span>(qsmk <span class="sc">~</span> highprice, <span class="at">data =</span> .) <span class="sc">%&gt;%</span> </span>
-<span id="cb622-3"><a href="instrumental-variables.html#cb622-3" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb623"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb623-1"><a href="instrumental-variables.html#cb623-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb623-2"><a href="instrumental-variables.html#cb623-2" tabindex="-1"></a>  <span class="fu">aov</span>(qsmk <span class="sc">~</span> highprice, <span class="at">data =</span> .) <span class="sc">%&gt;%</span> </span>
+<span id="cb623-3"><a href="instrumental-variables.html#cb623-3" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 6
 ##   term         df   sumsq meansq statistic p.value
 ##   &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
@@ -540,17 +540,17 @@ Pr[X=1|Z=1] -  Pr[X=1|Z=0]
 \]</span></p>
 <p>where <span class="math inline">\(X\)</span> is the exposure of interest (smoking cessation) and <span class="math inline">\(Z\)</span> is the instrument (high cigarette prices). In other words, we want to estimate the different in the probability of quitting smoking (<span class="math inline">\(X = 1\)</span>) in states with high cigarette prices (<span class="math inline">\(Z = 1\)</span>) versus the probability of quitting smoking (<span class="math inline">\(X = 1\)</span>) in states with low cigarette prices (<span class="math inline">\(Z = 0\)</span>).</p>
 <p>A two-by-two table for the values of X and Z, as well as probabilities in this format, is given by:</p>
-<div class="sourceCode" id="cb624"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb624-1"><a href="instrumental-variables.html#cb624-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb624-2"><a href="instrumental-variables.html#cb624-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highprice) <span class="sc">%&gt;%</span> </span>
-<span id="cb624-3"><a href="instrumental-variables.html#cb624-3" tabindex="-1"></a>  <span class="fu">table</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb625"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb625-1"><a href="instrumental-variables.html#cb625-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb625-2"><a href="instrumental-variables.html#cb625-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highprice) <span class="sc">%&gt;%</span> </span>
+<span id="cb625-3"><a href="instrumental-variables.html#cb625-3" tabindex="-1"></a>  <span class="fu">table</span>()</span></code></pre></div>
 <pre><code>##     highprice
 ## qsmk    0    1
 ##    0   33 1065
 ##    1    8  370</code></pre>
-<div class="sourceCode" id="cb626"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb626-1"><a href="instrumental-variables.html#cb626-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb626-2"><a href="instrumental-variables.html#cb626-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highprice) <span class="sc">%&gt;%</span> </span>
-<span id="cb626-3"><a href="instrumental-variables.html#cb626-3" tabindex="-1"></a>  <span class="fu">table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb626-4"><a href="instrumental-variables.html#cb626-4" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb627"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb627-1"><a href="instrumental-variables.html#cb627-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb627-2"><a href="instrumental-variables.html#cb627-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highprice) <span class="sc">%&gt;%</span> </span>
+<span id="cb627-3"><a href="instrumental-variables.html#cb627-3" tabindex="-1"></a>  <span class="fu">table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb627-4"><a href="instrumental-variables.html#cb627-4" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##     highprice
 ## qsmk         0         1
 ##    0 0.8048780 0.7421603
@@ -565,8 +565,8 @@ Pr[X=1|Z=1] -  Pr[X=1|Z=0]
 E[Y|Z=1] - E[Y|Z=0]
 \]</span></p>
 <p>where <span class="math inline">\(Y\)</span> is the outcome of interest (weight change) and <span class="math inline">\(Z\)</span> is, again, the instrument—whether the person lived in a state with high cigarette prices. We can test for a significant change in the sample means using a student’s t-test:</p>
-<div class="sourceCode" id="cb628"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb628-1"><a href="instrumental-variables.html#cb628-1" tabindex="-1"></a><span class="fu">t.test</span>(wt82_71 <span class="sc">~</span> highprice, <span class="at">data =</span> nhefs_iv) <span class="sc">%&gt;%</span> </span>
-<span id="cb628-2"><a href="instrumental-variables.html#cb628-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb629"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb629-1"><a href="instrumental-variables.html#cb629-1" tabindex="-1"></a><span class="fu">t.test</span>(wt82_71 <span class="sc">~</span> highprice, <span class="at">data =</span> nhefs_iv) <span class="sc">%&gt;%</span> </span>
+<span id="cb629-2"><a href="instrumental-variables.html#cb629-2" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 10
 ##   estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high
 ##      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
@@ -610,28 +610,28 @@ E[X|Z] = \alpha_{0} + \alpha_{1}Z
 E[Y|Z] = \beta_{0} + \beta_{1}\hat{E}[X|Z]
 \]</span></p>
 <p>Let’s start by fitting a logistic model for the exposure with the instrument as the only predictor and generate predicted values:</p>
-<div class="sourceCode" id="cb630"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb630-1"><a href="instrumental-variables.html#cb630-1" tabindex="-1"></a>modX_Z <span class="ot">&lt;-</span> <span class="fu">glm</span>(qsmk <span class="sc">~</span> highprice, <span class="at">family =</span> binomial, <span class="at">data =</span> nhefs_iv)</span>
-<span id="cb630-2"><a href="instrumental-variables.html#cb630-2" tabindex="-1"></a></span>
-<span id="cb630-3"><a href="instrumental-variables.html#cb630-3" tabindex="-1"></a>modX_Z <span class="sc">%&gt;%</span></span>
-<span id="cb630-4"><a href="instrumental-variables.html#cb630-4" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb631"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb631-1"><a href="instrumental-variables.html#cb631-1" tabindex="-1"></a>modX_Z <span class="ot">&lt;-</span> <span class="fu">glm</span>(qsmk <span class="sc">~</span> highprice, <span class="at">family =</span> binomial, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb631-2"><a href="instrumental-variables.html#cb631-2" tabindex="-1"></a></span>
+<span id="cb631-3"><a href="instrumental-variables.html#cb631-3" tabindex="-1"></a>modX_Z <span class="sc">%&gt;%</span></span>
+<span id="cb631-4"><a href="instrumental-variables.html#cb631-4" tabindex="-1"></a>  <span class="fu">tidy</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)   -1.42      0.394    -3.60  0.000323
 ## 2 highprice      0.360     0.399     0.903 0.367</code></pre>
-<div class="sourceCode" id="cb632"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb632-1"><a href="instrumental-variables.html#cb632-1" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span></span>
-<span id="cb632-2"><a href="instrumental-variables.html#cb632-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ehat =</span> <span class="fu">predict</span>(modX_Z, <span class="at">type =</span><span class="st">&#39;response&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb633"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb633-1"><a href="instrumental-variables.html#cb633-1" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span></span>
+<span id="cb633-2"><a href="instrumental-variables.html#cb633-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ehat =</span> <span class="fu">predict</span>(modX_Z, <span class="at">type =</span><span class="st">&#39;response&#39;</span>))</span></code></pre></div>
 <p>We then use the predicted values as a predictor in an outcome model:</p>
-<div class="sourceCode" id="cb633"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb633-1"><a href="instrumental-variables.html#cb633-1" tabindex="-1"></a>modY_Z <span class="ot">&lt;-</span> <span class="fu">glm</span>(wt82_71 <span class="sc">~</span> ehat, <span class="at">data =</span> nhefs_iv)</span>
-<span id="cb633-2"><a href="instrumental-variables.html#cb633-2" tabindex="-1"></a></span>
-<span id="cb633-3"><a href="instrumental-variables.html#cb633-3" tabindex="-1"></a></span>
-<span id="cb633-4"><a href="instrumental-variables.html#cb633-4" tabindex="-1"></a>modY_Z <span class="sc">%&gt;%</span></span>
-<span id="cb633-5"><a href="instrumental-variables.html#cb633-5" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb633-6"><a href="instrumental-variables.html#cb633-6" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;ehat&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb633-7"><a href="instrumental-variables.html#cb633-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
-<span id="cb633-8"><a href="instrumental-variables.html#cb633-8" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
-<span id="cb633-9"><a href="instrumental-variables.html#cb633-9" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
-<span id="cb633-10"><a href="instrumental-variables.html#cb633-10" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
+<div class="sourceCode" id="cb634"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb634-1"><a href="instrumental-variables.html#cb634-1" tabindex="-1"></a>modY_Z <span class="ot">&lt;-</span> <span class="fu">glm</span>(wt82_71 <span class="sc">~</span> ehat, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb634-2"><a href="instrumental-variables.html#cb634-2" tabindex="-1"></a></span>
+<span id="cb634-3"><a href="instrumental-variables.html#cb634-3" tabindex="-1"></a></span>
+<span id="cb634-4"><a href="instrumental-variables.html#cb634-4" tabindex="-1"></a>modY_Z <span class="sc">%&gt;%</span></span>
+<span id="cb634-5"><a href="instrumental-variables.html#cb634-5" tabindex="-1"></a>  <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb634-6"><a href="instrumental-variables.html#cb634-6" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&#39;ehat&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb634-7"><a href="instrumental-variables.html#cb634-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effect =</span> estimate,</span>
+<span id="cb634-8"><a href="instrumental-variables.html#cb634-8" tabindex="-1"></a>         <span class="at">low_effect =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error, </span>
+<span id="cb634-9"><a href="instrumental-variables.html#cb634-9" tabindex="-1"></a>         <span class="at">high_effect =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> std.error) <span class="sc">%&gt;%</span> </span>
+<span id="cb634-10"><a href="instrumental-variables.html#cb634-10" tabindex="-1"></a>  <span class="fu">select</span>(term, effect, low_effect, high_effect)</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   term  effect low_effect high_effect
 ##   &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
@@ -641,11 +641,11 @@ E[Y|Z] = \beta_{0} + \beta_{1}\hat{E}[X|Z]
 In this function call, we first give the formula for the relationship between
 the outcome and the exposure (<code>wt82_71 ~ qsmk</code>), and then the right hand of the formula for
 the instrumental variable (<code>~ highprice</code>):</p>
-<div class="sourceCode" id="cb635"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb635-1"><a href="instrumental-variables.html#cb635-1" tabindex="-1"></a><span class="fu">library</span>(sem)</span>
-<span id="cb635-2"><a href="instrumental-variables.html#cb635-2" tabindex="-1"></a>IV_estimatemod <span class="ot">&lt;-</span> <span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk, <span class="sc">~</span> highprice, <span class="at">data =</span> nhefs_iv)</span>
-<span id="cb635-3"><a href="instrumental-variables.html#cb635-3" tabindex="-1"></a></span>
-<span id="cb635-4"><a href="instrumental-variables.html#cb635-4" tabindex="-1"></a>IV_estimatemod <span class="sc">%&gt;%</span></span>
-<span id="cb635-5"><a href="instrumental-variables.html#cb635-5" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb636"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb636-1"><a href="instrumental-variables.html#cb636-1" tabindex="-1"></a><span class="fu">library</span>(sem)</span>
+<span id="cb636-2"><a href="instrumental-variables.html#cb636-2" tabindex="-1"></a>IV_estimatemod <span class="ot">&lt;-</span> <span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk, <span class="sc">~</span> highprice, <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb636-3"><a href="instrumental-variables.html#cb636-3" tabindex="-1"></a></span>
+<span id="cb636-4"><a href="instrumental-variables.html#cb636-4" tabindex="-1"></a>IV_estimatemod <span class="sc">%&gt;%</span></span>
+<span id="cb636-5"><a href="instrumental-variables.html#cb636-5" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## 
 ##  2SLS Estimates
 ## 
@@ -677,14 +677,14 @@ the instrumental variable (<code>~ highprice</code>):</p>
 <li><strong>Estimate the IV estimand accounting for measured covariates. How do the results compare to above?</strong></li>
 </ol>
 <p>We can apply the tsls estimator while accounting for covariates in a similar fashion to the way we include them in a regression model. Note that here we will include these baseline covariates in both the exposure and outcome models:</p>
-<div class="sourceCode" id="cb637"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb637-1"><a href="instrumental-variables.html#cb637-1" tabindex="-1"></a>IV_estimatemod2 <span class="ot">&lt;-</span> <span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
-<span id="cb637-2"><a href="instrumental-variables.html#cb637-2" tabindex="-1"></a>                          smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
-<span id="cb637-3"><a href="instrumental-variables.html#cb637-3" tabindex="-1"></a>                        <span class="sc">~</span> highprice <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
-<span id="cb637-4"><a href="instrumental-variables.html#cb637-4" tabindex="-1"></a>                          smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
-<span id="cb637-5"><a href="instrumental-variables.html#cb637-5" tabindex="-1"></a>                        <span class="at">data =</span> nhefs_iv)</span>
-<span id="cb637-6"><a href="instrumental-variables.html#cb637-6" tabindex="-1"></a></span>
-<span id="cb637-7"><a href="instrumental-variables.html#cb637-7" tabindex="-1"></a>IV_estimatemod2 <span class="sc">%&gt;%</span></span>
-<span id="cb637-8"><a href="instrumental-variables.html#cb637-8" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb638"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb638-1"><a href="instrumental-variables.html#cb638-1" tabindex="-1"></a>IV_estimatemod2 <span class="ot">&lt;-</span> <span class="fu">tsls</span>(wt82_71 <span class="sc">~</span> qsmk <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb638-2"><a href="instrumental-variables.html#cb638-2" tabindex="-1"></a>                          smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
+<span id="cb638-3"><a href="instrumental-variables.html#cb638-3" tabindex="-1"></a>                        <span class="sc">~</span> highprice <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb638-4"><a href="instrumental-variables.html#cb638-4" tabindex="-1"></a>                          smokeintensity <span class="sc">+</span> smokeyrs <span class="sc">+</span> wt71, </span>
+<span id="cb638-5"><a href="instrumental-variables.html#cb638-5" tabindex="-1"></a>                        <span class="at">data =</span> nhefs_iv)</span>
+<span id="cb638-6"><a href="instrumental-variables.html#cb638-6" tabindex="-1"></a></span>
+<span id="cb638-7"><a href="instrumental-variables.html#cb638-7" tabindex="-1"></a>IV_estimatemod2 <span class="sc">%&gt;%</span></span>
+<span id="cb638-8"><a href="instrumental-variables.html#cb638-8" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div>
 <pre><code>## 
 ##  2SLS Estimates
 ## 
@@ -715,40 +715,40 @@ the instrumental variable (<code>~ highprice</code>):</p>
 <li><strong>Use an alternative IV based on cigarette price difference from 1971 to 1982 rather than pricing in 1982.</strong></li>
 </ol>
 <p>Rather than use cigarette pricing at participant’s state of residence in 1982 as the candidate instrument let’s try using difference in cigarette prices from 1971 to 1982, <code>price71_82</code> in our data.</p>
-<div class="sourceCode" id="cb639"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb639-1"><a href="instrumental-variables.html#cb639-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb639-2"><a href="instrumental-variables.html#cb639-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.25</span>), </span>
-<span id="cb639-3"><a href="instrumental-variables.html#cb639-3" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price71_82), </span>
-<span id="cb639-4"><a href="instrumental-variables.html#cb639-4" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price71_82),</span>
-<span id="cb639-5"><a href="instrumental-variables.html#cb639-5" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.75</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb640"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb640-1"><a href="instrumental-variables.html#cb640-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb640-2"><a href="instrumental-variables.html#cb640-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">perc_25 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.25</span>), </span>
+<span id="cb640-3"><a href="instrumental-variables.html#cb640-3" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(price71_82), </span>
+<span id="cb640-4"><a href="instrumental-variables.html#cb640-4" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(price71_82),</span>
+<span id="cb640-5"><a href="instrumental-variables.html#cb640-5" tabindex="-1"></a>            <span class="at">perc_75 =</span> <span class="fu">quantile</span>(price71_82, <span class="fl">0.75</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 4
 ##   perc_25  mean median perc_75
 ##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
 ## 1   0.201 0.332  0.336   0.444</code></pre>
-<div class="sourceCode" id="cb641"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb641-1"><a href="instrumental-variables.html#cb641-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb641-2"><a href="instrumental-variables.html#cb641-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price71_82)) <span class="sc">+</span> </span>
-<span id="cb641-3"><a href="instrumental-variables.html#cb641-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb642"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb642-1"><a href="instrumental-variables.html#cb642-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb642-2"><a href="instrumental-variables.html#cb642-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price71_82)) <span class="sc">+</span> </span>
+<span id="cb642-3"><a href="instrumental-variables.html#cb642-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-324-1.png" width="672" /></p>
 <p>We see that the majority of prices increase (although some actually decrease) in the period between 1971 and 1982, with increases ranging from 0 to a little more than 50 cents. Let’s use an increase of $0.20 as our cutoff for a high increase in prices.</p>
-<div class="sourceCode" id="cb642"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb642-1"><a href="instrumental-variables.html#cb642-1" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb642-2"><a href="instrumental-variables.html#cb642-2" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highincrease =</span> <span class="fu">case_when</span>(</span>
-<span id="cb642-3"><a href="instrumental-variables.html#cb642-3" tabindex="-1"></a>    price71_82 <span class="sc">&gt;=</span> <span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb642-4"><a href="instrumental-variables.html#cb642-4" tabindex="-1"></a>    price71_82 <span class="sc">&lt;</span> <span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb643"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb643-1"><a href="instrumental-variables.html#cb643-1" tabindex="-1"></a>nhefs_iv <span class="ot">&lt;-</span> nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb643-2"><a href="instrumental-variables.html#cb643-2" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">highincrease =</span> <span class="fu">case_when</span>(</span>
+<span id="cb643-3"><a href="instrumental-variables.html#cb643-3" tabindex="-1"></a>    price71_82 <span class="sc">&gt;=</span> <span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb643-4"><a href="instrumental-variables.html#cb643-4" tabindex="-1"></a>    price71_82 <span class="sc">&lt;</span> <span class="fl">0.2</span> <span class="sc">~</span> <span class="dv">0</span>))</span></code></pre></div>
 <p>We can check the strength of this instrument based on its association with smoking cessation, as we did above:</p>
-<div class="sourceCode" id="cb643"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb643-1"><a href="instrumental-variables.html#cb643-1" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(qsmk <span class="sc">~</span> highincrease, <span class="at">data =</span> nhefs_iv))</span></code></pre></div>
+<div class="sourceCode" id="cb644"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb644-1"><a href="instrumental-variables.html#cb644-1" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(qsmk <span class="sc">~</span> highincrease, <span class="at">data =</span> nhefs_iv))</span></code></pre></div>
 <pre><code>##                Df Sum Sq Mean Sq F value Pr(&gt;F)
 ## highincrease    1   0.04 0.04101   0.215  0.643
 ## Residuals    1474 281.15 0.19074</code></pre>
-<div class="sourceCode" id="cb645"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb645-1"><a href="instrumental-variables.html#cb645-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb645-2"><a href="instrumental-variables.html#cb645-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highincrease) <span class="sc">%&gt;%</span> </span>
-<span id="cb645-3"><a href="instrumental-variables.html#cb645-3" tabindex="-1"></a>  <span class="fu">table</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb646"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb646-1"><a href="instrumental-variables.html#cb646-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb646-2"><a href="instrumental-variables.html#cb646-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highincrease) <span class="sc">%&gt;%</span> </span>
+<span id="cb646-3"><a href="instrumental-variables.html#cb646-3" tabindex="-1"></a>  <span class="fu">table</span>()</span></code></pre></div>
 <pre><code>##     highincrease
 ## qsmk   0   1
 ##    0 223 875
 ##    1  81 297</code></pre>
-<div class="sourceCode" id="cb647"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb647-1"><a href="instrumental-variables.html#cb647-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
-<span id="cb647-2"><a href="instrumental-variables.html#cb647-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highincrease) <span class="sc">%&gt;%</span> </span>
-<span id="cb647-3"><a href="instrumental-variables.html#cb647-3" tabindex="-1"></a>  <span class="fu">table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb647-4"><a href="instrumental-variables.html#cb647-4" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb648"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb648-1"><a href="instrumental-variables.html#cb648-1" tabindex="-1"></a>nhefs_iv <span class="sc">%&gt;%</span> </span>
+<span id="cb648-2"><a href="instrumental-variables.html#cb648-2" tabindex="-1"></a>  <span class="fu">select</span>(qsmk, highincrease) <span class="sc">%&gt;%</span> </span>
+<span id="cb648-3"><a href="instrumental-variables.html#cb648-3" tabindex="-1"></a>  <span class="fu">table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb648-4"><a href="instrumental-variables.html#cb648-4" tabindex="-1"></a>  <span class="fu">prop.table</span>(<span class="at">margin=</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##     highincrease
 ## qsmk         0         1
 ##    0 0.7335526 0.7465870
@@ -801,42 +801,42 @@ Madans, Jennifer H, Christine S Cox, Joel C Kleinman, Diane Makuc, Jacob J Feldm
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>

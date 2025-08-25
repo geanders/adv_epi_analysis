@@ -120,7 +120,7 @@
 
 \title{Advanced Epidemiological Analysis}
 \author{Andreas M. Neophytou and G. Brooke Anderson}
-\date{2024-08-19}
+\date{2025-08-25}
 
 \begin{document}
 \maketitle
@@ -324,35 +324,35 @@ Participation in in-course exercises & 10\\
 \hline
 Class & Date & Study type & Topic & Book sections\\
 \hline
-1 & August 19 & Time series & Time series / case-crossover study designs & 3.1--3.4\\
+1 & August 25 & Time series & Time series / case-crossover study designs & 3.1--3.4\\
 \hline
-2 & August 26 & Time series & Time series / case-crossover study designs & 3.5\\
+2 & September 8 & Time series & Time series / case-crossover study designs & 3.5\\
 \hline
-3 & September 9 & Time series & Generalized linear models & 4.1--4.2\\
+3 & September 15 & Time series & Generalized linear models & 4.1--4.2\\
 \hline
 4 & September 16 & Time series & Generalized linear models & 4.3\\
 \hline
-5 & September 23 & Time series & Natural experiments & 5.1--5.3\\
+5 & September 22 & Time series & Natural experiments & 5.1--5.3\\
 \hline
-6 & September 30 & Time series & Risk assessment & 6.1--6.3\\
+6 & September 29 & Time series & Risk assessment & 6.1--6.3\\
 \hline
-7 & October 7 & Time series & Group midterm presentations & None\\
+7 & October 6 & Time series & Group midterm presentations & None\\
 \hline
-8 & October 14 & Cohort & Longitudinal cohort study designs & 7.1--7.3\\
+8 & October 13 & Cohort & Longitudinal cohort study designs & 7.1--7.3\\
 \hline
-9 & October 21 & Cohort & Longitudinal cohort study designs & 7.4\\
+9 & October 20 & Cohort & Longitudinal cohort study designs & 7.4\\
 \hline
-10 & October 28 & Cohort & Inverse probability weighting, Propensity scores & 8.1--8.3\\
+10 & October 27 & Cohort & Inverse probability weighting, Propensity scores & 8.1--8.3\\
 \hline
-11 & November 4 & Cohort & Mixed models & 9.1--9.5\\
+11 & November 3 & Cohort & Mixed models & 9.1--9.5\\
 \hline
-12 & November 11 & Cohort & Instrumental variables & 10.1--10.7\\
+12 & November 10 & Cohort & Instrumental variables & 10.1--10.7\\
 \hline
-13 & November 18 & Cohort & Discuss Final Presentation/Prepatation & None\\
+13 & November 17 & Cohort & Discuss Final Presentation/Prepatation & None\\
 \hline
-14 & December 2 & Cohort & Finals presentations & None\\
+14 & December 1 & Cohort & Finals presentations & None\\
 \hline
-15 & December 9 & Cohort & Finals presentations & None\\
+15 & December 8 & Cohort & Finals presentations & None\\
 \hline
 \end{tabular}
 
@@ -425,7 +425,6 @@ first part of this course.
 The required readings for this chapter are:
 
 \begin{itemize}
-\tightlist
 \item
   \citet{bhaskaran2013time} Provides an overview of time series regression
   in environmental epidemiology.
@@ -4327,11 +4326,16 @@ If we look at the same plots and sliced plots as above we can see that this is a
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{plot}\NormalTok{(cp\_dlconstant, }\AttributeTok{ptype =} \StringTok{"slices"}\NormalTok{, }\AttributeTok{lag =} \DecValTok{0}\NormalTok{)}
-\FunctionTok{plot}\NormalTok{(cp\_dlconstant, }\AttributeTok{ptype =} \StringTok{"slices"}\NormalTok{, }\AttributeTok{lag =} \DecValTok{21}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{adv_epi_analysis_files/figure-latex/unnamed-chunk-111-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(cp\_dlconstant, }\AttributeTok{ptype =} \StringTok{"slices"}\NormalTok{, }\AttributeTok{lag =} \DecValTok{21}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 The two plots are identical (because we assume that the exposure-response is the same at all lags) with colder temperatures having a negative effect, while the warmer temperatures appear to be protective.
 
@@ -7018,7 +7022,7 @@ You can also look at the structure of this object with \texttt{str}:
 \end{Shaded}
 
 \begin{verbatim}
-## List of 16
+## List of 17
 ##  $ n        : int 4434
 ##  $ time     : num [1:1419] 0.0712 0.0931 0.1095 0.1232 0.1259 ...
 ##  $ n.risk   : num [1:1419] 4434 4433 4432 4431 4430 ...
@@ -7034,6 +7038,7 @@ You can also look at the structure of this object with \texttt{str}:
 ##  $ conf.type: chr "log"
 ##  $ lower    : num [1:1419] 0.999 0.999 0.999 0.998 0.998 ...
 ##  $ upper    : num [1:1419] 1 1 1 1 1 ...
+##  $ t0       : num 0
 ##  $ call     : language survfit(formula = Surv(timedthy, death) ~ 1, data = fhs_first)
 ##  - attr(*, "class")= chr "survfit"
 \end{verbatim}

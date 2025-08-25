@@ -23,7 +23,7 @@
 <meta name="author" content="Andreas M. Neophytou and G. Brooke Anderson" />
 
 
-<meta name="date" content="2024-08-19" />
+<meta name="date" content="2025-08-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -66,7 +66,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -342,34 +342,34 @@ AR = \frac{AN}{\sum_{i=1}^{n}{n_i}}
 </ol>
 <p><em>Applied exercise: Example code</em></p>
 <p>Here is the code to read in the data and create that model and crossbasis you will need in this exercise:</p>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="estimating-health-impacts.html#cb266-1" tabindex="-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
-<span id="cb266-2"><a href="estimating-health-impacts.html#cb266-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb266-3"><a href="estimating-health-impacts.html#cb266-3" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
-<span id="cb266-4"><a href="estimating-health-impacts.html#cb266-4" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb266-5"><a href="estimating-health-impacts.html#cb266-5" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb266-6"><a href="estimating-health-impacts.html#cb266-6" tabindex="-1"></a></span>
-<span id="cb266-7"><a href="estimating-health-impacts.html#cb266-7" tabindex="-1"></a><span class="co"># Load and clean the data</span></span>
-<span id="cb266-8"><a href="estimating-health-impacts.html#cb266-8" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb266-9"><a href="estimating-health-impacts.html#cb266-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dow =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb266-10"><a href="estimating-health-impacts.html#cb266-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> <span class="fu">as.numeric</span>(date) <span class="sc">-</span> <span class="fu">first</span>(<span class="fu">as.numeric</span>(date)))</span>
-<span id="cb266-11"><a href="estimating-health-impacts.html#cb266-11" tabindex="-1"></a></span>
-<span id="cb266-12"><a href="estimating-health-impacts.html#cb266-12" tabindex="-1"></a><span class="fu">library</span>(dlnm)</span>
-<span id="cb266-13"><a href="estimating-health-impacts.html#cb266-13" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
-<span id="cb266-14"><a href="estimating-health-impacts.html#cb266-14" tabindex="-1"></a>temp_basis <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">0</span>, </span>
-<span id="cb266-15"><a href="estimating-health-impacts.html#cb266-15" tabindex="-1"></a>                         <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
-<span id="cb266-16"><a href="estimating-health-impacts.html#cb266-16" tabindex="-1"></a>                         <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;integer&quot;</span>))</span>
-<span id="cb266-17"><a href="estimating-health-impacts.html#cb266-17" tabindex="-1"></a>dlnm_mod_1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> temp_basis <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb266-18"><a href="estimating-health-impacts.html#cb266-18" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
-<span id="cb266-19"><a href="estimating-health-impacts.html#cb266-19" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="estimating-health-impacts.html#cb267-1" tabindex="-1"></a><span class="co"># Load some packages that will likely be useful</span></span>
+<span id="cb267-2"><a href="estimating-health-impacts.html#cb267-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb267-3"><a href="estimating-health-impacts.html#cb267-3" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb267-4"><a href="estimating-health-impacts.html#cb267-4" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb267-5"><a href="estimating-health-impacts.html#cb267-5" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb267-6"><a href="estimating-health-impacts.html#cb267-6" tabindex="-1"></a></span>
+<span id="cb267-7"><a href="estimating-health-impacts.html#cb267-7" tabindex="-1"></a><span class="co"># Load and clean the data</span></span>
+<span id="cb267-8"><a href="estimating-health-impacts.html#cb267-8" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/lndn_obs.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb267-9"><a href="estimating-health-impacts.html#cb267-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dow =</span> <span class="fu">wday</span>(date, <span class="at">label =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb267-10"><a href="estimating-health-impacts.html#cb267-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time =</span> <span class="fu">as.numeric</span>(date) <span class="sc">-</span> <span class="fu">first</span>(<span class="fu">as.numeric</span>(date)))</span>
+<span id="cb267-11"><a href="estimating-health-impacts.html#cb267-11" tabindex="-1"></a></span>
+<span id="cb267-12"><a href="estimating-health-impacts.html#cb267-12" tabindex="-1"></a><span class="fu">library</span>(dlnm)</span>
+<span id="cb267-13"><a href="estimating-health-impacts.html#cb267-13" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb267-14"><a href="estimating-health-impacts.html#cb267-14" tabindex="-1"></a>temp_basis <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">0</span>, </span>
+<span id="cb267-15"><a href="estimating-health-impacts.html#cb267-15" tabindex="-1"></a>                         <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
+<span id="cb267-16"><a href="estimating-health-impacts.html#cb267-16" tabindex="-1"></a>                         <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;integer&quot;</span>))</span>
+<span id="cb267-17"><a href="estimating-health-impacts.html#cb267-17" tabindex="-1"></a>dlnm_mod_1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> temp_basis <span class="sc">+</span> <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb267-18"><a href="estimating-health-impacts.html#cb267-18" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb267-19"><a href="estimating-health-impacts.html#cb267-19" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li><strong>Start with the model you fit as <code>dlnm_mod_1</code> in Chapter 4, as well as the <code>obs</code> dataset you used to fit it. Using 7 degrees C as the baseline exposure, determine the fraction of deaths attributable to heat in the first week of July in 2012 in London.</strong></li>
 </ol>
 <p>Let’s start by pulling out the observations for the first week in July of 2012 (note that you can use <code>interval</code> and <code>%within%</code> from lubridate to help pull observations with a date within a certain range):</p>
-<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="estimating-health-impacts.html#cb267-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb267-2"><a href="estimating-health-impacts.html#cb267-2" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb267-3"><a href="estimating-health-impacts.html#cb267-3" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">%within%</span> <span class="fu">interval</span>(<span class="fu">ymd</span>(<span class="st">&quot;2012-07-01&quot;</span>), <span class="fu">ymd</span>(<span class="st">&quot;2012-07-07&quot;</span>))) <span class="sc">%&gt;%</span> </span>
-<span id="cb267-4"><a href="estimating-health-impacts.html#cb267-4" tabindex="-1"></a>  <span class="fu">select</span>(date, all, tmean)</span>
-<span id="cb267-5"><a href="estimating-health-impacts.html#cb267-5" tabindex="-1"></a>july_week</span></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="estimating-health-impacts.html#cb268-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb268-2"><a href="estimating-health-impacts.html#cb268-2" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
+<span id="cb268-3"><a href="estimating-health-impacts.html#cb268-3" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">%within%</span> <span class="fu">interval</span>(<span class="fu">ymd</span>(<span class="st">&quot;2012-07-01&quot;</span>), <span class="fu">ymd</span>(<span class="st">&quot;2012-07-07&quot;</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb268-4"><a href="estimating-health-impacts.html#cb268-4" tabindex="-1"></a>  <span class="fu">select</span>(date, all, tmean)</span>
+<span id="cb268-5"><a href="estimating-health-impacts.html#cb268-5" tabindex="-1"></a>july_week</span></code></pre></div>
 <pre><code>## # A tibble: 7 × 3
 ##   date         all tmean
 ##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;
@@ -384,8 +384,8 @@ AR = \frac{AN}{\sum_{i=1}^{n}{n_i}}
 <p>First, let’s calculate the attributable fraction. To do this, we need to use
 the model that we fit earlier to determine what the log relative risk is for each day’s temperature. You can use the <code>crosspred</code> function to determine the log relative risk at any temperature compared to a baseline temperature that you specify. In the <code>crosspred</code> call, you’ll use the <code>cen</code> parameter to say which temperature you want to use as your baseline and the <code>at</code> parameter to say which temperatures you want to predict to—in this case, we want to predict to the temperatures for the first week in July of 2012 (<code>july_week$tmean</code>).</p>
 <p>The <code>crosspred</code> object includes a lot of output; the <code>matfit</code> part gives the central estimates of log relative risk at each temperature:</p>
-<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="estimating-health-impacts.html#cb269-1" tabindex="-1"></a><span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb269-2"><a href="estimating-health-impacts.html#cb269-2" tabindex="-1"></a>          <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">at =</span> july_week<span class="sc">$</span>tmean)<span class="sc">$</span>matfit</span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="estimating-health-impacts.html#cb270-1" tabindex="-1"></a><span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb270-2"><a href="estimating-health-impacts.html#cb270-2" tabindex="-1"></a>          <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">at =</span> july_week<span class="sc">$</span>tmean)<span class="sc">$</span>matfit</span></code></pre></div>
 <pre><code>##                        lag0
 ## 14.6077699661255 0.01199433
 ## 15.190845489502  0.01275503
@@ -395,15 +395,15 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 18.4983215332031 0.04512788
 ## 19.1906547546387 0.05791965</code></pre>
 <p>With some code, you can extract this and join it with the <code>july_2012</code> dataframe:</p>
-<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="estimating-health-impacts.html#cb271-1" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb271-2"><a href="estimating-health-impacts.html#cb271-2" tabindex="-1"></a>          <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">at =</span> july_week<span class="sc">$</span>tmean) <span class="sc">%&gt;%</span> </span>
-<span id="cb271-3"><a href="estimating-health-impacts.html#cb271-3" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;matfit&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb271-4"><a href="estimating-health-impacts.html#cb271-4" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb271-5"><a href="estimating-health-impacts.html#cb271-5" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;tmean&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb271-6"><a href="estimating-health-impacts.html#cb271-6" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;beta_x&quot;</span> <span class="ot">=</span> lag0) <span class="sc">%&gt;%</span> </span>
-<span id="cb271-7"><a href="estimating-health-impacts.html#cb271-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tmean =</span> <span class="fu">as.numeric</span>(tmean)) <span class="sc">%&gt;%</span> </span>
-<span id="cb271-8"><a href="estimating-health-impacts.html#cb271-8" tabindex="-1"></a>  <span class="fu">inner_join</span>(july_week, ., <span class="at">by =</span> <span class="st">&quot;tmean&quot;</span>) </span>
-<span id="cb271-9"><a href="estimating-health-impacts.html#cb271-9" tabindex="-1"></a>july_week</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="estimating-health-impacts.html#cb272-1" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> <span class="fu">crosspred</span>(<span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb272-2"><a href="estimating-health-impacts.html#cb272-2" tabindex="-1"></a>          <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">at =</span> july_week<span class="sc">$</span>tmean) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-3"><a href="estimating-health-impacts.html#cb272-3" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;matfit&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-4"><a href="estimating-health-impacts.html#cb272-4" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb272-5"><a href="estimating-health-impacts.html#cb272-5" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;tmean&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-6"><a href="estimating-health-impacts.html#cb272-6" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;beta_x&quot;</span> <span class="ot">=</span> lag0) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-7"><a href="estimating-health-impacts.html#cb272-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tmean =</span> <span class="fu">as.numeric</span>(tmean)) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-8"><a href="estimating-health-impacts.html#cb272-8" tabindex="-1"></a>  <span class="fu">inner_join</span>(july_week, ., <span class="at">by =</span> <span class="st">&quot;tmean&quot;</span>) </span>
+<span id="cb272-9"><a href="estimating-health-impacts.html#cb272-9" tabindex="-1"></a>july_week</span></code></pre></div>
 <pre><code>## # A tibble: 7 × 4
 ##   date         all tmean beta_x
 ##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
@@ -415,10 +415,10 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 6 2012-07-06   102  17.0 0.0246
 ## 7 2012-07-07   109  16.0 0.0160</code></pre>
 <p>From this, you can calculate attributable risk on each day as <span class="math inline">\(AR = 1 - exp(-\beta_x)\)</span> and then calculate attributable number as <span class="math inline">\(AN = AR * n\)</span>:</p>
-<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="estimating-health-impacts.html#cb273-1" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> july_week <span class="sc">%&gt;%</span> </span>
-<span id="cb273-2"><a href="estimating-health-impacts.html#cb273-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">attr_frac =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>beta_x),</span>
-<span id="cb273-3"><a href="estimating-health-impacts.html#cb273-3" tabindex="-1"></a>         <span class="at">attr_num =</span> all <span class="sc">*</span> attr_frac)</span>
-<span id="cb273-4"><a href="estimating-health-impacts.html#cb273-4" tabindex="-1"></a>july_week</span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="estimating-health-impacts.html#cb274-1" tabindex="-1"></a>july_week <span class="ot">&lt;-</span> july_week <span class="sc">%&gt;%</span> </span>
+<span id="cb274-2"><a href="estimating-health-impacts.html#cb274-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">attr_frac =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>beta_x),</span>
+<span id="cb274-3"><a href="estimating-health-impacts.html#cb274-3" tabindex="-1"></a>         <span class="at">attr_num =</span> all <span class="sc">*</span> attr_frac)</span>
+<span id="cb274-4"><a href="estimating-health-impacts.html#cb274-4" tabindex="-1"></a>july_week</span></code></pre></div>
 <pre><code>## # A tibble: 7 × 6
 ##   date         all tmean beta_x attr_frac attr_num
 ##   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
@@ -431,36 +431,36 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 7 2012-07-07   109  16.0 0.0160    0.0159     1.73</code></pre>
 <p>Over this week, the fraction of deaths attributable to heat on any day (compared to a baseline of 7 degrees C) ranged from about 1.2% of all deaths to about 5.6% of all deaths. Across these days, between 1.2 and 6.2 deaths on a given day were attributable to heat.</p>
 <p>We can get the total number of deaths attributable to heat, as well as the total attributable fraction over the time period, by summing up across the week for the attributable number and then dividing this by the total number of cases in the week to get the attributable fraction:</p>
-<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="estimating-health-impacts.html#cb275-1" tabindex="-1"></a>july_week <span class="sc">%&gt;%</span> </span>
-<span id="cb275-2"><a href="estimating-health-impacts.html#cb275-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">tot_attr_num =</span> <span class="fu">sum</span>(attr_num), </span>
-<span id="cb275-3"><a href="estimating-health-impacts.html#cb275-3" tabindex="-1"></a>            <span class="at">tot_attr_frac =</span> tot_attr_num <span class="sc">/</span> <span class="fu">sum</span>(all))</span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="estimating-health-impacts.html#cb276-1" tabindex="-1"></a>july_week <span class="sc">%&gt;%</span> </span>
+<span id="cb276-2"><a href="estimating-health-impacts.html#cb276-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">tot_attr_num =</span> <span class="fu">sum</span>(attr_num), </span>
+<span id="cb276-3"><a href="estimating-health-impacts.html#cb276-3" tabindex="-1"></a>            <span class="at">tot_attr_frac =</span> tot_attr_num <span class="sc">/</span> <span class="fu">sum</span>(all))</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 2
 ##   tot_attr_num tot_attr_frac
 ##          &lt;dbl&gt;         &lt;dbl&gt;
 ## 1         20.7        0.0273</code></pre>
 <p>This tells us that there were about 21 deaths attributable to heat in London that week (i.e., deaths that would not have occurred if the temperature was instead 7 degrees C each day in the week), and that this makes up about 3% of all the deaths in London that week.</p>
 <p>You can plot day-by-day estimates of the total deaths, highlighting the number that are attributable to temperature, during this period:</p>
-<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="estimating-health-impacts.html#cb277-1" tabindex="-1"></a>july_week <span class="sc">%&gt;%</span> </span>
-<span id="cb277-2"><a href="estimating-health-impacts.html#cb277-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span> </span>
-<span id="cb277-3"><a href="estimating-health-impacts.html#cb277-3" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">fill =</span> <span class="st">&quot;cyan3&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb277-4"><a href="estimating-health-impacts.html#cb277-4" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> attr_num), <span class="at">fill =</span> <span class="st">&quot;cyan4&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="estimating-health-impacts.html#cb278-1" tabindex="-1"></a>july_week <span class="sc">%&gt;%</span> </span>
+<span id="cb278-2"><a href="estimating-health-impacts.html#cb278-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date)) <span class="sc">+</span> </span>
+<span id="cb278-3"><a href="estimating-health-impacts.html#cb278-3" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> all), <span class="at">fill =</span> <span class="st">&quot;cyan3&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb278-4"><a href="estimating-health-impacts.html#cb278-4" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> attr_num), <span class="at">fill =</span> <span class="st">&quot;cyan4&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-151-1.png" width="672" /></p>
 <p>With this example, you can see how you can calculate these estimates from scratch. However, this will become cumbersome as you move to larger and more complex examples. Fortunately, the authors of <span class="citation">Gasparrini and Leone (<a href="#ref-gasparrini2014attributable">2014</a>)</span> included an R script with code for a function to do this, both for these simpler examples and as you move to more complex examples. To download the script for this function, go <a href="https://raw.githubusercontent.com/gasparrini/2014_gasparrini_BMCmrm_Rcodedata/master/attrdl.R">here</a> and save the file as a plain text file, with the extension “.R”. (As a note, make sure you use this link for the file—an earlier version of the script was posted on the website of the article, but it’s changed some since then, and you want the newer version.) Once you unzip this file, it should be an R script named “attrdl.R”. Put this script somewhere convenient to your working directory and source the code in it using the <code>source</code> function. For example, if you saved the R script in a subdirectory “code” of the current working directory, you would run:</p>
-<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="estimating-health-impacts.html#cb278-1" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;code/attrdl.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="estimating-health-impacts.html#cb279-1" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;code/attrdl.R&quot;</span>)</span></code></pre></div>
 <p>This will run all the code in the file, which creates a new function called <code>attrdl</code>. This function also has a helpfile, which you can find <a href="https://static-content.springer.com/esm/art%3A10.1186%2F1471-2288-14-55/MediaObjects/12874_2014_1076_MOESM2_ESM.pdf">here</a>.</p>
 <p>The <code>attrdl</code> function has four required arguments: a vector with the exposure, a crossbasis function, a vector with the cases that correspond to each value in the exposure vector, and the value of the exposure that you want to use as a baseline. You can also include a fitted model. In our example, the exposure will be a vector of the temperature on each day of the first week of July 2012 in London, and the cases vector will be the number of deaths observed on each of those days. We will use 7 degrees C as our baseline. The crossbasis will be the crossbasis object we used to fit our model, and we’ll include the fitted model. We can run the function as:</p>
-<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="estimating-health-impacts.html#cb279-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
-<span id="cb279-2"><a href="estimating-health-impacts.html#cb279-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="estimating-health-impacts.html#cb280-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
+<span id="cb280-2"><a href="estimating-health-impacts.html#cb280-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
 <pre><code>## [1] 0.02727977</code></pre>
 <p>By default, it gives us the attributable risk for the week. You can see that this matches the value we got when we did this calculation from scratch, but it certainly saves us a lot of time. This function will also help us tackle tougher cases, like when we have model associations across a distributed lag.</p>
 <p>You can also use this function to get the attributable number. You just need to add the argument <code>type = "an"</code>:</p>
-<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="estimating-health-impacts.html#cb281-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
-<span id="cb281-2"><a href="estimating-health-impacts.html#cb281-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="estimating-health-impacts.html#cb282-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
+<span id="cb282-2"><a href="estimating-health-impacts.html#cb282-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 20.73262</code></pre>
 <p>If we want to get the values for each day of the week, we can include the argument <code>tot = FALSE</code>. This will give us an estimate for each date, rather than the estimate of the total over the period:</p>
-<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="estimating-health-impacts.html#cb283-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
-<span id="cb283-2"><a href="estimating-health-impacts.html#cb283-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>, </span>
-<span id="cb283-3"><a href="estimating-health-impacts.html#cb283-3" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">&quot;an&quot;</span>, <span class="at">tot =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="estimating-health-impacts.html#cb284-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> july_week<span class="sc">$</span>tmean, <span class="at">cases =</span> july_week<span class="sc">$</span>all, </span>
+<span id="cb284-2"><a href="estimating-health-impacts.html#cb284-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, <span class="at">cen =</span> <span class="dv">7</span>, </span>
+<span id="cb284-3"><a href="estimating-health-impacts.html#cb284-3" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">&quot;an&quot;</span>, <span class="at">tot =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>## [1] 1.228037 1.571579 2.855759 6.190165 4.677225 2.480511 1.729346</code></pre>
 <p>Again, you can see that this agrees with the calculations we did from scratch.</p>
 <ol start="2" style="list-style-type: decimal">
@@ -468,47 +468,47 @@ the model that we fit earlier to determine what the log relative risk is for eac
 </ol>
 <p>With the <code>attrdl</code> function, it’s very straightforward to extend these calculations to look at the whole study period, rather than just one week. The only tricky part, conceptually, is that we want to generate separate estimates for heat and cold. Heat-attributable mortality will only occur when the temperature is higher than our baseline of 7 degrees Celsius, while cold-attributable mortality will only occur when the temperature is lower than 7 degrees Celsius.</p>
 <p>One way we can do this is to split apart the original dataset into two datasets—one with all the observations on “cold” days (those below 7 degrees C) and one with all the observations on “hot” days (those above 8 degrees C). Then we can run the function to calculate attributable risk and attributable number on these two datasets separately, to get separate estimates for heat-attributable and cold attributable mortality.</p>
-<div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="estimating-health-impacts.html#cb285-1" tabindex="-1"></a>obs_cold <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb285-2"><a href="estimating-health-impacts.html#cb285-2" tabindex="-1"></a>  <span class="fu">filter</span>(tmean <span class="sc">&lt;</span> <span class="dv">7</span>)</span>
-<span id="cb285-3"><a href="estimating-health-impacts.html#cb285-3" tabindex="-1"></a>obs_hot <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb285-4"><a href="estimating-health-impacts.html#cb285-4" tabindex="-1"></a>  <span class="fu">filter</span>(tmean <span class="sc">&gt;</span> <span class="dv">7</span>)</span>
-<span id="cb285-5"><a href="estimating-health-impacts.html#cb285-5" tabindex="-1"></a></span>
-<span id="cb285-6"><a href="estimating-health-impacts.html#cb285-6" tabindex="-1"></a><span class="co"># Estimate cold-related attributable risk over the study period</span></span>
-<span id="cb285-7"><a href="estimating-health-impacts.html#cb285-7" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_cold<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_cold<span class="sc">$</span>all, </span>
-<span id="cb285-8"><a href="estimating-health-impacts.html#cb285-8" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb285-9"><a href="estimating-health-impacts.html#cb285-9" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="estimating-health-impacts.html#cb286-1" tabindex="-1"></a>obs_cold <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
+<span id="cb286-2"><a href="estimating-health-impacts.html#cb286-2" tabindex="-1"></a>  <span class="fu">filter</span>(tmean <span class="sc">&lt;</span> <span class="dv">7</span>)</span>
+<span id="cb286-3"><a href="estimating-health-impacts.html#cb286-3" tabindex="-1"></a>obs_hot <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
+<span id="cb286-4"><a href="estimating-health-impacts.html#cb286-4" tabindex="-1"></a>  <span class="fu">filter</span>(tmean <span class="sc">&gt;</span> <span class="dv">7</span>)</span>
+<span id="cb286-5"><a href="estimating-health-impacts.html#cb286-5" tabindex="-1"></a></span>
+<span id="cb286-6"><a href="estimating-health-impacts.html#cb286-6" tabindex="-1"></a><span class="co"># Estimate cold-related attributable risk over the study period</span></span>
+<span id="cb286-7"><a href="estimating-health-impacts.html#cb286-7" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_cold<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_cold<span class="sc">$</span>all, </span>
+<span id="cb286-8"><a href="estimating-health-impacts.html#cb286-8" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb286-9"><a href="estimating-health-impacts.html#cb286-9" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
 <pre><code>## [1] 0.007327224</code></pre>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="estimating-health-impacts.html#cb287-1" tabindex="-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
-<span id="cb287-2"><a href="estimating-health-impacts.html#cb287-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_cold<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_cold<span class="sc">$</span>all, </span>
-<span id="cb287-3"><a href="estimating-health-impacts.html#cb287-3" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb287-4"><a href="estimating-health-impacts.html#cb287-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="estimating-health-impacts.html#cb288-1" tabindex="-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
+<span id="cb288-2"><a href="estimating-health-impacts.html#cb288-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_cold<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_cold<span class="sc">$</span>all, </span>
+<span id="cb288-3"><a href="estimating-health-impacts.html#cb288-3" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb288-4"><a href="estimating-health-impacts.html#cb288-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 2414.899</code></pre>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="estimating-health-impacts.html#cb289-1" tabindex="-1"></a><span class="co"># Estimate heat-related attributable risk over the study period</span></span>
-<span id="cb289-2"><a href="estimating-health-impacts.html#cb289-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_hot<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_hot<span class="sc">$</span>all, </span>
-<span id="cb289-3"><a href="estimating-health-impacts.html#cb289-3" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb289-4"><a href="estimating-health-impacts.html#cb289-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="estimating-health-impacts.html#cb290-1" tabindex="-1"></a><span class="co"># Estimate heat-related attributable risk over the study period</span></span>
+<span id="cb290-2"><a href="estimating-health-impacts.html#cb290-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_hot<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_hot<span class="sc">$</span>all, </span>
+<span id="cb290-3"><a href="estimating-health-impacts.html#cb290-3" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb290-4"><a href="estimating-health-impacts.html#cb290-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>)</span></code></pre></div>
 <pre><code>## [1] 0.0235678</code></pre>
-<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="estimating-health-impacts.html#cb291-1" tabindex="-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
-<span id="cb291-2"><a href="estimating-health-impacts.html#cb291-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_hot<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_hot<span class="sc">$</span>all, </span>
-<span id="cb291-3"><a href="estimating-health-impacts.html#cb291-3" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb291-4"><a href="estimating-health-impacts.html#cb291-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="estimating-health-impacts.html#cb292-1" tabindex="-1"></a><span class="co"># Estimate cold-related attributable number over the study period</span></span>
+<span id="cb292-2"><a href="estimating-health-impacts.html#cb292-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs_hot<span class="sc">$</span>tmean, <span class="at">cases =</span> obs_hot<span class="sc">$</span>all, </span>
+<span id="cb292-3"><a href="estimating-health-impacts.html#cb292-3" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb292-4"><a href="estimating-health-impacts.html#cb292-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 23484.98</code></pre>
 <p>Another way that you can do this is to use the <code>range</code> argument in <code>attrdl</code>, which allows you to focus on the impacts in only one range of the exposure. For example, you could estimate the heat-related attributable number by using a range from the baseline temperature to the maximum temperature in the observations:</p>
-<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="estimating-health-impacts.html#cb293-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb293-2"><a href="estimating-health-impacts.html#cb293-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb293-3"><a href="estimating-health-impacts.html#cb293-3" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="estimating-health-impacts.html#cb294-1" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
+<span id="cb294-2"><a href="estimating-health-impacts.html#cb294-2" tabindex="-1"></a>       <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb294-3"><a href="estimating-health-impacts.html#cb294-3" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 23484.98</code></pre>
 <p>Based on these estimates, there were about 23,500 deaths over the approximately two-decade study period in London that we would expect to not have occurred if the temperature never exceeded 7 degrees C. This makes up about 2% of all mortality on days above 7 degrees C. On the other hand, based on this assessment, the impact from cold is much lower—only about 2,500 attributable deaths over the approximately two-decade study period, making only about 0.7% of all the deaths on days colder than 7 degrees C.</p>
 <p>There are a few caveats with these estimates. First, there are a lot fewer days that were below 7 degrees C in the study than that were above. This accounts for some of the difference in the total number of excess deaths attributable to heat versus cold over the study period. The location of the minimum mortality temperature, which we estimated from fitting a model with only immediate effects in this case, might shift as we include more lags, in which case we would recenter our estimates of attributable risk and attributable number in terms of the baseline temperature we compare to. This could change the numbers some just from having more days above or below the threshold.</p>
 <p>Second, we know from fitting the distributed lag non-linear models in an earlier chapter that cold tends to have a more lagged effect on mortality risk, while the effect of heat is more immediate. By limiting the model to lag 0, we’ve likely missed a lot of the effect of cold on mortality risk. We’ll address this in the next part of the exercise, where we’ll expand to use a model with a distributed lag.</p>
 <p>Finally, the choice of a baseline is tricky here. We’re using the minimum mortality temperature, and that’s a common choice. However, it’s pretty unrealistic to think that there would be a way that this “safest” baseline scenario would ever be met—you’d never be able to enforce the temperature in a city staying constant year-round. Another approach could be to take a sample “mild” summer and “mild” winter for your study city, and compare the health impacts during more severe years to that milder case. This would require a bit more work to calculate, as your baseline temperature would be changing throughout each season. There’s not a perfect solution to this issue of identifying a baseline, but it’s important to be clear when you communicate the baseline you’re using when you describe your results.</p>
 <p>Going back to the <code>attrdl</code> function, you can use the <code>tot = FALSE</code> argument to check out some interesting patterns in attributable numbers over your study. This argument estimates the attributable risk or number for each separate day in the study. For example, you can use it to add a column to your original data with the estimated attributable number for that day:</p>
-<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="estimating-health-impacts.html#cb295-1" tabindex="-1"></a>obs_an_added <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
-<span id="cb295-2"><a href="estimating-health-impacts.html#cb295-2" tabindex="-1"></a>  <span class="fu">select</span>(date, tmean, all) <span class="sc">%&gt;%</span> </span>
-<span id="cb295-3"><a href="estimating-health-impacts.html#cb295-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">an =</span> <span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb295-4"><a href="estimating-health-impacts.html#cb295-4" tabindex="-1"></a>                     <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
-<span id="cb295-5"><a href="estimating-health-impacts.html#cb295-5" tabindex="-1"></a>                     <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>, <span class="at">tot =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb295-6"><a href="estimating-health-impacts.html#cb295-6" tabindex="-1"></a>obs_an_added</span></code></pre></div>
+<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="estimating-health-impacts.html#cb296-1" tabindex="-1"></a>obs_an_added <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> </span>
+<span id="cb296-2"><a href="estimating-health-impacts.html#cb296-2" tabindex="-1"></a>  <span class="fu">select</span>(date, tmean, all) <span class="sc">%&gt;%</span> </span>
+<span id="cb296-3"><a href="estimating-health-impacts.html#cb296-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">an =</span> <span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
+<span id="cb296-4"><a href="estimating-health-impacts.html#cb296-4" tabindex="-1"></a>                     <span class="at">basis =</span> temp_basis, <span class="at">model =</span> dlnm_mod_1, </span>
+<span id="cb296-5"><a href="estimating-health-impacts.html#cb296-5" tabindex="-1"></a>                     <span class="at">cen =</span> <span class="dv">7</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>, <span class="at">tot =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb296-6"><a href="estimating-health-impacts.html#cb296-6" tabindex="-1"></a>obs_an_added</span></code></pre></div>
 <pre><code>## # A tibble: 8,279 × 4
 ##    date       tmean   all      an
 ##    &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
@@ -524,54 +524,54 @@ the model that we fit earlier to determine what the log relative risk is for eac
 ## 10 1990-01-10  9.51   214  1.84  
 ## # ℹ 8,269 more rows</code></pre>
 <p>With this, we can look at how the number of excess deaths vary by temperature. We can bin temperatures into broad bins and then plot the total number of attributable deaths for days with each temperature:</p>
-<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="estimating-health-impacts.html#cb297-1" tabindex="-1"></a>obs_an_added <span class="sc">%&gt;%</span> </span>
-<span id="cb297-2"><a href="estimating-health-impacts.html#cb297-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp_round =</span> <span class="fu">round</span>(tmean)) <span class="sc">%&gt;%</span> </span>
-<span id="cb297-3"><a href="estimating-health-impacts.html#cb297-3" tabindex="-1"></a>  <span class="fu">group_by</span>(temp_round) <span class="sc">%&gt;%</span> </span>
-<span id="cb297-4"><a href="estimating-health-impacts.html#cb297-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">an_tot =</span> <span class="fu">sum</span>(an)) <span class="sc">%&gt;%</span> </span>
-<span id="cb297-5"><a href="estimating-health-impacts.html#cb297-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> temp_round, <span class="at">y =</span> an_tot)) <span class="sc">+</span> </span>
-<span id="cb297-6"><a href="estimating-health-impacts.html#cb297-6" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
-<span id="cb297-7"><a href="estimating-health-impacts.html#cb297-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, </span>
-<span id="cb297-8"><a href="estimating-health-impacts.html#cb297-8" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Total attributable excess deaths on</span><span class="sc">\n</span><span class="st">days with that temperature&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="estimating-health-impacts.html#cb298-1" tabindex="-1"></a>obs_an_added <span class="sc">%&gt;%</span> </span>
+<span id="cb298-2"><a href="estimating-health-impacts.html#cb298-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp_round =</span> <span class="fu">round</span>(tmean)) <span class="sc">%&gt;%</span> </span>
+<span id="cb298-3"><a href="estimating-health-impacts.html#cb298-3" tabindex="-1"></a>  <span class="fu">group_by</span>(temp_round) <span class="sc">%&gt;%</span> </span>
+<span id="cb298-4"><a href="estimating-health-impacts.html#cb298-4" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">an_tot =</span> <span class="fu">sum</span>(an)) <span class="sc">%&gt;%</span> </span>
+<span id="cb298-5"><a href="estimating-health-impacts.html#cb298-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> temp_round, <span class="at">y =</span> an_tot)) <span class="sc">+</span> </span>
+<span id="cb298-6"><a href="estimating-health-impacts.html#cb298-6" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
+<span id="cb298-7"><a href="estimating-health-impacts.html#cb298-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Mean daily temperature&quot;</span>, </span>
+<span id="cb298-8"><a href="estimating-health-impacts.html#cb298-8" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Total attributable excess deaths on</span><span class="sc">\n</span><span class="st">days with that temperature&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-159-1.png" width="672" /></p>
 <p>Remember that our exposure-response function increased dramatically at extreme temperatures, especially extreme heat. Here, however, we see the role that frequency of exposure plays in the ultimate impact. Because extremely hot and extremely cold days are very rare, they don’t account for much of the heat- or cold-attributable mortality. Instead, a lot more comes at temperatures that are a bit milder than those extremes but that occur much more often. This, of course, might change depending on the baseline we’re using for comparison.</p>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Do the same calculation as in the previous part, but change the underlying model that you’re using. In this case, use the <code>dist_lag_mod_5</code> you fit in Chapter 4. What differences are there in attributable risk and attributable number when you use a model that incorporates lagged effects (<code>dist_lag_mod_5</code>) compared to one that only fits the immediate association (<code>dlnm_mod_1</code>)?</strong></li>
 </ol>
 <p>To start, re-run the code we used in Chapter 4 to fit <code>dist_lag_mod_5</code>, including the code to create the associated crossbasis function (<code>dl_basis_4</code>):</p>
-<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="estimating-health-impacts.html#cb298-1" tabindex="-1"></a>dl_basis_4 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
-<span id="cb298-2"><a href="estimating-health-impacts.html#cb298-2" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
-<span id="cb298-3"><a href="estimating-health-impacts.html#cb298-3" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">6</span>))</span>
-<span id="cb298-4"><a href="estimating-health-impacts.html#cb298-4" tabindex="-1"></a>dist_lag_mod_5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_4 <span class="sc">+</span> </span>
-<span id="cb298-5"><a href="estimating-health-impacts.html#cb298-5" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb298-6"><a href="estimating-health-impacts.html#cb298-6" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
-<span id="cb298-7"><a href="estimating-health-impacts.html#cb298-7" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="estimating-health-impacts.html#cb299-1" tabindex="-1"></a>dl_basis_4 <span class="ot">&lt;-</span> <span class="fu">crossbasis</span>(obs<span class="sc">$</span>tmean, <span class="at">lag =</span> <span class="dv">30</span>,</span>
+<span id="cb299-2"><a href="estimating-health-impacts.html#cb299-2" tabindex="-1"></a>                       <span class="at">argvar =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">4</span>), </span>
+<span id="cb299-3"><a href="estimating-health-impacts.html#cb299-3" tabindex="-1"></a>                       <span class="at">arglag =</span> <span class="fu">list</span>(<span class="at">fun =</span> <span class="st">&quot;ns&quot;</span>, <span class="at">df =</span> <span class="dv">6</span>))</span>
+<span id="cb299-4"><a href="estimating-health-impacts.html#cb299-4" tabindex="-1"></a>dist_lag_mod_5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(all <span class="sc">~</span> dl_basis_4 <span class="sc">+</span> </span>
+<span id="cb299-5"><a href="estimating-health-impacts.html#cb299-5" tabindex="-1"></a>                        <span class="fu">factor</span>(dow, <span class="at">ordered =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb299-6"><a href="estimating-health-impacts.html#cb299-6" tabindex="-1"></a>                          <span class="fu">ns</span>(time, <span class="at">df =</span> <span class="dv">158</span>), </span>
+<span id="cb299-7"><a href="estimating-health-impacts.html#cb299-7" tabindex="-1"></a>                        <span class="at">data =</span> obs, <span class="at">family =</span> <span class="st">&quot;quasipoisson&quot;</span>)</span></code></pre></div>
 <p>First, let’s take a look to see if we should use a different baseline—in other words, is 7 degrees C still our best estimate of the minimum mortality temperature, now that we’re incorporating lagged effects? If we use <code>crosspred</code>, we can check the exposure-response curve for the cumulative effects over all the fitted lags, to see what the minimum point is on that curve:</p>
-<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="estimating-health-impacts.html#cb299-1" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis_4, dist_lag_mod_5, <span class="at">bylag =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb299-2"><a href="estimating-health-impacts.html#cb299-2" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;overall&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="estimating-health-impacts.html#cb300-1" tabindex="-1"></a><span class="fu">crosspred</span>(dl_basis_4, dist_lag_mod_5, <span class="at">bylag =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb300-2"><a href="estimating-health-impacts.html#cb300-2" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="at">ptype =</span> <span class="st">&quot;overall&quot;</span>)</span></code></pre></div>
 <p><img src="adv_epi_analysis_files/figure-html/unnamed-chunk-161-1.png" width="672" /></p>
 <p>Now that we’re considering lagged effects, the temperature with minimum mortality risk has gone up quite a lot, to 18 degrees C. We’ll use that as our baseline in estimating attributable risk and number for heat and cold. We can already tell that this will increase our cold-attributable mortality by a bit most likely, since there will be a lot more days that are below this baseline temperature now. Following the same reasoning, this is also likely to decrease the heat-attributable mortality (although of course changes to the shape of the exposure-response curve will also affect our estimates).</p>
 <p>The other thing that we need to think about is how to incorporate lagged effects of temperature. You can do this by thinking of temperatures at different lags as different exposures. The mathematics for this gets more complicated, but fortunately the <code>attrdl</code> function can handle those mechanics for us.</p>
 <p>We do, however, have to decide whether we want to calculate these attributable impacts from lagged exposures under what’s called a “backward perspective” or a “forward perspective”. One of the required readings for this week has a full discussion of these two perspectives and the implications and assumptions of each <span class="citation">(<a href="#ref-gasparrini2014attributable">Gasparrini and Leone 2014</a>)</span>. Simply put, the forward perspective is describing how one day’s temperature has impacts on its same day as well as following days, while the backward perspective calculates the impact that all the exposures in the lagged period before a certain day impact risk on that day.</p>
 <p>There is a way to calculate the separate impacts of heat and cold under either of these perspectives, but the forward perspective can be prone to some bias <span class="citation">(<a href="#ref-gasparrini2014attributable">Gasparrini and Leone 2014</a>)</span>, so we’ll use the backward perspective. Since we want to get estimates for heat and cold separately, we’ll use the <code>range</code> argument in the <code>attrdl</code> function. (With the lagged effects, it would be tricky to try to do this by separating the dataset into hot and cold days, since you’ll have some cases when you have temperatures that are both below and above the baseline temperature in the lag period.) You can specify that you’d like to use the backward perspective with the argument <code>dir = "back"</code>:</p>
-<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="estimating-health-impacts.html#cb300-1" tabindex="-1"></a><span class="co"># Estimate cold-associated attributable risk</span></span>
-<span id="cb300-2"><a href="estimating-health-impacts.html#cb300-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb300-3"><a href="estimating-health-impacts.html#cb300-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb300-4"><a href="estimating-health-impacts.html#cb300-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fu">min</span>(obs<span class="sc">$</span>tmean), <span class="dv">18</span>), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="estimating-health-impacts.html#cb301-1" tabindex="-1"></a><span class="co"># Estimate cold-associated attributable risk</span></span>
+<span id="cb301-2"><a href="estimating-health-impacts.html#cb301-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
+<span id="cb301-3"><a href="estimating-health-impacts.html#cb301-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
+<span id="cb301-4"><a href="estimating-health-impacts.html#cb301-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fu">min</span>(obs<span class="sc">$</span>tmean), <span class="dv">18</span>), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 0.09398662</code></pre>
-<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="estimating-health-impacts.html#cb302-1" tabindex="-1"></a><span class="co"># Estimate cold-associated attributable number</span></span>
-<span id="cb302-2"><a href="estimating-health-impacts.html#cb302-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb302-3"><a href="estimating-health-impacts.html#cb302-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb302-4"><a href="estimating-health-impacts.html#cb302-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fu">min</span>(obs<span class="sc">$</span>tmean), <span class="dv">18</span>), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="estimating-health-impacts.html#cb303-1" tabindex="-1"></a><span class="co"># Estimate cold-associated attributable number</span></span>
+<span id="cb303-2"><a href="estimating-health-impacts.html#cb303-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
+<span id="cb303-3"><a href="estimating-health-impacts.html#cb303-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
+<span id="cb303-4"><a href="estimating-health-impacts.html#cb303-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="fu">min</span>(obs<span class="sc">$</span>tmean), <span class="dv">18</span>), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 124632.4</code></pre>
-<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="estimating-health-impacts.html#cb304-1" tabindex="-1"></a><span class="co"># Estimate heat-associated attributable risk</span></span>
-<span id="cb304-2"><a href="estimating-health-impacts.html#cb304-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb304-3"><a href="estimating-health-impacts.html#cb304-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb304-4"><a href="estimating-health-impacts.html#cb304-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="estimating-health-impacts.html#cb305-1" tabindex="-1"></a><span class="co"># Estimate heat-associated attributable risk</span></span>
+<span id="cb305-2"><a href="estimating-health-impacts.html#cb305-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
+<span id="cb305-3"><a href="estimating-health-impacts.html#cb305-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
+<span id="cb305-4"><a href="estimating-health-impacts.html#cb305-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 0.002380825</code></pre>
-<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="estimating-health-impacts.html#cb306-1" tabindex="-1"></a><span class="co"># Estimate heat-associated attributable number</span></span>
-<span id="cb306-2"><a href="estimating-health-impacts.html#cb306-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
-<span id="cb306-3"><a href="estimating-health-impacts.html#cb306-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
-<span id="cb306-4"><a href="estimating-health-impacts.html#cb306-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="estimating-health-impacts.html#cb307-1" tabindex="-1"></a><span class="co"># Estimate heat-associated attributable number</span></span>
+<span id="cb307-2"><a href="estimating-health-impacts.html#cb307-2" tabindex="-1"></a><span class="fu">attrdl</span>(<span class="at">x =</span> obs<span class="sc">$</span>tmean, <span class="at">cases =</span> obs<span class="sc">$</span>all, </span>
+<span id="cb307-3"><a href="estimating-health-impacts.html#cb307-3" tabindex="-1"></a>       <span class="at">basis =</span> dl_basis_4, <span class="at">model =</span> dist_lag_mod_5, </span>
+<span id="cb307-4"><a href="estimating-health-impacts.html#cb307-4" tabindex="-1"></a>       <span class="at">cen =</span> <span class="dv">18</span>, <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="fu">max</span>(obs<span class="sc">$</span>tmean)), <span class="at">dir =</span> <span class="st">&quot;back&quot;</span>, <span class="at">type =</span> <span class="st">&quot;an&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] 3157.129</code></pre>
 <p>When we use this model that includes distributed lag effects of temperature, you can see that the impact of cold has increased substantially and the impact of heat has decreased substantially. This is because cold tends to have effects that are lagged after the initial exposure, while heat tends to be more immediate, and can even have somewhat of a pattern reflective of mortality displacement (although this depends on the study city). Once we incorporate the delayed effects of cold, the minimum mortality temperature also increase substantially, so many more days are below, rather than above, the baseline temperature we’re using for comparison as compared to the last part of the exercise.</p>
 <p>These long lagged effects of temperature start to bring in some questions about whether the effect is specifically from the absolute value of the temperature, or whether they may be starting to pick up some impacts that are caused by seasonality, rather than absolute temperature. As you include lags up to a month or longer, it gets harder to separate the impact of temperature specifically from the impact of season. This question is very important when you start thinking about the impacts of climate change. With climate change, we expect in many places that winter days will, on average, have a higher temperature. If the mortality risk of cold is caused by the absolute temperature, this would result in fewer cold-related deaths. However, if there are other seasonal factors (that we don’t expect to change, or at least not as much), then the rising winter temperatures would have less of a beneficial effect on winter mortality risk. There are a number of interesting papers that focus on this question and its implications for climate change projections <span class="citation">(<a href="#ref-kinney2015winter">Kinney et al. 2015</a>; <a href="#ref-ebi2015greater">Ebi 2015</a>; <a href="#ref-hajat2016excess">Hajat and Gasparrini 2016</a>)</span>. Also, there are some papers that go more deeply into how to estimate minimum mortality temperatures <span class="citation">(<a href="#ref-lee2017monte">W. Lee et al. 2017</a>; <a href="#ref-tobias2017investigating">Tobıas, Armstrong, and Gasparrini 2017</a>)</span>, as well as what baseline temperature makes a suitable threshold for estimating attributable risk for cold-related mortality <span class="citation">(<a href="#ref-arbuthnott2018cold">Arbuthnott et al. 2018</a>)</span>.</p>
@@ -660,42 +660,42 @@ Vicedo-Cabrera, Ana M, Francesco Sera, and Antonio Gasparrini. 2019. <span>“Ha
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["adv_epi_analysis.pdf", "adv_epi_analysis.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>
